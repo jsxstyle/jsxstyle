@@ -133,7 +133,7 @@ var avatar = (
 }
 
 .c3 {
-  marginLeft: 10px; /* from Theme.js evaluated at build time */
+  margin-left: 10px; /* from Theme.js evaluated at build time */
   color: red; /* from Theme.js evaluated at build time */
 }
 
@@ -160,7 +160,7 @@ Since this is built on AST transformation, we can make the CSS pretty nice and *
 
 .example_js__3 {
   /* example.js:4 */
-  marginLeft: 10px;
+  margin-left: 10px;
   color: red;
 }
 
@@ -208,4 +208,4 @@ I should probably have a good example of a DI solution that works here, but I do
 
 ### Is this in production?
 
-I've built a moderately sized app with it used by customer, but it's not at huge scale yet.
+I've built a moderately sized app with it used by customers, but it's not at huge scale yet.
