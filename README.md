@@ -4,7 +4,8 @@
 
   * Vjeux sums up a lot of problems with CSS here: http://blog.vjeux.com/2014/javascript/react-css-in-js-nationjs.html
   * The problem with `StyleSheet.create()` is you're not colocating your style with where it's used for no reason. If you're instantiating a component that's only intended to be styled (which I've found is the majority of my DOM nodes!), the style properties should be on that component's props. Stylesheets shouldn't be used for reuse; instead the ideal API is to build inline styles w/ JavaScript, using components for reuse, and the power of JS expressions to compute styles (and share constants) where needed.
-  * The problem with inline styles everywhere is browsers aren't optimized for it (at the very least it's risky). It also makes the web inspector harder to use since you can't update all instances of a component on the page simultaneously.
+  * Performance of the inline styles technique is questionable. Inline styles means more bytes down the wire for server rendering and more GC pressure client-side. At the very least, there hasn't been a lot of sweat put into "inline styles for everything" by browser vendors yet.
+  * It also makes the web inspector harder to use since you can't update all instances of a component on the page simultaneously.
 
 ## The solution
 
@@ -18,7 +19,11 @@ var Theme = require('./MyTheme');
 var hovered = false; // This could be dynamic
 
 var avatar = (
-  <Flex width={Theme.GRID_UNIT * 10} marginLeft="auto" marginRight="auto" alignItems="center">
+  <Flex
+    width={Theme.GRID_UNIT * 10}
+    marginLeft="auto"
+    marginRight="auto"
+    alignItems="center">
     <img src="..." />
     <Block marginLeft={Theme.GRID_UNIT} color={Theme.primaryColor} background={hovered && rgb(255, 0, 0)}>
       <InlineBlock fontWeight="bold">Username here</InlineBlock>
