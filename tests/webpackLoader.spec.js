@@ -23,7 +23,7 @@ describe('webpackLoader', function() {
       },
       module: {
         loaders: [
-          {test: /\.js$/, loader: 'jsx-loader?harmony!' + path.join(__dirname, '..', 'lib', 'webpackLoader.js') + '?namespace=' + path.join(__dirname, 'webpackLoaderNamespace.js')},
+          {test: /\.js$/, loader: 'jsx-loader?harmony!' + path.join(__dirname, '..', 'lib', 'webpackLoader.js') + '?LayoutConstants=' + path.join(__dirname, 'webpackLoaderNamespace.js')},
         ],
       },
     });

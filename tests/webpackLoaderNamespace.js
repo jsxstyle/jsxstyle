@@ -1,5 +1,3 @@
 module.exports = {
-  LayoutConstants: {
-    x: 10,
-  },
+  x: 10,
 };
