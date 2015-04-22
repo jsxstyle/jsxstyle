@@ -36,7 +36,16 @@ describe('webpackLoader', function() {
         []
       ).then(function(window) {
         var src = fs.readFileSync(path.join(__dirname, 'bundle.js'), {encoding: 'utf8'});
-        console.log(window.eval(src));
+        var thrown = null;
+        try {
+          window.eval(src);
+        } catch (e) {
+          thrown = e;
+        }
+        expect(thrown && thrown.toString()).toBe(
+          'ReferenceError: LayoutConstants is not defined'
+        );
+        expect(window.document.head.innerHTML.indexOf('example.js')).toBeGreaterThan(-1);
       });
     });
   });
