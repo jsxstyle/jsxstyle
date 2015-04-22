@@ -5,7 +5,9 @@ require('jasmine-pit').install(global);
 var Promise = require('bluebird');
 
 var fs = require('fs');
+var invariant = require('invariant');
 var path = require('path');
+var jsdom = Promise.promisifyAll(require('node-jsdom'));
 var webpack = require('webpack');
 
 describe('webpackLoader', function() {
@@ -18,7 +20,7 @@ describe('webpackLoader', function() {
       },
       module: {
         loaders: [
-          {test: /\.js$/, loader: 'jsx-loader?harmony'},
+          {test: /\.js$/, loader: 'jsx-loader?harmony!' + path.join(__dirname, '..', 'lib', 'webpackLoader.js')},
         ],
       },
     });
@@ -26,10 +28,16 @@ describe('webpackLoader', function() {
     var runAsync = Promise.promisify(compiler.run);
 
     return runAsync.call(compiler).then(function(stats) {
-      console.log(stats.toString());
-      var bundleSrc = fs.readFileSync(path.join(__dirname, 'bundle.js'), {encoding: 'utf8'});
+      var jsonStats = stats.toJson();
+      invariant(jsonStats.errors.length === 0, stats.toString());
 
-      //expect(bundleSrc).toBe('bla');
+      return jsdom.envAsync(
+        '<p><a class="the-link" href="https://github.com/tmpvar/jsdom">jsdom!</a></p>',
+        []
+      ).then(function(window) {
+        var src = fs.readFileSync(path.join(__dirname, 'bundle.js'), {encoding: 'utf8'});
+        console.log(window.eval(src));
+      });
     });
   });
 });
