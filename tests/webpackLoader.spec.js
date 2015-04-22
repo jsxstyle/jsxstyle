@@ -12,15 +12,18 @@ var webpack = require('webpack');
 
 describe('webpackLoader', function() {
   pit('works', function() {
-    // returns a Compiler instance
+    var bundlePath = path.join(__dirname, 'bundle.js');
+    try {
+      fs.unlinkSync(bundlePath);
+    } catch (e) {}
     var compiler = webpack({
       entry: path.join(__dirname, 'example.js'),
       output: {
-        filename: path.join(__dirname, 'bundle.js'),
+        filename: bundlePath,
       },
       module: {
         loaders: [
-          {test: /\.js$/, loader: 'jsx-loader?harmony!' + path.join(__dirname, '..', 'lib', 'webpackLoader.js')},
+          {test: /\.js$/, loader: 'jsx-loader?harmony!' + path.join(__dirname, '..', 'lib', 'webpackLoader.js') + '?namespace=' + path.join(__dirname, 'webpackLoaderNamespace.js')},
         ],
       },
     });
@@ -35,7 +38,7 @@ describe('webpackLoader', function() {
         '<p><a class="the-link" href="https://github.com/tmpvar/jsdom">jsdom!</a></p>',
         []
       ).then(function(window) {
-        var src = fs.readFileSync(path.join(__dirname, 'bundle.js'), {encoding: 'utf8'});
+        var src = fs.readFileSync(bundlePath, {encoding: 'utf8'});
         var thrown = null;
         try {
           window.eval(src);
@@ -43,7 +46,7 @@ describe('webpackLoader', function() {
           thrown = e;
         }
         expect(thrown && thrown.toString()).toBe(
-          'ReferenceError: LayoutConstants is not defined'
+          'ReferenceError: OtherComponent is not defined'
         );
         expect(window.document.head.innerHTML.indexOf('example.js')).toBeGreaterThan(-1);
       });
