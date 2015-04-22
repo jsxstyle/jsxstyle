@@ -3,7 +3,7 @@
 ## The problem
 
   * Vjeux sums up a lot of problems with CSS here: http://blog.vjeux.com/2014/javascript/react-css-in-js-nationjs.html
-  * The problem with `StyleSheet.create()` is you're not colocating your style with where it's used for no reason. If you're making a style component, the styles belong on props. Stylesheets shouldn't be used for reuse. The ideal API is to build inline styles w/ JavaScript, using components for reuse, and the power of JS expressions to compute styles (and share constants) where needed.
+  * The problem with `StyleSheet.create()` is you're not colocating your style with where it's used for no reason. If you're instantiating a component that's only intended to be styled (which I've found is the majority of my DOM nodes!), the style properties should be on that component's props. Stylesheets shouldn't be used for reuse; instead the ideal API is to build inline styles w/ JavaScript, using components for reuse, and the power of JS expressions to compute styles (and share constants) where needed.
   * The problem with inline styles everywhere is browsers aren't optimized for it (at the very least it's risky). It also makes the web inspector harder to use since you can't update all instances of a component on the page simultaneously.
 
 ## The solution
