@@ -14,10 +14,15 @@
     "invariant": "^2.0.0",
     "object-assign": "^2.0.0",
     "react": "^0.13.2",
-    "recast": "^0.10.12"
+    "recast": "^0.10.12",
+    "temp": "^0.8.1"
   },
   "devDependencies": {
+    "bluebird": "^2.9.24",
     "jasmine-node": "git://github.com/authbox-lib/jasmine-node#4767e286879ed27f8a1ac05806550d77ffbeea5b",
-    "jsxhint": "^0.14.0"
+    "jasmine-pit": "^2.0.2",
+    "jsx-loader": "^0.13.1",
+    "jsxhint": "^0.14.0",
+    "webpack": "1.8.9"
   }
 }
