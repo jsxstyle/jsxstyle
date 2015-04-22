@@ -1,6 +1,6 @@
 {
   "name": "jsxstyle",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -16,8 +16,7 @@
     "object-assign": "^2.0.0",
     "react": "^0.13.2",
     "recast": "^0.10.12",
-    "style-loader": "^0.11.0",
-    "temp": "^0.8.1"
+    "style-loader": "^0.11.0"
   },
   "devDependencies": {
     "bluebird": "^2.9.24",
