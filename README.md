@@ -39,6 +39,8 @@ Another nice thing is you can lint this, hell, if you have a powerful enough typ
 
 ### Convert this nice API to traditional React with inline styles
 
+You can use a straightforward AST transform script to convert the previous example to:
+
 ```js
 var avatar = (
   <div style={{
@@ -61,7 +63,7 @@ var avatar = (
 );
 ```
 
-This is just a straightforward transformation into the React of today.
+This is just a straightforward transformation into the React of today. You can also do this at runtime too if you want (both are included in the repo)
 
 ### Extract the literal CSS into a stylesheet
 
