@@ -4,12 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jasmine-node tests/",
+    "lint": "jsxhint lib/"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "contextify": "^0.1.13",
+    "invariant": "^2.0.0",
     "object-assign": "^2.0.0",
     "react": "^0.13.2",
     "recast": "^0.10.12"
