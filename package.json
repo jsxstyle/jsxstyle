@@ -1,6 +1,6 @@
 {
   "name": "jsxstyle",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -20,7 +20,7 @@
   },
   "devDependencies": {
     "bluebird": "^2.9.24",
-    "jasmine-node": "git://github.com/authbox-lib/jasmine-node#4767e286879ed27f8a1ac05806550d77ffbeea5b",
+    "jasmine-node": "^1.14.5",
     "jasmine-pit": "^2.0.2",
     "jsx-loader": "^0.13.1",
     "jsxhint": "^0.14.0",
