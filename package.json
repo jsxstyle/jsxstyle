@@ -7,5 +7,15 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "contextify": "^0.1.13",
+    "object-assign": "^2.0.0",
+    "react": "^0.13.2",
+    "recast": "^0.10.12"
+  },
+  "devDependencies": {
+    "jasmine-node": "git://github.com/authbox-lib/jasmine-node#4767e286879ed27f8a1ac05806550d77ffbeea5b",
+    "jsxhint": "^0.14.0"
+  }
 }
