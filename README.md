@@ -194,7 +194,7 @@ Check out the `example/` directory for a bad example. Be sure to inspect the DOM
 
 Who cares? Search engines generally don't, and semantic tags don't get you accessibility for free. Instead of making our style components less expressive, we need [better tooling for accessibility](https://youtu.be/z5e7kWSHWTg?t=10m37s) instead.
 
-Additionally, how many times have you put a `<div>` on the page just to build a layout or add aborder? That's what these components are replacing, not nodes that should contain meaningful content for accessibility (i.e. use unstyled `<article>`s with a CSS reset).
+Additionally, how many times have you put a `<div>` on the page just to build a layout or add a border? That's what these components are replacing, not nodes that should contain meaningful content for accessibility (i.e. use unstyled `<article>`s with a CSS reset).
 
 ### What about repeated styles?
 
