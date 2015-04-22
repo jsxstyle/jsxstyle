@@ -16,6 +16,10 @@ describe('extractStyles', function() {
   });
 
   it('can extract simple expressions', function() {
-    //
+    var rv = extractStyles(EXAMPLE_SRC, {LayoutConstants: {x: 10}});
+    expect(rv).toEqual({
+      js: "<div className=\"__s_0\">\n  <div className=\"__s_1\" />\n  <div style={{width: 10}} />\n  <OtherComponent height={25} />\n</Block>\n",
+      css: ".__s_0 {\n  width:100%;\n  height:25px;\n  left:20px;\n  display:block;\n}\n\n.__s_1 {\n  height:24px;\n  display:inline-block;\n}\n\n"
+    });
   });
 });
