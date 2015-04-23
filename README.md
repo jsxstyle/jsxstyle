@@ -3,6 +3,9 @@
 ## The problem
 
   * Vjeux sums up a lot of problems with CSS here: http://blog.vjeux.com/2014/javascript/react-css-in-js-nationjs.html
+  * Also, sharing components in `npm` becomes a lot easier with inline styles
+  
+## The problem with vjeux's solution
   * The problem with `StyleSheet.create()` is you're not colocating your style with where it's used for no reason. If you're instantiating a component that's only intended to be styled (which I've found is the majority of my DOM nodes!), the style properties should be on that component's props. Stylesheets shouldn't be used for reuse; instead the ideal API is to build inline styles w/ JavaScript, using components for reuse, and the power of JS expressions to compute styles (and share constants) where needed.
   * Performance of the inline styles technique is questionable. Inline styles means more bytes down the wire for server rendering and more GC pressure client-side. At the very least, there hasn't been a lot of sweat put into "inline styles for everything" by browser vendors yet.
   * It also makes the web inspector harder to use since you can't update all instances of a component on the page simultaneously.
@@ -181,6 +184,8 @@ I've built some stuff with this at this point and I never want to go back to the
 ## Try it
 
 Check out the `example/` directory for a bad example. Be sure to inspect the DOM, particularly `<head>`! In `webpack.config.js` you can swap out the webpack loader and it will magically fall back to inline styles for everything instead of extracting out a static stylesheet.
+
+What's cool is the webpack loader is an optimization -- since this is just JavaScript, you can use Browserify or Require.js or whatever you want and the app will still work. And since it's pure JS you can package it in `npm` without hassle.
 
 ## Open areas of work
 
