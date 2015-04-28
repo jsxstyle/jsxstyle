@@ -1,6 +1,6 @@
 {
   "name": "jsxstyle",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -14,9 +14,11 @@
     "invariant": "^2.0.0",
     "loader-utils": "^0.2.7",
     "object-assign": "^2.0.0",
-    "react": "^0.13.2",
     "recast": "^0.10.12",
     "style-loader": "^0.11.0"
+  },
+  "peerDependencies": {
+    "react": "^0.13.2"
   },
   "devDependencies": {
     "bluebird": "^2.9.24",
