@@ -4,7 +4,7 @@
 
   * Vjeux sums up a lot of problems with CSS here: http://blog.vjeux.com/2014/javascript/react-css-in-js-nationjs.html
   * Also, sharing components in `npm` becomes a lot easier with inline styles
-  
+
 ## The problem with vjeux's solution
   * The problem with `StyleSheet.create()` is you're not colocating your style with where it's used for no reason. If you're instantiating a component that's only intended to be styled (which I've found is the majority of my DOM nodes!), the style properties should be on that component's props. Stylesheets shouldn't be used for reuse; instead the ideal API is to build inline styles w/ JavaScript, using components for reuse, and the power of JS expressions to compute styles (and share constants) where needed.
   * Performance of the inline styles technique is questionable. Inline styles means more bytes down the wire for server rendering and more GC pressure client-side. At the very least, there hasn't been a lot of sweat put into "inline styles for everything" by browser vendors yet.
@@ -176,6 +176,21 @@ Since every component has exactly one unique class name corresponding to its lex
 To be fair, this isn't a property of using inline styles, but a property of a system that treats CSS like the hostile render target it is and abstracts it away from you.
 
 I don't have an optimizer built, but the primitive `jsxstyle/renameClass` is included which can be used by an optimizer.
+
+### Make style reuse easy
+
+A lot of times you'll want simple reusable components that implement your theme. You can use currying to achieve this.
+
+```js
+
+var {Inline, curry} = require('jsxstyle');
+
+var StandardText = curry(Inline, {color: 'gray', fontSize: 12});
+var EmphText = curry(StandardText, {fontWeight: 'bold'});
+
+
+React.render(<StandardText>Hello world</StandardText>, document.body);
+```
 
 ## Conclusion
 
