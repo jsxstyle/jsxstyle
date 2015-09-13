@@ -17,9 +17,6 @@
     "recast": "^0.10.12",
     "style-loader": "^0.11.0"
   },
-  "peerDependencies": {
-    "react": ">= 0.12.0"
-  },
   "devDependencies": {
     "bluebird": "^2.9.24",
     "jasmine-node": "^1.14.5",
