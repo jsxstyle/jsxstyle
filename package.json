@@ -13,7 +13,7 @@
     "contextify": "^0.1.13",
     "invariant": "^2.0.0",
     "loader-utils": "^0.2.7",
-    "object-assign": "^2.0.0",
+    "object-assign": "^4.0.1",
     "recast": "^0.10.12",
     "style-loader": "^0.11.0"
   },
