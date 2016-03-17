@@ -1,6 +1,6 @@
 {
   "name": "jsxstyle",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -11,7 +11,6 @@
   "license": "ISC",
   "dependencies": {
     "contextify": "^0.1.13",
-    "immediate": "^3.2.2",
     "invariant": "^2.0.0",
     "loader-utils": "^0.2.7",
     "object-assign": "^2.0.0",
