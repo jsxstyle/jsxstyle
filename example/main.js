@@ -4,8 +4,9 @@ var Avatar = require('./Avatar');
 var {Block} = require('../lib/Display');
 var LayoutConstants = require('./LayoutConstants');
 var React = require('react');
+var ReactDOM = require('react-dom');
 
-React.render(
+ReactDOM.render(
   <Block
     marginLeft="auto"
     marginRight="auto"
@@ -13,7 +14,7 @@ React.render(
     border={'1px solid ' + LayoutConstants.secondaryColor}
     width={48 * LayoutConstants.gridUnit}
     minHeight={64}>
-    <Avatar username="pwh" />
+    <Avatar username="metallica" />
     <Avatar username="justintimberlake" />
     <Avatar username="carlyraejepsen" />
   </Block>,
