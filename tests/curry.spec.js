@@ -2,13 +2,14 @@
 
 var Inline = require('../Inline');
 var React = require('react');
+var ReactDOMServer = require('react-dom/server');
 var curry = require('../curry');
 
 describe('curry', function() {
   it('works', function() {
     var StandardText = curry(Inline, {color: 'gray', fontSize: 12});
     var EmphText = curry(Inline, {fontWeight: 'bold', color: 'black'});
-    var markup = React.renderToStaticMarkup(
+    var markup = ReactDOMServer.renderToStaticMarkup(
       React.createElement(
         'div', null,
         React.createElement(StandardText, null, 'hello world'),
