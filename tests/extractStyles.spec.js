@@ -11,7 +11,7 @@ describe('extractStyles', function() {
     var rv = extractStyles(EXAMPLE_SRC);
     expect(rv).toEqual({
       js: "var React = require('react');\n<div\n  style={{\n    \"left\": 2 * LayoutConstants.x\n  }}\n  className=\"__s_0\">\n  <div className=\"__s_1\" />\n  <div style={{width: 10}} />\n  <OtherComponent height={25} />\n</div>\n",
-      css: ".__s_0 {\n  width:100%;\n  height:25px;\n  display:block;\n}\n\n.__s_1 {\n  height:24px;\n  display:inline-block;\n}\n\n"
+      css: ".__s_0 {\n  width:100%;\n  height:25px;\n  display:block;\n}\n\n.__s_0:hover {\n  color:blue;\n  background-color:white;\n}\n\n.__s_1 {\n  height:24px;\n  display:inline-block;\n}\n\n"
     });
   });
 
@@ -19,7 +19,7 @@ describe('extractStyles', function() {
     var rv = extractStyles(EXAMPLE_SRC, {LayoutConstants: {x: 10}});
     expect(rv).toEqual({
       js: "var React = require('react');\n<div className=\"__s_0\">\n  <div className=\"__s_1\" />\n  <div style={{width: 10}} />\n  <OtherComponent height={25} />\n</div>\n",
-      css: ".__s_0 {\n  width:100%;\n  height:25px;\n  left:20px;\n  display:block;\n}\n\n.__s_1 {\n  height:24px;\n  display:inline-block;\n}\n\n"
+      css: ".__s_0 {\n  width:100%;\n  height:25px;\n  left:20px;\n  display:block;\n}\n\n.__s_0:hover {\n  color:blue;\n  background-color:white;\n}\n\n.__s_1 {\n  height:24px;\n  display:inline-block;\n}\n\n"
     });
   });
 
@@ -33,7 +33,7 @@ describe('extractStyles', function() {
     });
     expect(rv).toEqual({
       js: "var React = require('react');\n<div className=\"example_line2\">\n  <div className=\"example_line3\" />\n  <div style={{width: 10}} />\n  <OtherComponent height={25} />\n</div>\n",
-      css: ".example_line2 {\n  /* example.js:2 */\n  width:100%;\n  height:25px;\n  left:20px;\n  display:block;\n}\n\n.example_line3 {\n  /* example.js:3 */\n  height:24px;\n  display:inline-block;\n}\n\n"
+      css: ".example_line2 {\n  /* example.js:2 */\n  width:100%;\n  height:25px;\n  left:20px;\n  display:block;\n}\n\n.example_line2:hover {\n  /* example.js:2 */\n  color:blue;\n  background-color:white;\n}\n\n.example_line3 {\n  /* example.js:3 */\n  height:24px;\n  display:inline-block;\n}\n\n"
     });
   });
 });
