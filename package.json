@@ -10,7 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "contextify": "^0.1.13",
     "invariant": "^2.0.0",
     "loader-utils": "^0.2.7",
     "object-assign": "^2.0.0",
