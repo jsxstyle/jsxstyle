@@ -27,7 +27,8 @@
     "jsx-loader": "^0.13.1",
     "jsxhint": "^0.14.0",
     "node-jsdom": "^3.1.5",
-    "react-dom": "^0.14.8",
+    "react": ">= 0.14.0",
+    "react-dom": ">= 0.14.0",
     "webpack": "1.8.9"
   }
 }
