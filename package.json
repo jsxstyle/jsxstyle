@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jasmine-node tests/",
-    "lint": "jsxhint lib/"
+    "lint": "eslint lib/"
   },
   "author": "",
   "license": "ISC",
@@ -22,10 +22,9 @@
   },
   "devDependencies": {
     "bluebird": "^3.4.1",
+    "eslint": "^3.3.0",
     "jasmine-node": "^1.14.5",
     "jasmine-pit": "^2.0.2",
-    "jsx-loader": "^0.13.1",
-    "jsxhint": "^0.14.0",
     "node-jsdom": "^3.1.5",
     "react": ">=0.14.0",
     "react-dom": ">=0.14.0",
