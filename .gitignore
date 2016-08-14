@@ -1,3 +1,4 @@
 node_modules
 tests/bundle.js
 example/bundle.js
+lib/

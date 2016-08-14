@@ -6,7 +6,9 @@
   "scripts": {
     "test": "jasmine-node tests/",
     "lint": "eslint lib/",
-    "example": "cd example; webpack"
+    "example": "cd example; webpack",
+    "babel": "babel ./src --out-dir ./lib",
+    "prepublish": "npm run babel"
   },
   "author": "",
   "license": "ISC",
@@ -22,6 +24,8 @@
     "react-dom": ">=0.14.0"
   },
   "devDependencies": {
+    "babel-cli": "^6.11.4",
+    "babel-core": "^6.13.2",
     "babel-loader": "^6.2.4",
     "babel-preset-react": "^6.11.1",
     "bluebird": "^3.4.1",
