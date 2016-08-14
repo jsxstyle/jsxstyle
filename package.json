@@ -10,25 +10,25 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "invariant": "^2.0.0",
-    "loader-utils": "^0.2.7",
-    "object-assign": "^4.0.1",
-    "recast": "^0.10.12",
-    "style-loader": "^0.11.0"
+    "invariant": "^2.2.1",
+    "loader-utils": "^0.2.15",
+    "object-assign": "^4.1.0",
+    "recast": "^0.11.11",
+    "style-loader": "^0.13.1"
   },
   "peerDependencies": {
-    "react": ">= 0.14.0",
-    "react-dom": ">= 0.14.0"
+    "react": ">=0.14.0",
+    "react-dom": ">=0.14.0"
   },
   "devDependencies": {
-    "bluebird": "^2.9.24",
+    "bluebird": "^3.4.1",
     "jasmine-node": "^1.14.5",
     "jasmine-pit": "^2.0.2",
     "jsx-loader": "^0.13.1",
     "jsxhint": "^0.14.0",
     "node-jsdom": "^3.1.5",
-    "react": ">= 0.14.0",
-    "react-dom": ">= 0.14.0",
-    "webpack": "1.8.9"
+    "react": ">=0.14.0",
+    "react-dom": ">=0.14.0",
+    "webpack": "1.13.1"
   }
 }
