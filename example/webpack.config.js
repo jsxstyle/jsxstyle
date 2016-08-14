@@ -1,5 +1,3 @@
-var path = require('path');
-
 module.exports = {
   entry: './main',
   output: {
@@ -7,8 +5,13 @@ module.exports = {
   },
   module: {
     loaders: [
-      //{test: /\.js$/, loader: 'jsx-loader?harmony!' + path.join(__dirname, '..', 'lib', 'webpackLoader.js') + '?LayoutConstants=' + path.join(__dirname, 'LayoutConstants.js')},
-      {test: /\.js$/, loader: 'jsx-loader?harmony'},
+      {
+        test: /\.js$/,
+        loader: 'babel',
+        query: {
+          presets: ['react'],
+        },
+      },
     ],
   },
 };
