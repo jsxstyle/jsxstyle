@@ -1,40 +1,39 @@
-'use strict'
+'use strict';
+
+function stripPrefixFromStyleProp(styleProp, prefix) {
+  const formattedProp = styleProp.substr(prefix.length);
+  if (formattedProp.startsWith('Webkit') || formattedProp.startsWith('Moz')) {
+    return formattedProp;
+  }
+  return formattedProp.charAt(0).toLowerCase() + formattedProp.slice(1);
+}
 
 function explodePseudoStyles(style) {
-  var hoverStyles = null;
-  var activeStyles = null;
-  var focusStyles = null;
-  var baseStyles = null;
+  const styleObject = {};
 
-  for (var name in style) {
-    if (style.hasOwnProperty(name) ) {
+  for (const name in style) {
+    if (style.hasOwnProperty(name)) {
+      let prefix = 'base';
+      let styleProp = name;
+
       if (name.startsWith('hover')) {
-        hoverStyles = hoverStyles || {};
-        // Strip the name of the pseudo selector prefix and transform first char
-        // to lowercase to ensure correct markup generation and autoprefixing
-        var prop = name.substr(5);
-        hoverStyles[prop.charAt(0).toLowerCase() + prop.slice(1)] = style[name];
+        prefix = 'hover';
       } else if (name.startsWith('focus')) {
-        focusStyles = focusStyles || {};
-        var prop = name.substr(5);
-        focusStyles[prop.charAt(0).toLowerCase() + prop.slice(1)] = style[name];
+        prefix = 'focus';
       } else if (name.startsWith('active')) {
-        activeStyles = activeStyles || {};
-        var prop = name.substr(6);
-        activeStyles[prop.charAt(0).toLowerCase() + prop.slice(1)] = style[name];
-      } else {
-        baseStyles = baseStyles || {};
-        baseStyles[name] = style[name];
+        prefix = 'active';
       }
+
+      if (prefix !== 'base') {
+        styleProp = stripPrefixFromStyleProp(styleProp, prefix);
+      }
+
+      styleObject[prefix] = styleObject[prefix] || {};
+      styleObject[prefix][styleProp] = style[name];
     }
   }
 
-  return {
-    base: baseStyles,
-    hover: hoverStyles,
-    focus: focusStyles,
-    active: activeStyles
-  };
+  return styleObject;
 }
 
 module.exports = explodePseudoStyles;
