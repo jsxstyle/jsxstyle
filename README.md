@@ -68,6 +68,10 @@ var avatar = (
 
 This is just a straightforward transformation into the React of today. You can also do this at runtime too if you want (both are included in the repo)
 
+### Insert stylesheets, not inline styles
+
+Under the hood, jsxstyle doesn't actually use inline styles. At runtime in generates unique stylesheets for each node with a fresh class name. If two or more nodes have the same set of CSS properties, they share the same stylesheet. This prevents large strings of inline styles from being inserted into the DOM and improves performance a lot.
+
 ### Extract the literal CSS into a stylesheet
 
 The problem with the above example is React has to do a lot of extra work diffing a bunch of style properties that we know won't ever change. Since some of the parameters are expressions [magic Babel optimizations](https://github.com/babel/babel/issues/653) won't be able to help either.
@@ -228,4 +232,4 @@ I should probably have a good example of a DI solution that works here, but I do
 
 ### Is this in production?
 
-I've built a moderately sized app with it used by customers, but it's not at huge scale yet.
+We use this in production at [Smyte](https://www.smyte.com/), and the company sponsors its development.
