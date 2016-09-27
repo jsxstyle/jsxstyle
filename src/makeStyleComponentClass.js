@@ -6,13 +6,19 @@ var React = require('react');
 var assign = require('object-assign');
 
 function getStyleFromProps(props) {
-  var style = assign({}, props, {
-    children: null,
-    className: null,
-    component: null,
-    style: null,
-    props: null
-  });
+  var style = {};
+
+  for (let key in props) {
+    if (key === 'children' ||
+        key === 'className' ||
+        key === 'component' ||
+        key === 'props' ||
+        key === 'style') {
+      continue;
+    }
+    style[key] = props[key];
+  }
+
   assign(style, props.style);
   return style;
 }

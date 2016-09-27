@@ -8,6 +8,8 @@ function createCSS(styles, className, comment, pseudoSelector) {
   }
   pseudoSelector = pseudoSelector || '';
   comment = comment || '';
+
+  // TODO: remove split()/join()/trim() for performance reasons
   return (
     '.' + className + pseudoSelector + ' {\n' +
     '  ' + comment +
