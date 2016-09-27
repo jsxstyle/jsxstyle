@@ -61,7 +61,7 @@ var GlobalStylesheets = {
     }
   },
 
-  getKey: function(styleObj) {
+  getKey: function(styleObj, displayName, component) {
     var pairs = [];
 
     Object.keys(styleObj).sort().forEach(function(key) {
@@ -76,7 +76,7 @@ var GlobalStylesheets = {
 
     if (!styles.hasOwnProperty(key)) {
       var stylesheet = {
-        id: stylesheetIdSeed,
+        id: GlobalStylesheets.injection.getStylesheetId(key),
         style: styleObj,
         refs: 0,
       };
@@ -85,8 +85,6 @@ var GlobalStylesheets = {
         document.head.appendChild(stylesheet.domNode);
       }
       styles[key] = stylesheet;
-
-      stylesheetIdSeed++;
     }
 
     return key;
@@ -100,8 +98,18 @@ var GlobalStylesheets = {
     --styles[key].refs;
   },
 
-  getClassName: function(key) {
-    return PREFIX + styles[key].id;
+  getClassName(styleKey) {
+    return GlobalStylesheets.injection.formatClassNameFromId(styles[styleKey].id);
+  },
+
+  injection: {
+    getStylesheetId(styleKey, displayName, component) {
+      return stylesheetIdSeed++;
+    },
+
+    formatClassNameFromId(id) {
+      return PREFIX + id;
+    },
   },
 };
 

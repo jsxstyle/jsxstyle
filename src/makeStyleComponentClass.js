@@ -25,9 +25,10 @@ function getStyleFromProps(props) {
 
 function makeStyleComponentClass(defaults, displayName, tagName) {
   tagName = tagName || 'div';
+  displayName = displayName || 'Style';
 
   var Style = React.createClass({
-    displayName: displayName || 'Style',
+    displayName: displayName,
 
     statics: {
       style: defaults
@@ -38,10 +39,11 @@ function makeStyleComponentClass(defaults, displayName, tagName) {
     },
 
     refStyleKey: function(props) {
-      this.styleKey = GlobalStylesheets.getKey(getStyleFromProps(props));
+      this.component = this.props.component || tagName;
+      this.styleKey = GlobalStylesheets.getKey(getStyleFromProps(props), displayName, this.component);
       GlobalStylesheets.ref(this.styleKey);
     },
-
+o
     componentWillMount: function() {
       this.refStyleKey(this.props);
     },
@@ -60,7 +62,7 @@ function makeStyleComponentClass(defaults, displayName, tagName) {
       var className = GlobalStylesheets.getClassName(this.styleKey);
 
       return React.createElement(
-        this.props.component || tagName,
+        this.component,
         assign({
           className: (this.props.className || '') + ' ' + className,
           children: this.props.children,
