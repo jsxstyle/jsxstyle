@@ -2,8 +2,7 @@
 
 var assign = require('object-assign');
 
-// TODO: package this separately
-function autoprefix(style) {
+function legacyAutoprefix(style) {
   if (style.hasOwnProperty('userSelect')) {
     assign(style, {
       WebkitUserSelect: style.userSelect,
@@ -90,4 +89,4 @@ function autoprefix(style) {
   return style;
 }
 
-module.exports = autoprefix;
+module.exports = legacyAutoprefix;

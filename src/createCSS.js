@@ -1,7 +1,6 @@
 'use strict'
 
 var CSSPropertyOperations = require('react/lib/CSSPropertyOperations');
-var autoprefix = require('./autoprefix');
 
 function createCSS(styles, className, comment, pseudoSelector) {
   if (!styles) {
@@ -13,10 +12,14 @@ function createCSS(styles, className, comment, pseudoSelector) {
     '.' + className + pseudoSelector + ' {\n' +
     '  ' + comment +
     CSSPropertyOperations.createMarkupForStyles(
-      autoprefix(styles)
+      createCSS.injection.autoprefix(styles)
     ).split(';').join(';\n  ').trim() +
     '\n}\n\n'
   );
 }
+
+createCSS.injection = {
+  autoprefix: styles => styles,
+};
 
 module.exports = createCSS;
