@@ -7,10 +7,7 @@ module.exports = {
     loaders: [
       {
         test: /\.js$/,
-        loader: 'babel',
-        query: {
-          presets: ['react'],
-        },
+        loader: 'babel?presets=react!' + require.resolve('../lib/webpackLoader') + '?LayoutConstants=' + require.resolve('./LayoutConstants'),
       },
     ],
   },
