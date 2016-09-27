@@ -6,6 +6,14 @@ function createCSS(styles, className, comment, pseudoSelector) {
   if (!styles) {
     return null;
   }
+  var cssMarkup = CSSPropertyOperations.createMarkupForStyles(
+    createCSS.injection.autoprefix(styles)
+  );
+
+  if (!cssMarkup) {
+    return null;
+  }
+
   pseudoSelector = pseudoSelector || '';
   comment = comment || '';
 
@@ -13,9 +21,7 @@ function createCSS(styles, className, comment, pseudoSelector) {
   return (
     '.' + className + pseudoSelector + ' {\n' +
     '  ' + comment +
-    CSSPropertyOperations.createMarkupForStyles(
-      createCSS.injection.autoprefix(styles)
-    ).split(';').join(';\n  ').trim() +
+    cssMarkup.split(';').join(';\n  ').trim() +
     '\n}\n\n'
   );
 }

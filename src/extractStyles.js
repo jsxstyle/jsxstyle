@@ -57,57 +57,35 @@ function extractStyles(src, staticNamespace, getClassNameAndComment) {
   function transformOpeningElement(node) {
     if (CSSDisplayNames.hasOwnProperty(node.name.name)) {
       // Transform to div with a style attribute.
-      var styleAttributes = node.attributes;
-      var dynamicAttributes = {};
       var staticAttributes = {};
-      var hasDynamicAttributes = false;
 
-      node.attributes.forEach(function(attribute) {
+      node.attributes = node.attributes.filter(attribute => {
         var name = attribute.name.name;
         var value = attribute.value;
 
         if (canEvaluate(staticNamespace, value)) {
           staticAttributes[name] = evaluate(value);
-        } else {
-          dynamicAttributes[name] = value.expression;
-          hasDynamicAttributes = true;
+          return false;
         }
+
+        return true;
       });
 
-      staticAttributes.display = staticAttributes.display || CSSDisplayNames[node.name.name];
-      node.name.name = 'div';
+      node.attributes.push(
+        b.jsxAttribute(
+          b.jsxIdentifier('display'),
+          b.jsxExpressionContainer(
+            b.identifier('null')
+          )
+        )
+      );
 
-      var newAttributes = [];
+      staticAttributes.display = staticAttributes.display || CSSDisplayNames[node.name.name];
 
       staticStyles.push({
         node: node,
         staticAttributes: staticAttributes,
       });
-
-      if (hasDynamicAttributes) {
-        var properties = [];
-        for (var dynamicPropertyName in dynamicAttributes) {
-          properties.push(
-            b.property(
-              'init',
-              b.literal(dynamicPropertyName),
-              dynamicAttributes[dynamicPropertyName]
-            )
-          );
-        }
-
-        newAttributes.push(
-          b.jsxAttribute(
-            b.jsxIdentifier('style'),
-            b.jsxExpressionContainer(
-              b.objectExpression(properties)
-            )
-          )
-        );
-      }
-
-      // Create a style attribute for the dynamic attributes;
-      node.attributes = newAttributes;
     }
 
     return node.name.name;
