@@ -43,7 +43,7 @@ function makeStyleComponentClass(defaults, displayName, tagName) {
       this.styleKey = GlobalStylesheets.getKey(getStyleFromProps(props), displayName, this.component);
       GlobalStylesheets.ref(this.styleKey);
     },
-o
+
     componentWillMount: function() {
       this.refStyleKey(this.props);
     },
