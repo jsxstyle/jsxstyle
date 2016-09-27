@@ -11,9 +11,11 @@ ReactDOM.render(
     marginLeft="auto"
     marginRight="auto"
     marginTop="128"
+    fontFamily="Courier New"
     border={'1px solid ' + LayoutConstants.secondaryColor}
     width={48 * LayoutConstants.gridUnit}
     minHeight={64}>
+    Hello world<br />
     <Avatar username="metallica" />
     <Avatar username="justintimberlake" />
     <Avatar username="carlyraejepsen" />
