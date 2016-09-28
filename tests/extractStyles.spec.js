@@ -19,7 +19,7 @@ var InlineBlock = require('../InlineBlock');
   <OtherComponent height={25} />
 </Block>
 `,
-      css: ".__s_0 {\n  width:100%;\n  height:25px;\n  display:block;\n}\n\n.__s_0:hover {\n  color:blue;\n  background-color:white;\n}\n\n.__s_1 {\n  height:24px;\n  display:inline-block;\n}\n\n"
+      css: ".__s_0 {\n  width:100%;height:25px;display:block;\n}\n\n.__s_0:hover {\n  color:blue;background-color:white;\n}\n\n.__s_1 {\n  height:24px;display:inline-block;\n}\n\n"
     });
   });
 
@@ -35,7 +35,7 @@ var InlineBlock = require('../InlineBlock');
   <OtherComponent height={25} />
 </Block>
 `,
-      css: ".__s_0 {\n  width:100%;\n  height:25px;\n  left:20px;\n  display:block;\n}\n\n.__s_0:hover {\n  color:blue;\n  background-color:white;\n}\n\n.__s_1 {\n  height:24px;\n  display:inline-block;\n}\n\n"
+      css: ".__s_0 {\n  width:100%;height:25px;left:20px;display:block;\n}\n\n.__s_0:hover {\n  color:blue;background-color:white;\n}\n\n.__s_1 {\n  height:24px;display:inline-block;\n}\n\n"
     });
   });
 
@@ -59,22 +59,17 @@ var InlineBlock = require('../InlineBlock');
 `,
       css: `.example_line4 {
   /* example.js:4 */
-  width:100%;
-  height:25px;
-  left:20px;
-  display:block;
+  width:100%;height:25px;left:20px;display:block;
 }
 
 .example_line4:hover {
   /* example.js:4 */
-  color:blue;
-  background-color:white;
+  color:blue;background-color:white;
 }
 
 .example_line5 {
   /* example.js:5 */
-  height:24px;
-  display:inline-block;
+  height:24px;display:inline-block;
 }
 
 `,

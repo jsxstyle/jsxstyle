@@ -17,12 +17,9 @@ function createCSS(styles, className, comment, pseudoSelector) {
   pseudoSelector = pseudoSelector || '';
   comment = comment || '';
 
-  // TODO: remove split()/join()/trim() for performance reasons
   return (
     '.' + className + pseudoSelector + ' {\n' +
-    '  ' + comment +
-    cssMarkup.split(';').join(';\n  ').trim() +
-    '\n}\n\n'
+    '  ' + comment + cssMarkup + '\n}\n\n'
   );
 }
 
