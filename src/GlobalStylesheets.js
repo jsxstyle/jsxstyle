@@ -66,11 +66,20 @@ var GlobalStylesheets = {
 
     Object.keys(styleObj).sort().forEach(function(key) {
       var value = styleObj[key];
+
+      if (!value) {
+        return;
+      }
+
       if (typeof value !== 'string' && typeof value !== 'number' && value != null) {
         value = value.toString();
       }
       pairs.push(key + ':' + value);
     });
+
+    if (pairs.length === 0) {
+      return null;
+    }
 
     var key = pairs.join(',');
 

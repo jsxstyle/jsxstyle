@@ -41,7 +41,9 @@ function makeStyleComponentClass(defaults, displayName, tagName) {
     refStyleKey: function(props) {
       this.component = this.props.component || tagName;
       this.styleKey = GlobalStylesheets.getKey(getStyleFromProps(props), displayName, this.component);
-      GlobalStylesheets.ref(this.styleKey);
+      if (this.styleKey) {
+        GlobalStylesheets.ref(this.styleKey);
+      }
     },
 
     componentWillMount: function() {
@@ -49,22 +51,26 @@ function makeStyleComponentClass(defaults, displayName, tagName) {
     },
 
     componentWillReceiveProps: function(nextProps) {
-      GlobalStylesheets.unref(this.styleKey);
+      if (this.styleKey) {
+        GlobalStylesheets.unref(this.styleKey);
+      }
       this.refStyleKey(nextProps);
     },
 
     componentWillUnmount: function() {
-      GlobalStylesheets.unref(this.styleKey);
+      if (this.styleKey) {
+        GlobalStylesheets.unref(this.styleKey);
+      }
     },
 
     render: function() {
       var style = getStyleFromProps(this.props);
-      var className = GlobalStylesheets.getClassName(this.styleKey);
+      var className = this.styleKey ? GlobalStylesheets.getClassName(this.styleKey) : null;
 
       return React.createElement(
         this.component,
         assign({
-          className: (this.props.className || '') + ' ' + className,
+          className: (className || this.props.className) ? ((this.props.className || '') + ' ' + (className || '')) : null,
           children: this.props.children,
         }, this.props.props)
       );
