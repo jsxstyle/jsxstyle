@@ -6,6 +6,8 @@ var LayoutConstants = require('./LayoutConstants');
 var React = require('react');
 var ReactDOM = require('react-dom');
 
+require('../').install();
+
 ReactDOM.render(
   <Block
     marginLeft="auto"
