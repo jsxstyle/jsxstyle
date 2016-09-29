@@ -66,11 +66,12 @@ function makeStyleComponentClass(defaults, displayName, tagName) {
     render: function() {
       var style = getStyleFromProps(this.props);
       var className = this.styleKey ? GlobalStylesheets.getClassName(this.styleKey) : null;
+      var classes = [this.props.className, className].filter(a => a).join(' ');
 
       return React.createElement(
         this.component,
         assign({
-          className: (className || this.props.className) ? ((this.props.className || '') + ' ' + (className || '')) : null,
+          className: classes || null,
           children: this.props.children,
         }, this.props.props)
       );

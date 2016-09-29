@@ -18,9 +18,9 @@ describe('curry', function() {
       )
     );
     expect(markup).toBe(
-      '<div><div class=" jsxstyle1">hello world</div><div ' +
-        'class=" jsxstyle2">goodbye world</div><div ' +
-        'class=" jsxstyle3">I dont know whats going on</div></div>'
+      '<div><div class="jsxstyle1">hello world</div><div ' +
+        'class="jsxstyle2">goodbye world</div><div ' +
+        'class="jsxstyle3">I dont know whats going on</div></div>'
     );
   });
 });
