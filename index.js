@@ -17,15 +17,15 @@ var index = assign({
     invariant(typeof autoprefix === 'function', 'You may only inject functions for autoprefix');
     createCSS.injection.autoprefix = autoprefix;
   },
-  injectClassNameStrategy: function(getStylesheetId, formatClassNameFromId) {
+  injectClassNameStrategy: function(getStylesheetId, formatClassNameFromStylesheet) {
     if (getStylesheetId) {
       invariant(typeof getStylesheetId === 'function', 'getStylesheetId must be a function');
       GlobalStylesheets.injection.getStylesheetId = getStylesheetId;
     }
 
-    if (formatClassNameFromId) {
-      invariant(typeof formatClassNameFromId === 'function', 'formatClassNameFromId must be a function');
-      GlobalStylesheets.injection.formatClassNameFromId = formatClassNameFromId;
+    if (formatClassNameFromStylesheet) {
+      invariant(typeof formatClassNameFromStylesheet === 'function', 'formatClassNameFromStylesheet must be a function');
+      GlobalStylesheets.injection.formatClassNameFromStylesheet = formatClassNameFromStylesheet;
     }
   },
 }, Color, Display, Addons);

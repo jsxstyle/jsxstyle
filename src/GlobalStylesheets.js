@@ -32,7 +32,7 @@ function addStyle(css){
 
 function createStylesheet(stylesheet) {
   var styles = explodePseudoStyles(assign({}, stylesheet.style));
-  var className = PREFIX + stylesheet.id;
+  var className = GlobalStylesheets.injection.formatClassNameFromStylesheet(stylesheet);
   var stylesheetText = [
     createCSS(styles.base, className, null),
     createCSS(styles.hover, className, null, ':hover'),
@@ -61,7 +61,7 @@ var GlobalStylesheets = {
     }
   },
 
-  getKey: function(styleObj, displayName, component) {
+  getKey: function(styleObj, name) {
     var pairs = [];
 
     Object.keys(styleObj).sort().forEach(function(key) {
@@ -87,6 +87,7 @@ var GlobalStylesheets = {
       var stylesheet = {
         id: GlobalStylesheets.injection.getStylesheetId(key),
         style: styleObj,
+        name: name,
         refs: 0,
       };
       if (browser) {
@@ -108,16 +109,16 @@ var GlobalStylesheets = {
   },
 
   getClassName(styleKey) {
-    return GlobalStylesheets.injection.formatClassNameFromId(styles[styleKey].id);
+    return GlobalStylesheets.injection.formatClassNameFromStylesheet(styles[styleKey]);
   },
 
   injection: {
-    getStylesheetId(styleKey, displayName, component) {
+    getStylesheetId(stylesheetId) {
       return stylesheetIdSeed++;
     },
 
-    formatClassNameFromId(id) {
-      return PREFIX + id;
+    formatClassNameFromStylesheet(stylesheet) {
+      return PREFIX + stylesheet.id;
     },
   },
 };

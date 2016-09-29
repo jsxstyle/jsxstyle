@@ -12,6 +12,7 @@ function getStyleFromProps(props) {
     if (key === 'children' ||
         key === 'className' ||
         key === 'component' ||
+        key === 'name' ||
         key === 'props' ||
         key === 'style') {
       continue;
@@ -40,7 +41,7 @@ function makeStyleComponentClass(defaults, displayName, tagName) {
 
     refStyleKey: function(props) {
       this.component = this.props.component || tagName;
-      this.styleKey = GlobalStylesheets.getKey(getStyleFromProps(props), displayName, this.component);
+      this.styleKey = GlobalStylesheets.getKey(getStyleFromProps(props), props.name);
       if (this.styleKey) {
         GlobalStylesheets.ref(this.styleKey);
       }
