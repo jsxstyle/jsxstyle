@@ -13,6 +13,7 @@ function webpackLoader(content) {
   var query = loaderUtils.parseQuery(this.query);
 
   for (var key in query) {
+    // TODO: use webpack resolver
     namespace[key] = require(query[key]);
   }
 
@@ -41,8 +42,16 @@ function webpackLoader(content) {
 
   var preamble = '';
   if (rv.css.length > 0) {
-    preamble = 'require(' + JSON.stringify(require.resolve('style-loader/addStyles')) + ')(' +
-      JSON.stringify([[this.resourcePath, rv.css]]) + ');';
+    // TODO: resolve loader correctly
+
+    if (!this._compiler.jsxstylePluginEnabled) {
+      preamble = 'require(' + JSON.stringify(require.resolve('style-loader/addStyles')) + ')(' +
+        JSON.stringify([[this.resourcePath, rv.css]]) + ');';
+    } else {
+      this._compiler.jsxstyle = this._compiler.jsxstyle || {};
+      this._compiler.jsxstyle[this.resourcePath + '.css'] = rv.css;
+      preamble = 'require(' + JSON.stringify(this.resourcePath + '.css') + ');';
+    }
   }
   return preamble + rv.js;
 }
