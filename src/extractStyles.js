@@ -109,6 +109,7 @@ function extractStyles(src, staticNamespace, getClassNameAndComment) {
     var className = classNameAndComment.className;
     invariant(typeof className === 'string', 'className must be a string');
 
+    // TODO: is this a bug? does it overwrite className or generate bad code?
     entry.node.attributes.push(
       b.jsxAttribute(
         b.jsxIdentifier('className'),
