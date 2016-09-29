@@ -5,35 +5,27 @@ var LayoutConstants = require('./LayoutConstants');
 var React = require('react');
 
 var Avatar = React.createClass({
-  getInitialState: function() {
-    return {hovered: false};
-  },
-
-  handleMouseEnter: function() {
-    this.setState({hovered: true});
-  },
-
-  handleMouseLeave: function() {
-    this.setState({hovered: false});
-  },
-
   render: function() {
     return (
-      <div role="button" onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave}>
+      <div role="button">
         <Flex
+          name="Avatar"
           width={192}
           marginLeft="auto"
           marginRight="auto"
-          alignItems="center"
-          background={this.state.hovered ? LayoutConstants.secondaryColor : null}>
+          hoverColor="white"
+          color="black"
+          cursor="pointer"
+          hoverBackgroundColor={LayoutConstants.secondaryColor}
+          alignItems="center">
           <img
             src={'http://graph.facebook.com/' + this.props.username + '/picture?type=large'}
             width={LayoutConstants.gridUnit * 6}
             height={LayoutConstants.gridUnit * 6}
           />
           <Block
-            marginLeft={LayoutConstants.gridUnit}
-            color={this.state.hovered ? 'white' : 'black'}>
+            name="Username"
+            marginLeft={LayoutConstants.gridUnit}>
             {this.props.username}
           </Block>
         </Flex>
