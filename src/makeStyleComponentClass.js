@@ -40,8 +40,9 @@ function makeStyleComponentClass(defaults, displayName, tagName) {
     },
 
     refStyleKey: function(props) {
+      const name = props.name || this.displayName;
       this.component = this.props.component || tagName;
-      this.styleKey = GlobalStylesheets.getKey(getStyleFromProps(props), props.name);
+      this.styleKey = GlobalStylesheets.getKey(getStyleFromProps(props), name);
       if (this.styleKey) {
         GlobalStylesheets.ref(this.styleKey);
       }

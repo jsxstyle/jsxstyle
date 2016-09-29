@@ -11,7 +11,7 @@ module.exports = {
     loaders: [
       {
         test: /\.js$/,
-        loader: 'babel?presets=react!' + require.resolve('../lib/webpackLoader') + '?LayoutConstants=' + require.resolve('./LayoutConstants'),
+        loader: 'babel',
       },
       { test: /\.css$/, loader: ExtractTextPlugin.extract(
         'style-loader',
