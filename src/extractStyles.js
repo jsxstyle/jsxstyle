@@ -63,7 +63,7 @@ function extractStyles(src, staticNamespace, getClassNameAndComment) {
         var name = attribute.name.name;
         var value = attribute.value;
 
-        if (canEvaluate(staticNamespace, value)) {
+        if (canEvaluate(staticNamespace, value) && name !== 'name') {
           staticAttributes[name] = evaluate(value);
           return false;
         }
