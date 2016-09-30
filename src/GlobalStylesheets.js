@@ -2,13 +2,9 @@
 
 var explodePseudoStyles = require('./explodePseudoStyles');
 var createCSS = require('./createCSS');
+var {defaultConfig, validateConfig} = require('./config');
 
 var assign = require('object-assign');
-var invariant = require('invariant');
-
-var PREFIX = 'jsxstyle';
-
-var stylesheetIdSeed = 0;
 
 var styles = {};
 
@@ -55,7 +51,9 @@ function reap() {
 }
 
 var GlobalStylesheets = {
-  install: function() {
+  install: function(config = {}) {
+    validateConfig(config);
+    GlobalStylesheets.injection = assign(defaultConfig, config);
     if (browser) {
       setInterval(reap, 10000);
     }
@@ -112,15 +110,7 @@ var GlobalStylesheets = {
     return GlobalStylesheets.injection.formatClassNameFromStylesheet(styles[styleKey]);
   },
 
-  injection: {
-    getStylesheetId(stylesheetId) {
-      return stylesheetIdSeed++;
-    },
-
-    formatClassNameFromStylesheet(stylesheet) {
-      return PREFIX + stylesheet.id;
-    },
-  },
+  injection: defaultConfig,
 };
 
 module.exports = GlobalStylesheets;

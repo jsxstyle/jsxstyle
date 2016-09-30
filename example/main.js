@@ -2,17 +2,12 @@
 
 var Avatar = require('./Avatar');
 var {Block} = require('../lib/Display');
-var {injectClassNameStrategy} = require('../');
-var generateSha = require('git-sha1');
+var config = require('./jsxstyle.config')
 var LayoutConstants = require('./LayoutConstants');
 var React = require('react');
 var ReactDOM = require('react-dom');
 
-injectClassNameStrategy(
-  (id) => generateSha(id).substring(0, 6),
-  (style) => `${style.name}__${style.id}`
-)
-require('../').install();
+require('../').install(config);
 
 ReactDOM.render(
   <Block
