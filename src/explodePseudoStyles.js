@@ -12,6 +12,10 @@ function explodePseudoStyles(style) {
   const styleObject = {};
 
   for (const name in style) {
+    if (name === 'name') {
+      continue;
+    }
+
     if (style.hasOwnProperty(name)) {
       let prefix = 'base';
       let styleProp = name;

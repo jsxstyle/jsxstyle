@@ -11,7 +11,7 @@ require('../').install(config);
 
 ReactDOM.render(
   <Block
-    name="AvatarList"
+    name="list"
     marginLeft="auto"
     marginRight="auto"
     marginTop="128"

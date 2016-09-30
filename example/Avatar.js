@@ -9,7 +9,7 @@ var Avatar = React.createClass({
     return (
       <div role="button">
         <Flex
-          name="Avatar"
+          name="container"
           width={192}
           marginLeft="auto"
           marginRight="auto"
@@ -24,7 +24,7 @@ var Avatar = React.createClass({
             height={LayoutConstants.gridUnit * 6}
           />
           <Block
-            name="Username"
+            name="username"
             marginLeft={LayoutConstants.gridUnit}>
             {this.props.username}
           </Block>
