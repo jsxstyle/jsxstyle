@@ -46,7 +46,7 @@ function webpackLoader(content) {
     var classNameIndex = classNameCounters[baseName]++;
     var stylesheet = {
       id: getStylesheetId(classNameIndex),
-      name: baseName,
+      displayName: baseName,
       style: entry.staticAttributes
     };
 

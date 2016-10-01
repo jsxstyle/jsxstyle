@@ -59,7 +59,7 @@ var GlobalStylesheets = {
     }
   },
 
-  getKey: function(styleObj, name) {
+  getKey: function(styleObj, displayName) {
     var pairs = [];
 
     Object.keys(styleObj).sort().forEach(function(key) {
@@ -85,7 +85,7 @@ var GlobalStylesheets = {
       var stylesheet = {
         id: GlobalStylesheets.injection.getStylesheetId(key),
         style: styleObj,
-        name: name,
+        displayName: displayName,
         refs: 0,
       };
       if (browser) {
