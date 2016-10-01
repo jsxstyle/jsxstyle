@@ -11,7 +11,7 @@ export const defaultConfig = {
 };
 
 export function validateConfig(config = {}) {
-  const {autoprefix, getStylesheetId, formatClassNameFromStylesheet} = config
+  const {autoprefix, getStylesheetId, formatClassNameFromStylesheet} = config;
   if (autoprefix) {
     invariant(typeof autoprefix === 'function', 'You may only inject functions for autoprefix');
   }
