@@ -13,11 +13,11 @@ var invariant = require('invariant');
 var index = assign({
   curry: curry,
   install: GlobalStylesheets.install,
-  injectAutoprefixer(autoprefix) {
+  injectAutoprefixer: function(autoprefix) {
     invariant(typeof autoprefix === 'function', 'You may only inject functions for autoprefix');
     createCSS.injection.autoprefix = autoprefix;
   },
-  injectClassNameStrategy(getStylesheetId, formatClassNameFromId) {
+  injectClassNameStrategy: function(getStylesheetId, formatClassNameFromId) {
     if (getStylesheetId) {
       invariant(typeof getStylesheetId === 'function', 'getStylesheetId must be a function');
       GlobalStylesheets.injection.getStylesheetId = getStylesheetId;
