@@ -102,11 +102,11 @@ performance, especially in single-page apps.
 
 ## Optimization: using the webpack loader
 
-TODO
+This feature is experimental and remains undocumented. For more information see the `example/` directory.
 
 ## Optimization: extract a static stylesheet
 
-TODO
+This feature is experimental and remains undocumented. For more information see the `example/` directory.
 
 ## Under the hood
 
@@ -114,6 +114,9 @@ At runtime, `jsxstyle` inserts stylesheets into the DOM that take the form of a 
 unique class name per node. If two or more nodes share the same styles, the stylesheet
 will be reused between the two nodes. Periodically, `jsxstyle` will reap stylesheets
 that were inserted into the DOM if they are no longer used.
+
+
+### Experimental optimizations
 
 At build time, you can enable optional loaders that will extract out static expressions
 (i.e. `margin={5}`) and expressions that only reference globally-known constants and
