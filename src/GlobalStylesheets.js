@@ -2,13 +2,9 @@
 
 var explodePseudoStyles = require('./explodePseudoStyles');
 var createCSS = require('./createCSS');
+var {defaultConfig, validateConfig} = require('./config');
 
 var assign = require('object-assign');
-var invariant = require('invariant');
-
-var PREFIX = 'jsxstyle';
-
-var stylesheetIdSeed = 0;
 
 var styles = {};
 
@@ -32,7 +28,7 @@ function addStyle(css){
 
 function createStylesheet(stylesheet) {
   var styles = explodePseudoStyles(assign({}, stylesheet.style));
-  var className = PREFIX + stylesheet.id;
+  var className = GlobalStylesheets.injection.formatClassNameFromStylesheet(stylesheet);
   var stylesheetText = [
     createCSS(styles.base, className, null),
     createCSS(styles.hover, className, null, ':hover'),
@@ -55,13 +51,15 @@ function reap() {
 }
 
 var GlobalStylesheets = {
-  install: function() {
+  install: function(config = {}) {
+    validateConfig(config);
+    GlobalStylesheets.injection = assign(defaultConfig, config);
     if (browser) {
       setInterval(reap, 10000);
     }
   },
 
-  getKey: function(styleObj, displayName, component) {
+  getKey: function(styleObj, displayName) {
     var pairs = [];
 
     Object.keys(styleObj).sort().forEach(function(key) {
@@ -87,6 +85,7 @@ var GlobalStylesheets = {
       var stylesheet = {
         id: GlobalStylesheets.injection.getStylesheetId(key),
         style: styleObj,
+        displayName: displayName,
         refs: 0,
       };
       if (browser) {
@@ -108,18 +107,10 @@ var GlobalStylesheets = {
   },
 
   getClassName(styleKey) {
-    return GlobalStylesheets.injection.formatClassNameFromId(styles[styleKey].id);
+    return GlobalStylesheets.injection.formatClassNameFromStylesheet(styles[styleKey]);
   },
 
-  injection: {
-    getStylesheetId(styleKey, displayName, component) {
-      return stylesheetIdSeed++;
-    },
-
-    formatClassNameFromId(id) {
-      return PREFIX + id;
-    },
-  },
+  injection: defaultConfig,
 };
 
 module.exports = GlobalStylesheets;

@@ -40,7 +40,7 @@ function makeStyleComponentClass(defaults, displayName, tagName) {
 
     refStyleKey: function(props) {
       this.component = this.props.component || tagName;
-      this.styleKey = GlobalStylesheets.getKey(getStyleFromProps(props), displayName, this.component);
+      this.styleKey = GlobalStylesheets.getKey(getStyleFromProps(props), this.displayName);
       if (this.styleKey) {
         GlobalStylesheets.ref(this.styleKey);
       }
@@ -66,11 +66,12 @@ function makeStyleComponentClass(defaults, displayName, tagName) {
     render: function() {
       var style = getStyleFromProps(this.props);
       var className = this.styleKey ? GlobalStylesheets.getClassName(this.styleKey) : null;
+      var classes = [this.props.className, className].filter(a => a).join(' ');
 
       return React.createElement(
         this.component,
         assign({
-          className: (className || this.props.className) ? ((this.props.className || '') + ' ' + (className || '')) : null,
+          className: classes || null,
           children: this.props.children,
         }, this.props.props)
       );

@@ -1,8 +1,19 @@
 'use strict';
 
+var assign = require('object-assign');
 var extractStyles = require('./extractStyles');
 var loaderUtils = require('loader-utils');
 var path = require('path');
+
+var {defaultConfig, validateConfig} = require('./config');
+var configPath = path.resolve('jsxstyle.config.js');
+var config = {}
+try {
+  config = require(configPath);
+} catch (e) {}
+
+validateConfig(config);
+var {getStylesheetId, formatClassNameFromStylesheet} = assign(defaultConfig, config);
 
 var seenBaseNames = {};
 var classNameCounters = {};
@@ -33,9 +44,14 @@ function webpackLoader(content) {
 
   var rv = extractStyles(content, namespace, function(entry) {
     var classNameIndex = classNameCounters[baseName]++;
+    var stylesheet = {
+      id: getStylesheetId(classNameIndex),
+      displayName: baseName,
+      style: entry.staticAttributes
+    };
 
     return {
-      className: baseName + '_' + classNameIndex,
+      className: formatClassNameFromStylesheet(stylesheet),
       comment: this.resourcePath + ':' + entry.node.loc.start.line,
     };
   }.bind(this));

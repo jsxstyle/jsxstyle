@@ -2,14 +2,16 @@
 
 var Avatar = require('./Avatar');
 var {Block} = require('../lib/Display');
+var config = require('./jsxstyle.config')
 var LayoutConstants = require('./LayoutConstants');
 var React = require('react');
 var ReactDOM = require('react-dom');
 
-require('../').install();
+require('../').install(config);
 
 ReactDOM.render(
   <Block
+    name="list"
     marginLeft="auto"
     marginRight="auto"
     marginTop="128"
