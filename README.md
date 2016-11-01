@@ -21,7 +21,7 @@ into the browser that way (that is, there should be no performance penalty).
 
 `npm install jsxstyle` and then write code like this:
 
-```
+```jsx
 var Block = require('jsxstyle/Block');
 var React = require('react');
 
@@ -55,7 +55,7 @@ They all take props that correspond to every CSS `style` property (such as `colo
 `jsxstyle` makes it easy to use the common pseudoclasses `:hover`, `:focus`, and
 `:active`. You can prefix style props with the relevant pseudoclass to apply it:
 
-```
+```jsx
 var MyComponent = React.createClass({
   render: function() {
     return <Block color="red" hoverColor="yellow">Hello, world!</Block>;
