@@ -18,7 +18,8 @@
     "loader-utils": "^0.2.15",
     "object-assign": "^4.1.0",
     "recast": "^0.11.11",
-    "style-loader": "^0.13.1"
+    "style-loader": "^0.13.1",
+    "tmp": "0.0.30"
   },
   "peerDependencies": {
     "react": ">=0.14.0",
