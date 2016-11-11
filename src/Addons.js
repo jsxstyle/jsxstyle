@@ -9,4 +9,7 @@ var Addons = {
   Col: curry(Flex, {flexDirection: 'column'}),
 };
 
+Addons.Row.displayName = 'Row';
+Addons.Col.displayName = 'Col';
+
 module.exports = Addons;
