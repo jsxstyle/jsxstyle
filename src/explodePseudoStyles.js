@@ -2,7 +2,7 @@
 
 function stripPrefixFromStyleProp(styleProp, prefix) {
   const formattedProp = styleProp.substr(prefix.length);
-  if (formattedProp.startsWith('Webkit') || formattedProp.startsWith('Moz')) {
+  if (formattedProp.indexOf('Webkit') === 0 || formattedProp.indexOf('Moz') === 0) {
     return formattedProp;
   }
   return formattedProp.charAt(0).toLowerCase() + formattedProp.slice(1);
@@ -16,11 +16,11 @@ function explodePseudoStyles(style) {
       let prefix = 'base';
       let styleProp = name;
 
-      if (name.startsWith('hover')) {
+      if (name.indexOf('hover') === 0) {
         prefix = 'hover';
-      } else if (name.startsWith('focus')) {
+      } else if (name.indexOf('focus') === 0) {
         prefix = 'focus';
-      } else if (name.startsWith('active')) {
+      } else if (name.indexOf('active') === 0) {
         prefix = 'active';
       }
 
