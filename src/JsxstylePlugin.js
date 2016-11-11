@@ -2,7 +2,6 @@
 
 var assign = require('object-assign');
 var fs = require('fs');
-var tmp = require('tmp');
 
 class JsxstylePlugin {
   constructor() {
