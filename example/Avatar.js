@@ -1,6 +1,6 @@
 'use strict';
 
-var {Block, Flex} = require('../lib/Display');
+var {Block, Row} = require('../');
 var LayoutConstants = require('./LayoutConstants');
 var React = require('react');
 
@@ -20,7 +20,7 @@ var Avatar = React.createClass({
   render: function() {
     return (
       <div role="button" onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave}>
-        <Flex
+        <Row
           width={192}
           marginLeft="auto"
           marginRight="auto"
@@ -36,7 +36,7 @@ var Avatar = React.createClass({
             color={this.state.hovered ? 'white' : 'black'}>
             {this.props.username}
           </Block>
-        </Flex>
+        </Row>
       </div>
     );
   },

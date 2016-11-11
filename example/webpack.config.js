@@ -11,15 +11,25 @@ module.exports = {
     loaders: [
       {
         test: /\.js$/,
-        loader: 'babel?presets=react!' + require.resolve('../lib/webpackLoader') + '?LayoutConstants=' + require.resolve('./LayoutConstants'),
+        exclude: /node_modules/,
+        loader: 'babel',
       },
-      { test: /\.css$/, loader: ExtractTextPlugin.extract(
-        'style-loader',
-        'css-loader'
-      )},
+      {
+        test: /\.js$/,
+        loader: require.resolve('../lib/webpackLoader'),
+        query: {
+          LayoutConstants: require.resolve('./LayoutConstants'),
+        },
+      },
+      {
+        test: /\.css$/,
+        loader: ExtractTextPlugin.extract('style-loader', 'css-loader'),
+      },
 
     ],
   },
-
-  plugins: [new JsxstylePlugin(), new ExtractTextPlugin('bundle.css')],
+  plugins: [
+    new JsxstylePlugin(),
+    new ExtractTextPlugin('bundle.css'),
+  ],
 };
