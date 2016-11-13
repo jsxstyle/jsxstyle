@@ -1,25 +1,32 @@
 'use strict';
 
+var CSSProperties = require('./CSSProperties');
+var CSSVendorPrefixes = require('./CSSVendorPrefixes');
 var GlobalStylesheets = require('./GlobalStylesheets');
 var React = require('react');
 
 var assign = require('object-assign');
 
-function getStyleFromProps(props) {
+var reVendorPrefixes = new RegExp('^(' + CSSVendorPrefixes.join('|') + ')[A-Z]');
+var rePseudoPrefixes = /^(hover|focus|active)[A-Z]/;
+
+function splitPropsAndStyles(propsAndStyles) {
+  var props = {};
   var style = {};
 
-  for (let key in props) {
-    if (key === 'children' ||
-        key === 'className' ||
-        key === 'component' ||
-        key === 'props' ||
-        key === 'style') {
+  for (let key in propsAndStyles) {
+    if (key === 'style') {
       continue;
     }
-    style[key] = props[key];
+    if (CSSProperties[key] || reVendorPrefixes.test(key) || rePseudoPrefixes.test(key)) {
+      style[key] = propsAndStyles[key];
+    } else {
+      props[key] = propsAndStyles[key];
+    }
   }
 
-  return style;
+  assign(style, propsAndStyles.style);
+  return {props, style};
 }
 
 function makeStyleComponentClass(defaults, displayName, tagName) {
@@ -38,8 +45,9 @@ function makeStyleComponentClass(defaults, displayName, tagName) {
     },
 
     refStyleKey: function(props) {
+      var {style} = splitPropsAndStyles(props);
       this.component = this.props.component || tagName;
-      this.styleKey = GlobalStylesheets.getKey(getStyleFromProps(props), displayName, this.component);
+      this.styleKey = GlobalStylesheets.getKey(style, displayName, this.component);
       if (this.styleKey) {
         GlobalStylesheets.ref(this.styleKey);
       }
@@ -63,17 +71,14 @@ function makeStyleComponentClass(defaults, displayName, tagName) {
     },
 
     render: function() {
-      var style = getStyleFromProps(this.props);
-      var className = this.styleKey ? GlobalStylesheets.getClassName(this.styleKey) : null;
+      var {props} = splitPropsAndStyles(this.props);
 
-      return React.createElement(
-        this.component,
-        assign({}, this.props.props, {
-          className: (className || this.props.className) ? ((this.props.className || '') + ' ' + (className || '')) : null,
-          children: this.props.children,
-          style: this.props.style,
-        })
-      );
+      var className = this.styleKey ? GlobalStylesheets.getClassName(this.styleKey) : null;
+      if (className || props.className) {
+        props.className = (props.className || '') + ' ' + (className || '');
+      }
+
+      return React.createElement(this.component, props);
     }
   });
 
