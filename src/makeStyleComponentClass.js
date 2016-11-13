@@ -15,7 +15,7 @@ function splitPropsAndStyles(propsAndStyles) {
   var style = {};
 
   for (let key in propsAndStyles) {
-    if (key === 'style') {
+    if (key === 'style' || key === 'props') {
       continue;
     }
     if (CSSProperties[key] || reVendorPrefixes.test(key) || rePseudoPrefixes.test(key)) {
@@ -26,6 +26,8 @@ function splitPropsAndStyles(propsAndStyles) {
   }
 
   assign(style, propsAndStyles.style);
+  assign(props, propsAndStyles.props);
+
   return {props, style};
 }
 
