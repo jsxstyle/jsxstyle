@@ -7,9 +7,6 @@ var React = require('react');
 
 var assign = require('object-assign');
 
-var reVendorPrefixes = new RegExp('^(' + CSSVendorPrefixes.join('|') + ')[A-Z]');
-var rePseudoPrefixes = /^(hover|focus|active)[A-Z]/;
-
 function splitPropsAndStyles(propsAndStyles) {
   var props = {};
   var style = {};
@@ -18,7 +15,13 @@ function splitPropsAndStyles(propsAndStyles) {
     if (key === 'style' || key === 'props') {
       continue;
     }
-    if (CSSProperties[key] || reVendorPrefixes.test(key) || rePseudoPrefixes.test(key)) {
+    if (CSSProperties[key] ||
+        key.indexOf(CSSVendorPrefixes.webkit) === 0 ||
+        key.indexOf(CSSVendorPrefixes.explorer) === 0 ||
+        key.indexOf(CSSVendorPrefixes.firefox) === 0 ||
+        key.indexOf('hover') === 0 ||
+        key.indexOf('focus') === 0 ||
+        key.indexOf('active') === 0) {
       style[key] = propsAndStyles[key];
     } else {
       props[key] = propsAndStyles[key];

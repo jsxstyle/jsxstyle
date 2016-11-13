@@ -1,10 +1,9 @@
 'use strict';
 
-var CSSVendorPrefixes = [
-  'Webkit',
-  'ms',
-  'O',
-  'Moz',
-];
+var CSSVendorPrefixes = {
+  'webkit': 'Webkit',
+  'explorer': 'ms',
+  'firefox': 'Moz',
+};
 
 module.exports = CSSVendorPrefixes;
