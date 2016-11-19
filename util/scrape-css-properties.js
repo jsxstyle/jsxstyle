@@ -3,7 +3,7 @@ var https = require('https');
 var URL = 'https://developer.mozilla.org/en-US/docs/Web/CSS/Reference';
 
 var RE_PROPERTY_URL = /<a.*?href="\/en-US\/docs\/Web\/CSS\/(.*?)".*?><code>(.*?)<\/code><\/a>/ig;
-var RE_VALID_PROPERTY = /^[^:@\-][^#_]+[^(\(\))]$/;
+var RE_VALID_PROPERTY = /^[^:@\-<][^#_]+[^(\(\))>]$/;
 
 fetch(URL, function(html) {
   var props = filter(parse(html));
@@ -26,7 +26,10 @@ function parse(html) {
   var result;
   var props = [];
   while (result = RE_PROPERTY_URL.exec(html)) {
-    props.push({id: result[1], name: result[2]});
+    props.push({
+      id: unescape(result[1]),
+      name: unescape(result[2]),
+    });
   }
   return props;
 }
@@ -45,4 +48,11 @@ function normalize(prop) {
 
 function print(line) {
   process.stdout.write(line + '\n');
+}
+
+function unescape(s) {
+  return s
+    .replace('&lt;', '<')
+    .replace('&gt;', '>')
+    .replace('&amp;', '&');
 }
