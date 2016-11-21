@@ -47,10 +47,16 @@ function reap() {
   for (var key in styles) {
     if (styles[key].refs === 0) {
       if (styles[key].domNode) {
-        styles[key].domNode.remove();
+        removeNode(styles[key].domNode);
       }
       delete styles[key];
     }
+  }
+}
+
+function removeNode(node) {
+  if (node && node.parentNode) {
+    node.parentNode.removeChild(node);
   }
 }
 
