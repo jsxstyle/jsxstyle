@@ -4,6 +4,7 @@ var GlobalStylesheets = require('./GlobalStylesheets');
 var React = require('react');
 
 var assign = require('object-assign');
+var hyphenateStyleName = require('fbjs/lib/hyphenateStyleName');
 
 function getStyleFromProps(props) {
   var style = {};
@@ -23,6 +24,39 @@ function getStyleFromProps(props) {
   return style;
 }
 
+function extractLocalStyles(styles) {
+  if (styles.willChange) {
+    const localStyles = {};
+    const globalStyles = {};
+
+    Object.entries(styles).forEach(
+      ([key, value]) => {
+        if (key === 'willChange' && value.length) {
+          globalStyles[key] = value.map(
+            styleName => hyphenateStyleName(styleName)
+          ).join(', ');
+
+        } else if (styles.willChange.includes(key)) {
+          localStyles[key] = value;
+
+        } else {
+          globalStyles[key] = value;
+        }
+      }
+    );
+
+    return {
+      localStyles,
+      globalStyles,
+    };
+
+  } else {
+    return {
+      globalStyles: styles,
+    }
+  }
+}
+
 function makeStyleComponentClass(defaults, displayName, tagName) {
   tagName = tagName || 'div';
   displayName = displayName || 'Style';
@@ -40,9 +74,27 @@ function makeStyleComponentClass(defaults, displayName, tagName) {
 
     refStyleKey: function(props) {
       this.component = this.props.component || tagName;
-      this.styleKey = GlobalStylesheets.getKey(getStyleFromProps(props), displayName, this.component);
+
+      const {
+        localStyles,
+        globalStyles,
+      } = extractLocalStyles(
+        getStyleFromProps(props)
+      );
+
+      this.styleKey = GlobalStylesheets.getKey(globalStyles, displayName, this.component);
       if (this.styleKey) {
         GlobalStylesheets.ref(this.styleKey);
+      }
+
+      const newState = {
+        localStyles
+      };
+
+      if (this.state) {
+        this.setState(newState);
+      } else {
+        this.state = newState;
       }
     },
 
@@ -64,7 +116,10 @@ function makeStyleComponentClass(defaults, displayName, tagName) {
     },
 
     render: function() {
-      var style = getStyleFromProps(this.props);
+      const {
+        localStyles,
+      } = this.state;
+
       var className = this.styleKey ? GlobalStylesheets.getClassName(this.styleKey) : null;
 
       return React.createElement(
@@ -72,6 +127,7 @@ function makeStyleComponentClass(defaults, displayName, tagName) {
         assign({
           className: (className || this.props.className) ? ((this.props.className || '') + ' ' + (className || '')) : null,
           children: this.props.children,
+          style: localStyles,
         }, this.props.props)
       );
     }
