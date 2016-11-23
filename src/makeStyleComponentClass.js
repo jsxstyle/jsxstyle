@@ -31,8 +31,16 @@ function extractLocalStyles(styles) {
 
     Object.entries(styles).forEach(
       ([key, value]) => {
-        if (key === 'willChange' && value.length) {
-          globalStyles[key] = value.map(
+        if (key === 'willChange') {
+          let willChange = value;
+
+          if (willChange.includes(',')) {
+            willChange = willChange.split(',').map(
+              untrimmed => untrimmed.trim()
+            );
+          }
+
+          globalStyles[key] = willChange.map(
             styleName => hyphenateStyleName(styleName)
           ).join(', ');
 
