@@ -40,6 +40,10 @@ function extractLocalStyles(styles) {
             );
           }
 
+          if (!willChange.map) {
+            willChange = Array.of(willChange);
+          }
+
           globalStyles[key] = willChange.map(
             styleName => hyphenateStyleName(styleName)
           ).join(', ');
