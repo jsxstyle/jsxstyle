@@ -17,6 +17,7 @@
     "invariant": "^2.2.1",
     "loader-utils": "^0.2.15",
     "object-assign": "^4.1.0",
+    "react-css-property-operations": "^15.4.1",
     "recast": "^0.11.11",
     "style-loader": "^0.13.1"
   },

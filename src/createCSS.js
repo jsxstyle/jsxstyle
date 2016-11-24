@@ -1,6 +1,6 @@
 'use strict'
 
-var CSSPropertyOperations = require('react/lib/CSSPropertyOperations');
+var CSSPropertyOperations = require('react-css-property-operations');
 
 function createCSS(styles, className, comment, pseudoSelector) {
   if (!styles) {
