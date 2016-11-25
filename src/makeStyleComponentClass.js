@@ -19,7 +19,6 @@ function getStyleFromProps(props) {
     style[key] = props[key];
   }
 
-  assign(style, props.style);
   return style;
 }
 
@@ -69,10 +68,11 @@ function makeStyleComponentClass(defaults, displayName, tagName) {
 
       return React.createElement(
         this.component,
-        assign({
+        assign({}, this.props.props, {
           className: (className || this.props.className) ? ((this.props.className || '') + ' ' + (className || '')) : null,
           children: this.props.children,
-        }, this.props.props)
+          style: this.props.style,
+        })
       );
     }
   });
