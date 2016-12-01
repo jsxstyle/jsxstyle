@@ -1,7 +1,7 @@
 {
   "name": "jsxstyle",
-  "version": "1.0.1",
-  "description": "",
+  "version": "1.0.2",
+  "description": "React component styler",
   "main": "index.js",
   "scripts": {
     "test": "jasmine-node tests/",
