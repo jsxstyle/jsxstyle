@@ -95,11 +95,13 @@ var GlobalStylesheets = {
         style: styleObj,
         refs: 0,
       };
+      styles[key] = stylesheet;
       if (browser) {
         stylesheet.domNode = createStylesheet(stylesheet);
         document.head.appendChild(stylesheet.domNode);
+      } else if (GlobalStylesheets.injection.createdClass) {
+        GlobalStylesheets.injection.createdClass(getClassName(key), styleObj);
       }
-      styles[key] = stylesheet;
     }
 
     return key;
@@ -116,6 +118,10 @@ var GlobalStylesheets = {
   getClassName(styleKey) {
     return GlobalStylesheets.injection.formatClassNameFromId(styles[styleKey].id);
   },
+  
+  clearStyles: function() {
+    for (var key in styles) delete styles[key];
+  },
 
   injection: {
     getStylesheetId(styleKey, displayName, component) {
@@ -125,6 +131,8 @@ var GlobalStylesheets = {
     formatClassNameFromId(id) {
       return PREFIX + id;
     },
+    
+    createdClass: null
   },
 };
 
