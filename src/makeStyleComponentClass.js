@@ -7,6 +7,8 @@ var React = require('react');
 
 var assign = require('object-assign');
 
+var stylePrefix = /^(Webkit|ms|Moz|hover|focus|active)/
+
 function splitPropsAndStyles(propsAndStyles) {
   var props = {};
   var style = {};
@@ -15,13 +17,7 @@ function splitPropsAndStyles(propsAndStyles) {
     if (key === 'style' || key === 'props') {
       continue;
     }
-    if (CSSProperties[key] ||
-        key.indexOf(CSSVendorPrefixes.webkit) === 0 ||
-        key.indexOf(CSSVendorPrefixes.explorer) === 0 ||
-        key.indexOf(CSSVendorPrefixes.firefox) === 0 ||
-        key.indexOf('hover') === 0 ||
-        key.indexOf('focus') === 0 ||
-        key.indexOf('active') === 0) {
+    if (CSSProperties[key] || stylePrefix.test(key)) {
       style[key] = propsAndStyles[key];
     } else {
       props[key] = propsAndStyles[key];
