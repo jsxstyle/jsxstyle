@@ -60,12 +60,24 @@ function removeNode(node) {
   }
 }
 
+function reset() {
+  for (var key in styles) {
+    if (styles[key].domNode) {
+      styles[key].domNode.remove();
+    }
+    delete styles[key];
+  }
+  stylesheetIdSeed = 0;
+}
+
 var GlobalStylesheets = {
   install: function() {
     if (browser) {
       setInterval(reap, 10000);
     }
   },
+
+  reset: reset,
 
   getKey: function(styleObj, displayName, component) {
     var pairs = [];
