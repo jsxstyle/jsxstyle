@@ -73,6 +73,7 @@ function makeStyleComponentClass(defaults, displayName, tagName) {
 
     render: function() {
       var {props} = splitPropsAndStyles(this.props);
+      delete props.component // React will warn if we send an unknown prop.
 
       var className = this.styleKey ? GlobalStylesheets.getClassName(this.styleKey) : null;
       if (className || props.className) {
