@@ -12,7 +12,7 @@ names for nodes that don't need a name, like `.outerWrapperWrapper`), selector
 complexity, and constantly bouncing between your JS code and your CSS code in
 your editor.
 
-**jsxstyle** believes that, for the nodes that exist for pure styling purposes,
+`jsxstyle` believes that, for the nodes that exist for pure styling purposes,
 you should write styles inline with a friendly syntax, and furthermore, that just
 because you're writing your styles inline, doesn't mean that they actually get rendered
 into the browser that way (that is, there should be no performance penalty).
@@ -32,8 +32,9 @@ var MyComponent = React.createClass({
 });
 ```
 
-`jsxstyle` includes components corresponding to every potential value of the CSS
-`display` property. These include:
+`jsxstyle` provides a few components that correspond to the most commonly used
+values of the CSS `display` property:
+
   * Block
   * Flex
   * Inline
@@ -43,62 +44,58 @@ var MyComponent = React.createClass({
   * TableCell
   * TableRow
 
-They all take props that correspond to every CSS `style` property (such as `color`,
-`border`, `margin` etc). You can also pass a few extra props, including:
-  * `className`: additional CSS classes you would like to apply
-  * `component`: the underlying HTML tag to render
-  * `props`: additional props to pass directly to the underlying HTML tag
-  * `style`: inline styles to apply
+`jsxstyle` also includes a few flexbox helper components that set
+the `flex-direction` property:
+
+  * Row
+  * Col
+
+All props passed to these components are assumed to be CSS properties.
+There are four exceptions to this rule:
+
+  * `className`: additional CSS classes you would like to apply.
+  * `component`: the underlying HTML tag or React component to render.
+  * `props`: additional props to pass directly to the underlying HTML tag or React component.
+  * `style`: styles to apply directly to the DOM node as actual inline styles. CSS properties that change frequently (when animating, for example) should be passed as a `style` object to avoid generating a massive number of classNames.
 
 ## Pseudoclasses
 
-`jsxstyle` makes it easy to use the common pseudoclasses `:hover`, `:focus`, and
-`:active`. You can prefix style props with the relevant pseudoclass to apply it:
+`jsxstyle` supports the `:hover`, `:focus`, and `:active` pseudoclasses.
+You can prefix style props with the relevant pseudoclass to apply it:
 
 ```jsx
 var MyComponent = React.createClass({
   render: function() {
-    return <Block color="red" hoverColor="yellow">Hello, world!</Block>;
+    return (
+      <Block
+        color="red"
+        hoverColor="yellow">
+        Hello, world!
+      </Block>
+    );
   }
 });
 ```
 
-## Helpers
-
-`jsxstyle` has a few helpers extracted from Smyte's production application.
-
-### Flexbox helpers
-
-`jsxstyle` includes `Row` and `Col` components, which correspond to
-`<Flex direction="row">` and `<Flex direction="column">` respectively.
-
-### Colors
-
-You can create tasty CSS strings with `jsxstyle`.
-
-Simple colors can be constructed with `jsxstyle.rgb()` and `jsxstyle.rgba()`. You can
-manipulate colors too:
-
-```js
-var primaryBlue = jsxstyle.rgb(20, 20, 100);
-var transparentBlue = jsxstyle.alpha(primaryBlue, 0.8);
-var shadedBlue = jsxstyle.shade(primaryBlue, 0.8);
-```
-
-Want a linear gradient? Do:
-
-```js
-jsxstyle.linearGradient(
-  'to right',
-  [[jsxstyle.rgb(255, 255, 255), '5%'], [jsxstyle.rgb(255, 0, 0), '25%']]
-)
-```
+## Optimizations
 
 ### Style garbage collection
 
 For big applications you'll want to call `jsxstyle.install()` to run the style garbage
 collector. This will periodically prune dead stylesheets from the browser to improve
 performance, especially in single-page apps.
+
+## Experimental Optimizations
+
+At build time, you can enable an optional **webpack loader** and **webpack plugin**
+that will extract out static expressions (i.e. `margin={5}`) and expressions that only
+reference globally-known constants and precompile them into static style sheets. This
+has the advantage of reducing the number of props that React has to diff, and also, if
+you use `JsxstylePlugin` with webpack, will let you deliver a separate static `.css`
+file that can be cached and downloaded in parallel with the JS for maximum performance.
+
+The webpack plugin and loader are experimental and remain undocumented. For more
+information see the `experimental/` directory.
 
 ## Under the hood
 

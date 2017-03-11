@@ -1,14 +1,9 @@
 'use strict';
 
-var Color = require('../lib/Color');
-
-var primaryColor = Color.rgb(10, 0, 0);
-var secondaryColor = Color.alpha(primaryColor, .8);
-
-var LayoutConstants = {
-  primaryColor: primaryColor,
-  secondaryColor: secondaryColor,
+const LayoutConstants = {
+  primaryColor: 'rgb(10, 0, 0)',
+  secondaryColor: 'rgba(10, 0, 0, 0.8)',
   gridUnit: 8,
-}
+};
 
 module.exports = LayoutConstants;

@@ -1,23 +1,20 @@
 'use strict';
 
-var Addons = require('./lib/Addons');
-var Color = require('./lib/Color');
-var Display = require('./lib/Display');
-var GlobalStylesheets = require('./lib/GlobalStylesheets');
+const Addons = require('./lib/Addons');
+const Color = require('./lib/Color');
+const Display = require('./lib/Display');
+const GlobalStylesheets = require('./lib/GlobalStylesheets');
 
-var assign = require('object-assign');
-var createCSS = require('./lib/createCSS');
-var curry = require('./curry');
-var invariant = require('invariant');
+const createCSS = require('./lib/createCSS');
+const invariant = require('invariant');
 
-var index = assign({
-  curry: curry,
+const index = Object.assign({
   install: GlobalStylesheets.install,
-  injectAutoprefixer: function(autoprefix) {
+  injectAutoprefixer(autoprefix) {
     invariant(typeof autoprefix === 'function', 'You may only inject functions for autoprefix');
     createCSS.injection.autoprefix = autoprefix;
   },
-  injectClassNameStrategy: function(getStylesheetId, formatClassNameFromId) {
+  injectClassNameStrategy(getStylesheetId, formatClassNameFromId) {
     if (getStylesheetId) {
       invariant(typeof getStylesheetId === 'function', 'getStylesheetId must be a function');
       GlobalStylesheets.injection.getStylesheetId = getStylesheetId;
