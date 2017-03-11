@@ -100,30 +100,12 @@ For big applications you'll want to call `jsxstyle.install()` to run the style g
 collector. This will periodically prune dead stylesheets from the browser to improve
 performance, especially in single-page apps.
 
-## Optimization: using the webpack loader
-
-This feature is experimental and remains undocumented. For more information see the `example/` directory.
-
-## Optimization: extract a static stylesheet
-
-This feature is experimental and remains undocumented. For more information see the `example/` directory.
-
 ## Under the hood
 
 At runtime, `jsxstyle` inserts stylesheets into the DOM that take the form of a single
 unique class name per node. If two or more nodes share the same styles, the stylesheet
 will be reused between the two nodes. Periodically, `jsxstyle` will reap stylesheets
 that were inserted into the DOM if they are no longer used.
-
-
-### Experimental optimizations
-
-At build time, you can enable optional loaders that will extract out static expressions
-(i.e. `margin={5}`) and expressions that only reference globally-known constants and
-precompile them into static style sheets. This has the advantage of reducing the number
-of props that React has to diff, and also, if you use `JsxstylePlugin` with webpack,
-will let you deliver a separate static `.css` file that can be cached and downloaded
-in parallel with the JS for maximum performance.
 
 ## FAQ
 

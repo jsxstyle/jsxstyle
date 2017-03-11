@@ -1,5 +1,4 @@
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
-var JsxstylePlugin = require('../lib/JsxstylePlugin');
 
 module.exports = {
   entry: './main',
@@ -15,21 +14,10 @@ module.exports = {
         loader: 'babel',
       },
       {
-        test: /\.js$/,
-        loader: require.resolve('../lib/webpackLoader'),
-        query: {
-          LayoutConstants: require.resolve('./LayoutConstants'),
-        },
-      },
-      {
         test: /\.css$/,
         loader: ExtractTextPlugin.extract('style-loader', 'css-loader'),
       },
-
     ],
   },
-  plugins: [
-    new JsxstylePlugin(),
-    new ExtractTextPlugin('bundle.css'),
-  ],
+  plugins: [new ExtractTextPlugin('bundle.css')],
 };
