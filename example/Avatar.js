@@ -1,45 +1,32 @@
-'use strict';
+import React from 'react';
+import {Block, Row} from 'jsxstyle';
 
-var {Block, Row} = require('../');
-var LayoutConstants = require('./LayoutConstants');
-var React = require('react');
+import LayoutConstants from './LayoutConstants';
 
-var Avatar = React.createClass({
-  getInitialState: function() {
-    return {hovered: false};
-  },
+export default function Avatar(props) {
+  return (
+    <Row
+      width={192}
+      marginLeft="auto"
+      marginRight="auto"
+      alignItems="center"
+      color="black"
+      hoverColor="white"
+      backgroundColor="white"
+      hoverBackgroundColor={LayoutConstants.secondaryColor}>
+      <Block
+        backgroundImage={`url(http://graph.facebook.com/${props.username}/picture?type=large)`}
+        backgroundSize="contain"
+        width={LayoutConstants.gridUnit * 6}
+        height={LayoutConstants.gridUnit * 6}
+      />
+      <Block marginLeft={LayoutConstants.gridUnit}>
+        {props.username}
+      </Block>
+    </Row>
+  );
+}
 
-  handleMouseEnter: function() {
-    this.setState({hovered: true});
-  },
-
-  handleMouseLeave: function() {
-    this.setState({hovered: false});
-  },
-
-  render: function() {
-    return (
-      <div role="button" onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave}>
-        <Row
-          width={192}
-          marginLeft="auto"
-          marginRight="auto"
-          alignItems="center"
-          background={this.state.hovered ? LayoutConstants.secondaryColor : null}>
-          <img
-            src={'http://graph.facebook.com/' + this.props.username + '/picture?type=large'}
-            width={LayoutConstants.gridUnit * 6}
-            height={LayoutConstants.gridUnit * 6}
-          />
-          <Block
-            marginLeft={LayoutConstants.gridUnit}
-            color={this.state.hovered ? 'white' : 'black'}>
-            {this.props.username}
-          </Block>
-        </Row>
-      </div>
-    );
-  },
-});
-
-module.exports = Avatar;
+Avatar.propTypes = {
+  username: React.PropTypes.string.isRequired,
+};

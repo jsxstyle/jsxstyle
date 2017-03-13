@@ -1,25 +1,20 @@
 'use strict';
 
-var explodePseudoStyles = require('./explodePseudoStyles');
-var createCSS = require('./createCSS');
+const explodePseudoStyles = require('./explodePseudoStyles');
+const createCSS = require('./createCSS');
 
-var assign = require('object-assign');
-var invariant = require('invariant');
+let stylesheetIdSeed = 0;
 
-var PREFIX = 'jsxstyle';
+const styleCache = {};
 
-var stylesheetIdSeed = 0;
+const browser = typeof document !== 'undefined';
 
-var styles = {};
-
-var browser = typeof document !== 'undefined';
-
-function addStyle(css){
-  var head = document.head || document.getElementsByTagName('head')[0];
-  var style = document.createElement('style');
-
+function addStyle(css) {
+  const head = document.head || document.getElementsByTagName('head')[0];
+  const style = document.createElement('style');
   style.type = 'text/css';
-  if (style.styleSheet){
+
+  if (style.styleSheet) {
     style.styleSheet.cssText = css;
   } else {
     style.appendChild(document.createTextNode(css));
@@ -31,25 +26,25 @@ function addStyle(css){
 }
 
 function createStylesheet(stylesheet) {
-  var styles = explodePseudoStyles(assign({}, stylesheet.style));
-  var className = PREFIX + stylesheet.id;
-  var stylesheetText = [
-    createCSS(styles.base, className, null),
-    createCSS(styles.hover, className, null, ':hover'),
-    createCSS(styles.active, className, null, ':active'),
-    createCSS(styles.focus, className, null, ':focus')
+  const explodedStyles = explodePseudoStyles(Object.assign({}, stylesheet.style));
+  const className = GlobalStylesheets.injection.formatClassNameFromId(stylesheet.id);
+  const stylesheetText = [
+    createCSS(explodedStyles.base, className, null),
+    createCSS(explodedStyles.hover, className, null, ':hover'),
+    createCSS(explodedStyles.active, className, null, ':active'),
+    createCSS(explodedStyles.focus, className, null, ':focus'),
   ].join('');
 
   return addStyle(stylesheetText);
 }
 
 function reap() {
-  for (var key in styles) {
-    if (styles[key].refs === 0) {
-      if (styles[key].domNode) {
-        removeNode(styles[key].domNode);
+  for (const key in styleCache) {
+    if (styleCache[key].refs === 0) {
+      if (styleCache[key].domNode) {
+        removeNode(styleCache[key].domNode);
       }
-      delete styles[key];
+      delete styleCache[key];
     }
   }
 }
@@ -60,18 +55,19 @@ function removeNode(node) {
   }
 }
 
-var GlobalStylesheets = {
-  install: function() {
+const GlobalStylesheets = {
+  install() {
     if (browser) {
       setInterval(reap, 10000);
     }
   },
 
-  getKey: function(styleObj, displayName, component) {
-    var pairs = [];
+  // eslint-disable-next-line no-unused-vars
+  getKey(styleObj, displayName, component) {
+    const pairs = [];
 
     Object.keys(styleObj).sort().forEach(function(key) {
-      var value = styleObj[key];
+      let value = styleObj[key];
 
       if (!value) {
         return;
@@ -87,11 +83,11 @@ var GlobalStylesheets = {
       return null;
     }
 
-    var key = pairs.join(',');
+    const key = pairs.join(',');
 
-    if (!styles.hasOwnProperty(key)) {
-      var stylesheet = {
-        id: GlobalStylesheets.injection.getStylesheetId(key),
+    if (!styleCache.hasOwnProperty(key)) {
+      const stylesheet = {
+        id: GlobalStylesheets.injection.getStylesheetId(styleObj),
         style: styleObj,
         refs: 0,
       };
@@ -99,31 +95,32 @@ var GlobalStylesheets = {
         stylesheet.domNode = createStylesheet(stylesheet);
         document.head.appendChild(stylesheet.domNode);
       }
-      styles[key] = stylesheet;
+      styleCache[key] = stylesheet;
     }
 
     return key;
   },
 
-  ref: function(key) {
-    styles[key].refs++;
+  ref(key) {
+    styleCache[key].refs++;
   },
 
-  unref: function(key) {
-    --styles[key].refs;
+  unref(key) {
+    styleCache[key].refs--;
   },
 
   getClassName(styleKey) {
-    return GlobalStylesheets.injection.formatClassNameFromId(styles[styleKey].id);
+    return GlobalStylesheets.injection.formatClassNameFromId(styleCache[styleKey].id);
   },
 
   injection: {
-    getStylesheetId(styleKey, displayName, component) {
+    // eslint-disable-next-line no-unused-vars
+    getStylesheetId(styleKey) {
       return stylesheetIdSeed++;
     },
 
     formatClassNameFromId(id) {
-      return PREFIX + id;
+      return `jsxstyle${id}`;
     },
   },
 };

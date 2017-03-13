@@ -5,24 +5,29 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
 
 module.exports = {
-  entry: './main',
+  entry: [
+    require.resolve('webpack-dev-server/client') + '?http://localhost:3069/',
+    require.resolve('webpack/hot/only-dev-server'),
+    'react-hot-loader/patch',
+    './main',
+  ],
   output: {
-    path: __dirname + '/build',
+    path: null,
     filename: 'bundle.js',
   },
-  plugins: [
-    new webpack.NamedModulesPlugin(),
-    new HtmlWebpackPlugin({
-      template: 'template.html',
-      inject: false,
-    }),
-    new ExtractTextPlugin('bundle.css'),
-  ],
   resolve: {
     alias: {
       jsxstyle: require.resolve('../'),
     },
   },
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: 'template.html',
+      inject: false,
+    }),
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.NamedModulesPlugin(),
+  ],
   module: {
     loaders: [
       {

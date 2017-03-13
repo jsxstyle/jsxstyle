@@ -1,19 +1,13 @@
 'use strict';
 
-var GlobalStylesheets = require('./GlobalStylesheets');
-var React = require('react');
-
-var assign = require('object-assign');
+const GlobalStylesheets = require('./GlobalStylesheets');
+const React = require('react');
 
 function getStyleFromProps(props) {
-  var style = {};
+  const style = {};
 
-  for (let key in props) {
-    if (key === 'children' ||
-        key === 'className' ||
-        key === 'component' ||
-        key === 'props' ||
-        key === 'style') {
+  for (const key in props) {
+    if (key === 'children' || key === 'className' || key === 'component' || key === 'props' || key === 'style') {
       continue;
     }
     style[key] = props[key];
@@ -26,18 +20,26 @@ function makeStyleComponentClass(defaults, displayName, tagName) {
   tagName = tagName || 'div';
   displayName = displayName || 'Style';
 
-  var Style = React.createClass({
-    displayName: displayName,
+  const Style = React.createClass({
+    displayName,
 
-    statics: {
-      style: defaults
+    propTypes: {
+      children: React.PropTypes.node,
+      className: React.PropTypes.string,
+      component: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.object, React.PropTypes.func]),
+      props: React.PropTypes.object,
+      style: React.PropTypes.object,
     },
 
-    getDefaultProps: function() {
+    statics: {
+      style: defaults,
+    },
+
+    getDefaultProps() {
       return defaults;
     },
 
-    refStyleKey: function(props) {
+    refStyleKey(props) {
       this.component = this.props.component || tagName;
       this.styleKey = GlobalStylesheets.getKey(getStyleFromProps(props), displayName, this.component);
       if (this.styleKey) {
@@ -45,36 +47,37 @@ function makeStyleComponentClass(defaults, displayName, tagName) {
       }
     },
 
-    componentWillMount: function() {
+    componentWillMount() {
       this.refStyleKey(this.props);
     },
 
-    componentWillReceiveProps: function(nextProps) {
+    componentWillReceiveProps(nextProps) {
       if (this.styleKey) {
         GlobalStylesheets.unref(this.styleKey);
       }
       this.refStyleKey(nextProps);
     },
 
-    componentWillUnmount: function() {
+    componentWillUnmount() {
       if (this.styleKey) {
         GlobalStylesheets.unref(this.styleKey);
       }
     },
 
-    render: function() {
-      var style = getStyleFromProps(this.props);
-      var className = this.styleKey ? GlobalStylesheets.getClassName(this.styleKey) : null;
+    render() {
+      const className = this.styleKey ? GlobalStylesheets.getClassName(this.styleKey) : null;
 
       return React.createElement(
         this.component,
-        assign({}, this.props.props, {
-          className: (className || this.props.className) ? ((this.props.className || '') + ' ' + (className || '')) : null,
+        Object.assign({}, this.props.props, {
+          className: className || this.props.className
+            ? (this.props.className || '') + (this.props.className ? ' ' : '') + (className || '')
+            : null,
           children: this.props.children,
           style: this.props.style,
         })
       );
-    }
+    },
   });
 
   return Style;

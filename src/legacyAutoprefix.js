@@ -1,10 +1,8 @@
 'use strict';
 
-var assign = require('object-assign');
-
 function legacyAutoprefix(style) {
   if (style.hasOwnProperty('userSelect')) {
-    assign(style, {
+    Object.assign(style, {
       WebkitUserSelect: style.userSelect,
       MozUserSelect: style.userSelect,
       msUserSelect: style.userSelect,
@@ -12,7 +10,7 @@ function legacyAutoprefix(style) {
   }
 
   if (style.hasOwnProperty('transition')) {
-    assign(style, {
+    Object.assign(style, {
       WebkitTransition: style.transition,
       MozTransition: style.transition,
       msTransition: style.transition,
@@ -20,7 +18,7 @@ function legacyAutoprefix(style) {
   }
 
   if (style.hasOwnProperty('boxShadow')) {
-    assign(style, {
+    Object.assign(style, {
       WebkitBoxShadow: style.boxShadow,
       MozBoxShadow: style.boxShadow,
       msBoxSelect: style.boxShadow,
@@ -28,56 +26,56 @@ function legacyAutoprefix(style) {
   }
 
   if (style.hasOwnProperty('fontSmoothing')) {
-    assign(style, {
+    Object.assign(style, {
       WebkitFontSmoothing: style.fontSmoothing,
       MozOsxFontSmoothing: style.fontSmoothing === 'antialiased' ? 'grayscale' : undefined,
     });
   }
 
   if (style.hasOwnProperty('flexDirection')) {
-    assign(style, {
+    Object.assign(style, {
       WebkitFlexDirection: style.flexDirection,
     });
   }
 
   if (style.hasOwnProperty('flexWrap')) {
-    assign(style, {
+    Object.assign(style, {
       WebkitFlexWrap: style.flexWrap,
     });
   }
 
   if (style.hasOwnProperty('alignItems')) {
-    assign(style, {
+    Object.assign(style, {
       WebkitAlignItems: style.alignItems,
     });
   }
 
   if (style.hasOwnProperty('flexGrow')) {
-    assign(style, {
+    Object.assign(style, {
       WebkitFlexGrow: style.flexGrow,
     });
   }
 
   if (style.hasOwnProperty('flexShrink')) {
-    assign(style, {
+    Object.assign(style, {
       WebkitFlexShrink: style.flexShrink,
     });
   }
 
   if (style.hasOwnProperty('order')) {
-    assign(style, {
+    Object.assign(style, {
       WebkitOrder: style.order,
     });
   }
 
   if (style.hasOwnProperty('justifyContent')) {
-    assign(style, {
+    Object.assign(style, {
       WebkitJustifyContent: style.justifyContent,
     });
   }
 
   if (style.hasOwnProperty('flex')) {
-    assign(style, {
+    Object.assign(style, {
       WebkitFlex: style.flex,
     });
   }
