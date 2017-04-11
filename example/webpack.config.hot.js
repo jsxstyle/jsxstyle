@@ -1,6 +1,5 @@
 'use strict';
 
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
 
@@ -9,7 +8,7 @@ module.exports = {
     require.resolve('webpack-dev-server/client') + '?http://localhost:3069/',
     require.resolve('webpack/hot/only-dev-server'),
     'react-hot-loader/patch',
-    './main',
+    require.resolve('./main'),
   ],
   output: {
     path: null,
@@ -37,7 +36,11 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        loader: ExtractTextPlugin.extract('style-loader', 'css-loader'),
+        loader: 'style-loader',
+      },
+      {
+        test: /\.css$/,
+        loader: 'css-loader',
       },
     ],
   },

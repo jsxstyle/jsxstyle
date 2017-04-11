@@ -1,41 +1,25 @@
 'use strict';
 
-const invariant = require('invariant');
-
-const GlobalStylesheets = require('./GlobalStylesheets');
-const JsxstyleDefaults = require('./JsxstyleDefaults');
-
-const createCSS = require('./createCSS');
+const {installReaper} = require('./styleCache');
 const makeStyleComponentClass = require('./makeStyleComponentClass');
 
 module.exports = {
-  install: GlobalStylesheets.install,
+  install: installReaper,
 
-  Block: makeStyleComponentClass(JsxstyleDefaults.Block, 'Block'),
-  Flex: makeStyleComponentClass(JsxstyleDefaults.Flex, 'Flex'),
-  InlineBlock: makeStyleComponentClass(JsxstyleDefaults.InlineBlock, 'InlineBlock'),
-  InlineFlex: makeStyleComponentClass(JsxstyleDefaults.InlineFlex, 'InlineFlex'),
-  Table: makeStyleComponentClass(JsxstyleDefaults.Table, 'Table'),
-  TableRow: makeStyleComponentClass(JsxstyleDefaults.TableRow, 'TableRow'),
-  TableCell: makeStyleComponentClass(JsxstyleDefaults.TableCell, 'TableCell'),
-  Inline: makeStyleComponentClass(JsxstyleDefaults.Inline, 'Inline'),
-  Row: makeStyleComponentClass(JsxstyleDefaults.Row, 'Row'),
-  Col: makeStyleComponentClass(JsxstyleDefaults.Col, 'Col'),
+  // completely unstyled component
+  Box: makeStyleComponentClass(undefined, 'Box'),
 
-  injectAutoprefixer(autoprefix) {
-    invariant(typeof autoprefix === 'function', 'You may only inject functions for autoprefix');
-    createCSS.injection.autoprefix = autoprefix;
-  },
+  // display components
+  Block: makeStyleComponentClass({display: 'block'}, 'Block'),
+  Flex: makeStyleComponentClass({display: 'flex'}, 'Flex'),
+  InlineBlock: makeStyleComponentClass({display: 'inline-block'}, 'InlineBlock'),
+  InlineFlex: makeStyleComponentClass({display: 'inline-flex'}, 'InlineFlex'),
+  Table: makeStyleComponentClass({display: 'table'}, 'Table'),
+  TableRow: makeStyleComponentClass({display: 'table-row'}, 'TableRow'),
+  TableCell: makeStyleComponentClass({display: 'table-cell'}, 'TableCell'),
+  Inline: makeStyleComponentClass({display: 'inline'}, 'Inline'),
 
-  injectClassNameStrategy(getStylesheetId, formatClassNameFromId) {
-    if (getStylesheetId) {
-      invariant(typeof getStylesheetId === 'function', 'getStylesheetId must be a function');
-      GlobalStylesheets.injection.getStylesheetId = getStylesheetId;
-    }
-
-    if (formatClassNameFromId) {
-      invariant(typeof formatClassNameFromId === 'function', 'formatClassNameFromId must be a function');
-      GlobalStylesheets.injection.formatClassNameFromId = formatClassNameFromId;
-    }
-  },
+  // flexbox helper components
+  Row: makeStyleComponentClass({display: 'flex', flexDirection: 'row'}, 'Row'),
+  Col: makeStyleComponentClass({display: 'flex', flexDirection: 'column'}, 'Col'),
 };

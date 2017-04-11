@@ -1,18 +1,10 @@
 'use strict';
 
-function stripPrefixFromStyleProp(styleProp, prefix) {
-  const formattedProp = styleProp.substr(prefix.length);
-  if (formattedProp.indexOf('Webkit') === 0 || formattedProp.indexOf('Moz') === 0) {
-    return formattedProp;
-  }
-  return formattedProp.charAt(0).toLowerCase() + formattedProp.slice(1);
-}
+function explodePseudoStyles(styleObject) {
+  const stylesByPrefix = {};
 
-function explodePseudoStyles(style) {
-  const styleObject = {};
-
-  for (const name in style) {
-    if (style.hasOwnProperty(name)) {
+  for (const name in styleObject) {
+    if (styleObject.hasOwnProperty(name)) {
       let prefix = 'base';
       let styleProp = name;
 
@@ -24,16 +16,26 @@ function explodePseudoStyles(style) {
         prefix = 'active';
       }
 
-      if (prefix !== 'base') {
-        styleProp = stripPrefixFromStyleProp(styleProp, prefix);
+      // skip prefix-only props (edge case)
+      if (prefix === name) {
+        continue;
       }
 
-      styleObject[prefix] = styleObject[prefix] || {};
-      styleObject[prefix][styleProp] = style[name];
+      if (prefix !== 'base') {
+        const formattedProp = styleProp.substr(prefix.length);
+        if (formattedProp.indexOf('Webkit') === 0 || formattedProp.indexOf('Moz') === 0) {
+          styleProp = formattedProp;
+        } else {
+          styleProp = formattedProp.charAt(0).toLowerCase() + formattedProp.slice(1);
+        }
+      }
+
+      stylesByPrefix[prefix] = stylesByPrefix[prefix] || {};
+      stylesByPrefix[prefix][styleProp] = styleObject[name];
     }
   }
 
-  return styleObject;
+  return stylesByPrefix;
 }
 
 module.exports = explodePseudoStyles;

@@ -15,7 +15,9 @@ export default function Avatar(props) {
       backgroundColor="white"
       hoverBackgroundColor={LayoutConstants.secondaryColor}>
       <Block
-        backgroundImage={`url(http://graph.facebook.com/${props.username}/picture?type=large)`}
+        style={{
+          backgroundImage: `url("http://graph.facebook.com/${props.username}/picture?type=large")`,
+        }}
         backgroundSize="contain"
         width={LayoutConstants.gridUnit * 6}
         height={LayoutConstants.gridUnit * 6}

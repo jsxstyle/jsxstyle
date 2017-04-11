@@ -19,7 +19,7 @@ temp.mkdir('_jsxstyle_', function(err, dirPath) {
 
   const compiler = webpack(hotConfig);
   new WebpackDevServer(compiler, {
-    publicUrl: WDS_URL,
+    public: WDS_URL,
     contentBase: dirPath,
     hot: true,
     historyApiFallback: true,
