@@ -1,0 +1,34 @@
+{
+  "name": "jsxstyle-loader",
+  "version": "0.0.0",
+  "description": "A webpack loader that extracts out static styles defined on jsxstyle components",
+  "author": "Mike Meyer",
+  "license": "Apache-2.0",
+  "main": "lib/index.js",
+  "scripts": {
+    "lint": "eslint src/",
+    "prettier": "prettier --single-quote --print-width 120 --bracket-spacing false --jsx-bracket-same-line --trailing-comma es5 --write 'src/**/*.js'",
+    "build_lib": "rimraf lib; babel ./src --out-dir ./lib",
+    "watch_lib": "rimraf lib; babel --watch ./src --out-dir ./lib",
+    "ls_module": "LOADER_TMPFILE=$(npm --silent pack) && tar -tf $LOADER_TMPFILE && echo && rm -i $LOADER_TMPFILE",
+    "ls_module_yarn": "LOADER_TMPFILE=$(mktemp); yarn pack -s --filename $LOADER_TMPFILE; tar -tf $LOADER_TMPFILE",
+    "prepublish": "yarn run -s build_lib > /dev/null"
+  },
+  "dependencies": {
+    "invariant": "^2.2.1",
+    "jsxstyle": "next",
+    "loader-utils": "^1.1.0",
+    "recast": "^0.12.3"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-preset-env": "^1.4.0",
+    "eslint": "^3.19.0",
+    "eslint-plugin-jest": "^19.0.1",
+    "eslint-plugin-react": "^6.10.3",
+    "jest": "^19.0.2",
+    "prettier": "^1.1.0",
+    "react": "^15.4.2",
+    "rimraf": "^2.6.1"
+  }
+}
