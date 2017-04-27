@@ -19,9 +19,19 @@ const types = recast.types;
 const n = types.namedTypes;
 const b = types.builders;
 
-function extractStyles({src, styleGroups, sourceFileName, staticNamespace}) {
+const defaultCacheObject = {};
+function extractStyles({src, styleGroups, sourceFileName, staticNamespace, cacheObject}) {
   invariant(typeof src === 'string', 'extractStyles expects `src` to be a string of javascript');
   invariant(typeof sourceFileName === 'string', 'extractStyles expects `sourceFileName` to be a string');
+
+  if (typeof cacheObject !== 'undefined') {
+    invariant(
+      typeof cacheObject === 'object' && cacheObject !== null,
+      'extractStyles expects `cacheObject` to be an object'
+    );
+  } else {
+    cacheObject = defaultCacheObject;
+  }
 
   if (typeof styleGroups !== 'undefined') {
     invariant(
@@ -238,7 +248,7 @@ function extractStyles({src, styleGroups, sourceFileName, staticNamespace}) {
   const cssMap = new Map();
 
   staticStyles.forEach(({node, originalNodeName, staticAttributes, classNamePropValue}) => {
-    const stylesByClassName = getStylesByClassName(styleGroups, staticAttributes);
+    const stylesByClassName = getStylesByClassName(styleGroups, staticAttributes, cacheObject);
 
     const lineNumbers =
       node.loc.start.line + (node.loc.start.line !== node.loc.end.line ? `-${node.loc.end.line}` : '');

@@ -18,14 +18,15 @@ describe('extractStyles', function() {
           hoverColor: 'blue',
         },
       },
+      cacheObject: {},
     });
     expect(rv.js).toEqual(
       `require("test/constant-styles.jsxstyle.css");
 const React = require('react');
 const {Block, InlineBlock} = require('../');
 
-<div className="_test _j1v242s">
-  <div className="_j1xwql63" />
+<div className="_test _x0">
+  <div className="_x1" />
   <div style={{width: 10}} />
   <OtherComponent height={25} />
 </div>;
@@ -41,16 +42,16 @@ const {Block, InlineBlock} = require('../');
   color:blue;
 }
 /* test/constant-styles.js:4 (Block) */
-._j1v242s {
+._x0 {
   width:100%;
   height:25px;
   left:20px;
 }
-._j1v242s:hover {
+._x0:hover {
   background-color:white;
 }
 /* test/constant-styles.js:5 (InlineBlock) */
-._j1xwql63 {
+._x1 {
   height:24px;
   display:inline-block;
 }
@@ -63,6 +64,7 @@ const {Block, InlineBlock} = require('../');
       src: EXAMPLE_SRC,
       sourceFileName: 'test/extract-expressions.js',
       staticNamespace: {LayoutConstants: {x: 10}},
+      cacheObject: {},
     });
 
     expect(rv.js).toEqual(
@@ -70,8 +72,8 @@ const {Block, InlineBlock} = require('../');
 const React = require('react');
 const {Block, InlineBlock} = require('../');
 
-<div className="_j9vuctu">
-  <div className="_j1xwql63" />
+<div className="_x0">
+  <div className="_x1" />
   <div style={{width: 10}} />
   <OtherComponent height={25} />
 </div>;
@@ -80,18 +82,18 @@ const {Block, InlineBlock} = require('../');
 
     expect(rv.css).toEqual(
       `/* test/extract-expressions.js:4 (Block) */
-._j9vuctu {
+._x0 {
   width:100%;
   height:25px;
   left:20px;
   display:block;
 }
-._j9vuctu:hover {
+._x0:hover {
   color:blue;
   background-color:white;
 }
 /* test/extract-expressions.js:5 (InlineBlock) */
-._j1xwql63 {
+._x1 {
   height:24px;
   display:inline-block;
 }
@@ -104,6 +106,7 @@ const {Block, InlineBlock} = require('../');
       src: EXAMPLE_SRC,
       sourceFileName: 'test/nice-looking.js',
       staticNamespace: {LayoutConstants: {x: 10}},
+      cacheObject: {},
     });
 
     expect(rv.js).toEqual(
@@ -111,8 +114,8 @@ const {Block, InlineBlock} = require('../');
 const React = require('react');
 const {Block, InlineBlock} = require('../');
 
-<div className="_j9vuctu">
-  <div className="_j1xwql63" />
+<div className="_x0">
+  <div className="_x1" />
   <div style={{width: 10}} />
   <OtherComponent height={25} />
 </div>;
@@ -121,18 +124,18 @@ const {Block, InlineBlock} = require('../');
 
     expect(rv.css).toEqual(
       `/* test/nice-looking.js:4 (Block) */
-._j9vuctu {
+._x0 {
   width:100%;
   height:25px;
   left:20px;
   display:block;
 }
-._j9vuctu:hover {
+._x0:hover {
   color:blue;
   background-color:white;
 }
 /* test/nice-looking.js:5 (InlineBlock) */
-._j1xwql63 {
+._x1 {
   height:24px;
   display:inline-block;
 }

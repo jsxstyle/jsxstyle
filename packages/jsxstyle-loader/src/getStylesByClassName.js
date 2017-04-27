@@ -1,10 +1,23 @@
 'use strict';
 
+const invariant = require('invariant');
+
 const getStyleObjectFromProps = require('jsxstyle/lib/getStyleObjectFromProps');
 const getStyleKeyForStyleObject = require('jsxstyle/lib/getStyleKeyForStyleObject');
-const getClassName = require('jsxstyle/lib/getClassName');
 
-function getStylesByClassName(styleGroups, staticAttributes) {
+function getStylesByClassName(styleGroups, staticAttributes, cacheObject) {
+  if (typeof staticAttributes !== 'undefined') {
+    invariant(
+      typeof cacheObject === 'object' && cacheObject !== null,
+      'getStylesByClassName expects an object as its third parameter'
+    );
+  }
+
+  invariant(
+    typeof cacheObject === 'object' && cacheObject !== null,
+    'getStylesByClassName expects an object as its third parameter'
+  );
+
   const styleProps = getStyleObjectFromProps(staticAttributes);
   if (Object.keys(styleProps).length === 0) {
     return {};
@@ -41,9 +54,11 @@ function getStylesByClassName(styleGroups, staticAttributes) {
   }
 
   if (Object.keys(styleProps).length > 0) {
+    cacheObject.keys = cacheObject.keys || {};
+    cacheObject.counter = cacheObject.counter || 0;
     const styleKey = getStyleKeyForStyleObject(styleProps);
-    const className = getClassName(styleKey);
-    stylesByClassName[className] = styleProps;
+    cacheObject.keys[styleKey] = cacheObject.keys[styleKey] || (cacheObject.counter++).toString(16);
+    stylesByClassName[`_x${cacheObject.keys[styleKey]}`] = styleProps;
   }
 
   return stylesByClassName;
