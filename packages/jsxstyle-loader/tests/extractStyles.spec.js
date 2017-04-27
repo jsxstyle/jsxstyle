@@ -12,13 +12,19 @@ describe('extractStyles', function() {
       src: EXAMPLE_SRC,
       sourceFileName: 'test/constant-styles.js',
       staticNamespace: {LayoutConstants: {x: 10}},
+      styleGroups: {
+        _test: {
+          display: 'block',
+          hoverColor: 'blue',
+        },
+      },
     });
     expect(rv.js).toEqual(
       `require("test/constant-styles.jsxstyle.css");
 const React = require('react');
 const {Block, InlineBlock} = require('../');
 
-<div className="_j9vuctu">
+<div className="_test _j1v242s">
   <div className="_j1xwql63" />
   <div style={{width: 10}} />
   <OtherComponent height={25} />
@@ -28,14 +34,19 @@ const {Block, InlineBlock} = require('../');
 
     expect(rv.css).toEqual(
       `/* test/constant-styles.js:4 (Block) */
-._j9vuctu {
+._test {
+  display:block;
+}
+._test:hover {
+  color:blue;
+}
+/* test/constant-styles.js:4 (Block) */
+._j1v242s {
   width:100%;
   height:25px;
   left:20px;
-  display:block;
 }
-._j9vuctu:hover {
-  color:blue;
+._j1v242s:hover {
   background-color:white;
 }
 /* test/constant-styles.js:5 (InlineBlock) */

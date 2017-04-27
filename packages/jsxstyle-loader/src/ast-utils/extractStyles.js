@@ -13,14 +13,22 @@ const getClassName = require('jsxstyle/lib/getClassName');
 
 const canEvaluate = require('./canEvaluate');
 const getPropValueFromAttributes = require('./getPropValueFromAttributes');
+const getStylesByClassName = require('../getStylesByClassName');
 
 const types = recast.types;
 const n = types.namedTypes;
 const b = types.builders;
 
-function extractStyles({src, sourceFileName, staticNamespace}) {
+function extractStyles({src, styleGroups, sourceFileName, staticNamespace}) {
   invariant(typeof src === 'string', 'extractStyles expects `src` to be a string of javascript');
   invariant(typeof sourceFileName === 'string', 'extractStyles expects `sourceFileName` to be a string');
+
+  if (typeof styleGroups !== 'undefined') {
+    invariant(
+      typeof styleGroups === 'object' && styleGroups !== null,
+      'extractStyles expects `styleGroups` to be an object of style objects, keyed by className'
+    );
+  }
 
   if (typeof staticNamespace !== 'undefined') {
     invariant(
@@ -230,15 +238,16 @@ function extractStyles({src, sourceFileName, staticNamespace}) {
   const cssMap = new Map();
 
   staticStyles.forEach(({node, originalNodeName, staticAttributes, classNamePropValue}) => {
-    const styleKey = getStyleKeyForStyleObject(staticAttributes);
-    let className = getClassName(styleKey);
-    if (className === '') {
-      className = null;
-    }
+    const stylesByClassName = getStylesByClassName(styleGroups, staticAttributes);
 
     const lineNumbers =
       node.loc.start.line + (node.loc.start.line !== node.loc.end.line ? `-${node.loc.end.line}` : '');
-    const commentText = `/* ${path.relative(process.cwd(), sourceFileName)}:${lineNumbers} (${originalNodeName}) */`;
+    const commentText = `${path.relative(process.cwd(), sourceFileName)}:${lineNumbers} (${originalNodeName})`;
+
+    let className = Object.keys(stylesByClassName).join(' ');
+    if (className === '') {
+      className = null;
+    }
 
     let attributeValue;
     if (classNamePropValue) {
@@ -284,21 +293,31 @@ function extractStyles({src, sourceFileName, staticNamespace}) {
       node.attributes.push(b.jsxAttribute(b.jsxIdentifier('className'), attributeValue));
     }
 
-    if (cssMap.has(className)) {
-      const val = cssMap.get(className);
-      val.commentTexts.push(commentText);
-      cssMap.set(className, val);
-    } else {
-      const explodedStyles = explodePseudoStyles(staticAttributes);
-      const val = {
-        css: createCSS(explodedStyles.base, className) +
-          createCSS(explodedStyles.hover, className, ':hover') +
-          createCSS(explodedStyles.active, className, ':active') +
-          createCSS(explodedStyles.focus, className, ':focus'),
-        commentTexts: [commentText],
-      };
+    const comment = commentText ? `/* ${commentText} */` : null;
 
-      cssMap.set(className, val);
+    for (const classNameKey in stylesByClassName) {
+      if (cssMap.has(classNameKey)) {
+        if (comment) {
+          const val = cssMap.get(classNameKey);
+          val.commentTexts.push(comment);
+          cssMap.set(classNameKey, val);
+        }
+      } else {
+        const explodedStyles = explodePseudoStyles(stylesByClassName[classNameKey]);
+        const val = {
+          css: createCSS(explodedStyles.base, classNameKey) +
+            createCSS(explodedStyles.hover, classNameKey, ':hover') +
+            createCSS(explodedStyles.active, classNameKey, ':active') +
+            createCSS(explodedStyles.focus, classNameKey, ':focus'),
+          commentTexts: [],
+        };
+
+        if (comment) {
+          val.commentTexts.push(comment);
+        }
+
+        cssMap.set(classNameKey, val);
+      }
     }
   });
 
