@@ -8,106 +8,124 @@ const EXAMPLE_SRC = fs.readFileSync(path.join(__dirname, 'example.js'), {encodin
 
 describe('extractStyles', function() {
   it('can extract constant styles', function() {
-    const rv = extractStyles(EXAMPLE_SRC, '/jsxstyle/constant-styles.css', {LayoutConstants: {x: 10}});
-    expect(rv).toEqual({
-      js: `require("/jsxstyle/constant-styles.css");
+    const rv = extractStyles({
+      src: EXAMPLE_SRC,
+      sourceFileName: 'test/constant-styles.js',
+      staticNamespace: {LayoutConstants: {x: 10}},
+    });
+    expect(rv.js).toEqual(
+      `require("test/constant-styles.jsxstyle.css");
 const React = require('react');
 const {Block, InlineBlock} = require('../');
 
-<div className="__s_0">
-  <div className="__s_1" />
+<div className="_j9vuctu">
+  <div className="_j1xwql63" />
   <div style={{width: 10}} />
   <OtherComponent height={25} />
 </div>;
-`,
-      css: `.__s_0 {
+`
+    );
+
+    expect(rv.css).toEqual(
+      `/* test/constant-styles.js:4 (Block) */
+._j9vuctu {
   width:100%;
   height:25px;
   left:20px;
   display:block;
 }
-.__s_0:hover {
+._j9vuctu:hover {
   color:blue;
   background-color:white;
 }
-.__s_1 {
+/* test/constant-styles.js:5 (InlineBlock) */
+._j1xwql63 {
   height:24px;
   display:inline-block;
 }
-`,
-      map: undefined,
-    });
+`
+    );
   });
 
   it('can extract simple expressions', function() {
-    const rv = extractStyles(EXAMPLE_SRC, '/jsxstyle/extract-expressions.css', {LayoutConstants: {x: 10}});
-    expect(rv).toEqual({
-      js: `require("/jsxstyle/extract-expressions.css");
+    const rv = extractStyles({
+      src: EXAMPLE_SRC,
+      sourceFileName: 'test/extract-expressions.js',
+      staticNamespace: {LayoutConstants: {x: 10}},
+    });
+
+    expect(rv.js).toEqual(
+      `require("test/extract-expressions.jsxstyle.css");
 const React = require('react');
 const {Block, InlineBlock} = require('../');
 
-<div className="__s_0">
-  <div className="__s_1" />
+<div className="_j9vuctu">
+  <div className="_j1xwql63" />
   <div style={{width: 10}} />
   <OtherComponent height={25} />
 </div>;
-`,
-      css: `.__s_0 {
+`
+    );
+
+    expect(rv.css).toEqual(
+      `/* test/extract-expressions.js:4 (Block) */
+._j9vuctu {
   width:100%;
   height:25px;
   left:20px;
   display:block;
 }
-.__s_0:hover {
+._j9vuctu:hover {
   color:blue;
   background-color:white;
 }
-.__s_1 {
+/* test/extract-expressions.js:5 (InlineBlock) */
+._j1xwql63 {
   height:24px;
   display:inline-block;
 }
-`,
-      map: undefined,
-    });
+`
+    );
   });
 
   it('can create nice looking css', function() {
-    const rv = extractStyles(EXAMPLE_SRC, '/jsxstyle/nice-looking.css', {LayoutConstants: {x: 10}}, function(entry) {
-      const node = entry.node;
-      return {
-        className: 'example_line' + node.loc.start.line,
-        commentText: 'example.js:' + node.loc.start.line,
-      };
+    const rv = extractStyles({
+      src: EXAMPLE_SRC,
+      sourceFileName: 'test/nice-looking.js',
+      staticNamespace: {LayoutConstants: {x: 10}},
     });
-    expect(rv).toEqual({
-      js: `require("/jsxstyle/nice-looking.css");
+
+    expect(rv.js).toEqual(
+      `require("test/nice-looking.jsxstyle.css");
 const React = require('react');
 const {Block, InlineBlock} = require('../');
 
-<div className="example_line4">
-  <div className="example_line5" />
+<div className="_j9vuctu">
+  <div className="_j1xwql63" />
   <div style={{width: 10}} />
   <OtherComponent height={25} />
 </div>;
-`,
-      css: `/* example.js:4 */
-.example_line4 {
+`
+    );
+
+    expect(rv.css).toEqual(
+      `/* test/nice-looking.js:4 (Block) */
+._j9vuctu {
   width:100%;
   height:25px;
   left:20px;
   display:block;
 }
-.example_line4:hover {
+._j9vuctu:hover {
   color:blue;
   background-color:white;
 }
-/* example.js:5 */
-.example_line5 {
+/* test/nice-looking.js:5 (InlineBlock) */
+._j1xwql63 {
   height:24px;
   display:inline-block;
 }
-`,
-      map: undefined,
-    });
+`
+    );
   });
 });

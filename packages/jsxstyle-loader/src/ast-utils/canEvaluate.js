@@ -10,8 +10,15 @@ function canEvaluate(staticNamespace, exprNode) {
     return true;
   } else if (n.JSXExpressionContainer.check(exprNode)) {
     return canEvaluate(staticNamespace, exprNode.expression);
-  } else if (n.Identifier.check(exprNode) && staticNamespace.hasOwnProperty(exprNode.name)) {
-    return true;
+  } else if (n.Identifier.check(exprNode)) {
+    if (
+      typeof staticNamespace === 'object' &&
+      staticNamespace !== null &&
+      staticNamespace.hasOwnProperty(exprNode.name)
+    ) {
+      return true;
+    }
+    return false;
   } else if (n.MemberExpression.check(exprNode)) {
     return n.Identifier.check(exprNode.property) && canEvaluate(staticNamespace, exprNode.object);
   } else if (n.BinaryExpression.check(exprNode)) {
