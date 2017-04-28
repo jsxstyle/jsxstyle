@@ -35,6 +35,15 @@ describe('extractStyles', function() {
     );
   });
 
+  it('skips JSXElements that do not have a JSXIdentifier as an opening element', () => {
+    const rv = extractStyles({
+      src: '<member.expression color="red" />; <Member.Expression color="blue" />;',
+      sourceFileName: getTestFilePath('jsxidentifier.js'),
+      cacheObject: {},
+    });
+    expect(rv.js).toEqual('<member.expression color="red" />; <Member.Expression color="blue" />;');
+  });
+
   it('converts jsxstyle elements to Block elements when some props aren\u2019t static', () => {
     const rv = extractStyles({
       src: '<Block staticString="wow" staticInt={69} staticValue={val} staticMemberExpression={LC.staticValue} dynamicValue={notStatic} />',

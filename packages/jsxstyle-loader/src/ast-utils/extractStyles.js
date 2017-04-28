@@ -65,192 +65,195 @@ function extractStyles({src, styleGroups, sourceFileName, staticNamespace, cache
       const node = path.node.openingElement;
 
       if (
-        // if it starts with a capital letter
-        node.name.name[0].toUpperCase() === node.name.name[0] &&
-        // and is exported by jsxstyle
-        jsxstyle.hasOwnProperty(node.name.name)
+        // skip anything that isn't an identifier (i.e. <thing.cool />)
+        !n.JSXIdentifier.check(node.name) ||
+        // skip lowercase elements
+        node.name.name[0].toUpperCase() !== node.name.name[0] ||
+        // skip components not exported by jsxstyle
+        !jsxstyle.hasOwnProperty(node.name.name)
       ) {
-        const originalNodeName = node.name.name;
+        this.traverse(path);
+        return;
+      }
 
-        let lastSpreadIndex = null;
-        node.attributes.forEach((attr, idx) => {
-          if (n.JSXSpreadAttribute.check(attr)) {
-            lastSpreadIndex = idx;
-          }
-        });
+      const originalNodeName = node.name.name;
 
-        const classNamePropValue = getPropValueFromAttributes('className', node.attributes);
-        const componentPropValue = getPropValueFromAttributes('component', node.attributes);
-        let propsPropValue = null;
+      let lastSpreadIndex = null;
+      node.attributes.forEach((attr, idx) => {
+        if (n.JSXSpreadAttribute.check(attr)) {
+          lastSpreadIndex = idx;
+        }
+      });
 
-        const staticAttributes = {};
-        let inlinePropCount = 0;
+      const classNamePropValue = getPropValueFromAttributes('className', node.attributes);
+      const componentPropValue = getPropValueFromAttributes('component', node.attributes);
+      let propsPropValue = null;
 
-        node.attributes = node.attributes.filter((attribute, idx) => {
-          if (!attribute.name || !attribute.name.name) {
-            // keep the weirdos
-            inlinePropCount++;
-            return true;
-          }
+      const staticAttributes = {};
+      let inlinePropCount = 0;
 
-          // component and className props will be handled elsewhere
-          if (attribute.name.name === 'component' || attribute.name.name === 'className') {
-            return false;
-          }
-
-          // pass key and style props through untouched
-          if (attribute.name.name === 'key' || attribute.name.name === 'style') {
-            return true;
-          }
-
-          // TODO: implement props prop
-          if (attribute.name.name === 'props') {
-            invariant(
-              n.JSXExpressionContainer.check(attribute.value),
-              'props prop should be an expresion container. received type `%s`',
-              attribute.value.type
-            );
-            propsPropValue = attribute.value.expression;
-
-            // keep the props prop but do not increment inlinePropCount. if inlinePropCount is 0 when
-            // we're done, props prop will be spread. otherwise it will remain in place to preserve order.
-            return true;
-          }
-
-          // if one or more spread operators are present and we haven't hit the last one yet, the prop stays inline
-          if (lastSpreadIndex !== null && idx <= lastSpreadIndex) {
-            inlinePropCount++;
-            return true;
-          }
-
-          const name = attribute.name.name;
-          const value = attribute.value;
-
-          // if value can be evaluated, extract it and filter it out
-          // TODO: extract evaluatable constants from current scope and add to context
-          // this would remove the need to explicitly set
-          if (canEvaluate(staticNamespace, value)) {
-            staticAttributes[name] = vm.runInContext(recast.print(value).code, evalContext);
-            return false;
-          }
-
-          // if we've made it this far, the prop stays inline
+      node.attributes = node.attributes.filter((attribute, idx) => {
+        if (!attribute.name || !attribute.name.name) {
+          // keep the weirdos
           inlinePropCount++;
           return true;
-        });
+        }
 
-        // if all style props have been extracted, jsxstyle component can be converted to a div or the specified component
-        if (inlinePropCount === 0) {
-          Object.assign(staticAttributes, jsxstyle[node.name.name].defaultProps);
+        // component and className props will be handled elsewhere
+        if (attribute.name.name === 'component' || attribute.name.name === 'className') {
+          return false;
+        }
 
-          // deal with props prop
-          if (propsPropValue) {
-            const propsPropIndex = node.attributes.findIndex(attr => attr.name && attr.name.name === 'props');
-            if (propsPropIndex > -1) {
-              // remove props prop from attributes
-              node.attributes.splice(propsPropIndex, 1);
-            }
+        // pass key and style props through untouched
+        if (attribute.name.name === 'key' || attribute.name.name === 'style') {
+          return true;
+        }
 
-            if (n.ObjectExpression.check(propsPropValue)) {
-              // if it's an object, loop through the properties array and prepend to node.attributes
-              for (const k in propsPropValue.properties) {
-                const propObj = propsPropValue.properties[k];
-                invariant(
-                  ['style', 'className'].indexOf(propObj.key.name) === -1,
-                  '`props` prop cannot contain `' +
-                    propObj.key.name +
-                    '` as it is used by jsxstyle and will be overwritten.'
+        // TODO: implement props prop
+        if (attribute.name.name === 'props') {
+          invariant(
+            n.JSXExpressionContainer.check(attribute.value),
+            'props prop should be an expresion container. received type `%s`',
+            attribute.value.type
+          );
+          propsPropValue = attribute.value.expression;
+
+          // keep the props prop but do not increment inlinePropCount. if inlinePropCount is 0 when
+          // we're done, props prop will be spread. otherwise it will remain in place to preserve order.
+          return true;
+        }
+
+        // if one or more spread operators are present and we haven't hit the last one yet, the prop stays inline
+        if (lastSpreadIndex !== null && idx <= lastSpreadIndex) {
+          inlinePropCount++;
+          return true;
+        }
+
+        const name = attribute.name.name;
+        const value = attribute.value;
+
+        // if value can be evaluated, extract it and filter it out
+        // TODO: extract evaluatable constants from current scope and add to context
+        // this would remove the need to explicitly set
+        if (canEvaluate(staticNamespace, value)) {
+          staticAttributes[name] = vm.runInContext(recast.print(value).code, evalContext);
+          return false;
+        }
+
+        // if we've made it this far, the prop stays inline
+        inlinePropCount++;
+        return true;
+      });
+
+      // if all style props have been extracted, jsxstyle component can be converted to a div or the specified component
+      if (inlinePropCount === 0) {
+        Object.assign(staticAttributes, jsxstyle[node.name.name].defaultProps);
+
+        // deal with props prop
+        if (propsPropValue) {
+          const propsPropIndex = node.attributes.findIndex(attr => attr.name && attr.name.name === 'props');
+          if (propsPropIndex > -1) {
+            // remove props prop from attributes
+            node.attributes.splice(propsPropIndex, 1);
+          }
+
+          if (n.ObjectExpression.check(propsPropValue)) {
+            // if it's an object, loop through the properties array and prepend to node.attributes
+            for (const k in propsPropValue.properties) {
+              const propObj = propsPropValue.properties[k];
+              invariant(
+                ['style', 'className'].indexOf(propObj.key.name) === -1,
+                '`props` prop cannot contain `' +
+                  propObj.key.name +
+                  '` as it is used by jsxstyle and will be overwritten.'
+              );
+              if (n.Literal.check(propObj.value) && typeof propObj.value.value === 'string') {
+                // convert literal value back to literal to ensure it has double quotes (siiiigh)
+                node.attributes.unshift(
+                  b.jsxAttribute(b.jsxIdentifier(propObj.key.name), b.literal(propObj.value.value))
                 );
-                if (n.Literal.check(propObj.value) && typeof propObj.value.value === 'string') {
-                  // convert literal value back to literal to ensure it has double quotes (siiiigh)
-                  node.attributes.unshift(
-                    b.jsxAttribute(b.jsxIdentifier(propObj.key.name), b.literal(propObj.value.value))
-                  );
-                } else {
-                  // wrap everything else in a JSXExpressionContainer
-                  node.attributes.unshift(
-                    b.jsxAttribute(b.jsxIdentifier(propObj.key.name), b.jsxExpressionContainer(propObj.value))
-                  );
-                }
+              } else {
+                // wrap everything else in a JSXExpressionContainer
+                node.attributes.unshift(
+                  b.jsxAttribute(b.jsxIdentifier(propObj.key.name), b.jsxExpressionContainer(propObj.value))
+                );
               }
-            } else if (
-              // if it's not an object, spread it
-              // props={wow()}
-              n.CallExpression.check(propsPropValue) ||
-              // props={wow.cool}
-              n.MemberExpression.check(propsPropValue) ||
-              // props={wow}
-              n.Identifier.check(propsPropValue)
-            ) {
-              node.attributes.unshift(b.jsxSpreadAttribute(propsPropValue));
-            } else {
-              invariant(
-                false,
-                '`props` prop value was not handled by extractStyles: `' + recast.print(propsPropValue).code + '`'
-              );
             }
-          }
-
-          if (componentPropValue) {
-            // TODO: consider converting this to React.createElement to avoid uppercase/lowercase weirdness
-            if (n.Literal.check(componentPropValue) && typeof componentPropValue.value === 'string') {
-              const char1 = componentPropValue.value[0];
-              // component="article"
-              invariant(
-                char1 === char1.toLowerCase(),
-                '`component` prop is a string that starts with an uppercase letter (`' +
-                  componentPropValue.value +
-                  '`). React will (incorrectly) assume this is a component.'
-              );
-              node.name.name = componentPropValue.value;
-            } else if (n.Identifier.check(componentPropValue)) {
-              const char1 = componentPropValue.name[0];
-              // component={Avatar}
-              invariant(
-                char1 === char1.toUpperCase(),
-                '`component` prop is an identifier that starts with a lowercase letter (`' +
-                  componentPropValue.name +
-                  '`). React will (incorrectly) assume this is an HTML element.'
-              );
-              node.name.name = componentPropValue.name;
-            } else if (n.MemberExpression.check(componentPropValue)) {
-              // component={variable.prop}
-              node.name.name = recast.print(componentPropValue).code;
-            } else {
-              invariant(
-                false,
-                '`component` prop value was not handled by extractStyles: `' +
-                  recast.print(componentPropValue).code +
-                  '`'
-              );
-            }
+          } else if (
+            // if it's not an object, spread it
+            // props={wow()}
+            n.CallExpression.check(propsPropValue) ||
+            // props={wow.cool}
+            n.MemberExpression.check(propsPropValue) ||
+            // props={wow}
+            n.Identifier.check(propsPropValue)
+          ) {
+            node.attributes.unshift(b.jsxSpreadAttribute(propsPropValue));
           } else {
-            node.name.name = 'div';
-          }
-        } else {
-          if (lastSpreadIndex !== null) {
-            // if only some style props were extracted AND additional props are spread onto the component,
-            // add the props back with null values to prevent spread props from incorrectly overwriting the extracted prop value
-            Object.keys(staticAttributes).forEach(attr => {
-              node.attributes.push(b.jsxAttribute(b.jsxIdentifier(attr), b.jsxExpressionContainer(b.literal(null))));
-            });
-          }
-
-          // Add component prop back if it was initially present
-          if (componentPropValue) {
-            node.attributes.push(
-              b.jsxAttribute(b.jsxIdentifier('component'), b.jsxExpressionContainer(componentPropValue))
+            invariant(
+              false,
+              '`props` prop value was not handled by extractStyles: `' + recast.print(propsPropValue).code + '`'
             );
           }
         }
 
-        staticStyles.push({
-          node,
-          originalNodeName,
-          staticAttributes,
-          classNamePropValue,
-        });
+        if (componentPropValue) {
+          // TODO: consider converting this to React.createElement to avoid uppercase/lowercase weirdness
+          if (n.Literal.check(componentPropValue) && typeof componentPropValue.value === 'string') {
+            const char1 = componentPropValue.value[0];
+            // component="article"
+            invariant(
+              char1 === char1.toLowerCase(),
+              '`component` prop is a string that starts with an uppercase letter (`' +
+                componentPropValue.value +
+                '`). React will (incorrectly) assume this is a component.'
+            );
+            node.name.name = componentPropValue.value;
+          } else if (n.Identifier.check(componentPropValue)) {
+            const char1 = componentPropValue.name[0];
+            // component={Avatar}
+            invariant(
+              char1 === char1.toUpperCase(),
+              '`component` prop is an identifier that starts with a lowercase letter (`' +
+                componentPropValue.name +
+                '`). React will (incorrectly) assume this is an HTML element.'
+            );
+            node.name.name = componentPropValue.name;
+          } else if (n.MemberExpression.check(componentPropValue)) {
+            // component={variable.prop}
+            node.name.name = recast.print(componentPropValue).code;
+          } else {
+            invariant(
+              false,
+              '`component` prop value was not handled by extractStyles: `' + recast.print(componentPropValue).code + '`'
+            );
+          }
+        } else {
+          node.name.name = 'div';
+        }
+      } else {
+        if (lastSpreadIndex !== null) {
+          // if only some style props were extracted AND additional props are spread onto the component,
+          // add the props back with null values to prevent spread props from incorrectly overwriting the extracted prop value
+          Object.keys(staticAttributes).forEach(attr => {
+            node.attributes.push(b.jsxAttribute(b.jsxIdentifier(attr), b.jsxExpressionContainer(b.literal(null))));
+          });
+        }
+
+        // Add component prop back if it was initially present
+        if (componentPropValue) {
+          node.attributes.push(
+            b.jsxAttribute(b.jsxIdentifier('component'), b.jsxExpressionContainer(componentPropValue))
+          );
+        }
       }
+
+      staticStyles.push({
+        node,
+        originalNodeName,
+        staticAttributes,
+        classNamePropValue,
+      });
 
       if (path.node.closingElement) {
         path.node.closingElement.name.name = node.name.name;
