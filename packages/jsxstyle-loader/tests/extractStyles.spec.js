@@ -195,10 +195,22 @@ describe('extractStyles', function() {
 <div {...one} two={{three, four: 'five', ...six}} className="_x1" />;`
     );
 
+    const rv2 = extractStyles({
+      src: `<Block color="red" ref={r => this.testBlock = r} />`,
+      sourceFileName: 'test/props-prop2.js',
+      cacheObject: {},
+      staticNamespace,
+    });
+
+    expect(rv2.js).toEqual(
+      `require("test/props-prop2.jsxstyle.css");
+<div ref={r => this.testBlock = r} className="_x0" />`
+    );
+
     expect(() =>
       extractStyles({
         src: `<Block props={{className: 'test'}} />;`,
-        sourceFileName: 'test/props-prop1.js',
+        sourceFileName: 'test/props-prop3.js',
         cacheObject: {},
         staticNamespace,
       })
@@ -207,7 +219,7 @@ describe('extractStyles', function() {
     expect(() =>
       extractStyles({
         src: `<Block props={{style: 'test'}} />;`,
-        sourceFileName: 'test/props-prop1.js',
+        sourceFileName: 'test/props-prop4.js',
         cacheObject: {},
         staticNamespace,
       })
@@ -216,7 +228,7 @@ describe('extractStyles', function() {
     expect(() =>
       extractStyles({
         src: '<Block props="invalid" />',
-        sourceFileName: 'test/props-prop2.js',
+        sourceFileName: 'test/props-prop5.js',
         cacheObject: {},
         staticNamespace,
       })
@@ -225,7 +237,7 @@ describe('extractStyles', function() {
     expect(() =>
       extractStyles({
         src: '<Block dynamicProp={wow} props="invalid" />',
-        sourceFileName: 'test/props-prop3.js',
+        sourceFileName: 'test/props-prop6.js',
         cacheObject: {},
         staticNamespace,
       })
@@ -311,6 +323,7 @@ const DynamicBlock = ({wow, ...props}) => <Block dynamicProp={wow} {...props} />
       cacheObject: {},
       staticNamespace,
     });
+
     expect(rv1.js).toEqual(
       `<Row
   {...spread}

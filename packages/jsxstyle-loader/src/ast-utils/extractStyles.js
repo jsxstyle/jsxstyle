@@ -18,6 +18,11 @@ const types = recast.types;
 const n = types.namedTypes;
 const b = types.builders;
 
+// these props will be passed through as-is
+const UNTOUCHED_PROPS = ['ref', 'key', 'style'];
+// these props cannot appear in the props prop (so meta)
+const ALL_SPECIAL_PROPS = ['component', 'className'].concat(UNTOUCHED_PROPS);
+
 const defaultCacheObject = {};
 function extractStyles({src, styleGroups, sourceFileName, staticNamespace, cacheObject}) {
   invariant(typeof src === 'string', 'extractStyles expects `src` to be a string of javascript');
@@ -105,7 +110,7 @@ function extractStyles({src, styleGroups, sourceFileName, staticNamespace, cache
         }
 
         // pass key and style props through untouched
-        if (attribute.name.name === 'key' || attribute.name.name === 'style') {
+        if (UNTOUCHED_PROPS.indexOf(attribute.name.name) > -1) {
           return true;
         }
 
@@ -162,7 +167,7 @@ function extractStyles({src, styleGroups, sourceFileName, staticNamespace, cache
               const propObj = propsPropValue.properties[k];
               if (n.ObjectProperty.check(propObj)) {
                 invariant(
-                  ['style', 'className'].indexOf(propObj.key.name) === -1,
+                  ALL_SPECIAL_PROPS.indexOf(propObj.key.name) === -1,
                   '`props` prop cannot contain `%s` as it is used by jsxstyle and will be overwritten.',
                   propObj.key.name
                 );
