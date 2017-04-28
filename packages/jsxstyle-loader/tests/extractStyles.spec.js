@@ -300,4 +300,21 @@ const DynamicBlock = ({wow, ...props}) => <Block dynamicProp={wow} {...props} />
       })
     ).toThrow(/`component` prop value was not handled by extractStyles: `member.expression\(\)`/);
   });
+
+  it('handles the className prop correctly', () => {
+    const rv1 = extractStyles({
+      src: `<Row
+  className={member.expression}
+  {...spread}
+/>`,
+      sourceFileName: 'test/class-name1.js',
+      cacheObject: {},
+      staticNamespace,
+    });
+    expect(rv1.js).toEqual(
+      `<Row
+  {...spread}
+  className={typeof spread === "object" && spread !== null && spread["className"] || member.expression} />`
+    );
+  });
 });

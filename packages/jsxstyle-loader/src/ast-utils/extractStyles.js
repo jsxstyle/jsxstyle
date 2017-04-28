@@ -291,7 +291,11 @@ function extractStyles({src, styleGroups, sourceFileName, staticNamespace, cache
           if (className) {
             attributeValue = b.literal(`${evaluatedValue} ${className}`);
           } else {
-            attributeValue = b.literal(evaluatedValue);
+            if (typeof evaluatedValue === 'string') {
+              attributeValue = b.literal(evaluatedValue);
+            } else {
+              attributeValue = b.jsxExpressionContainer(b.literal(evaluatedValue));
+            }
           }
         } else {
           if (className) {
@@ -300,6 +304,7 @@ function extractStyles({src, styleGroups, sourceFileName, staticNamespace, cache
         }
       } else {
         if (className) {
+          // TODO: figure out why this gets double parens
           attributeValue = b.jsxExpressionContainer(
             b.binaryExpression(
               '+',
@@ -315,7 +320,7 @@ function extractStyles({src, styleGroups, sourceFileName, staticNamespace, cache
             )
           );
         } else {
-          attributeValue = classNamePropValue;
+          attributeValue = b.jsxExpressionContainer(classNamePropValue);
         }
       }
     } else if (className) {
