@@ -1,6 +1,7 @@
 'use strict';
 
 const recast = require('recast');
+const invariant = require('invariant');
 
 const types = recast.types;
 const n = types.namedTypes;
@@ -37,7 +38,19 @@ function getPropValueFromAttributes(propName, attrs) {
     .filter(
       // 1. idx is greater than propValue prop index
       // 2. attr is a spread operator
-      (attr, idx) => idx > propIndex && n.JSXSpreadAttribute.check(attr)
+      (attr, idx) => {
+        if (n.JSXSpreadAttribute.check(attr)) {
+          invariant(
+            // only allow member expressions and identifiers to be spread for now
+            n.Identifier.check(attr.argument) || n.MemberExpression.check(attr.argument),
+            'Unhandled spread operator value of type `%s` (`%s`)',
+            attr.argument.type,
+            recast.print(attr).code
+          );
+          return idx > propIndex;
+        }
+        return false;
+      }
     )
     .map(attr => attr.argument);
 
@@ -45,9 +58,10 @@ function getPropValueFromAttributes(propName, attrs) {
   // i.e. before1.propValue || before2.propValue || propValue
   // TODO: figure out how to do this without all the extra parens
   if (applicableSpreads.length > 0) {
-    propValue = applicableSpreads
-      .reverse()
-      .reduce((acc, val) => b.logicalExpression('||', accessSafe(val, 'className'), acc), propValue);
+    propValue = applicableSpreads.reduce(
+      (acc, val) => b.logicalExpression('||', accessSafe(val, propName), acc),
+      propValue
+    );
   }
 
   return propValue;
