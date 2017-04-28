@@ -9,8 +9,6 @@ const babylon = require('babylon');
 const jsxstyle = require('jsxstyle');
 const createCSS = require('jsxstyle/lib/createCSS');
 const explodePseudoStyles = require('jsxstyle/lib/explodePseudoStyles');
-const getStyleKeyForStyleObject = require('jsxstyle/lib/getStyleKeyForStyleObject');
-const getClassName = require('jsxstyle/lib/getClassName');
 
 const canEvaluate = require('./canEvaluate');
 const getPropValueFromAttributes = require('./getPropValueFromAttributes');
@@ -107,11 +105,12 @@ function extractStyles({src, styleGroups, sourceFileName, staticNamespace, cache
 
           // TODO: implement props prop
           if (attribute.name.name === 'props') {
-            propsPropValue = attribute.value;
-            // this should always be true
-            if (n.JSXExpressionContainer.check(propsPropValue)) {
-              propsPropValue = propsPropValue.expression;
-            }
+            invariant(
+              n.JSXExpressionContainer.check(attribute.value),
+              'props prop should be an expresion container. received type `%s`',
+              attribute.value.type
+            );
+            propsPropValue = attribute.value.expression;
 
             // keep the props prop but do not increment inlinePropCount. if inlinePropCount is 0 when
             // we're done, props prop will be spread. otherwise it will remain in place to preserve order.
@@ -228,12 +227,21 @@ function extractStyles({src, styleGroups, sourceFileName, staticNamespace, cache
           } else {
             node.name.name = 'div';
           }
-        } else if (lastSpreadIndex !== null) {
-          // if only some style props were extracted AND additional props are spread onto the component,
-          // add the props back with null values to prevent spread props from incorrectly overwriting the extracted prop value
-          Object.keys(staticAttributes).forEach(attr => {
-            node.attributes.push(b.jsxAttribute(b.jsxIdentifier(attr), b.jsxExpressionContainer(b.literal(null))));
-          });
+        } else {
+          if (lastSpreadIndex !== null) {
+            // if only some style props were extracted AND additional props are spread onto the component,
+            // add the props back with null values to prevent spread props from incorrectly overwriting the extracted prop value
+            Object.keys(staticAttributes).forEach(attr => {
+              node.attributes.push(b.jsxAttribute(b.jsxIdentifier(attr), b.jsxExpressionContainer(b.literal(null))));
+            });
+          }
+
+          // Add component prop back if it was initially present
+          if (componentPropValue) {
+            node.attributes.push(
+              b.jsxAttribute(b.jsxIdentifier('component'), b.jsxExpressionContainer(componentPropValue))
+            );
+          }
         }
 
         staticStyles.push({
