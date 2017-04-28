@@ -4,6 +4,7 @@ const invariant = require('invariant');
 const path = require('path');
 const recast = require('recast');
 const vm = require('vm');
+const babylon = require('babylon');
 
 const jsxstyle = require('jsxstyle');
 const createCSS = require('jsxstyle/lib/createCSS');
@@ -51,6 +52,13 @@ function extractStyles({src, styleGroups, sourceFileName, staticNamespace, cache
 
   const ast = recast.parse(src, {
     sourceFileName,
+    parser: {
+      parse: source =>
+        babylon.parse(source, {
+          sourceType: 'module',
+          plugins: ['jsx', 'objectRestSpread'],
+        }),
+    },
   });
   const staticStyles = [];
 

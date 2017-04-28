@@ -15,6 +15,7 @@
     "prepublish": "yarn run -s build_lib > /dev/null"
   },
   "dependencies": {
+    "babylon": "^6.17.0",
     "invariant": "^2.2.1",
     "jsxstyle": "next",
     "loader-utils": "^1.1.0",

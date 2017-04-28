@@ -194,6 +194,21 @@ describe('extractStyles', function() {
     ).toThrow(/`props` prop value was not handled by extractStyles: `"invalid"`/);
   });
 
+  it("doesn't explode if you use the spread operator", () => {
+    const rv = extractStyles({
+      src: `const BlueBlock = ({wow, ...props}) => <Block color="blue" {...props} test="wow" />;
+const DynamicBlock = ({wow, ...props}) => <Block dynamicProp={wow} {...props} />;`,
+      sourceFileName: 'test/rest-spread.js',
+      cacheObject: {},
+    });
+
+    expect(rv.js).toEqual(
+      `require("test/rest-spread.jsxstyle.css");
+const BlueBlock = ({wow, ...props}) => <Block color="blue" {...props} test={null} className="_x0" />;
+const DynamicBlock = ({wow, ...props}) => <Block dynamicProp={wow} {...props} />;`
+    );
+  });
+
   it('handles the `component` prop correctly', () => {
     const rv = extractStyles({
       src: `<Block component="input" />;
