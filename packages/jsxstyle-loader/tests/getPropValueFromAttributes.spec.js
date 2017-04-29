@@ -1,13 +1,14 @@
 'use strict';
 
 const recast = require('recast');
+const parse = require('../src/ast-utils/parse');
 
-const getPropValueFromAttributes = require('../lib/ast-utils/getPropValueFromAttributes');
+const getPropValueFromAttributes = require('../src/ast-utils/getPropValueFromAttributes');
 
 describe('getPropValueFromAttributes', () => {
   it('returns the original prop value if no spread attributes appear before the requested prop', () => {
     // TODO: update to use `resolves` when Jest 20 is released
-    const ast = recast.parse(`<Block {...spread} thing={Wow} />`);
+    const ast = parse(`<Block {...spread} thing={Wow} />`);
     recast.visit(ast, {
       visitJSXElement(path) {
         const node = path.node.openingElement;
@@ -19,7 +20,7 @@ describe('getPropValueFromAttributes', () => {
   });
 
   it('deals with one spread operator', () => {
-    const ast = recast.parse(`<Block thing={Wow} {...spread} />`);
+    const ast = parse(`<Block thing={Wow} {...spread} />`);
     recast.visit(ast, {
       visitJSXElement(path) {
         const node = path.node.openingElement;
@@ -33,7 +34,7 @@ describe('getPropValueFromAttributes', () => {
   });
 
   it('deals with two spread operators', () => {
-    const ast = recast.parse(`<Block thing={Wow} {...one} {...two} />`);
+    const ast = parse(`<Block thing={Wow} {...one} {...two} />`);
     recast.visit(ast, {
       visitJSXElement(path) {
         const node = path.node.openingElement;
@@ -49,7 +50,7 @@ describe('getPropValueFromAttributes', () => {
 
   // this should be sufficient
   it('deals with three spread operators', () => {
-    const ast = recast.parse(`<Block thing={Wow} {...one} {...two} {...three} />`);
+    const ast = parse(`<Block thing={Wow} {...one} {...two} {...three} />`);
     recast.visit(ast, {
       visitJSXElement(path) {
         const node = path.node.openingElement;
@@ -65,7 +66,7 @@ describe('getPropValueFromAttributes', () => {
   });
 
   it('throws an error if the spread operator is not a identifier or member expression', () => {
-    const ast = recast.parse(`<Block thing={Wow} {...{obj: 'ok'}} />`);
+    const ast = parse(`<Block thing={Wow} {...{obj: 'ok'}} />`);
     recast.visit(ast, {
       visitJSXElement(path) {
         const node = path.node.openingElement;

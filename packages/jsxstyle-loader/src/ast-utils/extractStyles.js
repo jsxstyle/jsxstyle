@@ -4,7 +4,6 @@ const invariant = require('invariant');
 const path = require('path');
 const recast = require('recast');
 const vm = require('vm');
-const babylon = require('babylon');
 
 const jsxstyle = require('jsxstyle');
 const createCSS = require('jsxstyle/lib/createCSS');
@@ -13,6 +12,7 @@ const explodePseudoStyles = require('jsxstyle/lib/explodePseudoStyles');
 const canEvaluate = require('./canEvaluate');
 const getPropValueFromAttributes = require('./getPropValueFromAttributes');
 const getStylesByClassName = require('../getStylesByClassName');
+const parse = require('./parse');
 
 const types = recast.types;
 const n = types.namedTypes;
@@ -53,16 +53,7 @@ function extractStyles({src, styleGroups, sourceFileName, staticNamespace, cache
 
   const evalContext = vm.createContext(staticNamespace ? Object.assign({}, staticNamespace) : {});
 
-  const ast = recast.parse(src, {
-    sourceFileName,
-    parser: {
-      parse: source =>
-        babylon.parse(source, {
-          sourceType: 'module',
-          plugins: ['jsx', 'objectRestSpread'],
-        }),
-    },
-  });
+  const ast = parse(src, {sourceFileName});
   const staticStyles = [];
 
   recast.visit(ast, {
@@ -137,8 +128,6 @@ function extractStyles({src, styleGroups, sourceFileName, staticNamespace, cache
         const value = attribute.value;
 
         // if value can be evaluated, extract it and filter it out
-        // TODO: extract evaluatable constants from current scope and add to context
-        // this would remove the need to explicitly set
         if (canEvaluate(staticNamespace, value)) {
           staticAttributes[name] = vm.runInContext(recast.print(value).code, evalContext);
           return false;
