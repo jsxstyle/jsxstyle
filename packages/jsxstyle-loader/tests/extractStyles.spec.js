@@ -38,7 +38,7 @@ describe('extractStyles', function() {
   it('skips JSXElements that do not have a JSXIdentifier as an opening element', () => {
     const rv = extractStyles({
       src: '<member.expression color="red" />; <Member.Expression color="blue" />;',
-      sourceFileName: getTestFilePath('jsxidentifier.js'),
+      sourceFileName: 'test/jsxidentifier.js',
       cacheObject: {},
     });
     expect(rv.js).toEqual('<member.expression color="red" />; <Member.Expression color="blue" />;');
@@ -177,7 +177,9 @@ describe('extractStyles', function() {
 <Block props={variable} />;
 <Block props={calledFunction()} />;
 <Block props={member.expression} />;
-<Block dynamic={ok} props="this should remain untouched" />;`,
+<Block dynamic={ok} props="this should remain untouched" />;
+<Block props={{objectShorthand}} />;
+<Block props={{...nestedSpread}} />;`,
       sourceFileName: 'test/props-prop1.js',
       cacheObject: {},
       staticNamespace,
@@ -190,7 +192,9 @@ describe('extractStyles', function() {
 <div {...variable} className="_x0" />;
 <div {...calledFunction()} className="_x0" />;
 <div {...member.expression} className="_x0" />;
-<Block dynamic={ok} props="this should remain untouched" />;`
+<Block dynamic={ok} props="this should remain untouched" />;
+<div objectShorthand={objectShorthand} className="_x0" />;
+<div {...nestedSpread} className="_x0" />;`
     );
 
     expect(() =>

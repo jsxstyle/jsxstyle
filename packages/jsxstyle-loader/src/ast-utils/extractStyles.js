@@ -161,22 +161,28 @@ function extractStyles({src, styleGroups, sourceFileName, staticNamespace, cache
             // if it's an object, loop through the properties array and prepend to node.attributes
             for (const k in propsPropValue.properties) {
               const propObj = propsPropValue.properties[k];
-              invariant(
-                ['style', 'className'].indexOf(propObj.key.name) === -1,
-                '`props` prop cannot contain `' +
-                  propObj.key.name +
-                  '` as it is used by jsxstyle and will be overwritten.'
-              );
-              if (n.Literal.check(propObj.value) && typeof propObj.value.value === 'string') {
-                // convert literal value back to literal to ensure it has double quotes (siiiigh)
-                node.attributes.unshift(
-                  b.jsxAttribute(b.jsxIdentifier(propObj.key.name), b.literal(propObj.value.value))
+              if (n.ObjectProperty.check(propObj)) {
+                invariant(
+                  ['style', 'className'].indexOf(propObj.key.name) === -1,
+                  '`props` prop cannot contain `' +
+                    propObj.key.name +
+                    '` as it is used by jsxstyle and will be overwritten.'
                 );
+                if (n.Literal.check(propObj.value) && typeof propObj.value.value === 'string') {
+                  // convert literal value back to literal to ensure it has double quotes (siiiigh)
+                  node.attributes.unshift(
+                    b.jsxAttribute(b.jsxIdentifier(propObj.key.name), b.literal(propObj.value.value))
+                  );
+                } else {
+                  // wrap everything else in a JSXExpressionContainer
+                  node.attributes.unshift(
+                    b.jsxAttribute(b.jsxIdentifier(propObj.key.name), b.jsxExpressionContainer(propObj.value))
+                  );
+                }
+              } else if (n.SpreadProperty.check(propObj)) {
+                node.attributes.unshift(b.jsxSpreadAttribute(propObj.argument));
               } else {
-                // wrap everything else in a JSXExpressionContainer
-                node.attributes.unshift(
-                  b.jsxAttribute(b.jsxIdentifier(propObj.key.name), b.jsxExpressionContainer(propObj.value))
-                );
+                invariant(false, 'Unhandled object property type: %s', propObj.type);
               }
             }
           } else if (
