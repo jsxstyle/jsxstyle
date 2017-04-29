@@ -177,9 +177,8 @@ describe('extractStyles', function() {
 <Block props={variable} />;
 <Block props={calledFunction()} />;
 <Block props={member.expression} />;
-<Block dynamic={ok} props="this should remain untouched" />;
 <Block props={{objectShorthand}} />;
-<Block props={{...nestedSpread}} />;`,
+<Block props={{...one, two: {three, four: 'five', ...six}}} seven="eight" />;`,
       sourceFileName: 'test/props-prop1.js',
       cacheObject: {},
       staticNamespace,
@@ -192,10 +191,27 @@ describe('extractStyles', function() {
 <div {...variable} className="_x0" />;
 <div {...calledFunction()} className="_x0" />;
 <div {...member.expression} className="_x0" />;
-<Block dynamic={ok} props="this should remain untouched" />;
 <div objectShorthand={objectShorthand} className="_x0" />;
-<div {...nestedSpread} className="_x0" />;`
+<div {...one} two={{three, four: 'five', ...six}} className="_x1" />;`
     );
+
+    expect(() =>
+      extractStyles({
+        src: `<Block props={{className: 'test'}} />;`,
+        sourceFileName: 'test/props-prop1.js',
+        cacheObject: {},
+        staticNamespace,
+      })
+    ).toThrow(/`props` prop cannot contain `className` as it is used by jsxstyle and will be overwritten\./);
+
+    expect(() =>
+      extractStyles({
+        src: `<Block props={{style: 'test'}} />;`,
+        sourceFileName: 'test/props-prop1.js',
+        cacheObject: {},
+        staticNamespace,
+      })
+    ).toThrow(/`props` prop cannot contain `style` as it is used by jsxstyle and will be overwritten\./);
 
     expect(() =>
       extractStyles({
@@ -204,7 +220,16 @@ describe('extractStyles', function() {
         cacheObject: {},
         staticNamespace,
       })
-    ).toThrow(/`props` prop value was not handled by extractStyles: `"invalid"`/);
+    ).toThrow(/props prop should be an expresion container\. received type `StringLiteral`/);
+
+    expect(() =>
+      extractStyles({
+        src: '<Block dynamicProp={wow} props="invalid" />',
+        sourceFileName: 'test/props-prop3.js',
+        cacheObject: {},
+        staticNamespace,
+      })
+    ).toThrow(/props prop should be an expresion container\. received type `StringLiteral`/);
   });
 
   it("doesn't explode if you use the spread operator", () => {

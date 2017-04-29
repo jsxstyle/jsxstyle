@@ -109,7 +109,6 @@ function extractStyles({src, styleGroups, sourceFileName, staticNamespace, cache
           return true;
         }
 
-        // TODO: implement props prop
         if (attribute.name.name === 'props') {
           invariant(
             n.JSXExpressionContainer.check(attribute.value),
@@ -164,23 +163,22 @@ function extractStyles({src, styleGroups, sourceFileName, staticNamespace, cache
               if (n.ObjectProperty.check(propObj)) {
                 invariant(
                   ['style', 'className'].indexOf(propObj.key.name) === -1,
-                  '`props` prop cannot contain `' +
-                    propObj.key.name +
-                    '` as it is used by jsxstyle and will be overwritten.'
+                  '`props` prop cannot contain `%s` as it is used by jsxstyle and will be overwritten.',
+                  propObj.key.name
                 );
                 if (n.Literal.check(propObj.value) && typeof propObj.value.value === 'string') {
                   // convert literal value back to literal to ensure it has double quotes (siiiigh)
-                  node.attributes.unshift(
+                  node.attributes.push(
                     b.jsxAttribute(b.jsxIdentifier(propObj.key.name), b.literal(propObj.value.value))
                   );
                 } else {
                   // wrap everything else in a JSXExpressionContainer
-                  node.attributes.unshift(
+                  node.attributes.push(
                     b.jsxAttribute(b.jsxIdentifier(propObj.key.name), b.jsxExpressionContainer(propObj.value))
                   );
                 }
               } else if (n.SpreadProperty.check(propObj)) {
-                node.attributes.unshift(b.jsxSpreadAttribute(propObj.argument));
+                node.attributes.push(b.jsxSpreadAttribute(propObj.argument));
               } else {
                 invariant(false, 'Unhandled object property type: %s', propObj.type);
               }
@@ -194,7 +192,7 @@ function extractStyles({src, styleGroups, sourceFileName, staticNamespace, cache
             // props={wow}
             n.Identifier.check(propsPropValue)
           ) {
-            node.attributes.unshift(b.jsxSpreadAttribute(propsPropValue));
+            node.attributes.push(b.jsxSpreadAttribute(propsPropValue));
           } else {
             invariant(
               false,
