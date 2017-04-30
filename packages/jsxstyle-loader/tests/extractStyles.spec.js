@@ -296,6 +296,120 @@ const DynamicBlock = ({wow, ...props}) => <Block dynamicProp={wow} {...props} />
     );
   });
 
+  it('extracts a ternary expression that has static consequent and alternate', () => {
+    const rv = extractStyles({
+      src: `<Block color={dynamic ? 'red' : 'blue'} />`,
+      sourceFileName: 'test/ternary.js',
+      cacheObject: {},
+      staticNamespace,
+    });
+
+    expect(rv.js).toEqual(
+      `require("test/ternary.jsxstyle.css");
+<div className={((dynamic ? "_x1" : "_x2")) + " " + "_x0"} />`
+    );
+  });
+
+  it('extracts a ternary expression from a component that has a className specified', () => {
+    const rv = extractStyles({
+      src: `<Block className="cool" color={dynamic ? 'red' : 'blue'} />`,
+      sourceFileName: 'test/ternary-with-classname.js',
+      cacheObject: {},
+      staticNamespace,
+    });
+
+    expect(rv.js).toEqual(
+      `require("test/ternary-with-classname.jsxstyle.css");
+<div className={"cool " + ((dynamic ? "_x1" : "_x2")) + " " + "_x0"} />`
+    );
+  });
+
+  it('ignores a ternary expression that comes before a spread operator', () => {
+    const rv = extractStyles({
+      src: `<Block color={dynamic ? 'red' : 'blue'} {...spread} className="cool" />`,
+      sourceFileName: 'test/ternary-with-classname.js',
+      cacheObject: {},
+      staticNamespace,
+    });
+
+    expect(rv.js).toEqual(`<Block color={dynamic ? 'red' : 'blue'} {...spread} className="cool" />`);
+  });
+
+  it('extracts a ternary expression from a component that has a className and spread operator', () => {
+    const rv = extractStyles({
+      src: `<Block {...spread} color={dynamic ? 'red' : 'blue'} />`,
+      sourceFileName: 'test/ternary-with-spread.js',
+      cacheObject: {},
+      staticNamespace,
+    });
+
+    expect(rv.js).toEqual(
+      `require("test/ternary-with-spread.jsxstyle.css");
+<Block
+  {...spread}
+  color={null}
+  className={((dynamic ? "_x1" : "_x2")) + " " + "_x0"} />`
+    );
+  });
+
+  it('groups extracted ternary statements', () => {
+    const rv = extractStyles({
+      src: `<Block color={dynamic ? 'red' : 'blue'} width={dynamic ? 200 : 400} />`,
+      sourceFileName: 'test/ternary-groups.js',
+      cacheObject: {},
+      staticNamespace,
+    });
+
+    expect(rv.js).toEqual(
+      `require("test/ternary-groups.jsxstyle.css");
+<div className={((dynamic ? "_x1" : "_x2")) + " " + "_x0"} />`
+    );
+
+    expect(rv.css).toEqual(
+      `/* test/ternary-groups.js:1 (Block) */
+._x0 {
+  display:block;
+}
+/* test/ternary-groups.js:1 (Block) */
+._x1 {
+  color:red;
+  width:200px;
+}
+/* test/ternary-groups.js:1 (Block) */
+._x2 {
+  color:blue;
+  width:400px;
+}
+`
+    );
+  });
+
+  it('handles null values in ternaries correctly', () => {
+    const rv = extractStyles({
+      src: `<Block color={dynamic ? null : 'blue'} />`,
+      sourceFileName: 'test/ternary-null-values.js',
+      cacheObject: {},
+      staticNamespace,
+    });
+
+    expect(rv.js).toEqual(
+      `require("test/ternary-null-values.jsxstyle.css");
+<div className={((dynamic ? "" : "_x1")) + " " + "_x0"} />`
+    );
+
+    expect(rv.css).toEqual(
+      `/* test/ternary-null-values.js:1 (Block) */
+._x0 {
+  display:block;
+}
+/* test/ternary-null-values.js:1 (Block) */
+._x1 {
+  color:blue;
+}
+`
+    );
+  });
+
   it('handles the `component` prop correctly', () => {
     const rv = extractStyles({
       src: `<Block component="input" />;

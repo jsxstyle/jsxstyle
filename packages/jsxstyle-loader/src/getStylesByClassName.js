@@ -8,8 +8,8 @@ const getStyleKeyForStyleObject = require('jsxstyle/lib/getStyleKeyForStyleObjec
 function getStylesByClassName(styleGroups, staticAttributes, cacheObject) {
   if (typeof staticAttributes !== 'undefined') {
     invariant(
-      typeof cacheObject === 'object' && cacheObject !== null,
-      'getStylesByClassName expects an object as its third parameter'
+      typeof staticAttributes === 'object' && staticAttributes !== null,
+      'getStylesByClassName expects an object as its second parameter'
     );
   }
 

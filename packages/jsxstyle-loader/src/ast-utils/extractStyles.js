@@ -12,6 +12,7 @@ const explodePseudoStyles = require('jsxstyle/lib/explodePseudoStyles');
 const canEvaluate = require('./canEvaluate');
 const getPropValueFromAttributes = require('./getPropValueFromAttributes');
 const getStylesByClassName = require('../getStylesByClassName');
+const getStyleKeyForStyleObject = require('jsxstyle/lib/getStyleKeyForStyleObject');
 const parse = require('./parse');
 
 const types = recast.types;
@@ -87,6 +88,8 @@ function extractStyles({src, styleGroups, sourceFileName, staticNamespace, cache
       const staticAttributes = {};
       let inlinePropCount = 0;
 
+      const ternaries = {};
+
       node.attributes = node.attributes.filter((attribute, idx) => {
         if (!attribute.name || !attribute.name.name) {
           // keep the weirdos
@@ -130,11 +133,11 @@ function extractStyles({src, styleGroups, sourceFileName, staticNamespace, cache
             // component={variable.prop}
             return true;
           } else {
-            invariant(
-              false,
-              '`component` prop value was not handled by extractStyles: `%s`',
-              recast.print(componentPropValue).code
+            inlinePropCount++;
+            console.warn(
+              '`component` prop value was not handled by extractStyles: `' + recast.print(componentPropValue).code + '`'
             );
+            return true;
           }
         }
 
@@ -169,6 +172,34 @@ function extractStyles({src, styleGroups, sourceFileName, staticNamespace, cache
         if (canEvaluate(staticNamespace, value)) {
           staticAttributes[name] = vm.runInContext(recast.print(value).code, evalContext);
           return false;
+        }
+
+        // expression container with a ternary inside
+        if (n.JSXExpressionContainer.check(value) && n.ConditionalExpression.check(value.expression)) {
+          // if both sides of the ternary can be evaluated, extract them
+          if (
+            canEvaluate(staticNamespace, value.expression.consequent) &&
+            canEvaluate(staticNamespace, value.expression.alternate)
+          ) {
+            const key = recast.print(value.expression.test).code;
+            ternaries[key] = ternaries[key] || {
+              test: value.expression.test,
+              consequent: {},
+              alternate: {},
+            };
+            ternaries[key].consequent[name] = vm.runInContext(
+              recast.print(value.expression.consequent).code,
+              evalContext
+            );
+            ternaries[key].alternate[name] = vm.runInContext(
+              recast.print(value.expression.alternate).code,
+              evalContext
+            );
+            if (!staticAttributes.hasOwnProperty(name)) {
+              staticAttributes[name] = null;
+            }
+            return false;
+          }
         }
 
         // if we've made it this far, the prop stays inline
@@ -268,6 +299,7 @@ function extractStyles({src, styleGroups, sourceFileName, staticNamespace, cache
         originalNodeName,
         staticAttributes,
         classNamePropValue,
+        ternaries,
       });
 
       if (path.node.closingElement) {
@@ -281,7 +313,7 @@ function extractStyles({src, styleGroups, sourceFileName, staticNamespace, cache
   // Using a map for (officially supported) guaranteed insertion order
   const cssMap = new Map();
 
-  staticStyles.forEach(({node, originalNodeName, staticAttributes, classNamePropValue}) => {
+  staticStyles.forEach(({node, originalNodeName, staticAttributes, classNamePropValue, ternaries}) => {
     const stylesByClassName = getStylesByClassName(styleGroups, staticAttributes, cacheObject);
 
     const lineNumbers =
@@ -289,6 +321,56 @@ function extractStyles({src, styleGroups, sourceFileName, staticNamespace, cache
     const commentText = `${sourceFileName.replace(process.cwd(), '')}:${lineNumbers} (${originalNodeName})`;
 
     const extractedStyleClassNames = Object.keys(stylesByClassName).join(' ');
+
+    const ternaryKeys = Object.keys(ternaries);
+    if (ternaryKeys.length > 0) {
+      const ternaryExpressions = ternaryKeys
+        .map(key => {
+          const {test, consequent, alternate} = ternaries[key];
+
+          cacheObject.keys = cacheObject.keys || {};
+          cacheObject.counter = cacheObject.counter || 0;
+
+          const consequentKey = getStyleKeyForStyleObject(consequent);
+          let consequentClassName = '';
+          if (consequentKey) {
+            cacheObject.keys[consequentKey] = cacheObject.keys[consequentKey] || (cacheObject.counter++).toString(16);
+            consequentClassName = `_x${cacheObject.keys[consequentKey]}`;
+            stylesByClassName[consequentClassName] = consequent;
+          }
+
+          const alternateKey = getStyleKeyForStyleObject(alternate);
+          let alternateClassName = '';
+          if (alternateKey) {
+            cacheObject.keys[alternateKey] = cacheObject.keys[alternateKey] || (cacheObject.counter++).toString(16);
+            alternateClassName = `_x${cacheObject.keys[alternateKey]}`;
+            stylesByClassName[alternateClassName] = alternate;
+          }
+
+          return b.conditionalExpression(test, b.literal(consequentClassName), b.literal(alternateClassName));
+        })
+        .reduce((acc, val) => (acc ? b.binaryExpression('+', acc, val) : val));
+
+      if (classNamePropValue) {
+        if (canEvaluate({}, classNamePropValue)) {
+          const classNamePropValueString = vm.runInNewContext(recast.print(classNamePropValue).code);
+          if (classNamePropValueString) {
+            classNamePropValue = b.binaryExpression('+', b.literal(classNamePropValueString + ' '), ternaryExpressions);
+          } else {
+            classNamePropValue = ternaryExpressions;
+          }
+        } else {
+          classNamePropValue = b.binaryExpression(
+            '+',
+            // TODO: move classNamePropValue out and check if it's valid, then turn this into a binary expression that conditionally adds a space
+            b.binaryExpression('+', b.logicalExpression('||', classNamePropValue, b.literal('')), b.literal(' ')),
+            ternaryExpressions
+          );
+        }
+      } else {
+        classNamePropValue = ternaryExpressions;
+      }
+    }
 
     let attributeValue;
     if (classNamePropValue) {
