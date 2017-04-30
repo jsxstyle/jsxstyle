@@ -19,29 +19,29 @@ describe('getPropValueFromAttributes', () => {
     });
   });
 
-  it('deals with one spread operator', () => {
+  it('handles one spread operator', () => {
     const ast = parse(`<Block thing={Wow} {...spread} />`);
     recast.visit(ast, {
       visitJSXElement(path) {
         const node = path.node.openingElement;
         const componentPropValue = getPropValueFromAttributes('thing', node.attributes);
         expect(recast.print(componentPropValue).code).toEqual(
-          'typeof spread === "object" && spread !== null && spread["thing"] || Wow'
+          'typeof spread === "object" && spread !== null && spread.thing || Wow'
         );
         return false;
       },
     });
   });
 
-  it('deals with two spread operators', () => {
+  it('handles two spread operators', () => {
     const ast = parse(`<Block thing={Wow} {...one} {...two} />`);
     recast.visit(ast, {
       visitJSXElement(path) {
         const node = path.node.openingElement;
         const componentPropValue = getPropValueFromAttributes('thing', node.attributes);
         expect(recast.print(componentPropValue).code).toEqual(
-          'typeof two === "object" && two !== null && two["thing"] || ' +
-            '(typeof one === "object" && one !== null && one["thing"] || Wow)'
+          'typeof two === "object" && two !== null && two.thing || ' +
+            '(typeof one === "object" && one !== null && one.thing || Wow)'
         );
         return false;
       },
@@ -49,16 +49,31 @@ describe('getPropValueFromAttributes', () => {
   });
 
   // this should be sufficient
-  it('deals with three spread operators', () => {
-    const ast = parse(`<Block thing={Wow} {...one} {...two} {...three} />`);
+  it('handles three spread operators', () => {
+    const ast = parse(`<Block className={Wow} {...one} {...two} {...three} />`);
     recast.visit(ast, {
       visitJSXElement(path) {
         const node = path.node.openingElement;
-        const componentPropValue = getPropValueFromAttributes('thing', node.attributes);
+        const componentPropValue = getPropValueFromAttributes('className', node.attributes);
         expect(recast.print(componentPropValue).code).toEqual(
-          'typeof three === "object" && three !== null && three["thing"] || ' +
-            '(typeof two === "object" && two !== null && two["thing"] || ' +
-            '(typeof one === "object" && one !== null && one["thing"] || Wow))'
+          'typeof three === "object" && three !== null && three.className || ' +
+            '(typeof two === "object" && two !== null && two.className || ' +
+            '(typeof one === "object" && one !== null && one.className || Wow))'
+        );
+        return false;
+      },
+    });
+  });
+
+  it('ignores spread operators that come before the prop', () => {
+    const ast = parse(`<Block {...one} className={Wow} {...two} {...three} />`);
+    recast.visit(ast, {
+      visitJSXElement(path) {
+        const node = path.node.openingElement;
+        const componentPropValue = getPropValueFromAttributes('className', node.attributes);
+        expect(recast.print(componentPropValue).code).toEqual(
+          'typeof three === "object" && three !== null && three.className || ' +
+            '(typeof two === "object" && two !== null && two.className || Wow)'
         );
         return false;
       },

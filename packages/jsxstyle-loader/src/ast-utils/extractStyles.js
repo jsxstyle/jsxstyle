@@ -26,7 +26,7 @@ const ALL_SPECIAL_PROPS = ['component', 'className'].concat(UNTOUCHED_PROPS);
 const defaultCacheObject = {};
 function extractStyles({src, styleGroups, sourceFileName, staticNamespace, cacheObject}) {
   invariant(typeof src === 'string', 'extractStyles expects `src` to be a string of javascript');
-  invariant(typeof sourceFileName === 'string', 'extractStyles expects `sourceFileName` to be a string');
+  invariant(typeof sourceFileName === 'string', 'extractStyles expects `sourceFileName` to be a path to a .js file');
 
   if (typeof cacheObject !== 'undefined') {
     invariant(
@@ -82,7 +82,6 @@ function extractStyles({src, styleGroups, sourceFileName, staticNamespace, cache
       });
 
       const classNamePropValue = getPropValueFromAttributes('className', node.attributes);
-      const componentPropValue = getPropValueFromAttributes('component', node.attributes);
       let propsPropValue = null;
 
       const staticAttributes = {};
@@ -95,9 +94,48 @@ function extractStyles({src, styleGroups, sourceFileName, staticNamespace, cache
           return true;
         }
 
-        // component and className props will be handled elsewhere
-        if (attribute.name.name === 'component' || attribute.name.name === 'className') {
+        // className prop will be handled below
+        if (attribute.name.name === 'className') {
           return false;
+        }
+
+        if (attribute.name.name === 'component') {
+          if (idx < lastSpreadIndex) {
+            inlinePropCount++;
+            return true;
+          }
+          const componentPropValue = n.JSXExpressionContainer.check(attribute.value)
+            ? attribute.value.expression
+            : attribute.value;
+
+          if (n.Literal.check(componentPropValue) && typeof componentPropValue.value === 'string') {
+            const char1 = componentPropValue.value[0];
+            // component="article"
+            invariant(
+              char1 === char1.toLowerCase(),
+              '`component` prop is a string that starts with an uppercase letter (`%s`). React will (incorrectly) assume this is a component.',
+              componentPropValue.value
+            );
+            return true;
+          } else if (n.Identifier.check(componentPropValue)) {
+            const char1 = attribute.value.expression.name[0];
+            // component={Avatar}
+            invariant(
+              char1 === char1.toUpperCase(),
+              '`component` prop is an identifier that starts with a lowercase letter (`%s`). React will (incorrectly) assume this is an HTML element.',
+              componentPropValue.name
+            );
+            return true;
+          } else if (n.MemberExpression.check(componentPropValue)) {
+            // component={variable.prop}
+            return true;
+          } else {
+            invariant(
+              false,
+              '`component` prop value was not handled by extractStyles: `%s`',
+              recast.print(componentPropValue).code
+            );
+          }
         }
 
         // pass key and style props through untouched
@@ -195,37 +233,23 @@ function extractStyles({src, styleGroups, sourceFileName, staticNamespace, cache
           }
         }
 
-        if (componentPropValue) {
-          // TODO: consider converting this to React.createElement to avoid uppercase/lowercase weirdness
+        const componentPropIndex = node.attributes.findIndex(attr => attr.name && attr.name.name === 'component');
+        if (componentPropIndex > -1) {
+          const attribute = node.attributes[componentPropIndex];
+          const componentPropValue = n.JSXExpressionContainer.check(attribute.value)
+            ? attribute.value.expression
+            : attribute.value;
+
           if (n.Literal.check(componentPropValue) && typeof componentPropValue.value === 'string') {
-            const char1 = componentPropValue.value[0];
-            // component="article"
-            invariant(
-              char1 === char1.toLowerCase(),
-              '`component` prop is a string that starts with an uppercase letter (`' +
-                componentPropValue.value +
-                '`). React will (incorrectly) assume this is a component.'
-            );
             node.name.name = componentPropValue.value;
           } else if (n.Identifier.check(componentPropValue)) {
-            const char1 = componentPropValue.name[0];
-            // component={Avatar}
-            invariant(
-              char1 === char1.toUpperCase(),
-              '`component` prop is an identifier that starts with a lowercase letter (`' +
-                componentPropValue.name +
-                '`). React will (incorrectly) assume this is an HTML element.'
-            );
             node.name.name = componentPropValue.name;
           } else if (n.MemberExpression.check(componentPropValue)) {
-            // component={variable.prop}
             node.name.name = recast.print(componentPropValue).code;
-          } else {
-            invariant(
-              false,
-              '`component` prop value was not handled by extractStyles: `' + recast.print(componentPropValue).code + '`'
-            );
           }
+
+          // remove component prop from attributes
+          node.attributes.splice(componentPropIndex, 1);
         } else {
           node.name.name = 'div';
         }
@@ -236,13 +260,6 @@ function extractStyles({src, styleGroups, sourceFileName, staticNamespace, cache
           Object.keys(staticAttributes).forEach(attr => {
             node.attributes.push(b.jsxAttribute(b.jsxIdentifier(attr), b.jsxExpressionContainer(b.literal(null))));
           });
-        }
-
-        // Add component prop back if it was initially present
-        if (componentPropValue) {
-          node.attributes.push(
-            b.jsxAttribute(b.jsxIdentifier('component'), b.jsxExpressionContainer(componentPropValue))
-          );
         }
       }
 
@@ -269,12 +286,9 @@ function extractStyles({src, styleGroups, sourceFileName, staticNamespace, cache
 
     const lineNumbers =
       node.loc.start.line + (node.loc.start.line !== node.loc.end.line ? `-${node.loc.end.line}` : '');
-    const commentText = `${path.relative(process.cwd(), sourceFileName)}:${lineNumbers} (${originalNodeName})`;
+    const commentText = `${sourceFileName.replace(process.cwd(), '')}:${lineNumbers} (${originalNodeName})`;
 
-    let className = Object.keys(stylesByClassName).join(' ');
-    if (className === '') {
-      className = null;
-    }
+    const extractedStyleClassNames = Object.keys(stylesByClassName).join(' ');
 
     let attributeValue;
     if (classNamePropValue) {
@@ -282,8 +296,8 @@ function extractStyles({src, styleGroups, sourceFileName, staticNamespace, cache
       if (canEvaluate({}, classNamePropValue)) {
         const evaluatedValue = vm.runInNewContext(recast.print(classNamePropValue).code);
         if (evaluatedValue) {
-          if (className) {
-            attributeValue = b.literal(`${evaluatedValue} ${className}`);
+          if (extractedStyleClassNames) {
+            attributeValue = b.literal(`${evaluatedValue} ${extractedStyleClassNames}`);
           } else {
             if (typeof evaluatedValue === 'string') {
               attributeValue = b.literal(evaluatedValue);
@@ -292,33 +306,26 @@ function extractStyles({src, styleGroups, sourceFileName, staticNamespace, cache
             }
           }
         } else {
-          if (className) {
-            attributeValue = b.literal(className);
+          if (extractedStyleClassNames) {
+            attributeValue = b.literal(extractedStyleClassNames);
           }
         }
       } else {
-        if (className) {
+        if (extractedStyleClassNames) {
           // TODO: figure out why this gets double parens
           attributeValue = b.jsxExpressionContainer(
             b.binaryExpression(
               '+',
-              b.conditionalExpression(
-                // if classNamePropValue
-                classNamePropValue,
-                // print classNamePropValue with a space
-                b.binaryExpression('+', classNamePropValue, b.literal(' ')),
-                // else an empty string
-                b.literal('')
-              ),
-              b.literal(className)
+              b.binaryExpression('+', classNamePropValue, b.literal(' ')),
+              b.literal(extractedStyleClassNames)
             )
           );
         } else {
           attributeValue = b.jsxExpressionContainer(classNamePropValue);
         }
       }
-    } else if (className) {
-      attributeValue = b.literal(className);
+    } else if (extractedStyleClassNames) {
+      attributeValue = b.literal(extractedStyleClassNames);
     }
 
     if (attributeValue) {

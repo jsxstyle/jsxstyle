@@ -17,8 +17,8 @@ function accessSafe(obj, member) {
       // obj !== null
       b.binaryExpression('!==', obj, b.literal(null))
     ),
-    // obj[member]
-    b.memberExpression(obj, b.literal(member))
+    // obj.member
+    b.memberExpression(obj, b.identifier(member), false)
   );
 }
 

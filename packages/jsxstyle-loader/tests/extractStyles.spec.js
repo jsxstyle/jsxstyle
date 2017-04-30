@@ -70,19 +70,56 @@ describe('extractStyles', function() {
 
   it('handles props mixed with spread operators', () => {
     const rv = extractStyles({
-      src: `<Block doNotExtract {...spread} extract="yep" />`,
+      src: `<Block doNotExtract="no" {...spread} extract="yep" />`,
       sourceFileName: 'test/spread.js',
       cacheObject: {},
     });
 
     expect(rv.js).toEqual(
       `require("test/spread.jsxstyle.css");
-<Block doNotExtract {...spread} extract={null} className="_x0" />`
+<Block doNotExtract="no" {...spread} extract={null} className="_x0" />`
     );
     expect(rv.css).toEqual(
       `/* test/spread.js:1 (Block) */
 ._x0 {
   extract:yep;
+}
+`
+    );
+  });
+
+  it('handles reserved props before the spread operators', () => {
+    const rv = extractStyles({
+      src: `<Block
+  className={wow}
+  component="wow"
+  props={{test: 4}}
+  key={test}
+  ref={test}
+  style={{}}
+  {...spread}
+  color="red"
+/>`,
+      sourceFileName: 'test/spread.js',
+      cacheObject: {},
+    });
+
+    expect(rv.js).toEqual(
+      `require("test/spread.jsxstyle.css");
+<Block
+  component="wow"
+  props={{test: 4}}
+  key={test}
+  ref={test}
+  style={{}}
+  {...spread}
+  color={null}
+  className={(typeof spread === "object" && spread !== null && spread.className || wow) + " " + "_x0"} />`
+    );
+    expect(rv.css).toEqual(
+      `/* test/spread.js:1-10 (Block) */
+._x0 {
+  color:red;
 }
 `
     );
@@ -263,7 +300,9 @@ const DynamicBlock = ({wow, ...props}) => <Block dynamicProp={wow} {...props} />
     const rv = extractStyles({
       src: `<Block component="input" />;
 <Block component={Thing} />;
-<Block component={thing.cool} />;`,
+<Block component={thing.cool} />;
+<Block component="h1" {...spread} />;
+<Block before="wow" component="h1" dynamic={wow} color="red" />;`,
       sourceFileName: 'test/component-prop1.js',
       cacheObject: {},
       staticNamespace,
@@ -273,7 +312,9 @@ const DynamicBlock = ({wow, ...props}) => <Block dynamicProp={wow} {...props} />
       `require("test/component-prop1.jsxstyle.css");
 <input className="_x0" />;
 <Thing className="_x0" />;
-<thing.cool className="_x0" />;`
+<thing.cool className="_x0" />;
+<Block component="h1" {...spread} />;
+<Block component="h1" dynamic={wow} className="_x1" />;`
     );
 
     expect(() =>
@@ -327,7 +368,7 @@ const DynamicBlock = ({wow, ...props}) => <Block dynamicProp={wow} {...props} />
     expect(rv1.js).toEqual(
       `<Row
   {...spread}
-  className={typeof spread === "object" && spread !== null && spread["className"] || member.expression} />`
+  className={typeof spread === "object" && spread !== null && spread.className || member.expression} />`
     );
   });
 });
