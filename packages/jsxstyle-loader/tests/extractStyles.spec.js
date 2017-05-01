@@ -244,41 +244,25 @@ describe('extractStyles', function() {
 <div ref={r => this.testBlock = r} className="_x0" />`
     );
 
-    expect(() =>
-      extractStyles({
-        src: `<Block props={{className: 'test'}} />;`,
-        sourceFileName: 'test/props-prop3.js',
-        cacheObject: {},
-        staticNamespace,
-      })
-    ).toThrow(/`props` prop cannot contain `className` as it is used by jsxstyle and will be overwritten\./);
+    global.console = {warn: jest.fn()};
+    const rv3 = extractStyles({
+      src: `<Block props={{className: 'test'}} />;
+<Block props={{style: 'test'}} />;
+<Block props="invalid" />;
+<Block dynamicProp={wow} props="invalid" />;`,
+      sourceFileName: 'test/props-prop4.js',
+      cacheObject: {},
+      staticNamespace,
+    });
 
-    expect(() =>
-      extractStyles({
-        src: `<Block props={{style: 'test'}} />;`,
-        sourceFileName: 'test/props-prop4.js',
-        cacheObject: {},
-        staticNamespace,
-      })
-    ).toThrow(/`props` prop cannot contain `style` as it is used by jsxstyle and will be overwritten\./);
+    expect(rv3.js).toEqual(
+      `<Block props={{className: 'test'}} />;
+<Block props={{style: 'test'}} />;
+<Block props="invalid" />;
+<Block dynamicProp={wow} props="invalid" />;`
+    );
 
-    expect(() =>
-      extractStyles({
-        src: '<Block props="invalid" />',
-        sourceFileName: 'test/props-prop5.js',
-        cacheObject: {},
-        staticNamespace,
-      })
-    ).toThrow(/props prop should be an expresion container\. received type `StringLiteral`/);
-
-    expect(() =>
-      extractStyles({
-        src: '<Block dynamicProp={wow} props="invalid" />',
-        sourceFileName: 'test/props-prop6.js',
-        cacheObject: {},
-        staticNamespace,
-      })
-    ).toThrow(/props prop should be an expresion container\. received type `StringLiteral`/);
+    expect(console.warn).toHaveBeenCalledTimes(4);
   });
 
   it("doesn't explode if you use the spread operator", () => {
@@ -431,44 +415,42 @@ const DynamicBlock = ({wow, ...props}) => <Block dynamicProp={wow} {...props} />
 <Block component="h1" dynamic={wow} className="_x1" />;`
     );
 
-    expect(() =>
-      extractStyles({
-        src: '<Block component="CapitalisedString" />',
-        sourceFileName: 'test/component-prop2.js',
-        cacheObject: {},
-        staticNamespace,
-      })
-    ).toThrow(/`component` prop is a string that starts with an uppercase letter \(`CapitalisedString`\)/);
+    global.console = {warn: jest.fn()};
 
-    expect(() =>
-      extractStyles({
-        src: '<Block component={lowercaseIdentifier} />',
-        sourceFileName: 'test/component-prop3.js',
-        cacheObject: {},
-        staticNamespace,
-      })
-    ).toThrow(/`component` prop is an identifier that starts with a lowercase letter \(`lowercaseIdentifier`\)/);
+    // does not warn
+    extractStyles({
+      src: '<Block component="CapitalisedString" />',
+      sourceFileName: 'test/component-prop2.js',
+      cacheObject: {},
+      staticNamespace,
+    });
 
-    expect(() =>
-      extractStyles({
-        src: '<Block component={functionCall()} />',
-        sourceFileName: 'test/component-prop4.js',
-        cacheObject: {},
-        staticNamespace,
-      })
-    ).toThrow(/`component` prop value was not handled by extractStyles: `functionCall\(\)`/);
+    // does not warn
+    extractStyles({
+      src: '<Block component={lowercaseIdentifier} />',
+      sourceFileName: 'test/component-prop3.js',
+      cacheObject: {},
+      staticNamespace,
+    });
 
-    expect(() =>
-      extractStyles({
-        src: '<Block component={member.expression()} />',
-        sourceFileName: 'test/component-prop4.js',
-        cacheObject: {},
-        staticNamespace,
-      })
-    ).toThrow(/`component` prop value was not handled by extractStyles: `member.expression\(\)`/);
+    extractStyles({
+      src: '<Block component={functionCall()} />',
+      sourceFileName: 'test/component-prop4.js',
+      cacheObject: {},
+      staticNamespace,
+    });
+
+    extractStyles({
+      src: '<Block component={member.expression()} />',
+      sourceFileName: 'test/component-prop4.js',
+      cacheObject: {},
+      staticNamespace,
+    });
+
+    expect(console.warn).toHaveBeenCalledTimes(2);
   });
 
-  it('handles the className prop correctly', () => {
+  it('handles the `className` prop correctly', () => {
     const rv1 = extractStyles({
       src: `<Row
   className={member.expression}
@@ -481,8 +463,9 @@ const DynamicBlock = ({wow, ...props}) => <Block dynamicProp={wow} {...props} />
 
     expect(rv1.js).toEqual(
       `<Row
+  className={member.expression}
   {...spread}
-  className={typeof spread === "object" && spread !== null && spread.className || member.expression} />`
+/>`
     );
   });
 });
