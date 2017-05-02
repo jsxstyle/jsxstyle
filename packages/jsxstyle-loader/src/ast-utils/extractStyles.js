@@ -10,9 +10,9 @@ const createCSS = require('jsxstyle/lib/createCSS');
 const explodePseudoStyles = require('jsxstyle/lib/explodePseudoStyles');
 
 const canEvaluate = require('./canEvaluate');
+const extractStaticTernaries = require('./extractStaticTernaries');
 const getPropValueFromAttributes = require('./getPropValueFromAttributes');
 const getStylesByClassName = require('../getStylesByClassName');
-const getClassNameFromCache = require('../getClassNameFromCache');
 const parse = require('./parse');
 
 const types = recast.types;
@@ -59,7 +59,9 @@ function extractStyles({src, styleGroups, namedStyleGroups, sourceFileName, stat
   const evalContext = vm.createContext(staticNamespace ? Object.assign({}, staticNamespace) : {});
 
   const ast = parse(src, {sourceFileName});
-  const staticStyles = [];
+
+  // Using a map for (officially supported) guaranteed insertion order
+  const cssMap = new Map();
 
   recast.visit(ast, {
     visitJSXElement(path) {
@@ -90,7 +92,7 @@ function extractStyles({src, styleGroups, namedStyleGroups, sourceFileName, stat
       const staticAttributes = {};
       let inlinePropCount = 0;
 
-      const ternaries = {};
+      const staticTernaries = [];
 
       node.attributes = node.attributes.filter((attribute, idx) => {
         if (
@@ -101,6 +103,17 @@ function extractStyles({src, styleGroups, namedStyleGroups, sourceFileName, stat
           idx < lastSpreadIndex
         ) {
           inlinePropCount++;
+          return true;
+        }
+
+        // if one or more spread operators are present and we haven't hit the last one yet, the prop stays inline
+        if (lastSpreadIndex !== null && idx <= lastSpreadIndex) {
+          inlinePropCount++;
+          return true;
+        }
+
+        // pass ref, key, and style props through untouched
+        if (UNTOUCHED_PROPS.indexOf(attribute.name.name) > -1) {
           return true;
         }
 
@@ -225,12 +238,6 @@ function extractStyles({src, styleGroups, namedStyleGroups, sourceFileName, stat
           return true;
         }
 
-        // if one or more spread operators are present and we haven't hit the last one yet, the prop stays inline
-        if (lastSpreadIndex !== null && idx <= lastSpreadIndex) {
-          inlinePropCount++;
-          return true;
-        }
-
         const name = attribute.name.name;
         const value = attribute.value;
 
@@ -247,23 +254,9 @@ function extractStyles({src, styleGroups, namedStyleGroups, sourceFileName, stat
             canEvaluate(staticNamespace, value.expression.consequent) &&
             canEvaluate(staticNamespace, value.expression.alternate)
           ) {
-            const key = recast.print(value.expression.test).code;
-            ternaries[key] = ternaries[key] || {
-              test: value.expression.test,
-              consequent: {},
-              alternate: {},
-            };
-            ternaries[key].consequent[name] = vm.runInContext(
-              recast.print(value.expression.consequent).code,
-              evalContext
-            );
-            ternaries[key].alternate[name] = vm.runInContext(
-              recast.print(value.expression.alternate).code,
-              evalContext
-            );
-            if (!staticAttributes.hasOwnProperty(name)) {
-              staticAttributes[name] = null;
-            }
+            staticTernaries.push({name, ternary: value.expression});
+            // mark the prop as extracted
+            staticAttributes[name] = null;
             return false;
           }
         }
@@ -273,8 +266,11 @@ function extractStyles({src, styleGroups, namedStyleGroups, sourceFileName, stat
         return true;
       });
 
-      let classNamePropValue;
+      if (inlinePropCount === 0) {
+        Object.assign(staticAttributes, jsxstyle[node.name.name].defaultProps);
+      }
 
+      let classNamePropValue;
       const classNamePropIndex = node.attributes.findIndex(attr => attr.name && attr.name.name === 'className');
       if (classNamePropIndex > -1 && Object.keys(staticAttributes).length > 0) {
         classNamePropValue = getPropValueFromAttributes('className', node.attributes);
@@ -283,8 +279,6 @@ function extractStyles({src, styleGroups, namedStyleGroups, sourceFileName, stat
 
       // if all style props have been extracted, jsxstyle component can be converted to a div or the specified component
       if (inlinePropCount === 0) {
-        Object.assign(staticAttributes, jsxstyle[node.name.name].defaultProps);
-
         const propsPropIndex = node.attributes.findIndex(attr => attr.name && attr.name.name === 'props');
         // deal with props prop
         if (propsPropIndex > -1) {
@@ -325,143 +319,125 @@ function extractStyles({src, styleGroups, namedStyleGroups, sourceFileName, stat
         }
       }
 
-      staticStyles.push({
-        node,
-        originalNodeName,
-        staticAttributes,
-        classNamePropValue,
-        ternaries,
-      });
-
       if (path.node.closingElement) {
         path.node.closingElement.name.name = node.name.name;
       }
 
-      this.traverse(path);
-    },
-  });
+      const stylesByClassName = getStylesByClassName(styleGroups, namedStyleGroups, staticAttributes, cacheObject);
 
-  // Using a map for (officially supported) guaranteed insertion order
-  const cssMap = new Map();
+      const extractedStyleClassNames = Object.keys(stylesByClassName).join(' ');
 
-  staticStyles.forEach(({node, originalNodeName, staticAttributes, classNamePropValue, ternaries}) => {
-    const stylesByClassName = getStylesByClassName(styleGroups, namedStyleGroups, staticAttributes, cacheObject);
-
-    const extractedStyleClassNames = Object.keys(stylesByClassName).join(' ');
-
-    const ternaryKeys = Object.keys(ternaries);
-    if (ternaryKeys.length > 0) {
-      const ternaryExpressions = ternaryKeys
-        .map(key => {
-          const {test, consequent, alternate} = ternaries[key];
-
-          const consequentClassName = getClassNameFromCache(consequent, cacheObject) || '';
-          const alternateClassName = getClassNameFromCache(alternate, cacheObject) || '';
-
-          if (consequentClassName) {
-            stylesByClassName[consequentClassName] = consequent;
-          }
-
-          if (alternateClassName) {
-            stylesByClassName[alternateClassName] = alternate;
-          }
-
-          return b.conditionalExpression(test, b.literal(consequentClassName), b.literal(alternateClassName));
-        })
-        .reduce((acc, val) => (acc ? b.binaryExpression('+', acc, val) : val));
+      const classNameObjects = [];
 
       if (classNamePropValue) {
         if (canEvaluate({}, classNamePropValue)) {
-          const classNamePropValueString = vm.runInNewContext(recast.print(classNamePropValue).code);
-          if (classNamePropValueString) {
-            classNamePropValue = b.binaryExpression('+', b.literal(classNamePropValueString + ' '), ternaryExpressions);
-          } else {
-            classNamePropValue = ternaryExpressions;
-          }
+          classNameObjects.push(b.literal(vm.runInNewContext(recast.print(classNamePropValue).code)));
         } else {
-          classNamePropValue = b.binaryExpression(
-            '+',
-            // TODO: move classNamePropValue out and check if it's valid, then turn this into a binary expression that conditionally adds a space
-            b.binaryExpression('+', b.logicalExpression('||', classNamePropValue, b.literal('')), b.literal(' ')),
-            ternaryExpressions
-          );
+          classNameObjects.push(classNamePropValue);
         }
-      } else {
-        classNamePropValue = ternaryExpressions;
       }
-    }
 
-    let attributeValue;
-    if (classNamePropValue) {
-      // if className prop can be evaluated, add it as a literal
-      if (canEvaluate({}, classNamePropValue)) {
-        const evaluatedValue = vm.runInNewContext(recast.print(classNamePropValue).code);
-        if (evaluatedValue) {
-          if (extractedStyleClassNames) {
-            attributeValue = b.literal(`${evaluatedValue} ${extractedStyleClassNames}`);
-          } else {
-            if (typeof evaluatedValue === 'string') {
-              attributeValue = b.literal(evaluatedValue);
-            } else {
-              attributeValue = b.jsxExpressionContainer(b.literal(evaluatedValue));
+      if (staticTernaries.length > 0) {
+        const ternaryObj = extractStaticTernaries(staticTernaries, evalContext, cacheObject);
+
+        // add extracted styles by className to existing object
+        Object.assign(stylesByClassName, ternaryObj.stylesByClassName);
+
+        classNameObjects.push(ternaryObj.ternaryExpression);
+      }
+
+      if (extractedStyleClassNames) {
+        classNameObjects.push(b.literal(extractedStyleClassNames));
+      }
+
+      const classNamePropValueForReals = classNameObjects.reduce((acc, val) => {
+        if (!acc) {
+          if (
+            // pass conditional expressions through
+            n.ConditionalExpression.check(val) ||
+            // pass non-null literals through
+            (n.Literal.check(val) && val.value !== null)
+          ) {
+            return val;
+          }
+          return b.logicalExpression('||', val, b.literal(''));
+        }
+
+        const accIsString = n.Literal.check(acc) && typeof acc.value === 'string';
+
+        let inner;
+        if (n.Literal.check(val)) {
+          if (typeof val.value === 'string') {
+            if (accIsString) {
+              // join adjacent string literals
+              return b.literal(`${acc.value} ${val.value}`);
             }
+            inner = b.literal(` ${val.value}`);
+          } else {
+            inner = b.binaryExpression('+', b.literal(' '), val);
           }
+        } else if (n.ConditionalExpression.check(val) || n.BinaryExpression.check(val)) {
+          if (accIsString) {
+            return b.binaryExpression('+', b.literal(`${acc.value} `), val);
+          }
+          inner = b.binaryExpression('+', b.literal(' '), val);
+        } else if (n.Identifier.check(val) || n.MemberExpression.check(val)) {
+          // identifiers and member expressions make for reasonable ternaries
+          inner = b.conditionalExpression(val, b.binaryExpression('+', b.literal(' '), val), b.literal(''));
         } else {
-          if (extractedStyleClassNames) {
-            attributeValue = b.literal(extractedStyleClassNames);
+          process.stderr.write(recast.print(val).code + '\n');
+          if (accIsString) {
+            return b.binaryExpression('+', b.literal(`${acc.value} `), b.logicalExpression('||', val, b.literal('')));
           }
+          // use a logical expression for more complex prop values
+          inner = b.binaryExpression('+', b.literal(' '), b.logicalExpression('||', val, b.literal('')));
         }
-      } else {
-        if (extractedStyleClassNames) {
-          // TODO: figure out why this gets double parens
-          attributeValue = b.jsxExpressionContainer(
-            b.binaryExpression(
-              '+',
-              b.binaryExpression('+', classNamePropValue, b.literal(' ')),
-              b.literal(extractedStyleClassNames)
-            )
+        return b.binaryExpression('+', acc, inner);
+      }, null);
+
+      if (classNamePropValueForReals) {
+        if (n.Literal.check(classNamePropValueForReals) && typeof classNamePropValueForReals.value === 'string') {
+          node.attributes.push(
+            b.jsxAttribute(b.jsxIdentifier('className'), b.literal(classNamePropValueForReals.value))
           );
         } else {
-          attributeValue = b.jsxExpressionContainer(classNamePropValue);
+          node.attributes.push(
+            b.jsxAttribute(b.jsxIdentifier('className'), b.jsxExpressionContainer(classNamePropValueForReals))
+          );
         }
       }
-    } else if (extractedStyleClassNames) {
-      attributeValue = b.literal(extractedStyleClassNames);
-    }
 
-    if (attributeValue) {
-      node.attributes.push(b.jsxAttribute(b.jsxIdentifier('className'), attributeValue));
-    }
+      const lineNumbers =
+        node.loc.start.line + (node.loc.start.line !== node.loc.end.line ? `-${node.loc.end.line}` : '');
+      const commentText = `${sourceFileName.replace(process.cwd(), '')}:${lineNumbers} (${originalNodeName})`;
+      const comment = `/* ${commentText} */`;
 
-    const lineNumbers =
-      node.loc.start.line + (node.loc.start.line !== node.loc.end.line ? `-${node.loc.end.line}` : '');
-    const commentText = `${sourceFileName.replace(process.cwd(), '')}:${lineNumbers} (${originalNodeName})`;
-    const comment = `/* ${commentText} */`;
+      for (const classNameKey in stylesByClassName) {
+        if (cssMap.has(classNameKey)) {
+          if (comment) {
+            const val = cssMap.get(classNameKey);
+            val.commentTexts.push(comment);
+            cssMap.set(classNameKey, val);
+          }
+        } else {
+          const explodedStyles = explodePseudoStyles(stylesByClassName[classNameKey]);
+          const val = {
+            css: createCSS(explodedStyles.base, classNameKey) +
+              createCSS(explodedStyles.hover, classNameKey, ':hover') +
+              createCSS(explodedStyles.active, classNameKey, ':active') +
+              createCSS(explodedStyles.focus, classNameKey, ':focus'),
+            commentTexts: [],
+          };
 
-    for (const classNameKey in stylesByClassName) {
-      if (cssMap.has(classNameKey)) {
-        if (comment) {
-          const val = cssMap.get(classNameKey);
-          val.commentTexts.push(comment);
+          if (comment) {
+            val.commentTexts.push(comment);
+          }
+
           cssMap.set(classNameKey, val);
         }
-      } else {
-        const explodedStyles = explodePseudoStyles(stylesByClassName[classNameKey]);
-        const val = {
-          css: createCSS(explodedStyles.base, classNameKey) +
-            createCSS(explodedStyles.hover, classNameKey, ':hover') +
-            createCSS(explodedStyles.active, classNameKey, ':active') +
-            createCSS(explodedStyles.focus, classNameKey, ':focus'),
-          commentTexts: [],
-        };
-
-        if (comment) {
-          val.commentTexts.push(comment);
-        }
-
-        cssMap.set(classNameKey, val);
       }
-    }
+      this.traverse(path);
+    },
   });
 
   const css = Array.from(cssMap.values()).map(n => n.commentTexts.map(t => `${t}\n`).join('') + n.css).join('');
