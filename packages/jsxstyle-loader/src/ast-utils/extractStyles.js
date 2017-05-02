@@ -12,7 +12,7 @@ const explodePseudoStyles = require('jsxstyle/lib/explodePseudoStyles');
 const canEvaluate = require('./canEvaluate');
 const getPropValueFromAttributes = require('./getPropValueFromAttributes');
 const getStylesByClassName = require('../getStylesByClassName');
-const getStyleKeyForStyleObject = require('jsxstyle/lib/getStyleKeyForStyleObject');
+const getClassNameFromCache = require('../getClassNameFromCache');
 const parse = require('./parse');
 
 const types = recast.types;
@@ -25,7 +25,7 @@ const UNTOUCHED_PROPS = ['ref', 'key', 'style'];
 const ALL_SPECIAL_PROPS = ['component', 'className'].concat(UNTOUCHED_PROPS);
 
 const defaultCacheObject = {};
-function extractStyles({src, styleGroups, sourceFileName, staticNamespace, cacheObject}) {
+function extractStyles({src, styleGroups, namedStyleGroups, sourceFileName, staticNamespace, cacheObject}) {
   invariant(typeof src === 'string', 'extractStyles expects `src` to be a string of javascript');
   invariant(typeof sourceFileName === 'string', 'extractStyles expects `sourceFileName` to be a path to a .js file');
 
@@ -39,9 +39,13 @@ function extractStyles({src, styleGroups, sourceFileName, staticNamespace, cache
   }
 
   if (typeof styleGroups !== 'undefined') {
+    invariant(Array.isArray(styleGroups), 'extractStyles expects `styleGroups` to be an array of style prop objects');
+  }
+
+  if (typeof namedStyleGroups !== 'undefined') {
     invariant(
-      typeof styleGroups === 'object' && styleGroups !== null,
-      'extractStyles expects `styleGroups` to be an object of style objects, keyed by className'
+      typeof namedStyleGroups === 'object' && namedStyleGroups !== null,
+      'extractStyles expects `namedStyleGroups` to be an object of style prop objects keyed by className'
     );
   }
 
@@ -341,11 +345,7 @@ function extractStyles({src, styleGroups, sourceFileName, staticNamespace, cache
   const cssMap = new Map();
 
   staticStyles.forEach(({node, originalNodeName, staticAttributes, classNamePropValue, ternaries}) => {
-    const stylesByClassName = getStylesByClassName(styleGroups, staticAttributes, cacheObject);
-
-    const lineNumbers =
-      node.loc.start.line + (node.loc.start.line !== node.loc.end.line ? `-${node.loc.end.line}` : '');
-    const commentText = `${sourceFileName.replace(process.cwd(), '')}:${lineNumbers} (${originalNodeName})`;
+    const stylesByClassName = getStylesByClassName(styleGroups, namedStyleGroups, staticAttributes, cacheObject);
 
     const extractedStyleClassNames = Object.keys(stylesByClassName).join(' ');
 
@@ -355,22 +355,14 @@ function extractStyles({src, styleGroups, sourceFileName, staticNamespace, cache
         .map(key => {
           const {test, consequent, alternate} = ternaries[key];
 
-          cacheObject.keys = cacheObject.keys || {};
-          cacheObject.counter = cacheObject.counter || 0;
+          const consequentClassName = getClassNameFromCache(consequent, cacheObject) || '';
+          const alternateClassName = getClassNameFromCache(alternate, cacheObject) || '';
 
-          const consequentKey = getStyleKeyForStyleObject(consequent);
-          let consequentClassName = '';
-          if (consequentKey) {
-            cacheObject.keys[consequentKey] = cacheObject.keys[consequentKey] || (cacheObject.counter++).toString(16);
-            consequentClassName = `_x${cacheObject.keys[consequentKey]}`;
+          if (consequentClassName) {
             stylesByClassName[consequentClassName] = consequent;
           }
 
-          const alternateKey = getStyleKeyForStyleObject(alternate);
-          let alternateClassName = '';
-          if (alternateKey) {
-            cacheObject.keys[alternateKey] = cacheObject.keys[alternateKey] || (cacheObject.counter++).toString(16);
-            alternateClassName = `_x${cacheObject.keys[alternateKey]}`;
+          if (alternateClassName) {
             stylesByClassName[alternateClassName] = alternate;
           }
 
@@ -441,7 +433,10 @@ function extractStyles({src, styleGroups, sourceFileName, staticNamespace, cache
       node.attributes.push(b.jsxAttribute(b.jsxIdentifier('className'), attributeValue));
     }
 
-    const comment = commentText ? `/* ${commentText} */` : null;
+    const lineNumbers =
+      node.loc.start.line + (node.loc.start.line !== node.loc.end.line ? `-${node.loc.end.line}` : '');
+    const commentText = `${sourceFileName.replace(process.cwd(), '')}:${lineNumbers} (${originalNodeName})`;
+    const comment = `/* ${commentText} */`;
 
     for (const classNameKey in stylesByClassName) {
       if (cssMap.has(classNameKey)) {

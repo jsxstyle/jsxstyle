@@ -147,18 +147,18 @@ describe('extractStyles', function() {
     });
 
     expect(cacheObject).toEqual({
-      counter: 3,
+      '_x~counter': 3,
       keys: {
-        'display:block;': '0',
-        'display:block;staticThing:wow;': '1',
-        'display:inline-block;': '2',
+        '_x~display:block;': '0',
+        '_x~display:block;staticThing:wow;': '1',
+        '_x~display:inline-block;': '2',
       },
     });
   });
 
-  it('groups styles when a `styleGroups` object is provided', () => {
+  it('groups styles when a `namedStyleGroups` object is provided', () => {
     const cacheObject = {};
-    const styleGroups = {
+    const namedStyleGroups = {
       _test1: {
         thing: 'wow',
         hoverThing: 'ok',
@@ -173,6 +173,57 @@ describe('extractStyles', function() {
   <Block thing="wow" hoverThing="ok" />
   <InlineBlock />
 </Block>`,
+      sourceFileName: 'test/named-style-groups.js',
+      cacheObject,
+      namedStyleGroups,
+    });
+
+    expect(rv.js).toEqual(
+      `require("test/named-style-groups.jsxstyle.css");
+<div className="_x0">
+  <div className="_test1 _x0" />
+  <div className="_test2" />
+</div>`
+    );
+
+    expect(rv.css).toEqual(
+      `/* test/named-style-groups.js:1 (Block) */
+/* test/named-style-groups.js:2 (Block) */
+._x0 {
+  display:block;
+}
+/* test/named-style-groups.js:2 (Block) */
+._test1 {
+  thing:wow;
+}
+._test1:hover {
+  thing:ok;
+}
+/* test/named-style-groups.js:3 (InlineBlock) */
+._test2 {
+  display:inline-block;
+}
+`
+    );
+  });
+
+  it('groups styles when a `styleGroups` array is provided', () => {
+    const cacheObject = {};
+    const styleGroups = [
+      {
+        thing: 'wow',
+        hoverThing: 'ok',
+      },
+      {
+        display: 'inline-block',
+      },
+    ];
+
+    const rv = extractStyles({
+      src: `<Block>
+  <Block thing="wow" hoverThing="ok" />
+  <InlineBlock />
+</Block>`,
       sourceFileName: 'test/style-groups.js',
       cacheObject,
       styleGroups,
@@ -181,8 +232,8 @@ describe('extractStyles', function() {
     expect(rv.js).toEqual(
       `require("test/style-groups.jsxstyle.css");
 <div className="_x0">
-  <div className="_test1 _x0" />
-  <div className="_test2" />
+  <div className="_x1 _x0" />
+  <div className="_x2" />
 </div>`
     );
 
@@ -193,14 +244,14 @@ describe('extractStyles', function() {
   display:block;
 }
 /* test/style-groups.js:2 (Block) */
-._test1 {
+._x1 {
   thing:wow;
 }
-._test1:hover {
+._x1:hover {
   thing:ok;
 }
 /* test/style-groups.js:3 (InlineBlock) */
-._test2 {
+._x2 {
   display:inline-block;
 }
 `
@@ -327,12 +378,21 @@ const DynamicBlock = ({wow, ...props}) => <Block dynamicProp={wow} {...props} />
       staticNamespace,
     });
 
+    expect(rv.css).toEqual(
+      `/* test/ternary-with-spread.js:1 (Block) */
+._x0 {
+  color:red;
+}
+/* test/ternary-with-spread.js:1 (Block) */
+._x1 {
+  color:blue;
+}
+`
+    );
+
     expect(rv.js).toEqual(
       `require("test/ternary-with-spread.jsxstyle.css");
-<Block
-  {...spread}
-  color={null}
-  className={((dynamic ? "_x1" : "_x2")) + " " + "_x0"} />`
+<Block {...spread} color={null} className={(dynamic ? "_x0" : "_x1")} />`
     );
   });
 

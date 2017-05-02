@@ -20,9 +20,13 @@ function webpackLoader(content) {
   );
 
   if (typeof query.styleGroups !== 'undefined') {
+    invariant(Array.isArray(query.styleGroups), '`styleGroups` option must be an array of style prop objects');
+  }
+
+  if (typeof query.namedStyleGroups !== 'undefined') {
     invariant(
-      typeof query.styleGroups === 'object' && query.styleGroups !== null,
-      '`styleGroups` option must be an object of style prop objects'
+      typeof query.namedStyleGroups === 'object' && query.namedStyleGroups !== null,
+      '`namedStyleGroups` option must be an object of style prop objects keyed by className'
     );
   }
 
@@ -40,6 +44,7 @@ function webpackLoader(content) {
     sourceFileName: this.resourcePath,
     staticNamespace: namespace,
     styleGroups: query.styleGroups,
+    namedStyleGroups: query.namedStyleGroups,
   });
 
   if (rv.css.length === 0) {
