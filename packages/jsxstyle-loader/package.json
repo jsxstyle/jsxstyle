@@ -15,11 +15,13 @@
     "prepublish": "yarn run -s build_lib > /dev/null"
   },
   "dependencies": {
+    "babel-generator": "^6.24.1",
+    "babel-traverse": "^6.24.1",
+    "babel-types": "^6.24.1",
     "babylon": "^6.17.0",
     "invariant": "^2.2.1",
     "jsxstyle": "next",
-    "loader-utils": "^1.1.0",
-    "recast": "^0.12.3"
+    "loader-utils": "^1.1.0"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",

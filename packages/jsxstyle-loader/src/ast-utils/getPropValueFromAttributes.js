@@ -1,11 +1,8 @@
 'use strict';
 
-const recast = require('recast');
 const invariant = require('invariant');
-
-const types = recast.types;
-const n = types.namedTypes;
-const b = types.builders;
+const t = require('babel-types');
+const generate = require('babel-generator').default;
 
 const accessSafe = require('./accessSafe');
 
@@ -29,7 +26,7 @@ function getPropValueFromAttributes(propName, attrs) {
 
   let propValue = attrs[propIndex].value;
 
-  if (n.JSXExpressionContainer.check(propValue)) {
+  if (t.isJSXExpressionContainer(propValue)) {
     propValue = propValue.expression;
   }
 
@@ -39,13 +36,13 @@ function getPropValueFromAttributes(propName, attrs) {
       // 1. idx is greater than propValue prop index
       // 2. attr is a spread operator
       (attr, idx) => {
-        if (n.JSXSpreadAttribute.check(attr)) {
+        if (t.isJSXSpreadAttribute(attr)) {
           invariant(
             // only allow member expressions and identifiers to be spread for now
-            n.Identifier.check(attr.argument) || n.MemberExpression.check(attr.argument),
+            t.isIdentifier(attr.argument) || t.isMemberExpression(attr.argument),
             'Unhandled spread operator value of type `%s` (`%s`)',
             attr.argument.type,
-            recast.print(attr).code
+            generate(attr).code
           );
           return idx > propIndex;
         }
@@ -59,7 +56,7 @@ function getPropValueFromAttributes(propName, attrs) {
   // TODO: figure out how to do this without all the extra parens
   if (applicableSpreads.length > 0) {
     propValue = applicableSpreads.reduce(
-      (acc, val) => b.logicalExpression('||', accessSafe(val, propName), acc),
+      (acc, val) => t.logicalExpression('||', accessSafe(val, propName), acc),
       propValue
     );
   }

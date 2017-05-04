@@ -1,24 +1,21 @@
 'use strict';
 
-const recast = require('recast');
-
-const types = recast.types;
-const b = types.builders;
+const t = require('babel-types');
 
 // accessSafe wraps memberExpressions in object/null checks
 // TODO: inject this as a function? this gets pretty repetitive
 function accessSafe(obj, member) {
-  return b.logicalExpression(
+  return t.logicalExpression(
     '&&',
-    b.logicalExpression(
+    t.logicalExpression(
       '&&',
       // typeof obj === 'object
-      b.binaryExpression('===', b.unaryExpression('typeof', obj), b.literal('object')),
+      t.binaryExpression('===', t.unaryExpression('typeof', obj), t.stringLiteral('object')),
       // obj !== null
-      b.binaryExpression('!==', obj, b.literal(null))
+      t.binaryExpression('!==', obj, t.nullLiteral())
     ),
     // obj.member
-    b.memberExpression(obj, b.identifier(member), false)
+    t.memberExpression(obj, t.identifier(member), false)
   );
 }
 

@@ -1,18 +1,25 @@
 'use strict';
 
-const recast = require('recast');
-
-const types = recast.types;
-const n = types.namedTypes;
+const t = require('babel-types');
 
 function canEvaluate(staticNamespace, exprNode) {
-  if (n.Literal.check(exprNode)) {
+  if (t.isTemplateLiteral(exprNode)) {
+    // exprNode is a template literal and all expressions in the template literal can be evaluated
+    for (let idx = -1, len = exprNode.expressions.length; ++idx < len; ) {
+      const expr = exprNode.expressions[idx];
+      process.stdout.write(' - ' + expr.type + '\n');
+      if (!canEvaluate(staticNamespace, expr)) {
+        return false;
+      }
+    }
+    return true;
+  } else if (t.isLiteral(exprNode)) {
     // exprNode is a string, int, or null
     return true;
-  } else if (n.JSXExpressionContainer.check(exprNode)) {
+  } else if (t.isJSXExpressionContainer(exprNode)) {
     // exprNode is wrapped in an expression container
     return canEvaluate(staticNamespace, exprNode.expression);
-  } else if (n.Identifier.check(exprNode)) {
+  } else if (t.isIdentifier(exprNode)) {
     // exprNode is a variable
     if (
       typeof staticNamespace === 'object' &&
@@ -22,28 +29,19 @@ function canEvaluate(staticNamespace, exprNode) {
       return true;
     }
     return false;
-  } else if (n.MemberExpression.check(exprNode)) {
+  } else if (t.isMemberExpression(exprNode)) {
     // exprNode is a member expression (object.property or object['property'])
     return (
       // object is in the provided namespace
       canEvaluate(staticNamespace, exprNode.object) &&
       // property is either an identifier specified with dot notation
-      ((n.Identifier.check(exprNode.property) && !exprNode.computed) ||
+      ((t.isIdentifier(exprNode.property) && !exprNode.computed) ||
         // or it's specified with bracket notation and can be evaluated
         canEvaluate(staticNamespace, exprNode.property))
     );
-  } else if (n.BinaryExpression.check(exprNode)) {
+  } else if (t.isBinaryExpression(exprNode)) {
     // exprNode is a binary expression and both sides can be evaluated
     return canEvaluate(staticNamespace, exprNode.left) && canEvaluate(staticNamespace, exprNode.right);
-  } else if (n.TemplateLiteral.check(exprNode)) {
-    // exprNode is a template literal and all expressions in the template literal can be evaluated
-    for (let idx = -1, len = exprNode.expressions.length; ++idx < len; ) {
-      const expr = exprNode.expressions[idx];
-      if (!canEvaluate(staticNamespace, expr)) {
-        return false;
-      }
-    }
-    return true;
   }
   return false;
 }

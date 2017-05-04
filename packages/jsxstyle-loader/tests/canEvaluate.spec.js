@@ -33,7 +33,7 @@ describe('canEvaluate', () => {
     const errors = [];
     ast.program.body[0].expression.openingElement.attributes.forEach(attr => {
       if (canEvaluate(staticNamespace, attr.value)) {
-        errors.push(`'${attr.name.name}' should be evaluated`);
+        errors.push(`'${attr.name.name}' should not be evaluated`);
       }
     });
     expect(errors).toEqual([]);
@@ -56,7 +56,7 @@ describe('canEvaluate', () => {
     const errors = [];
     ast.program.body[0].expression.openingElement.attributes.forEach(attr => {
       if (!canEvaluate(staticNamespace, attr.value)) {
-        errors.push(`'${attr.name.name}' should not be evaluated`);
+        errors.push(`'${attr.name.name}' should be evaluated`);
       }
     });
 

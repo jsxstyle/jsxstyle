@@ -1,12 +1,10 @@
 'use strict';
 
-const recast = require('recast');
+const t = require('babel-types');
+const generate = require('babel-generator').default;
 const vm = require('vm');
 const invariant = require('invariant');
 const getClassNameFromCache = require('../getClassNameFromCache');
-
-const types = recast.types;
-const b = types.builders;
 
 function extractStaticTernaries(ternaries, evalContext, cacheObject) {
   invariant(Array.isArray(ternaries), 'extractStaticTernaries expects param 1 to be an array of ternaries');
@@ -27,10 +25,10 @@ function extractStaticTernaries(ternaries, evalContext, cacheObject) {
   for (let idx = -1, len = ternaries.length; ++idx < len; ) {
     const {name, ternary} = ternaries[idx];
 
-    const key = recast.print(ternary.test).code;
+    const key = generate(ternary.test).code;
     const {test} = ternary;
-    const consequentValue = vm.runInContext(recast.print(ternary.consequent).code, evalContext);
-    const alternateValue = vm.runInContext(recast.print(ternary.alternate).code, evalContext);
+    const consequentValue = vm.runInContext(generate(ternary.consequent).code, evalContext);
+    const alternateValue = vm.runInContext(generate(ternary.alternate).code, evalContext);
 
     ternariesByKey[key] = ternariesByKey[key] || {
       test,
@@ -64,25 +62,29 @@ function extractStaticTernaries(ternaries, evalContext, cacheObject) {
       if (consequentClassName && alternateClassName) {
         if (idx > 0) {
           // if it's not the first ternary, add a leading space
-          return b.binaryExpression(
+          return t.binaryExpression(
             '+',
-            b.literal(' '),
-            b.conditionalExpression(test, b.literal(consequentClassName), b.literal(alternateClassName))
+            t.stringLiteral(' '),
+            t.conditionalExpression(test, t.stringLiteral(consequentClassName), t.stringLiteral(alternateClassName))
           );
         } else {
-          return b.conditionalExpression(test, b.literal(consequentClassName), b.literal(alternateClassName));
+          return t.conditionalExpression(
+            test,
+            t.stringLiteral(consequentClassName),
+            t.stringLiteral(alternateClassName)
+          );
         }
       } else {
         // if only one className is present, put the padding space inside the ternary
-        return b.conditionalExpression(
+        return t.conditionalExpression(
           test,
-          b.literal((idx > 0 && consequentClassName ? ' ' : '') + consequentClassName),
-          b.literal((idx > 0 && alternateClassName ? ' ' : '') + alternateClassName)
+          t.stringLiteral((idx > 0 && consequentClassName ? ' ' : '') + consequentClassName),
+          t.stringLiteral((idx > 0 && alternateClassName ? ' ' : '') + alternateClassName)
         );
       }
     })
     .filter(f => f)
-    .reduce((acc, val) => (acc ? b.binaryExpression('+', acc, val) : val));
+    .reduce((acc, val) => (acc ? t.binaryExpression('+', acc, val) : val));
 
   return {
     // styles to be extracted

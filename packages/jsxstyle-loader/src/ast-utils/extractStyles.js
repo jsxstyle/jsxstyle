@@ -2,7 +2,6 @@
 
 const invariant = require('invariant');
 const path = require('path');
-const recast = require('recast');
 const vm = require('vm');
 
 const jsxstyle = require('jsxstyle');
@@ -13,11 +12,11 @@ const canEvaluate = require('./canEvaluate');
 const extractStaticTernaries = require('./extractStaticTernaries');
 const getPropValueFromAttributes = require('./getPropValueFromAttributes');
 const getStylesByClassName = require('../getStylesByClassName');
-const parse = require('./parse');
 
-const types = recast.types;
-const n = types.namedTypes;
-const b = types.builders;
+const parse = require('./parse');
+const traverse = require('babel-traverse').default;
+const generate = require('babel-generator').default;
+const t = require('babel-types');
 
 // these props will be passed through as-is
 const UNTOUCHED_PROPS = ['ref', 'key', 'style'];
@@ -58,24 +57,21 @@ function extractStyles({src, styleGroups, namedStyleGroups, sourceFileName, stat
 
   const evalContext = vm.createContext(staticNamespace ? Object.assign({}, staticNamespace) : {});
 
-  const ast = parse(src, {sourceFileName});
-
   // Using a map for (officially supported) guaranteed insertion order
   const cssMap = new Map();
 
-  recast.visit(ast, {
-    visitJSXElement(path) {
+  const traverseOptions = {
+    JSXElement(path) {
       const node = path.node.openingElement;
 
       if (
         // skip anything that isn't an identifier (i.e. <thing.cool />)
-        !n.JSXIdentifier.check(node.name) ||
+        !t.isJSXIdentifier(node.name) ||
         // skip lowercase elements
         node.name.name[0].toUpperCase() !== node.name.name[0] ||
         // skip components not exported by jsxstyle
         !jsxstyle.hasOwnProperty(node.name.name)
       ) {
-        this.traverse(path);
         return;
       }
 
@@ -83,7 +79,7 @@ function extractStyles({src, styleGroups, namedStyleGroups, sourceFileName, stat
 
       let lastSpreadIndex = null;
       node.attributes.forEach((attr, idx) => {
-        if (n.JSXSpreadAttribute.check(attr)) {
+        if (t.isJSXSpreadAttribute(attr)) {
           lastSpreadIndex = idx;
         }
       });
@@ -124,11 +120,11 @@ function extractStyles({src, styleGroups, namedStyleGroups, sourceFileName, stat
 
         // validate component prop
         if (attribute.name.name === 'component') {
-          const componentPropValue = n.JSXExpressionContainer.check(attribute.value)
+          const componentPropValue = t.isJSXExpressionContainer(attribute.value)
             ? attribute.value.expression
             : attribute.value;
 
-          if (n.Literal.check(componentPropValue) && typeof componentPropValue.value === 'string') {
+          if (t.isLiteral(componentPropValue) && typeof componentPropValue.value === 'string') {
             const char1 = componentPropValue.value[0];
             // component="article"
             if (char1 === char1.toUpperCase()) {
@@ -137,19 +133,19 @@ function extractStyles({src, styleGroups, namedStyleGroups, sourceFileName, stat
               // main downside is that further transformations that rely on JSX won't work.
               inlinePropCount++;
             }
-          } else if (n.Identifier.check(componentPropValue)) {
+          } else if (t.isIdentifier(componentPropValue)) {
             const char1 = attribute.value.expression.name[0];
             // component={Avatar}
             if (char1 === char1.toLowerCase()) {
               // a lowercase identifier will be transformed to a DOM element. that's not good.
               inlinePropCount++;
             }
-          } else if (n.MemberExpression.check(componentPropValue)) {
+          } else if (t.isMemberExpression(componentPropValue)) {
             // component={variable.prop}
           } else {
             console.warn(
               '`component` prop value was not handled by extractStyles: `%s`',
-              recast.print(componentPropValue).code
+              generate(componentPropValue).code
             );
             inlinePropCount++;
           }
@@ -167,7 +163,7 @@ function extractStyles({src, styleGroups, namedStyleGroups, sourceFileName, stat
             inlinePropCount++;
             return true;
           }
-          if (!n.JSXExpressionContainer.check(attribute.value)) {
+          if (!t.isJSXExpressionContainer(attribute.value)) {
             console.warn(
               '`props` prop should be wrapped in an expression container. received type `%s`',
               attribute.value.type
@@ -178,13 +174,13 @@ function extractStyles({src, styleGroups, namedStyleGroups, sourceFileName, stat
 
           const propsPropValue = attribute.value.expression;
 
-          if (n.ObjectExpression.check(attribute.value.expression)) {
+          if (t.isObjectExpression(attribute.value.expression)) {
             let errorCount = 0;
             const attributes = [];
 
             for (const k in propsPropValue.properties) {
               const propObj = propsPropValue.properties[k];
-              if (n.ObjectProperty.check(propObj)) {
+              if (t.isObjectProperty(propObj)) {
                 if (ALL_SPECIAL_PROPS.indexOf(propObj.key.name) !== -1) {
                   console.warn(
                     '`props` prop cannot contain `%s` as it is used by jsxstyle and will be overwritten.',
@@ -193,17 +189,19 @@ function extractStyles({src, styleGroups, namedStyleGroups, sourceFileName, stat
                   errorCount++;
                   continue;
                 }
-                if (n.Literal.check(propObj.value) && typeof propObj.value.value === 'string') {
+                if (t.isStringLiteral(propObj.value)) {
                   // convert literal value back to literal to ensure it has double quotes (siiiigh)
-                  attributes.push(b.jsxAttribute(b.jsxIdentifier(propObj.key.name), b.literal(propObj.value.value)));
+                  attributes.push(
+                    t.jSXAttribute(t.jSXIdentifier(propObj.key.name), t.stringLiteral(propObj.value.value))
+                  );
                 } else {
                   // wrap everything else in a JSXExpressionContainer
                   attributes.push(
-                    b.jsxAttribute(b.jsxIdentifier(propObj.key.name), b.jsxExpressionContainer(propObj.value))
+                    t.jSXAttribute(t.jSXIdentifier(propObj.key.name), t.jSXExpressionContainer(propObj.value))
                   );
                 }
-              } else if (n.SpreadProperty.check(propObj)) {
-                attributes.push(b.jsxSpreadAttribute(propObj.argument));
+              } else if (t.isSpreadProperty(propObj)) {
+                attributes.push(t.jSXSpreadAttribute(propObj.argument));
               } else {
                 console.warn('unhandled object property type: `%s`', propObj.type);
                 errorCount++;
@@ -222,13 +220,13 @@ function extractStyles({src, styleGroups, namedStyleGroups, sourceFileName, stat
           if (
             // if it's not an object, spread it
             // props={wow()}
-            n.CallExpression.check(propsPropValue) ||
+            t.isCallExpression(propsPropValue) ||
             // props={wow.cool}
-            n.MemberExpression.check(propsPropValue) ||
+            t.isMemberExpression(propsPropValue) ||
             // props={wow}
-            n.Identifier.check(propsPropValue)
+            t.isIdentifier(propsPropValue)
           ) {
-            propsAttributes = [b.jsxSpreadAttribute(propsPropValue)];
+            propsAttributes = [t.jSXSpreadAttribute(propsPropValue)];
             return true;
           }
 
@@ -243,12 +241,12 @@ function extractStyles({src, styleGroups, namedStyleGroups, sourceFileName, stat
 
         // if value can be evaluated, extract it and filter it out
         if (canEvaluate(staticNamespace, value)) {
-          staticAttributes[name] = vm.runInContext(recast.print(value).code, evalContext);
+          staticAttributes[name] = vm.runInContext(generate(value).code, evalContext);
           return false;
         }
 
         // expression container with a ternary inside
-        if (n.JSXExpressionContainer.check(value) && n.ConditionalExpression.check(value.expression)) {
+        if (t.isJSXExpressionContainer(value) && t.isConditionalExpression(value.expression)) {
           // if both sides of the ternary can be evaluated, extract them
           if (
             canEvaluate(staticNamespace, value.expression.consequent) &&
@@ -292,16 +290,16 @@ function extractStyles({src, styleGroups, namedStyleGroups, sourceFileName, stat
         const componentPropIndex = node.attributes.findIndex(attr => attr.name && attr.name.name === 'component');
         if (componentPropIndex > -1) {
           const attribute = node.attributes[componentPropIndex];
-          const componentPropValue = n.JSXExpressionContainer.check(attribute.value)
+          const componentPropValue = t.isJSXExpressionContainer(attribute.value)
             ? attribute.value.expression
             : attribute.value;
 
-          if (n.Literal.check(componentPropValue) && typeof componentPropValue.value === 'string') {
+          if (t.isLiteral(componentPropValue) && typeof componentPropValue.value === 'string') {
             node.name.name = componentPropValue.value;
-          } else if (n.Identifier.check(componentPropValue)) {
+          } else if (t.isIdentifier(componentPropValue)) {
             node.name.name = componentPropValue.name;
-          } else if (n.MemberExpression.check(componentPropValue)) {
-            node.name.name = recast.print(componentPropValue).code;
+          } else if (t.isMemberExpression(componentPropValue)) {
+            node.name.name = generate(componentPropValue).code;
           }
 
           // remove component prop from attributes
@@ -314,7 +312,7 @@ function extractStyles({src, styleGroups, namedStyleGroups, sourceFileName, stat
           // if only some style props were extracted AND additional props are spread onto the component,
           // add the props back with null values to prevent spread props from incorrectly overwriting the extracted prop value
           Object.keys(staticAttributes).forEach(attr => {
-            node.attributes.push(b.jsxAttribute(b.jsxIdentifier(attr), b.jsxExpressionContainer(b.literal(null))));
+            node.attributes.push(t.jSXAttribute(t.jSXIdentifier(attr), t.jSXExpressionContainer(t.nullLiteral())));
           });
         }
       }
@@ -331,7 +329,8 @@ function extractStyles({src, styleGroups, namedStyleGroups, sourceFileName, stat
 
       if (classNamePropValue) {
         if (canEvaluate({}, classNamePropValue)) {
-          classNameObjects.push(b.literal(vm.runInNewContext(recast.print(classNamePropValue).code)));
+          // TODO: don't use canEvaluate here, need to be more specific
+          classNameObjects.push(t.stringLiteral(vm.runInNewContext(generate(classNamePropValue).code)));
         } else {
           classNameObjects.push(classNamePropValue);
         }
@@ -347,62 +346,66 @@ function extractStyles({src, styleGroups, namedStyleGroups, sourceFileName, stat
       }
 
       if (extractedStyleClassNames) {
-        classNameObjects.push(b.literal(extractedStyleClassNames));
+        classNameObjects.push(t.stringLiteral(extractedStyleClassNames));
       }
 
       const classNamePropValueForReals = classNameObjects.reduce((acc, val) => {
         if (!acc) {
           if (
             // pass conditional expressions through
-            n.ConditionalExpression.check(val) ||
+            t.isConditionalExpression(val) ||
             // pass non-null literals through
-            (n.Literal.check(val) && val.value !== null)
+            (t.isLiteral(val) && val.value !== null)
           ) {
             return val;
           }
-          return b.logicalExpression('||', val, b.literal(''));
+          return t.logicalExpression('||', val, t.stringLiteral(''));
         }
 
-        const accIsString = n.Literal.check(acc) && typeof acc.value === 'string';
+        const accIsString = t.isLiteral(acc) && typeof acc.value === 'string';
 
         let inner;
-        if (n.Literal.check(val)) {
+        if (t.isLiteral(val)) {
           if (typeof val.value === 'string') {
             if (accIsString) {
               // join adjacent string literals
-              return b.literal(`${acc.value} ${val.value}`);
+              return t.stringLiteral(`${acc.value} ${val.value}`);
             }
-            inner = b.literal(` ${val.value}`);
+            inner = t.stringLiteral(` ${val.value}`);
           } else {
-            inner = b.binaryExpression('+', b.literal(' '), val);
+            inner = t.binaryExpression('+', t.stringLiteral(' '), val);
           }
-        } else if (n.ConditionalExpression.check(val) || n.BinaryExpression.check(val)) {
+        } else if (t.isConditionalExpression(val) || t.isBinaryExpression(val)) {
           if (accIsString) {
-            return b.binaryExpression('+', b.literal(`${acc.value} `), val);
+            return t.binaryExpression('+', t.stringLiteral(`${acc.value} `), val);
           }
-          inner = b.binaryExpression('+', b.literal(' '), val);
-        } else if (n.Identifier.check(val) || n.MemberExpression.check(val)) {
+          inner = t.binaryExpression('+', t.stringLiteral(' '), val);
+        } else if (t.isIdentifier(val) || t.isMemberExpression(val)) {
           // identifiers and member expressions make for reasonable ternaries
-          inner = b.conditionalExpression(val, b.binaryExpression('+', b.literal(' '), val), b.literal(''));
+          inner = t.conditionalExpression(val, t.binaryExpression('+', t.stringLiteral(' '), val), t.stringLiteral(''));
         } else {
-          process.stderr.write(recast.print(val).code + '\n');
+          process.stderr.write(generate(val).code + '\n');
           if (accIsString) {
-            return b.binaryExpression('+', b.literal(`${acc.value} `), b.logicalExpression('||', val, b.literal('')));
+            return t.binaryExpression(
+              '+',
+              t.stringLiteral(`${acc.value} `),
+              t.logicalExpression('||', val, t.stringLiteral(''))
+            );
           }
           // use a logical expression for more complex prop values
-          inner = b.binaryExpression('+', b.literal(' '), b.logicalExpression('||', val, b.literal('')));
+          inner = t.binaryExpression('+', t.stringLiteral(' '), t.logicalExpression('||', val, t.stringLiteral('')));
         }
-        return b.binaryExpression('+', acc, inner);
+        return t.binaryExpression('+', acc, inner);
       }, null);
 
       if (classNamePropValueForReals) {
-        if (n.Literal.check(classNamePropValueForReals) && typeof classNamePropValueForReals.value === 'string') {
+        if (t.isLiteral(classNamePropValueForReals) && typeof classNamePropValueForReals.value === 'string') {
           node.attributes.push(
-            b.jsxAttribute(b.jsxIdentifier('className'), b.literal(classNamePropValueForReals.value))
+            t.jSXAttribute(t.jSXIdentifier('className'), t.stringLiteral(classNamePropValueForReals.value))
           );
         } else {
           node.attributes.push(
-            b.jsxAttribute(b.jsxIdentifier('className'), b.jsxExpressionContainer(classNamePropValueForReals))
+            t.jSXAttribute(t.jSXIdentifier('className'), t.jSXExpressionContainer(classNamePropValueForReals))
           );
         }
       }
@@ -436,9 +439,12 @@ function extractStyles({src, styleGroups, namedStyleGroups, sourceFileName, stat
           cssMap.set(classNameKey, val);
         }
       }
-      this.traverse(path);
     },
-  });
+  };
+
+  const ast = parse(src, {sourceFileName});
+
+  traverse(ast, traverseOptions);
 
   const css = Array.from(cssMap.values()).map(n => n.commentTexts.map(t => `${t}\n`).join('') + n.css).join('');
   // path.parse doesn't exist in the webpack'd bundle but path.dirname and path.basename do.
@@ -449,19 +455,29 @@ function extractStyles({src, styleGroups, namedStyleGroups, sourceFileName, stat
     // append require statement to the document
     // TODO: make sure this doesn't break something valuable
     ast.program.body.unshift(
-      b.expressionStatement(b.callExpression(b.identifier('require'), [b.literal(cssFileName)]))
+      t.expressionStatement(t.callExpression(t.identifier('require'), [t.stringLiteral(cssFileName)]))
     );
   }
 
-  const result = recast.print(ast, {
-    sourceMapName: path.join(dirName, `${baseName}.json`),
-  });
+  const result = generate(
+    ast,
+    {
+      fileName: sourceFileName,
+      retainLines: false,
+      compact: 'auto',
+      concise: false,
+      sourceMaps: true,
+      sourceFileName,
+      quotes: 'single',
+    },
+    src
+  );
 
   return {
     js: result.code,
     css,
     cssFileName,
-    ast,
+    ast: result.ast,
     map: result.map,
   };
 }

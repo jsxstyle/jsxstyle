@@ -19,8 +19,9 @@ describe('extractStyles', function() {
     });
 
     expect(rv.js).toEqual(
-      `require("test/extract-static1.jsxstyle.css");
-<div className="_x0" />`
+      `require('test/extract-static1.jsxstyle.css');
+
+<div className="_x0" />;`
     );
     expect(rv.css).toEqual(
       `/* test/extract-static1.js:1 (Block) */
@@ -41,7 +42,7 @@ describe('extractStyles', function() {
       sourceFileName: 'test/jsxidentifier.js',
       cacheObject: {},
     });
-    expect(rv.js).toEqual('<member.expression color="red" />; <Member.Expression color="blue" />;');
+    expect(rv.js).toEqual('<member.expression color="red" />;<Member.Expression color="blue" />;');
   });
 
   it('converts jsxstyle elements to Block elements when some props aren\u2019t static', () => {
@@ -53,8 +54,9 @@ describe('extractStyles', function() {
     });
 
     expect(rv.js).toEqual(
-      `require("test/extract-static2.jsxstyle.css");
-<Block dynamicValue={notStatic} className="_x0" />`
+      `require('test/extract-static2.jsxstyle.css');
+
+<Block dynamicValue={notStatic} className="_x0" />;`
     );
     expect(rv.css).toEqual(
       `/* test/extract-static2.js:1 (Block) */
@@ -76,8 +78,9 @@ describe('extractStyles', function() {
     });
 
     expect(rv.js).toEqual(
-      `require("test/spread.jsxstyle.css");
-<Block doNotExtract="no" {...spread} extract={null} className="_x0" />`
+      `require('test/spread.jsxstyle.css');
+
+<Block doNotExtract="no" {...spread} extract={null} className="_x0" />;`
     );
     expect(rv.css).toEqual(
       `/* test/spread.js:1 (Block) */
@@ -105,16 +108,9 @@ describe('extractStyles', function() {
     });
 
     expect(rv.js).toEqual(
-      `require("test/spread.jsxstyle.css");
-<Block
-  component="wow"
-  props={{test: 4}}
-  key={test}
-  ref={test}
-  style={{}}
-  {...spread}
-  color={null}
-  className={(typeof spread === "object" && spread !== null && spread.className || wow || "") + " _x0"} />`
+      `require('test/spread.jsxstyle.css');
+
+<Block component="wow" props={{ test: 4 }} key={test} ref={test} style={{}} {...spread} color={null} className={(typeof spread === 'object' && spread !== null && spread.className || wow || '') + ' _x0'} />;`
     );
     expect(rv.css).toEqual(
       `/* test/spread.js:1-10 (Block) */
@@ -179,11 +175,12 @@ describe('extractStyles', function() {
     });
 
     expect(rv.js).toEqual(
-      `require("test/named-style-groups.jsxstyle.css");
+      `require('test/named-style-groups.jsxstyle.css');
+
 <div className="_x0">
   <div className="_test1 _x0" />
   <div className="_test2" />
-</div>`
+</div>;`
     );
 
     expect(rv.css).toEqual(
@@ -230,11 +227,12 @@ describe('extractStyles', function() {
     });
 
     expect(rv.js).toEqual(
-      `require("test/style-groups.jsxstyle.css");
+      `require('test/style-groups.jsxstyle.css');
+
 <div className="_x0">
   <div className="_x1 _x0" />
   <div className="_x2" />
-</div>`
+</div>;`
     );
 
     expect(rv.css).toEqual(
@@ -273,14 +271,15 @@ describe('extractStyles', function() {
     });
 
     expect(rv1.js).toEqual(
-      `require("test/props-prop1.jsxstyle.css");
+      `require('test/props-prop1.jsxstyle.css');
+
 <div staticObject="yep" className="_x0" />;
 <div className="_x0" />;
 <div {...variable} className="_x0" />;
 <div {...calledFunction()} className="_x0" />;
 <div {...member.expression} className="_x0" />;
 <div objectShorthand={objectShorthand} className="_x0" />;
-<div {...one} two={{three, four: 'five', ...six}} className="_x1" />;`
+<div {...one} two={{ three, four: 'five', ...six }} className="_x1" />;`
     );
 
     const rv2 = extractStyles({
@@ -291,8 +290,9 @@ describe('extractStyles', function() {
     });
 
     expect(rv2.js).toEqual(
-      `require("test/props-prop2.jsxstyle.css");
-<div ref={r => this.testBlock = r} className="_x0" />`
+      `require('test/props-prop2.jsxstyle.css');
+
+<div ref={r => this.testBlock = r} className="_x0" />;`
     );
 
     global.console = {warn: jest.fn()};
@@ -307,8 +307,8 @@ describe('extractStyles', function() {
     });
 
     expect(rv3.js).toEqual(
-      `<Block props={{className: 'test'}} />;
-<Block props={{style: 'test'}} />;
+      `<Block props={{ className: 'test' }} />;
+<Block props={{ style: 'test' }} />;
 <Block props="invalid" />;
 <Block dynamicProp={wow} props="invalid" />;`
     );
@@ -325,9 +325,10 @@ const DynamicBlock = ({wow, ...props}) => <Block dynamicProp={wow} {...props} />
     });
 
     expect(rv.js).toEqual(
-      `require("test/rest-spread.jsxstyle.css");
-const BlueBlock = ({wow, ...props}) => <Block color="blue" {...props} test={null} className="_x0" />;
-const DynamicBlock = ({wow, ...props}) => <Block dynamicProp={wow} {...props} />;`
+      `require('test/rest-spread.jsxstyle.css');
+
+const BlueBlock = ({ wow, ...props }) => <Block color="blue" {...props} test={null} className="_x0" />;
+const DynamicBlock = ({ wow, ...props }) => <Block dynamicProp={wow} {...props} />;`
     );
   });
 
@@ -340,8 +341,9 @@ const DynamicBlock = ({wow, ...props}) => <Block dynamicProp={wow} {...props} />
     });
 
     expect(rv.js).toEqual(
-      `require("test/ternary.jsxstyle.css");
-<div className={((dynamic ? "_x1" : "_x2")) + " _x0"} />`
+      `require('test/ternary.jsxstyle.css');
+
+<div className={(dynamic ? '_x1' : '_x2') + ' _x0'} />;`
     );
   });
 
@@ -352,9 +354,9 @@ const DynamicBlock = ({wow, ...props}) => <Block dynamicProp={wow} {...props} />
     });
 
     expect(rv.js).toEqual(
-      `require("test/classname-spaces.jsxstyle.css");
-<div
-  className={"orange " + (((thing1 ? "_x1" : "_x2")) + (" " + ((thing2 ? "_x3" : "_x4")))) + " _x0"} />`
+      `require('test/classname-spaces.jsxstyle.css');
+
+<div className={'orange ' + ((thing1 ? '_x1' : '_x2') + (' ' + (thing2 ? '_x3' : '_x4'))) + ' _x0'} />;`
     );
   });
 
@@ -367,8 +369,9 @@ const DynamicBlock = ({wow, ...props}) => <Block dynamicProp={wow} {...props} />
     });
 
     expect(rv.js).toEqual(
-      `require("test/ternary-with-classname.jsxstyle.css");
-<div className={"cool " + ((dynamic ? "_x1" : "_x2")) + " _x0"} />`
+      `require('test/ternary-with-classname.jsxstyle.css');
+
+<div className={'cool ' + (dynamic ? '_x1' : '_x2') + ' _x0'} />;`
     );
   });
 
@@ -380,7 +383,7 @@ const DynamicBlock = ({wow, ...props}) => <Block dynamicProp={wow} {...props} />
       staticNamespace,
     });
 
-    expect(rv.js).toEqual(`<Block color={dynamic ? 'red' : 'blue'} {...spread} className="cool" />`);
+    expect(rv.js).toEqual(`<Block color={dynamic ? 'red' : 'blue'} {...spread} className="cool" />;`);
   });
 
   it('extracts a ternary expression from a component that has a className and spread operator', () => {
@@ -404,8 +407,9 @@ const DynamicBlock = ({wow, ...props}) => <Block dynamicProp={wow} {...props} />
     );
 
     expect(rv.js).toEqual(
-      `require("test/ternary-with-spread.jsxstyle.css");
-<Block {...spread} color={null} className={(dynamic ? "_x0" : "_x1")} />`
+      `require('test/ternary-with-spread.jsxstyle.css');
+
+<Block {...spread} color={null} className={dynamic ? '_x0' : '_x1'} />;`
     );
   });
 
@@ -418,8 +422,9 @@ const DynamicBlock = ({wow, ...props}) => <Block dynamicProp={wow} {...props} />
     });
 
     expect(rv.js).toEqual(
-      `require("test/ternary-groups.jsxstyle.css");
-<div className={((dynamic ? "_x1" : "_x2")) + " _x0"} />`
+      `require('test/ternary-groups.jsxstyle.css');
+
+<div className={(dynamic ? '_x1' : '_x2') + ' _x0'} />;`
     );
 
     expect(rv.css).toEqual(
@@ -450,8 +455,9 @@ const DynamicBlock = ({wow, ...props}) => <Block dynamicProp={wow} {...props} />
     });
 
     expect(rv.js).toEqual(
-      `require("test/ternary-null-values.jsxstyle.css");
-<div className={((dynamic ? "" : "_x1")) + " _x0"} />`
+      `require('test/ternary-null-values.jsxstyle.css');
+
+<div className={(dynamic ? '' : '_x1') + ' _x0'} />;`
     );
 
     expect(rv.css).toEqual(
@@ -480,7 +486,8 @@ const DynamicBlock = ({wow, ...props}) => <Block dynamicProp={wow} {...props} />
     });
 
     expect(rv.js).toEqual(
-      `require("test/component-prop1.jsxstyle.css");
+      `require('test/component-prop1.jsxstyle.css');
+
 <input className="_x0" />;
 <Thing className="_x0" />;
 <thing.cool className="_x0" />;
@@ -525,10 +532,7 @@ const DynamicBlock = ({wow, ...props}) => <Block dynamicProp={wow} {...props} />
 
   it('handles the `className` prop correctly', () => {
     const rv1 = extractStyles({
-      src: `<Row
-  className={member.expression}
-  {...spread}
-/>;
+      src: `<Row className={member.expression} {...spread} />;
 <Block className="orange" />;`,
       sourceFileName: 'test/class-name1.js',
       cacheObject: {},
@@ -536,11 +540,9 @@ const DynamicBlock = ({wow, ...props}) => <Block dynamicProp={wow} {...props} />
     });
 
     expect(rv1.js).toEqual(
-      `require("test/class-name1.jsxstyle.css");
-<Row
-  className={member.expression}
-  {...spread}
-/>;
+      `require('test/class-name1.jsxstyle.css');
+
+<Row className={member.expression} {...spread} />;
 <div className="orange _x0" />;`
     );
   });
