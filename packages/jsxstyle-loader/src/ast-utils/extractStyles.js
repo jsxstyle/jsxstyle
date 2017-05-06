@@ -12,6 +12,7 @@ const canEvaluate = require('./canEvaluate');
 const extractStaticTernaries = require('./extractStaticTernaries');
 const getPropValueFromAttributes = require('./getPropValueFromAttributes');
 const getStylesByClassName = require('../getStylesByClassName');
+const getSourceModuleForItem = require('./getSourceModuleForItem');
 
 const parse = require('./parse');
 const traverse = require('babel-traverse').default;
@@ -24,7 +25,15 @@ const UNTOUCHED_PROPS = ['ref', 'key', 'style'];
 const ALL_SPECIAL_PROPS = ['component', 'className'].concat(UNTOUCHED_PROPS);
 
 const defaultCacheObject = {};
-function extractStyles({src, styleGroups, namedStyleGroups, sourceFileName, staticNamespace, cacheObject}) {
+function extractStyles({
+  src,
+  styleGroups,
+  namedStyleGroups,
+  sourceFileName,
+  staticNamespace,
+  cacheObject,
+  validateComponent,
+}) {
   invariant(typeof src === 'string', 'extractStyles expects `src` to be a string of javascript');
   invariant(typeof sourceFileName === 'string', 'extractStyles expects `sourceFileName` to be a path to a .js file');
 
@@ -55,6 +64,11 @@ function extractStyles({src, styleGroups, namedStyleGroups, sourceFileName, stat
     );
   }
 
+  // default to true
+  if (typeof validateComponent === 'undefined') {
+    validateComponent = true;
+  }
+
   const evalContext = vm.createContext(staticNamespace ? Object.assign({}, staticNamespace) : {});
 
   // Using a map for (officially supported) guaranteed insertion order
@@ -64,14 +78,18 @@ function extractStyles({src, styleGroups, namedStyleGroups, sourceFileName, stat
     JSXElement(path) {
       const node = path.node.openingElement;
 
-      if (
-        // skip anything that isn't an identifier (i.e. <thing.cool />)
-        !t.isJSXIdentifier(node.name) ||
-        // skip lowercase elements
-        node.name.name[0].toUpperCase() !== node.name.name[0] ||
-        // skip components not exported by jsxstyle
-        !jsxstyle.hasOwnProperty(node.name.name)
-      ) {
+      let jsxstyleSrcComponent;
+      if (validateComponent) {
+        const src = getSourceModuleForItem(node, path.scope);
+        if (src === null) {
+          return;
+        }
+        jsxstyleSrcComponent = src.imported;
+      } else {
+        jsxstyleSrcComponent = node.name.name;
+      }
+
+      if (!jsxstyle.hasOwnProperty(jsxstyleSrcComponent)) {
         return;
       }
 
@@ -143,6 +161,7 @@ function extractStyles({src, styleGroups, namedStyleGroups, sourceFileName, stat
           } else if (t.isMemberExpression(componentPropValue)) {
             // component={variable.prop}
           } else {
+            // TODO: extract more complex expressions out as separate var
             console.warn(
               '`component` prop value was not handled by extractStyles: `%s`',
               generate(componentPropValue).code
@@ -265,7 +284,7 @@ function extractStyles({src, styleGroups, namedStyleGroups, sourceFileName, stat
       });
 
       if (inlinePropCount === 0) {
-        Object.assign(staticAttributes, jsxstyle[node.name.name].defaultProps);
+        Object.assign(staticAttributes, jsxstyle[jsxstyleSrcComponent].defaultProps);
       }
 
       let classNamePropValue;

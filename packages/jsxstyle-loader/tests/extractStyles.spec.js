@@ -12,7 +12,8 @@ const staticNamespace = {
 describe('extractStyles', function() {
   it('converts jsxstyle elements to plain elements when all props are static', () => {
     const rv = extractStyles({
-      src: '<Block staticString="wow" staticInt={69} staticValue={val} staticMemberExpression={LC.staticValue} />',
+      src: `import {Block} from 'jsxstyle';
+<Block staticString="wow" staticInt={69} staticValue={val} staticMemberExpression={LC.staticValue} />`,
       sourceFileName: 'test/extract-static1.js',
       cacheObject: {},
       staticNamespace,
@@ -21,10 +22,11 @@ describe('extractStyles', function() {
     expect(rv.js).toEqual(
       `require('test/extract-static1.jsxstyle.css');
 
+import { Block } from 'jsxstyle';
 <div className="_x0" />;`
     );
     expect(rv.css).toEqual(
-      `/* test/extract-static1.js:1 (Block) */
+      `/* test/extract-static1.js:2 (Block) */
 ._x0 {
   static-string:wow;
   static-int:69px;
@@ -47,7 +49,8 @@ describe('extractStyles', function() {
 
   it('converts jsxstyle elements to Block elements when some props aren\u2019t static', () => {
     const rv = extractStyles({
-      src: '<Block staticString="wow" staticInt={69} staticValue={val} staticMemberExpression={LC.staticValue} dynamicValue={notStatic} />',
+      src: `import {Block} from 'jsxstyle';
+<Block staticString="wow" staticInt={69} staticValue={val} staticMemberExpression={LC.staticValue} dynamicValue={notStatic} />`,
       sourceFileName: 'test/extract-static2.js',
       cacheObject: {},
       staticNamespace,
@@ -56,10 +59,11 @@ describe('extractStyles', function() {
     expect(rv.js).toEqual(
       `require('test/extract-static2.jsxstyle.css');
 
+import { Block } from 'jsxstyle';
 <Block dynamicValue={notStatic} className="_x0" />;`
     );
     expect(rv.css).toEqual(
-      `/* test/extract-static2.js:1 (Block) */
+      `/* test/extract-static2.js:2 (Block) */
 ._x0 {
   static-string:wow;
   static-int:69px;
@@ -72,7 +76,8 @@ describe('extractStyles', function() {
 
   it('handles props mixed with spread operators', () => {
     const rv = extractStyles({
-      src: `<Block doNotExtract="no" {...spread} extract="yep" />`,
+      src: `import {Block} from 'jsxstyle';
+<Block doNotExtract="no" {...spread} extract="yep" />`,
       sourceFileName: 'test/spread.js',
       cacheObject: {},
     });
@@ -80,10 +85,11 @@ describe('extractStyles', function() {
     expect(rv.js).toEqual(
       `require('test/spread.jsxstyle.css');
 
+import { Block } from 'jsxstyle';
 <Block doNotExtract="no" {...spread} extract={null} className="_x0" />;`
     );
     expect(rv.css).toEqual(
-      `/* test/spread.js:1 (Block) */
+      `/* test/spread.js:2 (Block) */
 ._x0 {
   extract:yep;
 }
@@ -93,7 +99,8 @@ describe('extractStyles', function() {
 
   it('handles reserved props before the spread operators', () => {
     const rv = extractStyles({
-      src: `<Block
+      src: `import {Block} from 'jsxstyle';
+<Block
   className={wow}
   component="wow"
   props={{test: 4}}
@@ -110,10 +117,11 @@ describe('extractStyles', function() {
     expect(rv.js).toEqual(
       `require('test/spread.jsxstyle.css');
 
+import { Block } from 'jsxstyle';
 <Block component="wow" props={{ test: 4 }} key={test} ref={test} style={{}} {...spread} color={null} className={(typeof spread === 'object' && spread !== null && spread.className || wow || '') + ' _x0'} />;`
     );
     expect(rv.css).toEqual(
-      `/* test/spread.js:1-10 (Block) */
+      `/* test/spread.js:2-11 (Block) */
 ._x0 {
   color:red;
 }
@@ -125,19 +133,22 @@ describe('extractStyles', function() {
     const cacheObject = {};
 
     extractStyles({
-      src: `<Block />`,
+      src: `import {Block} from 'jsxstyle';
+<Block />`,
       sourceFileName: 'test/cache-object.js',
       cacheObject,
     });
 
     extractStyles({
-      src: `<Block staticThing="wow" />`,
+      src: `import {Block} from 'jsxstyle';
+<Block staticThing="wow" />`,
       sourceFileName: 'test/cache-object.js',
       cacheObject,
     });
 
     extractStyles({
-      src: `<InlineBlock />`,
+      src: `import {InlineBlock} from 'jsxstyle';
+<InlineBlock />`,
       sourceFileName: 'test/cache-object.js',
       cacheObject,
     });
@@ -165,7 +176,8 @@ describe('extractStyles', function() {
     };
 
     const rv = extractStyles({
-      src: `<Block>
+      src: `import {Block, InlineBlock} from 'jsxstyle';
+<Block>
   <Block thing="wow" hoverThing="ok" />
   <InlineBlock />
 </Block>`,
@@ -177,6 +189,7 @@ describe('extractStyles', function() {
     expect(rv.js).toEqual(
       `require('test/named-style-groups.jsxstyle.css');
 
+import { Block, InlineBlock } from 'jsxstyle';
 <div className="_x0">
   <div className="_test1 _x0" />
   <div className="_test2" />
@@ -184,19 +197,19 @@ describe('extractStyles', function() {
     );
 
     expect(rv.css).toEqual(
-      `/* test/named-style-groups.js:1 (Block) */
-/* test/named-style-groups.js:2 (Block) */
+      `/* test/named-style-groups.js:2 (Block) */
+/* test/named-style-groups.js:3 (Block) */
 ._x0 {
   display:block;
 }
-/* test/named-style-groups.js:2 (Block) */
+/* test/named-style-groups.js:3 (Block) */
 ._test1 {
   thing:wow;
 }
 ._test1:hover {
   thing:ok;
 }
-/* test/named-style-groups.js:3 (InlineBlock) */
+/* test/named-style-groups.js:4 (InlineBlock) */
 ._test2 {
   display:inline-block;
 }
@@ -217,7 +230,8 @@ describe('extractStyles', function() {
     ];
 
     const rv = extractStyles({
-      src: `<Block>
+      src: `import {Block, InlineBlock} from 'jsxstyle';
+<Block>
   <Block thing="wow" hoverThing="ok" />
   <InlineBlock />
 </Block>`,
@@ -229,6 +243,7 @@ describe('extractStyles', function() {
     expect(rv.js).toEqual(
       `require('test/style-groups.jsxstyle.css');
 
+import { Block, InlineBlock } from 'jsxstyle';
 <div className="_x0">
   <div className="_x1 _x0" />
   <div className="_x2" />
@@ -236,19 +251,19 @@ describe('extractStyles', function() {
     );
 
     expect(rv.css).toEqual(
-      `/* test/style-groups.js:1 (Block) */
-/* test/style-groups.js:2 (Block) */
+      `/* test/style-groups.js:2 (Block) */
+/* test/style-groups.js:3 (Block) */
 ._x0 {
   display:block;
 }
-/* test/style-groups.js:2 (Block) */
+/* test/style-groups.js:3 (Block) */
 ._x1 {
   thing:wow;
 }
 ._x1:hover {
   thing:ok;
 }
-/* test/style-groups.js:3 (InlineBlock) */
+/* test/style-groups.js:4 (InlineBlock) */
 ._x2 {
   display:inline-block;
 }
@@ -258,7 +273,8 @@ describe('extractStyles', function() {
 
   it('handles the `props` prop correctly', () => {
     const rv1 = extractStyles({
-      src: `<Block props={{staticObject: 'yep'}} />;
+      src: `import {Block} from 'jsxstyle';
+<Block props={{staticObject: 'yep'}} />;
 <Block props={{}} />;
 <Block props={variable} />;
 <Block props={calledFunction()} />;
@@ -273,6 +289,7 @@ describe('extractStyles', function() {
     expect(rv1.js).toEqual(
       `require('test/props-prop1.jsxstyle.css');
 
+import { Block } from 'jsxstyle';
 <div staticObject="yep" className="_x0" />;
 <div className="_x0" />;
 <div {...variable} className="_x0" />;
@@ -283,7 +300,8 @@ describe('extractStyles', function() {
     );
 
     const rv2 = extractStyles({
-      src: `<Block color="red" ref={r => this.testBlock = r} />`,
+      src: `import {Block} from 'jsxstyle';
+<Block color="red" ref={r => this.testBlock = r} />`,
       sourceFileName: 'test/props-prop2.js',
       cacheObject: {},
       staticNamespace,
@@ -292,12 +310,15 @@ describe('extractStyles', function() {
     expect(rv2.js).toEqual(
       `require('test/props-prop2.jsxstyle.css');
 
+import { Block } from 'jsxstyle';
 <div ref={r => this.testBlock = r} className="_x0" />;`
     );
 
+    const oldConsole = global.console;
     global.console = {warn: jest.fn()};
     const rv3 = extractStyles({
-      src: `<Block props={{className: 'test'}} />;
+      src: `import {Block} from 'jsxstyle';
+<Block props={{className: 'test'}} />;
 <Block props={{style: 'test'}} />;
 <Block props="invalid" />;
 <Block dynamicProp={wow} props="invalid" />;`,
@@ -307,18 +328,21 @@ describe('extractStyles', function() {
     });
 
     expect(rv3.js).toEqual(
-      `<Block props={{ className: 'test' }} />;
+      `import { Block } from 'jsxstyle';
+<Block props={{ className: 'test' }} />;
 <Block props={{ style: 'test' }} />;
 <Block props="invalid" />;
 <Block dynamicProp={wow} props="invalid" />;`
     );
 
     expect(console.warn).toHaveBeenCalledTimes(4);
+    global.console = oldConsole;
   });
 
   it("doesn't explode if you use the spread operator", () => {
     const rv = extractStyles({
-      src: `const BlueBlock = ({wow, ...props}) => <Block color="blue" {...props} test="wow" />;
+      src: `import {Block} from 'jsxstyle';
+const BlueBlock = ({wow, ...props}) => <Block color="blue" {...props} test="wow" />;
 const DynamicBlock = ({wow, ...props}) => <Block dynamicProp={wow} {...props} />;`,
       sourceFileName: 'test/rest-spread.js',
       cacheObject: {},
@@ -327,6 +351,7 @@ const DynamicBlock = ({wow, ...props}) => <Block dynamicProp={wow} {...props} />
     expect(rv.js).toEqual(
       `require('test/rest-spread.jsxstyle.css');
 
+import { Block } from 'jsxstyle';
 const BlueBlock = ({ wow, ...props }) => <Block color="blue" {...props} test={null} className="_x0" />;
 const DynamicBlock = ({ wow, ...props }) => <Block dynamicProp={wow} {...props} />;`
     );
@@ -334,7 +359,8 @@ const DynamicBlock = ({ wow, ...props }) => <Block dynamicProp={wow} {...props} 
 
   it('extracts a ternary expression that has static consequent and alternate', () => {
     const rv = extractStyles({
-      src: `<Block color={dynamic ? 'red' : 'blue'} />`,
+      src: `import { Block } from 'jsxstyle';
+<Block color={dynamic ? 'red' : 'blue'} />`,
       sourceFileName: 'test/ternary.js',
       cacheObject: {},
       staticNamespace,
@@ -343,26 +369,30 @@ const DynamicBlock = ({ wow, ...props }) => <Block dynamicProp={wow} {...props} 
     expect(rv.js).toEqual(
       `require('test/ternary.jsxstyle.css');
 
+import { Block } from 'jsxstyle';
 <div className={(dynamic ? '_x1' : '_x2') + ' _x0'} />;`
     );
   });
 
   it('puts spaces between each class name', () => {
     const rv = extractStyles({
-      src: `<Block className="orange" color={thing1 ? 'orange' : 'purple'} width={thing2 ? 200 : 400} />`,
+      src: `import {Block} from 'jsxstyle';
+<Block className="orange" color={thing1 ? 'orange' : 'purple'} width={thing2 ? 200 : 400} />`,
       sourceFileName: 'test/classname-spaces.js',
     });
 
     expect(rv.js).toEqual(
       `require('test/classname-spaces.jsxstyle.css');
 
+import { Block } from 'jsxstyle';
 <div className={'orange ' + ((thing1 ? '_x1' : '_x2') + (' ' + (thing2 ? '_x3' : '_x4'))) + ' _x0'} />;`
     );
   });
 
   it('extracts a ternary expression from a component that has a className specified', () => {
     const rv = extractStyles({
-      src: `<Block className="cool" color={dynamic ? 'red' : 'blue'} />`,
+      src: `import {Block} from 'jsxstyle';
+<Block className="cool" color={dynamic ? 'red' : 'blue'} />`,
       sourceFileName: 'test/ternary-with-classname.js',
       cacheObject: {},
       staticNamespace,
@@ -371,35 +401,39 @@ const DynamicBlock = ({ wow, ...props }) => <Block dynamicProp={wow} {...props} 
     expect(rv.js).toEqual(
       `require('test/ternary-with-classname.jsxstyle.css');
 
+import { Block } from 'jsxstyle';
 <div className={'cool ' + (dynamic ? '_x1' : '_x2') + ' _x0'} />;`
     );
   });
 
   it('ignores a ternary expression that comes before a spread operator', () => {
     const rv = extractStyles({
-      src: `<Block color={dynamic ? 'red' : 'blue'} {...spread} className="cool" />`,
+      src: `import {Block} from 'jsxstyle';
+<Block color={dynamic ? 'red' : 'blue'} {...spread} className="cool" />`,
       sourceFileName: 'test/ternary-with-classname.js',
       cacheObject: {},
       staticNamespace,
     });
 
-    expect(rv.js).toEqual(`<Block color={dynamic ? 'red' : 'blue'} {...spread} className="cool" />;`);
+    expect(rv.js).toEqual(`import { Block } from 'jsxstyle';
+<Block color={dynamic ? 'red' : 'blue'} {...spread} className="cool" />;`);
   });
 
   it('extracts a ternary expression from a component that has a className and spread operator', () => {
     const rv = extractStyles({
-      src: `<Block {...spread} color={dynamic ? 'red' : 'blue'} />`,
+      src: `import {Block} from 'jsxstyle';
+<Block {...spread} color={dynamic ? 'red' : 'blue'} />`,
       sourceFileName: 'test/ternary-with-spread.js',
       cacheObject: {},
       staticNamespace,
     });
 
     expect(rv.css).toEqual(
-      `/* test/ternary-with-spread.js:1 (Block) */
+      `/* test/ternary-with-spread.js:2 (Block) */
 ._x0 {
   color:red;
 }
-/* test/ternary-with-spread.js:1 (Block) */
+/* test/ternary-with-spread.js:2 (Block) */
 ._x1 {
   color:blue;
 }
@@ -409,13 +443,15 @@ const DynamicBlock = ({ wow, ...props }) => <Block dynamicProp={wow} {...props} 
     expect(rv.js).toEqual(
       `require('test/ternary-with-spread.jsxstyle.css');
 
+import { Block } from 'jsxstyle';
 <Block {...spread} color={null} className={dynamic ? '_x0' : '_x1'} />;`
     );
   });
 
   it('groups extracted ternary statements', () => {
     const rv = extractStyles({
-      src: `<Block color={dynamic ? 'red' : 'blue'} width={dynamic ? 200 : 400} />`,
+      src: `import {Block} from 'jsxstyle';
+<Block color={dynamic ? 'red' : 'blue'} width={dynamic ? 200 : 400} />`,
       sourceFileName: 'test/ternary-groups.js',
       cacheObject: {},
       staticNamespace,
@@ -424,20 +460,21 @@ const DynamicBlock = ({ wow, ...props }) => <Block dynamicProp={wow} {...props} 
     expect(rv.js).toEqual(
       `require('test/ternary-groups.jsxstyle.css');
 
+import { Block } from 'jsxstyle';
 <div className={(dynamic ? '_x1' : '_x2') + ' _x0'} />;`
     );
 
     expect(rv.css).toEqual(
-      `/* test/ternary-groups.js:1 (Block) */
+      `/* test/ternary-groups.js:2 (Block) */
 ._x0 {
   display:block;
 }
-/* test/ternary-groups.js:1 (Block) */
+/* test/ternary-groups.js:2 (Block) */
 ._x1 {
   color:red;
   width:200px;
 }
-/* test/ternary-groups.js:1 (Block) */
+/* test/ternary-groups.js:2 (Block) */
 ._x2 {
   color:blue;
   width:400px;
@@ -448,7 +485,8 @@ const DynamicBlock = ({ wow, ...props }) => <Block dynamicProp={wow} {...props} 
 
   it('handles null values in ternaries correctly', () => {
     const rv = extractStyles({
-      src: `<Block color={dynamic ? null : 'blue'} />`,
+      src: `import {Block} from 'jsxstyle';
+<Block color={dynamic ? null : 'blue'} />`,
       sourceFileName: 'test/ternary-null-values.js',
       cacheObject: {},
       staticNamespace,
@@ -457,15 +495,16 @@ const DynamicBlock = ({ wow, ...props }) => <Block dynamicProp={wow} {...props} 
     expect(rv.js).toEqual(
       `require('test/ternary-null-values.jsxstyle.css');
 
+import { Block } from 'jsxstyle';
 <div className={(dynamic ? '' : '_x1') + ' _x0'} />;`
     );
 
     expect(rv.css).toEqual(
-      `/* test/ternary-null-values.js:1 (Block) */
+      `/* test/ternary-null-values.js:2 (Block) */
 ._x0 {
   display:block;
 }
-/* test/ternary-null-values.js:1 (Block) */
+/* test/ternary-null-values.js:2 (Block) */
 ._x1 {
   color:blue;
 }
@@ -475,7 +514,8 @@ const DynamicBlock = ({ wow, ...props }) => <Block dynamicProp={wow} {...props} 
 
   it('handles the `component` prop correctly', () => {
     const rv = extractStyles({
-      src: `<Block component="input" />;
+      src: `import {Block} from 'jsxstyle';
+<Block component="input" />;
 <Block component={Thing} />;
 <Block component={thing.cool} />;
 <Block component="h1" {...spread} />;
@@ -488,6 +528,7 @@ const DynamicBlock = ({ wow, ...props }) => <Block dynamicProp={wow} {...props} 
     expect(rv.js).toEqual(
       `require('test/component-prop1.jsxstyle.css');
 
+import { Block } from 'jsxstyle';
 <input className="_x0" />;
 <Thing className="_x0" />;
 <thing.cool className="_x0" />;
@@ -495,11 +536,13 @@ const DynamicBlock = ({ wow, ...props }) => <Block dynamicProp={wow} {...props} 
 <Block component="h1" dynamic={wow} className="_x1" />;`
     );
 
+    const oldConsole = global.console;
     global.console = {warn: jest.fn()};
 
     // does not warn
     extractStyles({
-      src: '<Block component="CapitalisedString" />',
+      src: `import {Block} from 'jsxstyle';
+<Block component="CapitalisedString" />`,
       sourceFileName: 'test/component-prop2.js',
       cacheObject: {},
       staticNamespace,
@@ -507,32 +550,37 @@ const DynamicBlock = ({ wow, ...props }) => <Block dynamicProp={wow} {...props} 
 
     // does not warn
     extractStyles({
-      src: '<Block component={lowercaseIdentifier} />',
+      src: `import {Block} from 'jsxstyle';
+<Block component={lowercaseIdentifier} />`,
       sourceFileName: 'test/component-prop3.js',
       cacheObject: {},
       staticNamespace,
     });
 
     extractStyles({
-      src: '<Block component={functionCall()} />',
+      src: `import {Block} from 'jsxstyle';
+<Block component={functionCall()} />`,
       sourceFileName: 'test/component-prop4.js',
       cacheObject: {},
       staticNamespace,
     });
 
     extractStyles({
-      src: '<Block component={member.expression()} />',
+      src: `import {Block} from 'jsxstyle';
+<Block component={member.expression()} />`,
       sourceFileName: 'test/component-prop4.js',
       cacheObject: {},
       staticNamespace,
     });
 
     expect(console.warn).toHaveBeenCalledTimes(2);
+    global.console = oldConsole;
   });
 
   it('handles the `className` prop correctly', () => {
     const rv1 = extractStyles({
-      src: `<Row className={member.expression} {...spread} />;
+      src: `import {Block, Row} from 'jsxstyle';
+<Row className={member.expression} {...spread} />;
 <Block className="orange" />;`,
       sourceFileName: 'test/class-name1.js',
       cacheObject: {},
@@ -542,8 +590,38 @@ const DynamicBlock = ({ wow, ...props }) => <Block dynamicProp={wow} {...props} 
     expect(rv1.js).toEqual(
       `require('test/class-name1.jsxstyle.css');
 
+import { Block, Row } from 'jsxstyle';
 <Row className={member.expression} {...spread} />;
 <div className="orange _x0" />;`
+    );
+  });
+
+  it('only extract styles from valid jsxstyle components', () => {
+    const rv1 = extractStyles({
+      src: `import {Block as TestBlock} from 'jsxstyle';
+const {Col: TestCol, Row} = require('jsxstyle');
+<Block extract="nope" />;
+<TestBlock extract="yep" />;
+<Row extract="yep" />;
+<Col extract="nope" />;
+<InlineBlock extract="nope" />;
+<TestCol extract="yep" />;`,
+      sourceFileName: 'test/validate.js',
+      cacheObject: {},
+      staticNamespace,
+    });
+
+    expect(rv1.js).toEqual(
+      `require('test/validate.jsxstyle.css');
+
+import { Block as TestBlock } from 'jsxstyle';
+const { Col: TestCol, Row } = require('jsxstyle');
+<Block extract="nope" />;
+<div className="_x0" />;
+<div className="_x1" />;
+<Col extract="nope" />;
+<InlineBlock extract="nope" />;
+<div className="_x2" />;`
     );
   });
 });
