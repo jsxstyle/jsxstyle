@@ -84,7 +84,11 @@ function extractStaticTernaries(ternaries, evalContext, cacheObject) {
       }
     })
     .filter(f => f)
-    .reduce((acc, val) => (acc ? t.binaryExpression('+', acc, val) : val));
+    .reduce((acc, val) => (acc ? t.binaryExpression('+', acc, val) : val), null);
+
+  if (!ternaryExpression) {
+    return null;
+  }
 
   return {
     // styles to be extracted

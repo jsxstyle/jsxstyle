@@ -374,6 +374,33 @@ import { Block } from 'jsxstyle';
     );
   });
 
+  it('extracts a simple conditional expression that has static right side', () => {
+    const rv = extractStyles({
+      src: `import {Block} from 'jsxstyle';
+<Block color={dynamic && 'red'} />`,
+      sourceFileName: 'test/ternary.js',
+      cacheObject: {},
+      staticNamespace,
+    });
+
+    expect(rv.js).toEqual(
+      `require('test/ternary.jsxstyle.css');
+
+import { Block } from 'jsxstyle';
+<div className={(dynamic ? '_x1' : '') + ' _x0'} />;`
+    );
+
+    expect(rv.css).toEqual(`/* test/ternary.js:2 (Block) */
+._x0 {
+  display:block;
+}
+/* test/ternary.js:2 (Block) */
+._x1 {
+  color:red;
+}
+`);
+  });
+
   it('puts spaces between each class name', () => {
     const rv = extractStyles({
       src: `import {Block} from 'jsxstyle';

@@ -264,17 +264,32 @@ function extractStyles({
           return false;
         }
 
-        // expression container with a ternary inside
-        if (t.isJSXExpressionContainer(value) && t.isConditionalExpression(value.expression)) {
-          // if both sides of the ternary can be evaluated, extract them
-          if (
-            canEvaluate(staticNamespace, value.expression.consequent) &&
-            canEvaluate(staticNamespace, value.expression.alternate)
-          ) {
-            staticTernaries.push({name, ternary: value.expression});
-            // mark the prop as extracted
-            staticAttributes[name] = null;
-            return false;
+        if (t.isJSXExpressionContainer(value)) {
+          if (t.isConditionalExpression(value.expression)) {
+            // if both sides of the ternary can be evaluated, extract them
+            if (
+              canEvaluate(staticNamespace, value.expression.consequent) &&
+              canEvaluate(staticNamespace, value.expression.alternate)
+            ) {
+              staticTernaries.push({name, ternary: value.expression});
+              // mark the prop as extracted
+              staticAttributes[name] = null;
+              return false;
+            }
+          } else if (t.isLogicalExpression(value.expression)) {
+            // convert a simple logical expression to a ternary with a null alternate
+            if (value.expression.operator === '&&' && canEvaluate(staticNamespace, value.expression.right)) {
+              staticTernaries.push({
+                name,
+                ternary: {
+                  test: value.expression.left,
+                  consequent: value.expression.right,
+                  alternate: t.nullLiteral(),
+                },
+              });
+              staticAttributes[name] = null;
+              return false;
+            }
           }
         }
 
@@ -358,10 +373,12 @@ function extractStyles({
       if (staticTernaries.length > 0) {
         const ternaryObj = extractStaticTernaries(staticTernaries, evalContext, cacheObject);
 
-        // add extracted styles by className to existing object
-        Object.assign(stylesByClassName, ternaryObj.stylesByClassName);
-
-        classNameObjects.push(ternaryObj.ternaryExpression);
+        // ternaryObj is null if all of the extracted ternaries have falsey consequents and alternates
+        if (ternaryObj !== null) {
+          // add extracted styles by className to existing object
+          Object.assign(stylesByClassName, ternaryObj.stylesByClassName);
+          classNameObjects.push(ternaryObj.ternaryExpression);
+        }
       }
 
       if (extractedStyleClassNames) {
