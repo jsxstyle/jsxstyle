@@ -10,7 +10,11 @@ function accessSafe(obj, member) {
     t.logicalExpression(
       '&&',
       // typeof obj === 'object
-      t.binaryExpression('===', t.unaryExpression('typeof', obj), t.stringLiteral('object')),
+      t.binaryExpression(
+        '===',
+        t.unaryExpression('typeof', obj),
+        t.stringLiteral('object')
+      ),
       // obj !== null
       t.binaryExpression('!==', obj, t.nullLiteral())
     ),

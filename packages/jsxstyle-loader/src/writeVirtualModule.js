@@ -8,13 +8,16 @@ let inode = 69000000;
 
 // writeVirtualModule expects to be bound to the loader instance
 function writeVirtualModule(filePath, contents) {
-  invariant(this._compiler, 'writeVirtualModule must be bound to the webpack loader instance');
+  invariant(
+    this._compiler,
+    'writeVirtualModule must be bound to the webpack loader instance'
+  );
 
   if (!this.fs._writeVirtualFile) {
     // Write the contents of a file to the module cache and give it fake stats
     this.fs._writeVirtualFile = function(file, stats, contents) {
       this._virtualFiles = this._virtualFiles || {};
-      this._virtualFiles[file] = {stats, contents};
+      this._virtualFiles[file] = { stats, contents };
       this._statStorage.data[file] = [null, stats];
       this._readFileStorage.data[file] = [null, contents];
     };
@@ -52,7 +55,9 @@ function writeVirtualModule(filePath, contents) {
     birthtime: time,
   });
 
-  const modulePath = path.isAbsolute(filePath) ? filePath : path.join(this.context, filePath);
+  const modulePath = path.isAbsolute(filePath)
+    ? filePath
+    : path.join(this.context, filePath);
 
   this.fs._writeVirtualFile(modulePath, stats, contents);
 }

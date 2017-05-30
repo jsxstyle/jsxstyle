@@ -41,7 +41,10 @@ function canEvaluate(staticNamespace, exprNode) {
     );
   } else if (t.isBinaryExpression(exprNode)) {
     // exprNode is a binary expression and both sides can be evaluated
-    return canEvaluate(staticNamespace, exprNode.left) && canEvaluate(staticNamespace, exprNode.right);
+    return (
+      canEvaluate(staticNamespace, exprNode.left) &&
+      canEvaluate(staticNamespace, exprNode.right)
+    );
   }
   return false;
 }

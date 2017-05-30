@@ -7,7 +7,10 @@ const invariant = require('invariant');
 const getClassNameFromCache = require('../getClassNameFromCache');
 
 function extractStaticTernaries(ternaries, evalContext, cacheObject) {
-  invariant(Array.isArray(ternaries), 'extractStaticTernaries expects param 1 to be an array of ternaries');
+  invariant(
+    Array.isArray(ternaries),
+    'extractStaticTernaries expects param 1 to be an array of ternaries'
+  );
   invariant(
     typeof evalContext === 'object' && evalContext !== null,
     'extractStaticTernaries expects param 2 to be an object'
@@ -23,12 +26,18 @@ function extractStaticTernaries(ternaries, evalContext, cacheObject) {
 
   const ternariesByKey = {};
   for (let idx = -1, len = ternaries.length; ++idx < len; ) {
-    const {name, ternary} = ternaries[idx];
+    const { name, ternary } = ternaries[idx];
 
     const key = generate(ternary.test).code;
-    const {test} = ternary;
-    const consequentValue = vm.runInContext(generate(ternary.consequent).code, evalContext);
-    const alternateValue = vm.runInContext(generate(ternary.alternate).code, evalContext);
+    const { test } = ternary;
+    const consequentValue = vm.runInContext(
+      generate(ternary.consequent).code,
+      evalContext
+    );
+    const alternateValue = vm.runInContext(
+      generate(ternary.alternate).code,
+      evalContext
+    );
 
     ternariesByKey[key] = ternariesByKey[key] || {
       test,
@@ -43,9 +52,11 @@ function extractStaticTernaries(ternaries, evalContext, cacheObject) {
 
   const ternaryExpression = Object.keys(ternariesByKey)
     .map((key, idx) => {
-      const {test, consequentStyles, alternateStyles} = ternariesByKey[key];
-      const consequentClassName = getClassNameFromCache(consequentStyles, cacheObject) || '';
-      const alternateClassName = getClassNameFromCache(alternateStyles, cacheObject) || '';
+      const { test, consequentStyles, alternateStyles } = ternariesByKey[key];
+      const consequentClassName =
+        getClassNameFromCache(consequentStyles, cacheObject) || '';
+      const alternateClassName =
+        getClassNameFromCache(alternateStyles, cacheObject) || '';
 
       if (!consequentClassName && !alternateClassName) {
         return null;
@@ -65,7 +76,11 @@ function extractStaticTernaries(ternaries, evalContext, cacheObject) {
           return t.binaryExpression(
             '+',
             t.stringLiteral(' '),
-            t.conditionalExpression(test, t.stringLiteral(consequentClassName), t.stringLiteral(alternateClassName))
+            t.conditionalExpression(
+              test,
+              t.stringLiteral(consequentClassName),
+              t.stringLiteral(alternateClassName)
+            )
           );
         } else {
           return t.conditionalExpression(
@@ -78,13 +93,20 @@ function extractStaticTernaries(ternaries, evalContext, cacheObject) {
         // if only one className is present, put the padding space inside the ternary
         return t.conditionalExpression(
           test,
-          t.stringLiteral((idx > 0 && consequentClassName ? ' ' : '') + consequentClassName),
-          t.stringLiteral((idx > 0 && alternateClassName ? ' ' : '') + alternateClassName)
+          t.stringLiteral(
+            (idx > 0 && consequentClassName ? ' ' : '') + consequentClassName
+          ),
+          t.stringLiteral(
+            (idx > 0 && alternateClassName ? ' ' : '') + alternateClassName
+          )
         );
       }
     })
     .filter(f => f)
-    .reduce((acc, val) => (acc ? t.binaryExpression('+', acc, val) : val), null);
+    .reduce(
+      (acc, val) => (acc ? t.binaryExpression('+', acc, val) : val),
+      null
+    );
 
   if (!ternaryExpression) {
     return null;

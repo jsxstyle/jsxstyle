@@ -18,7 +18,9 @@ const accessSafe = require('./accessSafe');
 // The returned value should (obviously) be placed after spread operators.
 
 function getPropValueFromAttributes(propName, attrs) {
-  const propIndex = attrs.findIndex(attr => attr.name && attr.name.name === propName);
+  const propIndex = attrs.findIndex(
+    attr => attr.name && attr.name.name === propName
+  );
 
   if (propIndex === -1) {
     return null;
@@ -39,7 +41,8 @@ function getPropValueFromAttributes(propName, attrs) {
         if (t.isJSXSpreadAttribute(attr)) {
           invariant(
             // only allow member expressions and identifiers to be spread for now
-            t.isIdentifier(attr.argument) || t.isMemberExpression(attr.argument),
+            t.isIdentifier(attr.argument) ||
+              t.isMemberExpression(attr.argument),
             'Unhandled spread operator value of type `%s` (`%s`)',
             attr.argument.type,
             generate(attr).code

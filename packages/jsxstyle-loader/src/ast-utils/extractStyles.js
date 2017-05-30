@@ -34,8 +34,14 @@ function extractStyles({
   cacheObject,
   validateComponent,
 }) {
-  invariant(typeof src === 'string', 'extractStyles expects `src` to be a string of javascript');
-  invariant(typeof sourceFileName === 'string', 'extractStyles expects `sourceFileName` to be a path to a .js file');
+  invariant(
+    typeof src === 'string',
+    'extractStyles expects `src` to be a string of javascript'
+  );
+  invariant(
+    typeof sourceFileName === 'string',
+    'extractStyles expects `sourceFileName` to be a path to a .js file'
+  );
 
   if (typeof cacheObject !== 'undefined') {
     invariant(
@@ -47,7 +53,10 @@ function extractStyles({
   }
 
   if (typeof styleGroups !== 'undefined') {
-    invariant(Array.isArray(styleGroups), 'extractStyles expects `styleGroups` to be an array of style prop objects');
+    invariant(
+      Array.isArray(styleGroups),
+      'extractStyles expects `styleGroups` to be an array of style prop objects'
+    );
   }
 
   if (typeof namedStyleGroups !== 'undefined') {
@@ -69,7 +78,9 @@ function extractStyles({
     validateComponent = true;
   }
 
-  const evalContext = vm.createContext(staticNamespace ? Object.assign({}, staticNamespace) : {});
+  const evalContext = vm.createContext(
+    staticNamespace ? Object.assign({}, staticNamespace) : {}
+  );
 
   // Using a map for (officially supported) guaranteed insertion order
   const cssMap = new Map();
@@ -142,7 +153,10 @@ function extractStyles({
             ? attribute.value.expression
             : attribute.value;
 
-          if (t.isLiteral(componentPropValue) && typeof componentPropValue.value === 'string') {
+          if (
+            t.isLiteral(componentPropValue) &&
+            typeof componentPropValue.value === 'string'
+          ) {
             const char1 = componentPropValue.value[0];
             // component="article"
             if (char1 === char1.toUpperCase()) {
@@ -211,18 +225,27 @@ function extractStyles({
                 if (t.isStringLiteral(propObj.value)) {
                   // convert literal value back to literal to ensure it has double quotes (siiiigh)
                   attributes.push(
-                    t.jSXAttribute(t.jSXIdentifier(propObj.key.name), t.stringLiteral(propObj.value.value))
+                    t.jSXAttribute(
+                      t.jSXIdentifier(propObj.key.name),
+                      t.stringLiteral(propObj.value.value)
+                    )
                   );
                 } else {
                   // wrap everything else in a JSXExpressionContainer
                   attributes.push(
-                    t.jSXAttribute(t.jSXIdentifier(propObj.key.name), t.jSXExpressionContainer(propObj.value))
+                    t.jSXAttribute(
+                      t.jSXIdentifier(propObj.key.name),
+                      t.jSXExpressionContainer(propObj.value)
+                    )
                   );
                 }
               } else if (t.isSpreadProperty(propObj)) {
                 attributes.push(t.jSXSpreadAttribute(propObj.argument));
               } else {
-                console.warn('unhandled object property type: `%s`', propObj.type);
+                console.warn(
+                  'unhandled object property type: `%s`',
+                  propObj.type
+                );
                 errorCount++;
               }
             }
@@ -250,7 +273,10 @@ function extractStyles({
           }
 
           // if props prop is weird-looking, leave it and warn
-          console.warn('props prop is an unhandled type: `%s`', attribute.value.expression.type);
+          console.warn(
+            'props prop is an unhandled type: `%s`',
+            attribute.value.expression.type
+          );
           inlinePropCount++;
           return true;
         }
@@ -260,7 +286,10 @@ function extractStyles({
 
         // if value can be evaluated, extract it and filter it out
         if (canEvaluate(staticNamespace, value)) {
-          staticAttributes[name] = vm.runInContext(generate(value).code, evalContext);
+          staticAttributes[name] = vm.runInContext(
+            generate(value).code,
+            evalContext
+          );
           return false;
         }
 
@@ -271,14 +300,17 @@ function extractStyles({
               canEvaluate(staticNamespace, value.expression.consequent) &&
               canEvaluate(staticNamespace, value.expression.alternate)
             ) {
-              staticTernaries.push({name, ternary: value.expression});
+              staticTernaries.push({ name, ternary: value.expression });
               // mark the prop as extracted
               staticAttributes[name] = null;
               return false;
             }
           } else if (t.isLogicalExpression(value.expression)) {
             // convert a simple logical expression to a ternary with a null alternate
-            if (value.expression.operator === '&&' && canEvaluate(staticNamespace, value.expression.right)) {
+            if (
+              value.expression.operator === '&&' &&
+              canEvaluate(staticNamespace, value.expression.right)
+            ) {
               staticTernaries.push({
                 name,
                 ternary: {
@@ -299,19 +331,29 @@ function extractStyles({
       });
 
       if (inlinePropCount === 0) {
-        Object.assign(staticAttributes, jsxstyle[jsxstyleSrcComponent].defaultProps);
+        Object.assign(
+          staticAttributes,
+          jsxstyle[jsxstyleSrcComponent].defaultProps
+        );
       }
 
       let classNamePropValue;
-      const classNamePropIndex = node.attributes.findIndex(attr => attr.name && attr.name.name === 'className');
+      const classNamePropIndex = node.attributes.findIndex(
+        attr => attr.name && attr.name.name === 'className'
+      );
       if (classNamePropIndex > -1 && Object.keys(staticAttributes).length > 0) {
-        classNamePropValue = getPropValueFromAttributes('className', node.attributes);
+        classNamePropValue = getPropValueFromAttributes(
+          'className',
+          node.attributes
+        );
         node.attributes.splice(classNamePropIndex, 1);
       }
 
       // if all style props have been extracted, jsxstyle component can be converted to a div or the specified component
       if (inlinePropCount === 0) {
-        const propsPropIndex = node.attributes.findIndex(attr => attr.name && attr.name.name === 'props');
+        const propsPropIndex = node.attributes.findIndex(
+          attr => attr.name && attr.name.name === 'props'
+        );
         // deal with props prop
         if (propsPropIndex > -1) {
           if (propsAttributes) {
@@ -321,14 +363,19 @@ function extractStyles({
           node.attributes.splice(propsPropIndex, 1);
         }
 
-        const componentPropIndex = node.attributes.findIndex(attr => attr.name && attr.name.name === 'component');
+        const componentPropIndex = node.attributes.findIndex(
+          attr => attr.name && attr.name.name === 'component'
+        );
         if (componentPropIndex > -1) {
           const attribute = node.attributes[componentPropIndex];
           const componentPropValue = t.isJSXExpressionContainer(attribute.value)
             ? attribute.value.expression
             : attribute.value;
 
-          if (t.isLiteral(componentPropValue) && typeof componentPropValue.value === 'string') {
+          if (
+            t.isLiteral(componentPropValue) &&
+            typeof componentPropValue.value === 'string'
+          ) {
             node.name.name = componentPropValue.value;
           } else if (t.isIdentifier(componentPropValue)) {
             node.name.name = componentPropValue.name;
@@ -346,7 +393,12 @@ function extractStyles({
           // if only some style props were extracted AND additional props are spread onto the component,
           // add the props back with null values to prevent spread props from incorrectly overwriting the extracted prop value
           Object.keys(staticAttributes).forEach(attr => {
-            node.attributes.push(t.jSXAttribute(t.jSXIdentifier(attr), t.jSXExpressionContainer(t.nullLiteral())));
+            node.attributes.push(
+              t.jSXAttribute(
+                t.jSXIdentifier(attr),
+                t.jSXExpressionContainer(t.nullLiteral())
+              )
+            );
           });
         }
       }
@@ -355,7 +407,12 @@ function extractStyles({
         path.node.closingElement.name.name = node.name.name;
       }
 
-      const stylesByClassName = getStylesByClassName(styleGroups, namedStyleGroups, staticAttributes, cacheObject);
+      const stylesByClassName = getStylesByClassName(
+        styleGroups,
+        namedStyleGroups,
+        staticAttributes,
+        cacheObject
+      );
 
       const extractedStyleClassNames = Object.keys(stylesByClassName).join(' ');
 
@@ -364,14 +421,22 @@ function extractStyles({
       if (classNamePropValue) {
         if (canEvaluate({}, classNamePropValue)) {
           // TODO: don't use canEvaluate here, need to be more specific
-          classNameObjects.push(t.stringLiteral(vm.runInNewContext(generate(classNamePropValue).code)));
+          classNameObjects.push(
+            t.stringLiteral(
+              vm.runInNewContext(generate(classNamePropValue).code)
+            )
+          );
         } else {
           classNameObjects.push(classNamePropValue);
         }
       }
 
       if (staticTernaries.length > 0) {
-        const ternaryObj = extractStaticTernaries(staticTernaries, evalContext, cacheObject);
+        const ternaryObj = extractStaticTernaries(
+          staticTernaries,
+          evalContext,
+          cacheObject
+        );
 
         // ternaryObj is null if all of the extracted ternaries have falsey consequents and alternates
         if (ternaryObj !== null) {
@@ -411,14 +476,25 @@ function extractStyles({
           } else {
             inner = t.binaryExpression('+', t.stringLiteral(' '), val);
           }
-        } else if (t.isConditionalExpression(val) || t.isBinaryExpression(val)) {
+        } else if (
+          t.isConditionalExpression(val) ||
+          t.isBinaryExpression(val)
+        ) {
           if (accIsString) {
-            return t.binaryExpression('+', t.stringLiteral(`${acc.value} `), val);
+            return t.binaryExpression(
+              '+',
+              t.stringLiteral(`${acc.value} `),
+              val
+            );
           }
           inner = t.binaryExpression('+', t.stringLiteral(' '), val);
         } else if (t.isIdentifier(val) || t.isMemberExpression(val)) {
           // identifiers and member expressions make for reasonable ternaries
-          inner = t.conditionalExpression(val, t.binaryExpression('+', t.stringLiteral(' '), val), t.stringLiteral(''));
+          inner = t.conditionalExpression(
+            val,
+            t.binaryExpression('+', t.stringLiteral(' '), val),
+            t.stringLiteral('')
+          );
         } else {
           process.stderr.write(generate(val).code + '\n');
           if (accIsString) {
@@ -429,25 +505,41 @@ function extractStyles({
             );
           }
           // use a logical expression for more complex prop values
-          inner = t.binaryExpression('+', t.stringLiteral(' '), t.logicalExpression('||', val, t.stringLiteral('')));
+          inner = t.binaryExpression(
+            '+',
+            t.stringLiteral(' '),
+            t.logicalExpression('||', val, t.stringLiteral(''))
+          );
         }
         return t.binaryExpression('+', acc, inner);
       }, null);
 
       if (classNamePropValueForReals) {
-        if (t.isLiteral(classNamePropValueForReals) && typeof classNamePropValueForReals.value === 'string') {
+        if (
+          t.isLiteral(classNamePropValueForReals) &&
+          typeof classNamePropValueForReals.value === 'string'
+        ) {
           node.attributes.push(
-            t.jSXAttribute(t.jSXIdentifier('className'), t.stringLiteral(classNamePropValueForReals.value))
+            t.jSXAttribute(
+              t.jSXIdentifier('className'),
+              t.stringLiteral(classNamePropValueForReals.value)
+            )
           );
         } else {
           node.attributes.push(
-            t.jSXAttribute(t.jSXIdentifier('className'), t.jSXExpressionContainer(classNamePropValueForReals))
+            t.jSXAttribute(
+              t.jSXIdentifier('className'),
+              t.jSXExpressionContainer(classNamePropValueForReals)
+            )
           );
         }
       }
 
       const lineNumbers =
-        node.loc.start.line + (node.loc.start.line !== node.loc.end.line ? `-${node.loc.end.line}` : '');
+        node.loc.start.line +
+        (node.loc.start.line !== node.loc.end.line
+          ? `-${node.loc.end.line}`
+          : '');
       const commentText = `${sourceFileName.replace(process.cwd(), '')}:${lineNumbers} (${originalNodeName})`;
       const comment = `/* ${commentText} */`;
 
@@ -459,7 +551,9 @@ function extractStyles({
             cssMap.set(classNameKey, val);
           }
         } else {
-          const explodedStyles = explodePseudoStyles(stylesByClassName[classNameKey]);
+          const explodedStyles = explodePseudoStyles(
+            stylesByClassName[classNameKey]
+          );
           const val = {
             css: createCSS(explodedStyles.base, classNameKey) +
               createCSS(explodedStyles.hover, classNameKey, ':hover') +
@@ -478,11 +572,13 @@ function extractStyles({
     },
   };
 
-  const ast = parse(src, {sourceFileName});
+  const ast = parse(src, { sourceFileName });
 
   traverse(ast, traverseOptions);
 
-  const css = Array.from(cssMap.values()).map(n => n.commentTexts.map(t => `${t}\n`).join('') + n.css).join('');
+  const css = Array.from(cssMap.values())
+    .map(n => n.commentTexts.map(t => `${t}\n`).join('') + n.css)
+    .join('');
   // path.parse doesn't exist in the webpack'd bundle but path.dirname and path.basename do.
   const dirName = path.dirname(sourceFileName);
   const baseName = path.basename(sourceFileName, '.js');
@@ -491,7 +587,11 @@ function extractStyles({
     // append require statement to the document
     // TODO: make sure this doesn't break something valuable
     ast.program.body.unshift(
-      t.expressionStatement(t.callExpression(t.identifier('require'), [t.stringLiteral(cssFileName)]))
+      t.expressionStatement(
+        t.callExpression(t.identifier('require'), [
+          t.stringLiteral(cssFileName),
+        ])
+      )
     );
   }
 

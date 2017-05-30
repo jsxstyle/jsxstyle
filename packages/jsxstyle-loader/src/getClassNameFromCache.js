@@ -3,14 +3,20 @@
 const invariant = require('invariant');
 const getStyleKeyForStyleObject = require('jsxstyle/lib/getStyleKeyForStyleObject');
 
-function getClassNameFromCache(styleObject, cacheObject, classNamePrefix = '_x') {
+function getClassNameFromCache(
+  styleObject,
+  cacheObject,
+  classNamePrefix = '_x'
+) {
   invariant(
     typeof cacheObject === 'object' && cacheObject !== null,
     'getClassNameFromCache expects an object as its second parameter'
   );
 
   if (!styleObject || typeof styleObject !== 'object' || styleObject === null) {
-    console.warn('getClassNameFromCache received an invalid styleObject as its first parameter');
+    console.warn(
+      'getClassNameFromCache received an invalid styleObject as its first parameter'
+    );
     return null;
   }
 
@@ -22,7 +28,9 @@ function getClassNameFromCache(styleObject, cacheObject, classNamePrefix = '_x')
       cacheObject.keys = cacheObject.keys || {};
 
       const classNameKey = classNamePrefix + '~' + styleKey;
-      cacheObject.keys[classNameKey] = cacheObject.keys[classNameKey] || (cacheObject[counterKey]++).toString(16);
+      cacheObject.keys[classNameKey] =
+        cacheObject.keys[classNameKey] ||
+        (cacheObject[counterKey]++).toString(16);
       return classNamePrefix + cacheObject.keys[classNameKey];
     }
   }

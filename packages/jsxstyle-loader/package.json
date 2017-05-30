@@ -7,7 +7,7 @@
   "main": "lib/index.js",
   "scripts": {
     "lint": "eslint src/",
-    "prettier": "prettier --single-quote --print-width 120 --bracket-spacing false --jsx-bracket-same-line --trailing-comma es5 --write 'src/**/*.js'",
+    "prettier": "prettier --single-quote --trailing-comma es5 --write 'src/**/*.js'",
     "build_lib": "rimraf lib; babel ./src --out-dir ./lib",
     "watch_lib": "rimraf lib; babel --watch ./src --out-dir ./lib",
     "ls_module": "LOADER_TMPFILE=$(npm --silent pack) && tar -tf $LOADER_TMPFILE && echo && rm -i $LOADER_TMPFILE",

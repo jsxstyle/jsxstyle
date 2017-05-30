@@ -5,7 +5,12 @@ const invariant = require('invariant');
 const getStyleObjectFromProps = require('jsxstyle/lib/getStyleObjectFromProps');
 const getClassNameFromCache = require('./getClassNameFromCache');
 
-function getStylesByClassName(styleGroups, namedStyleGroups, staticAttributes, cacheObject) {
+function getStylesByClassName(
+  styleGroups,
+  namedStyleGroups,
+  staticAttributes,
+  cacheObject
+) {
   if (typeof staticAttributes !== 'undefined') {
     invariant(
       typeof staticAttributes === 'object' && staticAttributes !== null,

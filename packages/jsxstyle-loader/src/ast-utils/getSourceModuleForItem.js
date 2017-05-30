@@ -28,7 +28,10 @@ function getSourceModuleForItem(node, scope) {
   let local;
 
   if (t.isImportSpecifier(itemBinding.path.node)) {
-    if (t.isImportDeclaration(itemBinding.path.parent) && t.isStringLiteral(itemBinding.path.parent.source)) {
+    if (
+      t.isImportDeclaration(itemBinding.path.parent) &&
+      t.isStringLiteral(itemBinding.path.parent.source)
+    ) {
       sourceModule = itemBinding.path.parent.source.value;
       local = itemBinding.path.node.local.name;
       imported = itemBinding.path.node.imported.name;
