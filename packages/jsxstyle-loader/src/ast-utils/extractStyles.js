@@ -34,19 +34,17 @@ function extractStyles({
   cacheObject,
   validateComponent,
 }) {
-  invariant(
-    typeof src === 'string',
-    'extractStyles expects `src` to be a string of javascript'
-  );
+  invariant(typeof src === 'string', '`src` must be a string of javascript');
+
   invariant(
     typeof sourceFileName === 'string',
-    'extractStyles expects `sourceFileName` to be a path to a .js file'
+    '`sourceFileName` must be a path to a .js file'
   );
 
   if (typeof cacheObject !== 'undefined') {
     invariant(
       typeof cacheObject === 'object' && cacheObject !== null,
-      'extractStyles expects `cacheObject` to be an object'
+      '`cacheObject` must be an object'
     );
   } else {
     cacheObject = defaultCacheObject;
@@ -55,21 +53,21 @@ function extractStyles({
   if (typeof styleGroups !== 'undefined') {
     invariant(
       Array.isArray(styleGroups),
-      'extractStyles expects `styleGroups` to be an array of style prop objects'
+      '`styleGroups` must be an array of style prop objects'
     );
   }
 
   if (typeof namedStyleGroups !== 'undefined') {
     invariant(
       typeof namedStyleGroups === 'object' && namedStyleGroups !== null,
-      'extractStyles expects `namedStyleGroups` to be an object of style prop objects keyed by className'
+      '`namedStyleGroups` must be an object of style prop objects keyed by className'
     );
   }
 
   if (typeof staticNamespace !== 'undefined') {
     invariant(
       typeof staticNamespace === 'object' && staticNamespace !== null,
-      'extractStyles expects `staticNamespace` to be an object of objects'
+      '`staticNamespace` must be an object of objects'
     );
   }
 

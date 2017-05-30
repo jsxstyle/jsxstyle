@@ -8,41 +8,38 @@ const loaderUtils = require('loader-utils');
 
 function webpackLoader(content) {
   this.cacheable && this.cacheable();
-  const namespace = {};
+  const staticNamespace = {};
 
   const query = loaderUtils.getOptions(this) || {};
 
-  // Check for invalid config options
-  const keys = Object.keys(query).filter(k => k !== 'constants' && k !== 'styleGroups');
+  const invalidOptions = Object.keys(query).filter(k => {
+    // style group props are validated by extractStyles
+    if (k === 'styleGroups' || k === 'namedStyleGroups') {
+      return false;
+    }
+
+    if (k === 'constants') {
+      const constants = query[k];
+      invariant(
+        typeof constants === 'object' && constants !== null,
+        '`constants` option must be an object of paths'
+      );
+      Object.assign(staticNamespace, constants);
+      return false;
+    } else {
+      return true;
+    }
+  });
+
   invariant(
-    keys.length === 0,
-    `jsxstyle loader received ${keys.length} invalid option${keys.length === 1 ? '' : 's'}: ${keys.join(', ')}`
+    invalidOptions.length === 0,
+    `jsxstyle loader received ${invalidOptions.length} invalid option${invalidOptions.length === 1 ? '' : 's'}: ${invalidOptions.join(', ')}`
   );
-
-  if (typeof query.styleGroups !== 'undefined') {
-    invariant(Array.isArray(query.styleGroups), '`styleGroups` option must be an array of style prop objects');
-  }
-
-  if (typeof query.namedStyleGroups !== 'undefined') {
-    invariant(
-      typeof query.namedStyleGroups === 'object' && query.namedStyleGroups !== null,
-      '`namedStyleGroups` option must be an object of style prop objects keyed by className'
-    );
-  }
-
-  // Add constants to context object
-  if (typeof query.constants !== 'undefined') {
-    invariant(
-      typeof query.constants === 'object' && query.constants !== null,
-      '`constants` option must be an object of paths'
-    );
-    Object.assign(namespace, query.constants);
-  }
 
   const rv = extractStyles({
     src: content,
     sourceFileName: this.resourcePath,
-    staticNamespace: namespace,
+    staticNamespace,
     styleGroups: query.styleGroups,
     namedStyleGroups: query.namedStyleGroups,
   });
