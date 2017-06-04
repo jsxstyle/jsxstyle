@@ -90,7 +90,13 @@ function extractStyles({
       let jsxstyleSrcComponent;
       if (validateComponent) {
         const src = getSourceModuleForItem(node, path.scope);
-        if (src === null) {
+        if (src === null || src.sourceModule !== 'jsxstyle') {
+          return;
+        }
+        if (!src.destructured) {
+          console.error(
+            'jsxstyle-loader only supports destructured import/require syntax'
+          );
           return;
         }
         jsxstyleSrcComponent = src.imported;
