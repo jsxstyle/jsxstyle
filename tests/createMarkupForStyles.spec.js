@@ -5,11 +5,10 @@ const createMarkupForStyles = require('../src/createMarkupForStyles');
 describe('createMarkupForStyles', () => {
   it('returns null when given an empty style object', () => {
     const markup = createMarkupForStyles({});
-    expect(markup).toEqual(null);
+    expect(markup).toBeNull();
   });
 
   it('converts a style object to a style string that only contains valid styles', () => {
-    global.console = {warn: jest.fn()};
     function Useless(stuff) {
       this.stuff = stuff;
     }
@@ -42,12 +41,9 @@ describe('createMarkupForStyles', () => {
   valid-prop4:wow;
 `
     );
-    expect(console.warn).toHaveBeenCalledTimes(0);
   });
 
   it('warns about invalid style props if NODE_ENV is not set to "production"', () => {
-    global.console = {warn: jest.fn()};
-
     // TODO: strip these out?
     const invalidStyles = {
       invalidProp1: {},
@@ -55,13 +51,15 @@ describe('createMarkupForStyles', () => {
       invalidProp3: ['one', 'two'],
     };
 
+    const f = jest.fn();
+
     process.env.NODE_ENV = 'production';
-    const markup = createMarkupForStyles(invalidStyles);
-    expect(console.warn).toHaveBeenCalledTimes(0);
+    const markup = createMarkupForStyles(invalidStyles, f);
+    expect(f).toHaveBeenCalledTimes(0);
 
     process.env.NODE_ENV = 'development';
-    createMarkupForStyles(invalidStyles);
-    expect(console.warn).toHaveBeenCalledTimes(2);
+    createMarkupForStyles(invalidStyles, f);
+    expect(f).toHaveBeenCalledTimes(2);
 
     // gross
     expect(markup).toEqual(

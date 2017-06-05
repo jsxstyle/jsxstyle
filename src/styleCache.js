@@ -2,7 +2,7 @@
 
 const invariant = require('invariant');
 const explodePseudoStyles = require('./explodePseudoStyles');
-const createCSS = require('./createCSS');
+const createMarkupForStyles = require('./createMarkupForStyles');
 const getClassName = require('./getClassName');
 
 const styleCache = {};
@@ -51,10 +51,10 @@ function refKey(key, styleObj) {
   const explodedStyles = explodePseudoStyles(styleObj);
   const className = getClassName(key);
 
-  const baseStyleText = createCSS(explodedStyles.base, className);
-  const hoverStyleText = createCSS(explodedStyles.hover, className, ':hover');
-  const activeStyleText = createCSS(explodedStyles.active, className, ':active');
-  const focusStyleText = createCSS(explodedStyles.focus, className, ':focus');
+  const baseCSS = createMarkupForStyles(explodedStyles.base);
+  const hoverCSS = createMarkupForStyles(explodedStyles.hover);
+  const activeCSS = createMarkupForStyles(explodedStyles.active);
+  const focusCSS = createMarkupForStyles(explodedStyles.focus);
 
   const styleElement = document.createElement('style');
   styleElement.type = 'text/css';
@@ -63,17 +63,17 @@ function refKey(key, styleObj) {
   stylesheet.domNode = styleElement;
 
   let idx = 0;
-  if (baseStyleText !== '') {
-    styleElement.sheet.insertRule(baseStyleText, idx++);
+  if (baseCSS) {
+    styleElement.sheet.insertRule(`.${className} {${baseCSS}}`, idx++);
   }
-  if (hoverStyleText !== '') {
-    styleElement.sheet.insertRule(hoverStyleText, idx++);
+  if (hoverCSS) {
+    styleElement.sheet.insertRule(`.${className}:hover {${hoverCSS}}`, idx++);
   }
-  if (activeStyleText !== '') {
-    styleElement.sheet.insertRule(activeStyleText, idx++);
+  if (activeCSS) {
+    styleElement.sheet.insertRule(`.${className}:active {${activeCSS}}`, idx++);
   }
-  if (focusStyleText !== '') {
-    styleElement.sheet.insertRule(focusStyleText, idx++);
+  if (focusCSS) {
+    styleElement.sheet.insertRule(`.${className}:focus {${focusCSS}}`, idx++);
   }
 }
 

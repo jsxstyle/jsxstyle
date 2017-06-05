@@ -15,10 +15,24 @@ function createMarkupForStyles(styleObj) {
     if (styleValue != null) {
       const stringifiedStyleValue = dangerousStyleValue(styleName, styleValue);
       if (process.env.NODE_ENV !== 'production') {
+        const errorCallback =
+          arguments.length > 1 && typeof arguments[1] === 'function'
+            ? arguments[1]
+            : e => console.warn(e);
         if (stringifiedStyleValue === '[object Object]') {
-          console.warn(`Style value for ${styleName} evaluated to an object`);
+          errorCallback(
+            `Style value for ${styleName} evaluated to [object Object]`,
+            styleName,
+            styleValue,
+            stringifiedStyleValue
+          );
         } else if (styleValue !== '' && stringifiedStyleValue === '') {
-          console.warn(`Style value for ${styleName} evaluated to an empty string`);
+          errorCallback(
+            `Style value for ${styleName} evaluated to an empty string`,
+            styleName,
+            styleValue,
+            stringifiedStyleValue
+          );
         }
       }
       serialized += '\n  ' + hyphenateStyleName(styleName) + ':';

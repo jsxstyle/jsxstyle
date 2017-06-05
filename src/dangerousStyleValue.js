@@ -16,7 +16,13 @@ const isUnitlessNumber = {
   flexNegative: true,
   flexOrder: true,
   gridRow: true,
+  gridRowEnd: true,
+  gridRowSpan: true,
+  gridRowStart: true,
   gridColumn: true,
+  gridColumnEnd: true,
+  gridColumnSpan: true,
+  gridColumnStart: true,
   fontWeight: true,
   lineClamp: true,
   lineHeight: true,
@@ -39,13 +45,29 @@ const isUnitlessNumber = {
   strokeWidth: true,
 };
 
+function prefixKey(prefix, key) {
+  return prefix + key.charAt(0).toUpperCase() + key.substring(1);
+}
+
+const prefixes = ['Webkit', 'ms', 'Moz', 'O'];
+
+Object.keys(isUnitlessNumber).forEach(function(prop) {
+  prefixes.forEach(function(prefix) {
+    isUnitlessNumber[prefixKey(prefix, prop)] = isUnitlessNumber[prop];
+  });
+});
+
 function dangerousStyleValue(name, value) {
   const isEmpty = value == null || typeof value === 'boolean' || value === '';
   if (isEmpty) {
     return '';
   }
 
-  if (typeof value === 'number' && value !== 0 && !(isUnitlessNumber.hasOwnProperty(name) && isUnitlessNumber[name])) {
+  if (
+    typeof value === 'number' &&
+    value !== 0 &&
+    !(isUnitlessNumber.hasOwnProperty(name) && isUnitlessNumber[name])
+  ) {
     return value + 'px';
   }
 
