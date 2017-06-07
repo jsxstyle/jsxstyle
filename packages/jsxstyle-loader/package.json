@@ -6,8 +6,8 @@
   "license": "Apache-2.0",
   "main": "lib/index.js",
   "scripts": {
-    "lint": "eslint src/",
-    "prettier": "prettier --single-quote --trailing-comma es5 --write 'src/**/*.js'",
+    "lint": "eslint {src,tests}/",
+    "prettier": "prettier --single-quote --trailing-comma es5 --write '{src,tests}/**/*.js'",
     "build_lib": "rimraf lib; babel ./src --out-dir ./lib",
     "watch_lib": "rimraf lib; babel --watch ./src --out-dir ./lib",
     "ls_module": "LOADER_TMPFILE=$(npm --silent pack) && tar -tf $LOADER_TMPFILE && echo && rm -i $LOADER_TMPFILE",
@@ -20,7 +20,7 @@
     "babel-types": "^6.24.1",
     "babylon": "^6.17.0",
     "invariant": "^2.2.1",
-    "jsxstyle": "next",
+    "jsxstyle": "^2.0.0-beta.1",
     "loader-utils": "^1.1.0"
   },
   "devDependencies": {

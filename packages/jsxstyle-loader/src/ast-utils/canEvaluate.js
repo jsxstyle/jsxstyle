@@ -7,7 +7,6 @@ function canEvaluate(staticNamespace, exprNode) {
     // exprNode is a template literal and all expressions in the template literal can be evaluated
     for (let idx = -1, len = exprNode.expressions.length; ++idx < len; ) {
       const expr = exprNode.expressions[idx];
-      process.stdout.write(' - ' + expr.type + '\n');
       if (!canEvaluate(staticNamespace, expr)) {
         return false;
       }

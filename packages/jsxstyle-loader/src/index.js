@@ -33,6 +33,7 @@ function webpackLoader(content) {
 
   invariant(
     invalidOptions.length === 0,
+    // prettier-ignore
     `jsxstyle loader received ${invalidOptions.length} invalid option${invalidOptions.length === 1 ? '' : 's'}: ${invalidOptions.join(', ')}`
   );
 

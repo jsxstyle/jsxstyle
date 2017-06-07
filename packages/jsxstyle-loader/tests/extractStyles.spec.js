@@ -40,11 +40,14 @@ import { Block } from 'jsxstyle';
 
   it('skips JSXElements that do not have a JSXIdentifier as an opening element', () => {
     const rv = extractStyles({
-      src: '<member.expression color="red" />; <Member.Expression color="blue" />;',
+      src:
+        '<member.expression color="red" />; <Member.Expression color="blue" />;',
       sourceFileName: 'test/jsxidentifier.js',
       cacheObject: {},
     });
-    expect(rv.js).toEqual('<member.expression color="red" />;<Member.Expression color="blue" />;');
+    expect(rv.js).toEqual(
+      '<member.expression color="red" />;<Member.Expression color="blue" />;'
+    );
   });
 
   it('converts jsxstyle elements to Block elements when some props aren\u2019t static', () => {
@@ -315,7 +318,7 @@ import { Block } from 'jsxstyle';
     );
 
     const oldConsole = global.console;
-    global.console = {warn: jest.fn()};
+    global.console = { warn: jest.fn() };
     const rv3 = extractStyles({
       src: `import {Block} from 'jsxstyle';
 <Block props={{className: 'test'}} />;
@@ -564,7 +567,7 @@ import { Block } from 'jsxstyle';
     );
 
     const oldConsole = global.console;
-    global.console = {warn: jest.fn()};
+    global.console = { warn: jest.fn() };
 
     // does not warn
     extractStyles({
