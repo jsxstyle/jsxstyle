@@ -2,13 +2,8 @@
 
 const t = require('babel-types');
 
-function getSourceModuleForItem(node, scope) {
+function getSourceModuleForItem(itemName, scope) {
   let itemBinding = null;
-  const itemName = node.name.name;
-
-  if (!t.isJSXIdentifier(node.name)) {
-    return null;
-  }
 
   if (scope.hasBinding(itemName)) {
     itemBinding = scope.getBinding(itemName);
@@ -53,6 +48,7 @@ function getSourceModuleForItem(node, scope) {
     t.isCallExpression(itemBinding.path.node.init) &&
     t.isIdentifier(itemBinding.path.node.init.callee) &&
     itemBinding.path.node.init.callee.name === 'require' &&
+    itemBinding.path.node.init.arguments.length === 1 &&
     t.isStringLiteral(itemBinding.path.node.init.arguments[0])
   ) {
     sourceModule = itemBinding.path.node.init.arguments[0].value;
@@ -80,7 +76,6 @@ function getSourceModuleForItem(node, scope) {
       return null;
     }
   } else {
-    console.error('unhandled type: %s', itemBinding.path.node.type);
     return null;
   }
 

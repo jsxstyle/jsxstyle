@@ -47,7 +47,8 @@ import {Original as Reassigned2} from 'reassigned';
 
   it('handles regular requires', () => {
     const { node, scope } = testItems['Thing1'];
-    const sourceModule = getSourceModuleForItem(node, scope);
+    const itemName = node.name.name;
+    const sourceModule = getSourceModuleForItem(itemName, scope);
 
     expect(sourceModule).not.toBeNull();
     expect(sourceModule.destructured).toEqual(false);
@@ -58,7 +59,8 @@ import {Original as Reassigned2} from 'reassigned';
 
   it('handles destructured requires', () => {
     const { node, scope } = testItems['Destructured1'];
-    const sourceModule = getSourceModuleForItem(node, scope);
+    const itemName = node.name.name;
+    const sourceModule = getSourceModuleForItem(itemName, scope);
 
     expect(sourceModule).not.toBeNull();
     expect(sourceModule.destructured).toEqual(true);
@@ -69,7 +71,8 @@ import {Original as Reassigned2} from 'reassigned';
 
   it('handles reassigned requires', () => {
     const { node, scope } = testItems['Reassigned1'];
-    const sourceModule = getSourceModuleForItem(node, scope);
+    const itemName = node.name.name;
+    const sourceModule = getSourceModuleForItem(itemName, scope);
 
     expect(sourceModule).not.toBeNull();
     expect(sourceModule.destructured).toEqual(true);
@@ -80,7 +83,8 @@ import {Original as Reassigned2} from 'reassigned';
 
   it('handles regular imports', () => {
     const { node, scope } = testItems['Thing2'];
-    const sourceModule = getSourceModuleForItem(node, scope);
+    const itemName = node.name.name;
+    const sourceModule = getSourceModuleForItem(itemName, scope);
 
     expect(sourceModule).not.toBeNull();
     expect(sourceModule.destructured).toEqual(false);
@@ -91,7 +95,8 @@ import {Original as Reassigned2} from 'reassigned';
 
   it('handles destructured imports', () => {
     const { node, scope } = testItems['Destructured2'];
-    const sourceModule = getSourceModuleForItem(node, scope);
+    const itemName = node.name.name;
+    const sourceModule = getSourceModuleForItem(itemName, scope);
 
     expect(sourceModule).not.toBeNull();
     expect(sourceModule.destructured).toEqual(true);
@@ -102,7 +107,8 @@ import {Original as Reassigned2} from 'reassigned';
 
   it('handles reassigned imports', () => {
     const { node, scope } = testItems['Reassigned2'];
-    const sourceModule = getSourceModuleForItem(node, scope);
+    const itemName = node.name.name;
+    const sourceModule = getSourceModuleForItem(itemName, scope);
 
     expect(sourceModule).not.toBeNull();
     expect(sourceModule.destructured).toEqual(true);

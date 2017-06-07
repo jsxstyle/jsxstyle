@@ -5,7 +5,7 @@ const path = require('path');
 const vm = require('vm');
 
 const jsxstyle = require('jsxstyle');
-const createCSS = require('jsxstyle/lib/createCSS');
+const createMarkupForStyles = require('jsxstyle/lib/createMarkupForStyles');
 const explodePseudoStyles = require('jsxstyle/lib/explodePseudoStyles');
 
 const canEvaluate = require('./canEvaluate');
@@ -87,9 +87,18 @@ function extractStyles({
     JSXElement(path) {
       const node = path.node.openingElement;
 
+      if (
+        // skip non-identifier opening elements (member expressions, etc.)
+        !t.isJSXIdentifier(node.name) ||
+        // skip elements that are not components
+        node.name.name === node.name.name.toLowerCase()
+      ) {
+        return;
+      }
+
       let jsxstyleSrcComponent;
       if (validateComponent) {
-        const src = getSourceModuleForItem(node, path.scope);
+        const src = getSourceModuleForItem(node.name.name, path.scope);
         if (src === null || src.sourceModule !== 'jsxstyle') {
           return;
         }
@@ -544,25 +553,42 @@ function extractStyles({
         (node.loc.start.line !== node.loc.end.line
           ? `-${node.loc.end.line}`
           : '');
-      const commentText = `${sourceFileName.replace(process.cwd(), '')}:${lineNumbers} (${originalNodeName})`;
-      const comment = `/* ${commentText} */`;
+      // prettier-ignore
+      const comment = `/* ${sourceFileName.replace(process.cwd(), '')}:${lineNumbers} (${originalNodeName}) */`;
 
-      for (const classNameKey in stylesByClassName) {
-        if (cssMap.has(classNameKey)) {
+      for (const className in stylesByClassName) {
+        if (cssMap.has(className)) {
           if (comment) {
-            const val = cssMap.get(classNameKey);
+            const val = cssMap.get(className);
             val.commentTexts.push(comment);
-            cssMap.set(classNameKey, val);
+            cssMap.set(className, val);
           }
         } else {
           const explodedStyles = explodePseudoStyles(
-            stylesByClassName[classNameKey]
+            stylesByClassName[className]
           );
+
+          const baseCSS = createMarkupForStyles(explodedStyles.base);
+          const hoverCSS = createMarkupForStyles(explodedStyles.hover);
+          const activeCSS = createMarkupForStyles(explodedStyles.active);
+          const focusCSS = createMarkupForStyles(explodedStyles.focus);
+
+          let cssString = '';
+          if (baseCSS) {
+            cssString += `.${className} {${baseCSS}}\n`;
+          }
+          if (hoverCSS) {
+            cssString += `.${className}:hover {${hoverCSS}}\n`;
+          }
+          if (activeCSS) {
+            cssString += `.${className}:active {${activeCSS}}\n`;
+          }
+          if (focusCSS) {
+            cssString += `.${className}:focus {${focusCSS}}\n`;
+          }
+
           const val = {
-            css: createCSS(explodedStyles.base, classNameKey) +
-              createCSS(explodedStyles.hover, classNameKey, ':hover') +
-              createCSS(explodedStyles.active, classNameKey, ':active') +
-              createCSS(explodedStyles.focus, classNameKey, ':focus'),
+            css: cssString,
             commentTexts: [],
           };
 
@@ -570,7 +596,7 @@ function extractStyles({
             val.commentTexts.push(comment);
           }
 
-          cssMap.set(classNameKey, val);
+          cssMap.set(className, val);
         }
       }
     },
