@@ -11,8 +11,9 @@ const explodePseudoStyles = require('jsxstyle/lib/explodePseudoStyles');
 const canEvaluate = require('./canEvaluate');
 const extractStaticTernaries = require('./extractStaticTernaries');
 const getPropValueFromAttributes = require('./getPropValueFromAttributes');
-const getStylesByClassName = require('../getStylesByClassName');
 const getSourceModuleForItem = require('./getSourceModuleForItem');
+const getStaticBindingsForScope = require('./getStaticBindingsForScope');
+const getStylesByClassName = require('../getStylesByClassName');
 
 const parse = require('./parse');
 const traverse = require('babel-traverse').default;
@@ -24,21 +25,24 @@ const UNTOUCHED_PROPS = ['ref', 'key', 'style'];
 // these props cannot appear in the props prop (so meta)
 const ALL_SPECIAL_PROPS = ['component', 'className'].concat(UNTOUCHED_PROPS);
 
+function noop() {}
+
 const defaultCacheObject = {};
 function extractStyles({
   src,
   styleGroups,
   namedStyleGroups,
   sourceFileName,
-  staticNamespace,
+  whitelistedModules,
   cacheObject,
   validateComponent,
+  errorCallback,
 }) {
   invariant(typeof src === 'string', '`src` must be a string of javascript');
 
   invariant(
-    typeof sourceFileName === 'string',
-    '`sourceFileName` must be a path to a .js file'
+    typeof sourceFileName === 'string' && path.isAbsolute(sourceFileName),
+    '`sourceFileName` must be an absolute path to a .js file'
   );
 
   if (typeof cacheObject !== 'undefined') {
@@ -64,21 +68,26 @@ function extractStyles({
     );
   }
 
-  if (typeof staticNamespace !== 'undefined') {
+  if (typeof whitelistedModules !== 'undefined') {
     invariant(
-      typeof staticNamespace === 'object' && staticNamespace !== null,
-      '`staticNamespace` must be an object of objects'
+      Array.isArray(whitelistedModules),
+      '`whitelistedModules` must be an array of paths to modules that are OK to require'
     );
+  }
+
+  if (typeof errorCallback !== 'undefined') {
+    invariant(
+      typeof errorCallback === 'function',
+      '`errorCallback` is expected to be a function'
+    );
+  } else {
+    errorCallback = noop;
   }
 
   // default to true
   if (typeof validateComponent === 'undefined') {
     validateComponent = true;
   }
-
-  const evalContext = vm.createContext(
-    staticNamespace ? Object.assign({}, staticNamespace) : {}
-  );
 
   // Using a map for (officially supported) guaranteed insertion order
   const cssMap = new Map();
@@ -96,9 +105,29 @@ function extractStyles({
         return;
       }
 
+      // TODO: build this lazily? no sense in building a whole context object if it's not needed
+      const staticNamespace = getStaticBindingsForScope(
+        path.scope,
+        whitelistedModules,
+        sourceFileName
+      );
+
+      // console.log(sourceFileName);
+      // console.log(
+      //   'staticNamespace for %s:\n%s\n\n-----\n',
+      //   node.name.name,
+      //   JSON.stringify(staticNamespace, null, '  ')
+      // );
+
+      const evalContext = vm.createContext(staticNamespace);
+
       let jsxstyleSrcComponent;
       if (validateComponent) {
-        const src = getSourceModuleForItem(node.name.name, path.scope);
+        const src = getSourceModuleForItem(
+          node.name.name,
+          path.scope,
+          errorCallback
+        );
         if (src === null || src.sourceModule !== 'jsxstyle') {
           return;
         }
@@ -189,9 +218,9 @@ function extractStyles({
             // component={variable.prop}
           } else {
             // TODO: extract more complex expressions out as separate var
-            console.warn(
-              '`component` prop value was not handled by extractStyles: `%s`',
-              generate(componentPropValue).code
+            errorCallback(
+              '`component` prop value was not handled by extractStyles: ' +
+                generate(componentPropValue).code
             );
             inlinePropCount++;
           }
@@ -205,14 +234,15 @@ function extractStyles({
 
         if (attribute.name.name === 'props') {
           if (!attribute.value) {
-            console.warn('`props` prop does not have a value');
+            errorCallback('`props` prop does not have a value');
             inlinePropCount++;
             return true;
           }
           if (!t.isJSXExpressionContainer(attribute.value)) {
-            console.warn(
-              '`props` prop should be wrapped in an expression container. received type `%s`',
-              attribute.value.type
+            errorCallback(
+              '`props` prop should be wrapped in an expression container. received type `' +
+                attribute.value.type +
+                '`'
             );
             inlinePropCount++;
             return true;
@@ -228,9 +258,10 @@ function extractStyles({
               const propObj = propsPropValue.properties[k];
               if (t.isObjectProperty(propObj)) {
                 if (ALL_SPECIAL_PROPS.indexOf(propObj.key.name) !== -1) {
-                  console.warn(
-                    '`props` prop cannot contain `%s` as it is used by jsxstyle and will be overwritten.',
-                    propObj.key.name
+                  errorCallback(
+                    '`props` prop cannot contain `' +
+                      propObj.key.name +
+                      '` as it is used by jsxstyle and will be overwritten.'
                   );
                   errorCount++;
                   continue;
@@ -255,9 +286,8 @@ function extractStyles({
               } else if (t.isSpreadProperty(propObj)) {
                 attributes.push(t.jSXSpreadAttribute(propObj.argument));
               } else {
-                console.warn(
-                  'unhandled object property type: `%s`',
-                  propObj.type
+                errorCallback(
+                  'unhandled object property type: `' + propObj.type + +'`'
                 );
                 errorCount++;
               }
@@ -286,9 +316,10 @@ function extractStyles({
           }
 
           // if props prop is weird-looking, leave it and warn
-          console.warn(
-            'props prop is an unhandled type: `%s`',
-            attribute.value.expression.type
+          errorCallback(
+            'props prop is an unhandled type: `' +
+              attribute.value.expression.type +
+              '`'
           );
           inlinePropCount++;
           return true;
@@ -432,7 +463,7 @@ function extractStyles({
       const classNameObjects = [];
 
       if (classNamePropValue) {
-        if (canEvaluate({}, classNamePropValue)) {
+        if (canEvaluate(null, classNamePropValue)) {
           // TODO: don't use canEvaluate here, need to be more specific
           classNameObjects.push(
             t.stringLiteral(
@@ -554,7 +585,7 @@ function extractStyles({
           ? `-${node.loc.end.line}`
           : '');
       // prettier-ignore
-      const comment = `/* ${sourceFileName.replace(process.cwd(), '')}:${lineNumbers} (${originalNodeName}) */`;
+      const comment = `/* ${sourceFileName.replace(process.cwd(), '.')}:${lineNumbers} (${originalNodeName}) */`;
 
       for (const className in stylesByClassName) {
         if (cssMap.has(className)) {
@@ -568,10 +599,22 @@ function extractStyles({
             stylesByClassName[className]
           );
 
-          const baseCSS = createMarkupForStyles(explodedStyles.base);
-          const hoverCSS = createMarkupForStyles(explodedStyles.hover);
-          const activeCSS = createMarkupForStyles(explodedStyles.active);
-          const focusCSS = createMarkupForStyles(explodedStyles.focus);
+          const baseCSS = createMarkupForStyles(
+            explodedStyles.base,
+            errorCallback
+          );
+          const hoverCSS = createMarkupForStyles(
+            explodedStyles.hover,
+            errorCallback
+          );
+          const activeCSS = createMarkupForStyles(
+            explodedStyles.active,
+            errorCallback
+          );
+          const focusCSS = createMarkupForStyles(
+            explodedStyles.focus,
+            errorCallback
+          );
 
           let cssString = '';
           if (baseCSS) {
@@ -612,14 +655,15 @@ function extractStyles({
   // path.parse doesn't exist in the webpack'd bundle but path.dirname and path.basename do.
   const dirName = path.dirname(sourceFileName);
   const baseName = path.basename(sourceFileName, '.js');
-  const cssFileName = path.join(dirName, `${baseName}.jsxstyle.css`);
+  const cssRelativeFileName = `./${baseName}.jsxstyle.css`;
+  const cssFileName = path.join(dirName, cssRelativeFileName);
   if (css !== '') {
     // append require statement to the document
     // TODO: make sure this doesn't break something valuable
     ast.program.body.unshift(
       t.expressionStatement(
         t.callExpression(t.identifier('require'), [
-          t.stringLiteral(cssFileName),
+          t.stringLiteral(cssRelativeFileName),
         ])
       )
     );

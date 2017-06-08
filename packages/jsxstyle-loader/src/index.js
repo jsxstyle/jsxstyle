@@ -8,7 +8,7 @@ const loaderUtils = require('loader-utils');
 
 function webpackLoader(content) {
   this.cacheable && this.cacheable();
-  const staticNamespace = {};
+  let whitelistedModules = [];
 
   const query = loaderUtils.getOptions(this) || {};
 
@@ -17,14 +17,15 @@ function webpackLoader(content) {
     if (k === 'styleGroups' || k === 'namedStyleGroups') {
       return false;
     }
+    const option = query[k];
 
-    if (k === 'constants') {
-      const constants = query[k];
+    if (k === 'whitelistedModules') {
       invariant(
-        typeof constants === 'object' && constants !== null,
-        '`constants` option must be an object of paths'
+        Array.isArray(option),
+        '`whitelistedModules` option must be an array of absolute paths'
       );
-      Object.assign(staticNamespace, constants);
+      // TODO: absolute check (?)
+      whitelistedModules = option.slice(0);
       return false;
     } else {
       return true;
@@ -40,7 +41,7 @@ function webpackLoader(content) {
   const rv = extractStyles({
     src: content,
     sourceFileName: this.resourcePath,
-    staticNamespace,
+    whitelistedModules,
     styleGroups: query.styleGroups,
     namedStyleGroups: query.namedStyleGroups,
   });
