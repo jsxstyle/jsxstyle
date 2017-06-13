@@ -55,13 +55,6 @@ function getStaticBindingsForScope(scope, whitelist = [], sourceFileName) {
       if (canEvaluate(null, dec.init)) {
         ret[k] = vm.runInNewContext(generate(dec.init).code);
       }
-    } else {
-      console.error(
-        'Unhandled parent type for `%s` in getStaticBindingsForScope: %s\n\n---\n%s\n---\n',
-        k,
-        binding.path.parent.type,
-        generate(binding.path.parent).code
-      );
     }
   }
 

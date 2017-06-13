@@ -326,7 +326,9 @@ function extractStyles({
         }
 
         const name = attribute.name.name;
-        const value = attribute.value;
+        const value = t.isJSXExpressionContainer(attribute.value)
+          ? attribute.value.expression
+          : attribute.value;
 
         // if value can be evaluated, extract it and filter it out
         if (canEvaluate(staticNamespace, value)) {
@@ -337,35 +339,33 @@ function extractStyles({
           return false;
         }
 
-        if (t.isJSXExpressionContainer(value)) {
-          if (t.isConditionalExpression(value.expression)) {
-            // if both sides of the ternary can be evaluated, extract them
-            if (
-              canEvaluate(staticNamespace, value.expression.consequent) &&
-              canEvaluate(staticNamespace, value.expression.alternate)
-            ) {
-              staticTernaries.push({ name, ternary: value.expression });
-              // mark the prop as extracted
-              staticAttributes[name] = null;
-              return false;
-            }
-          } else if (t.isLogicalExpression(value.expression)) {
-            // convert a simple logical expression to a ternary with a null alternate
-            if (
-              value.expression.operator === '&&' &&
-              canEvaluate(staticNamespace, value.expression.right)
-            ) {
-              staticTernaries.push({
-                name,
-                ternary: {
-                  test: value.expression.left,
-                  consequent: value.expression.right,
-                  alternate: t.nullLiteral(),
-                },
-              });
-              staticAttributes[name] = null;
-              return false;
-            }
+        if (t.isConditionalExpression(value)) {
+          // if both sides of the ternary can be evaluated, extract them
+          if (
+            canEvaluate(staticNamespace, value.consequent) &&
+            canEvaluate(staticNamespace, value.alternate)
+          ) {
+            staticTernaries.push({ name, ternary: value });
+            // mark the prop as extracted
+            staticAttributes[name] = null;
+            return false;
+          }
+        } else if (t.isLogicalExpression(value)) {
+          // convert a simple logical expression to a ternary with a null alternate
+          if (
+            value.operator === '&&' &&
+            canEvaluate(staticNamespace, value.right)
+          ) {
+            staticTernaries.push({
+              name,
+              ternary: {
+                test: value.left,
+                consequent: value.right,
+                alternate: t.nullLiteral(),
+              },
+            });
+            staticAttributes[name] = null;
+            return false;
           }
         }
 
@@ -540,7 +540,6 @@ function extractStyles({
             t.stringLiteral('')
           );
         } else {
-          process.stderr.write(generate(val).code + '\n');
           if (accIsString) {
             return t.binaryExpression(
               '+',

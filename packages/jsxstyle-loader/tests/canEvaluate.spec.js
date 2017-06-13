@@ -55,7 +55,7 @@ describe('canEvaluate', () => {
 
     const errors = [];
     ast.program.body[0].expression.openingElement.attributes.forEach(attr => {
-      if (!canEvaluate(staticNamespace, attr.value)) {
+      if (!canEvaluate(staticNamespace, attr.value.expression)) {
         errors.push(`'${attr.name.name}' should be evaluated`);
       }
     });

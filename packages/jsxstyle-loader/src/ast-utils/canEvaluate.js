@@ -15,9 +15,6 @@ function canEvaluate(staticNamespace, exprNode) {
   } else if (t.isLiteral(exprNode)) {
     // exprNode is a string, int, or null
     return true;
-  } else if (t.isJSXExpressionContainer(exprNode)) {
-    // exprNode is wrapped in an expression container
-    return canEvaluate(staticNamespace, exprNode.expression);
   } else if (t.isIdentifier(exprNode)) {
     // exprNode is a variable
     if (
