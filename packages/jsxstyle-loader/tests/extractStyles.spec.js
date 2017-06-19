@@ -408,6 +408,41 @@ import { Block } from 'jsxstyle';
 `);
   });
 
+  it('extracts a ternary expression that has a whitelisted consequent and alternate', () => {
+    const rv = extractStyles({
+      src: `import LC from './LC';
+import {Block} from 'jsxstyle';
+const blue = 'blueberry';
+<Block color={dynamic ? LC.red : blue} />`,
+      sourceFileName: path.resolve(__dirname, 'mock/ternary.js'),
+      cacheObject: {},
+      whitelistedModules,
+    });
+
+    expect(rv.js).toEqual(
+      `require('./ternary.jsxstyle.css');
+
+import LC from './LC';
+import { Block } from 'jsxstyle';
+const blue = 'blueberry';
+<div className={(dynamic ? '_x1' : '_x2') + ' _x0'} />;`
+    );
+
+    expect(rv.css).toEqual(`/* ./tests/mock/ternary.js:4 (Block) */
+._x0 {
+  display:block;
+}
+/* ./tests/mock/ternary.js:4 (Block) */
+._x1 {
+  color:strawberry;
+}
+/* ./tests/mock/ternary.js:4 (Block) */
+._x2 {
+  color:blueberry;
+}
+`);
+  });
+
   it('puts spaces between each class name', () => {
     const rv = extractStyles({
       src: `import {Block} from 'jsxstyle';

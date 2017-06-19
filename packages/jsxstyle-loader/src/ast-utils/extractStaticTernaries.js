@@ -17,7 +17,7 @@ function extractStaticTernaries(ternaries, evalContext, cacheObject) {
   );
   invariant(
     typeof cacheObject === 'object' && cacheObject !== null,
-    'extractStaticTernaries expects param 4 to be an object'
+    'extractStaticTernaries expects param 3 to be an object'
   );
 
   if (ternaries.length === 0) {
@@ -28,8 +28,6 @@ function extractStaticTernaries(ternaries, evalContext, cacheObject) {
   for (let idx = -1, len = ternaries.length; ++idx < len; ) {
     const { name, ternary } = ternaries[idx];
 
-    const key = generate(ternary.test).code;
-    const { test } = ternary;
     const consequentValue = vm.runInContext(
       generate(ternary.consequent).code,
       evalContext
@@ -39,8 +37,9 @@ function extractStaticTernaries(ternaries, evalContext, cacheObject) {
       evalContext
     );
 
+    const key = generate(ternary.test).code;
     ternariesByKey[key] = ternariesByKey[key] || {
-      test,
+      test: ternary.test,
       consequentStyles: {},
       alternateStyles: {},
     };

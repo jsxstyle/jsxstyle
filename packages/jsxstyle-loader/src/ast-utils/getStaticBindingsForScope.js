@@ -44,7 +44,6 @@ function getStaticBindingsForScope(scope, whitelist = [], sourceFileName) {
       t.isVariableDeclaration(binding.path.parent) &&
       binding.path.parent.kind === 'const'
     ) {
-      // console.log(generate(binding.path.parent.node).code);
       // pick out the right variable declarator
       const dec = binding.path.parent.declarations.find(
         d => t.isIdentifier(d.id) && d.id.name === k

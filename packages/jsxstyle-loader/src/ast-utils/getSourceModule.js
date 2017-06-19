@@ -5,7 +5,6 @@ const t = require('babel-types');
 function getSourceModule(itemName, itemBinding) {
   // TODO: deal with reassignment
   if (!itemBinding.constant) {
-    // console.error('Item `%s` has been reassigned', itemName);
     return null;
   }
 

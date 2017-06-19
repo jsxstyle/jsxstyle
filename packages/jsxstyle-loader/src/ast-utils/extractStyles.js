@@ -111,14 +111,6 @@ function extractStyles({
         whitelistedModules,
         sourceFileName
       );
-
-      // console.log(sourceFileName);
-      // console.log(
-      //   'staticNamespace for %s:\n%s\n\n-----\n',
-      //   node.name.name,
-      //   JSON.stringify(staticNamespace, null, '  ')
-      // );
-
       const evalContext = vm.createContext(staticNamespace);
 
       let jsxstyleSrcComponent;
