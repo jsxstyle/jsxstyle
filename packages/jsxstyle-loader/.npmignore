@@ -1,4 +1,5 @@
 .babelrc
 .eslintrc.js
+.vscode/
 src/
 tests/
