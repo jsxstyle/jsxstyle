@@ -73,11 +73,11 @@ var GlobalStylesheets = {
     Object.keys(styleObj).sort().forEach(function(key) {
       var value = styleObj[key];
 
-      if (!value) {
+      if (value == null) {
         return;
       }
 
-      if (typeof value !== 'string' && typeof value !== 'number' && value != null) {
+      if (typeof value !== 'string' && typeof value !== 'number') {
         value = value.toString();
       }
       pairs.push(key + ':' + value);
