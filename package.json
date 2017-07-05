@@ -7,13 +7,15 @@
   "license": "Apache-2.0",
   "main": "lib/index.js",
   "scripts": {
-    "lint": "eslint src/",
-    "prettier": "prettier --single-quote --print-width 120 --bracket-spacing false --jsx-bracket-same-line --trailing-comma es5 --write 'src/**/*.js'",
+    "eslint": "eslint  {{src,tests}/**/*.js,example/*.js}",
+    "eslint-fix": "eslint --fix {{src,tests}/**/*.js,example/*.js}",
     "example": "cd example; rimraf build; webpack",
+    "jest": "jest --verbose",
+    "lint": "eslint src/",
+    "prepare": "rimraf lib; babel ./src --out-dir ./lib",
+    "prettier": "prettier --single-quote --trailing-comma es5 --write '{{src,tests}/**/*.js,example/*.js}'",
     "start": "cd example; ./serve.js",
-    "babel": "rimraf lib; babel ./src --out-dir ./lib",
-    "watch": "rimraf lib; babel --watch ./src --out-dir ./lib",
-    "prepublish": "npm run babel"
+    "watch": "rimraf lib; babel --watch ./src --out-dir ./lib"
   },
   "dependencies": {
     "invariant": "^2.2.1",
@@ -32,9 +34,11 @@
     "babel-preset-env": "^1.4.0",
     "babel-preset-react": "^6.24.1",
     "css-loader": "^0.28.0",
-    "eslint": "^3.3.0",
+    "eslint": "^4.1.1",
+    "eslint-config-prettier": "^2.2.0",
     "eslint-plugin-jest": "^20.0.3",
     "eslint-plugin-json": "^1.2.0",
+    "eslint-plugin-prettier": "^2.1.2",
     "eslint-plugin-react": "^7.0.1",
     "extract-text-webpack-plugin": "^2.1.0",
     "html-webpack-plugin": "^2.28.0",
@@ -46,7 +50,7 @@
     "rimraf": "^2.6.1",
     "style-loader": "^0.18.0",
     "temp": "^0.8.3",
-    "webpack": "^2.6.0",
-    "webpack-dev-server": "^2.4.5"
+    "webpack": "^3.0.0",
+    "webpack-dev-server": "^2.5.0"
   }
 }

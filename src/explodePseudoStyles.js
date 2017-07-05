@@ -23,10 +23,14 @@ function explodePseudoStyles(styleObject) {
 
       if (prefix !== 'base') {
         const formattedProp = styleProp.substr(prefix.length);
-        if (formattedProp.indexOf('Webkit') === 0 || formattedProp.indexOf('Moz') === 0) {
+        if (
+          formattedProp.indexOf('Webkit') === 0 ||
+          formattedProp.indexOf('Moz') === 0
+        ) {
           styleProp = formattedProp;
         } else {
-          styleProp = formattedProp.charAt(0).toLowerCase() + formattedProp.slice(1);
+          styleProp =
+            formattedProp.charAt(0).toLowerCase() + formattedProp.slice(1);
         }
       }
 

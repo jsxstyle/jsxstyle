@@ -18,7 +18,7 @@ function createMarkupForStyles(styleObj) {
         const errorCallback =
           arguments.length > 1 && typeof arguments[1] === 'function'
             ? arguments[1]
-            : e => console.warn(e);
+            : e => console.warn(e); // eslint-disable-line no-console
         if (stringifiedStyleValue === '[object Object]') {
           errorCallback(
             `Style value for ${styleName} evaluated to [object Object]`,

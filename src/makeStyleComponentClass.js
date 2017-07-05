@@ -4,7 +4,7 @@ const React = require('react');
 const getStyleObjectFromProps = require('./getStyleObjectFromProps');
 const getStyleKeyForStyleObject = require('./getStyleKeyForStyleObject');
 const getClassName = require('./getClassName');
-const {refKey, unrefKey} = require('./styleCache');
+const { refKey, unrefKey } = require('./styleCache');
 const PropTypes = require('prop-types');
 
 function makeStyleComponentClass(defaults, displayName, tagName) {
@@ -54,9 +54,12 @@ function makeStyleComponentClass(defaults, displayName, tagName) {
       return React.createElement(
         this.component,
         Object.assign({}, this.props.props, {
-          className: className || this.props.className
-            ? (this.props.className || '') + (this.props.className ? ' ' : '') + (className || '')
-            : null,
+          className:
+            className && this.props.className
+              ? this.props.className + ' ' + className
+              : className || this.props.className
+                ? className || this.props.className
+                : null,
           children: this.props.children,
           style: this.props.style,
         })
@@ -67,7 +70,11 @@ function makeStyleComponentClass(defaults, displayName, tagName) {
   Style.propTypes = {
     children: PropTypes.node,
     className: PropTypes.string,
-    component: PropTypes.oneOfType([PropTypes.string, PropTypes.object, PropTypes.func]),
+    component: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.object,
+      PropTypes.func,
+    ]),
     props: PropTypes.object,
     style: PropTypes.object,
   };

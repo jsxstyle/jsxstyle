@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-'use strict';
 
 const invariant = require('invariant');
 const temp = require('temp');

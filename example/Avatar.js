@@ -1,5 +1,5 @@
 import React from 'react';
-import {Block, Row} from 'jsxstyle';
+import { Block, Row } from 'jsxstyle';
 
 import LayoutConstants from './LayoutConstants';
 
@@ -13,7 +13,8 @@ export default function Avatar(props) {
       color="black"
       hoverColor="white"
       backgroundColor="white"
-      hoverBackgroundColor={LayoutConstants.secondaryColor}>
+      hoverBackgroundColor={LayoutConstants.secondaryColor}
+    >
       <Block
         style={{
           backgroundImage: `url("http://graph.facebook.com/${props.username}/picture?type=large")`,

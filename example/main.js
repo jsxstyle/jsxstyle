@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {AppContainer} from 'react-hot-loader';
-import {Block, install as installJsxstyle} from 'jsxstyle';
+import { AppContainer } from 'react-hot-loader';
+import { Block, install as installJsxstyle } from 'jsxstyle';
 
 import Avatar from './Avatar';
 import LayoutConstants from './LayoutConstants';
@@ -24,7 +24,8 @@ function load() {
         width={48 * LayoutConstants.gridUnit}
         minHeight={64}
         borderRadius={8}
-        padding={10}>
+        padding={10}
+      >
         <Avatar username="metallica" />
         <Avatar username="justintimberlake" />
         <Avatar username="carlyraejepsen" />
