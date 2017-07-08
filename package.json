@@ -14,7 +14,8 @@
     "lint": "eslint src/",
     "prepare": "rimraf lib; babel ./src --out-dir ./lib",
     "prettier": "prettier --single-quote --trailing-comma es5 --write '{{src,tests}/**/*.js,example/*.js}'",
-    "start": "cd example; ./serve.js",
+    "start": "webpack-dev-server --config=example/webpack.config.js --hot --hotOnly --inline --historyApiFallback",
+    "build": "webpack --config=example/webpack.config.js -p --progress",
     "watch": "rimraf lib; babel --watch ./src --out-dir ./lib"
   },
   "dependencies": {
