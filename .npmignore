@@ -1,2 +1,8 @@
 src/
+example/
 experimental/
+tests/
+.eslintrc.js
+.babelrc
+*.md
+!README.md

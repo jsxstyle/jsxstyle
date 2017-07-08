@@ -12,11 +12,12 @@
     "example": "cd example; rimraf build; webpack",
     "jest": "jest --verbose",
     "lint": "eslint src/",
-    "prepare": "rimraf lib; babel ./src --out-dir ./lib",
+    "prepare": "rimraf lib; babel -q ./src --out-dir ./lib",
     "prettier": "prettier --single-quote --trailing-comma es5 --write '{{src,tests}/**/*.js,example/*.js}'",
     "start": "webpack-dev-server --config=example/webpack.config.js --hot --hotOnly --inline --historyApiFallback",
     "build": "webpack --config=example/webpack.config.js -p --progress",
-    "watch": "rimraf lib; babel --watch ./src --out-dir ./lib"
+    "watch": "rimraf lib; babel --watch ./src --out-dir ./lib",
+    "ls_module": "LOADER_TMPFILE=$(npm --silent pack) && tar -tf $LOADER_TMPFILE && echo && rm -i $LOADER_TMPFILE"
   },
   "dependencies": {
     "invariant": "^2.2.1",
