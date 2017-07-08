@@ -10,8 +10,13 @@ export default function Avatar(props) {
       marginLeft="auto"
       marginRight="auto"
       alignItems="center"
+      mediaQueries={{
+        sm: 'screen and (max-width: 900px)',
+      }}
       color="black"
+      smColor="blue"
       hoverColor="white"
+      smHoverColor="red"
       backgroundColor="white"
       hoverBackgroundColor={LayoutConstants.secondaryColor}
     >

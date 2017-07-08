@@ -1,10 +1,9 @@
 'use strict';
 
 const React = require('react');
-const getStyleObjectFromProps = require('./getStyleObjectFromProps');
-const getStyleKeyForStyleObject = require('./getStyleKeyForStyleObject');
+const getStyleKeysForProps = require('./getStyleKeysForProps');
 const getClassName = require('./getClassName');
-const { refKey, unrefKey } = require('./styleCache');
+const { refClassName, unrefClassName } = require('./styleCache');
 const PropTypes = require('prop-types');
 
 function makeStyleComponentClass(defaults, displayName, tagName) {
@@ -14,51 +13,74 @@ function makeStyleComponentClass(defaults, displayName, tagName) {
   class Style extends React.Component {
     constructor(props) {
       super(props);
-      const styleProps = getStyleObjectFromProps(props);
-      this.styleKey = getStyleKeyForStyleObject(styleProps);
-      this.component = this.props.component || tagName;
-      if (this.styleKey) {
-        refKey(this.styleKey, styleProps);
+      this.updateRefs = this.updateRefs.bind(this);
+      this.updateRefs(props);
+    }
+
+    updateRefs(nextProps) {
+      const oldClassNames = this.classNameObject;
+      this.classNameObject = {};
+
+      this.component = nextProps.component || tagName;
+      this.classNameString = null;
+
+      const styleObj = getStyleKeysForProps(nextProps);
+      if (styleObj) {
+        for (const keyPrefix in styleObj) {
+          const value = styleObj[keyPrefix];
+          const key = keyPrefix + value.css;
+          const classNamePrefix =
+            '_' +
+            // if it's a prefixed prop, use special classname prefix
+            (value.mediaQuery || value.pseudoclass
+              ? (value.mediaQuery ? 'm' : '') + (value.pseudoclass ? 'p' : '')
+              : 'j');
+
+          const className = getClassName(key, classNamePrefix);
+          if (!this.classNameString) {
+            this.classNameString = className;
+          } else {
+            this.classNameString += ' ' + className;
+          }
+
+          this.classNameObject[className] = true;
+          // skip ref/unref of old style key
+          if (oldClassNames && oldClassNames.hasOwnProperty(className)) {
+            delete oldClassNames[className];
+            continue;
+          }
+          refClassName(className, value);
+        }
+      }
+
+      if (oldClassNames) {
+        for (const className in oldClassNames) {
+          unrefClassName(className);
+        }
       }
     }
 
     componentWillReceiveProps(nextProps) {
-      const oldStyleKey = this.styleKey;
-      const nextStyleProps = getStyleObjectFromProps(nextProps);
-      this.styleKey = getStyleKeyForStyleObject(nextStyleProps);
-      this.component = nextProps.component || tagName;
-
-      // skip ref/unref if style key changed
-      if (this.styleKey === oldStyleKey) {
-        return;
-      }
-
-      if (oldStyleKey) {
-        unrefKey(oldStyleKey);
-      }
-
-      if (this.styleKey) {
-        refKey(this.styleKey, nextStyleProps);
-      }
+      this.updateRefs(nextProps);
     }
 
     componentWillUnmount() {
-      if (this.styleKey) {
-        unrefKey(this.styleKey);
+      if (this.classNameObject) {
+        for (const className in this.classNameObject) {
+          unrefClassName(className);
+        }
       }
     }
 
     render() {
-      const className = this.styleKey ? getClassName(this.styleKey) : null;
-
       return React.createElement(
         this.component,
         Object.assign({}, this.props.props, {
           className:
-            className && this.props.className
-              ? this.props.className + ' ' + className
-              : className || this.props.className
-                ? className || this.props.className
+            this.classNameString && this.props.className
+              ? this.props.className + ' ' + this.classNameString
+              : this.classNameString || this.props.className
+                ? this.classNameString || this.props.className
                 : null,
           children: this.props.children,
           style: this.props.style,
@@ -75,6 +97,7 @@ function makeStyleComponentClass(defaults, displayName, tagName) {
       PropTypes.object,
       PropTypes.func,
     ]),
+    mediaQueries: PropTypes.object,
     props: PropTypes.object,
     style: PropTypes.object,
   };

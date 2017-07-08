@@ -1,12 +1,8 @@
 'use strict';
 
 const invariant = require('invariant');
-const explodePseudoStyles = require('./explodePseudoStyles');
-const createMarkupForStyles = require('./createMarkupForStyles');
-const getClassName = require('./getClassName');
 
 const styleCache = {};
-
 const browserIsAvailable = typeof document !== 'undefined';
 
 function reap() {
@@ -23,7 +19,7 @@ function reap() {
   }
 }
 
-let reaper;
+let reaper = null;
 function installReaper(intervalMS = 10000) {
   invariant(!reaper, 'jsxstyle stylesheet reaper has already been installed');
   if (browserIsAvailable) {
@@ -31,30 +27,26 @@ function installReaper(intervalMS = 10000) {
   }
 }
 
-function refKey(key, styleObj) {
-  if (styleCache.hasOwnProperty(key)) {
-    styleCache[key].refs++;
+if (module.hot) {
+  // stop garbage collection when module is replaced
+  module.hot.dispose(function() {
+    clearInterval(reaper);
+    reaper = null;
+  });
+}
+
+function refClassName(className, styleObj) {
+  if (styleCache.hasOwnProperty(className)) {
+    styleCache[className].refs++;
     return;
   }
 
-  const stylesheet = {
-    key,
-    style: styleObj,
-    refs: 1,
-  };
-  styleCache[key] = stylesheet;
+  const stylesheet = { refs: 1 };
+  styleCache[className] = stylesheet;
 
   if (!browserIsAvailable) {
     return;
   }
-
-  const explodedStyles = explodePseudoStyles(styleObj);
-  const className = getClassName(key);
-
-  const baseCSS = createMarkupForStyles(explodedStyles.base);
-  const hoverCSS = createMarkupForStyles(explodedStyles.hover);
-  const activeCSS = createMarkupForStyles(explodedStyles.active);
-  const focusCSS = createMarkupForStyles(explodedStyles.focus);
 
   const styleElement = document.createElement('style');
   styleElement.type = 'text/css';
@@ -62,27 +54,28 @@ function refKey(key, styleObj) {
   document.head.appendChild(styleElement);
   stylesheet.domNode = styleElement;
 
-  let idx = 0;
-  if (baseCSS) {
-    styleElement.sheet.insertRule(`.${className} {${baseCSS}}`, idx++);
+  let styleString =
+    `.${className}` +
+    (styleObj.pseudoclass ? ':' + styleObj.pseudoclass : '') +
+    ` {${styleObj.css}}`;
+
+  if (styleObj.mediaQuery) {
+    styleString = `@media ${styleObj.mediaQuery} { ${styleString} }`;
   }
-  if (hoverCSS) {
-    styleElement.sheet.insertRule(`.${className}:hover {${hoverCSS}}`, idx++);
-  }
-  if (activeCSS) {
-    styleElement.sheet.insertRule(`.${className}:active {${activeCSS}}`, idx++);
-  }
-  if (focusCSS) {
-    styleElement.sheet.insertRule(`.${className}:focus {${focusCSS}}`, idx++);
+
+  if (process.env.NODE_ENV === 'production') {
+    styleElement.sheet.insertRule(styleString, 0);
+  } else {
+    styleElement.appendChild(document.createTextNode(styleString));
   }
 }
 
-function unrefKey(key) {
-  styleCache[key].refs--;
+function unrefClassName(className) {
+  styleCache[className].refs--;
 }
 
 module.exports = {
   installReaper,
-  refKey,
-  unrefKey,
+  refClassName,
+  unrefClassName,
 };
