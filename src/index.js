@@ -23,4 +23,6 @@ module.exports = {
   // flexbox helper components
   Row: makeStyleComponentClass({ display: 'flex', flexDirection: 'row' }, 'Row'),
   Col: makeStyleComponentClass({ display: 'flex', flexDirection: 'column' }, 'Col'),
+
+  Grid: makeStyleComponentClass({ display: 'grid' }, 'Grid'),
 };
