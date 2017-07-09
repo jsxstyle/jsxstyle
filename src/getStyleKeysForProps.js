@@ -46,90 +46,91 @@ function getStyleKeysForProps(props, pretty = false) {
       continue;
     }
 
-    const propValue = dangerousStyleValue(propName, props[originalPropName]);
-
-    if (propValue == null || propValue === '') {
-      continue;
-    }
-
+    let propName = originalPropName;
+    let placeholder;
     let pseudoclass;
     let mediaQuery;
-    let propName = originalPropName;
 
     if (!prefixCache.hasOwnProperty(originalPropName)) {
       prefixCache[originalPropName] = false;
+
       capRegex.lastIndex = 0;
-      let splitIndex;
+      let splitIndex = 0;
       let mediaQueryPrefix;
 
-      const match1 = capRegex.exec(originalPropName);
-      if (match1 && match1.index > 0) {
-        const prefix1 = originalPropName.slice(0, match1.index);
-        if (
-          prefix1 === 'active' ||
-          prefix1 === 'focus' ||
-          prefix1 === 'hover' ||
-          prefix1 === 'placeholder'
-        ) {
-          pseudoclass = prefix1;
-          splitIndex = match1.index;
-        } else if (hasMediaQueries && mediaQueries.hasOwnProperty(prefix1)) {
-          mediaQueryPrefix = prefix1;
-          mediaQuery = mediaQueries[mediaQueryPrefix];
-          splitIndex = match1.index;
+      let prefix =
+        capRegex.test(originalPropName) &&
+        capRegex.lastIndex > 1 &&
+        originalPropName.slice(0, capRegex.lastIndex - 1);
 
-          const match2 = capRegex.exec(originalPropName);
-          if (match2 && match2.index > match1.index + 1) {
-            const prefix2 = originalPropName.slice(match1.index, match2.index);
-            if (
-              prefix2 === 'Active' ||
-              prefix2 === 'Focus' ||
-              prefix2 === 'Hover' ||
-              prefix2 === 'Placeholder'
-            ) {
-              pseudoclass = prefix2.toLowerCase();
-              splitIndex = match2.index;
-            }
-          }
-        }
+      // check for media query prefix
+      if (prefix && hasMediaQueries && mediaQueries.hasOwnProperty(prefix)) {
+        mediaQueryPrefix = prefix;
+        mediaQuery = mediaQueries[mediaQueryPrefix];
+        splitIndex = capRegex.lastIndex - 1;
+        prefix =
+          capRegex.test(originalPropName) &&
+          originalPropName[splitIndex].toLowerCase() +
+            originalPropName.slice(splitIndex + 1, capRegex.lastIndex - 1);
+      }
 
-        if (typeof splitIndex === 'number') {
-          propName =
-            originalPropName[splitIndex].toLowerCase() +
-            originalPropName.slice(splitIndex + 1);
+      if (prefix && prefix === 'placeholder') {
+        placeholder = true;
+        splitIndex = capRegex.lastIndex - 1;
+        prefix =
+          capRegex.test(originalPropName) &&
+          originalPropName[splitIndex].toLowerCase() +
+            originalPropName.slice(splitIndex + 1, capRegex.lastIndex - 1);
+      }
 
-          prefixCache[originalPropName] = {
-            propName,
-            mediaQueryPrefix,
-            pseudoclass:
-              pseudoclass === 'placeholder' ? ':' + pseudoclass : pseudoclass,
-          };
-        }
+      if (
+        prefix &&
+        (prefix === 'active' || prefix === 'focus' || prefix === 'hover')
+      ) {
+        pseudoclass = prefix;
+        splitIndex = capRegex.lastIndex - 1;
+      }
+
+      if (splitIndex > 0) {
+        propName =
+          originalPropName[splitIndex].toLowerCase() +
+          originalPropName.slice(splitIndex + 1);
+
+        prefixCache[originalPropName] = {
+          mediaQueryPrefix,
+          placeholder,
+          propName,
+          pseudoclass,
+        };
       }
     } else if (typeof prefixCache[originalPropName] === 'object') {
+      propName = prefixCache[originalPropName].propName;
       pseudoclass = prefixCache[originalPropName].pseudoclass;
+      placeholder = prefixCache[originalPropName].placeholder;
       const mediaQueryPrefix = prefixCache[originalPropName].mediaQueryPrefix;
       if (hasMediaQueries && mediaQueries.hasOwnProperty(mediaQueryPrefix)) {
         mediaQuery = mediaQueries[mediaQueryPrefix];
       }
-      propName = prefixCache[originalPropName].propName;
     }
 
     // key by pseudoclass and media query
     const key =
-      (pseudoclass || 'normal') + (mediaQuery ? '~' + mediaQuery : '');
+      (pseudoclass || 'normal') +
+      (placeholder ? '~p' : '') +
+      (mediaQuery ? '~' + mediaQuery : '');
 
     if (!styleKeyObj.hasOwnProperty(key)) {
       styleKeyObj[key] = { css: pretty ? '\n' : '' };
       if (pseudoclass) styleKeyObj[key].pseudoclass = pseudoclass;
       if (mediaQuery) styleKeyObj[key].mediaQuery = mediaQuery;
+      if (placeholder) styleKeyObj[key].placeholder = true;
     }
 
     styleKeyObj[key].css +=
       (pretty ? '  ' : '') +
       hyphenateStyleName(propName) +
       ':' +
-      propValue +
+      dangerousStyleValue(propName, props[originalPropName]) +
       ';' +
       (pretty ? '\n' : '');
   }

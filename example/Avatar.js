@@ -1,5 +1,6 @@
 import React from 'react';
 import { Block, Row } from 'jsxstyle';
+import PropTypes from 'prop-types';
 
 import LayoutConstants from './LayoutConstants';
 
@@ -36,5 +37,5 @@ export default function Avatar(props) {
 }
 
 Avatar.propTypes = {
-  username: React.PropTypes.string.isRequired,
+  username: PropTypes.string.isRequired,
 };

@@ -57,6 +57,7 @@ function refClassName(className, styleObj) {
   let styleString =
     `.${className}` +
     (styleObj.pseudoclass ? ':' + styleObj.pseudoclass : '') +
+    (styleObj.placeholder ? '::placeholder' : '') +
     ` {${styleObj.css}}`;
 
   if (styleObj.mediaQuery) {

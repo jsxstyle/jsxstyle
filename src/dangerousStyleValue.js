@@ -1,5 +1,6 @@
 'use strict';
 
+// https://github.com/facebook/react/blob/master/src/renderers/dom/shared/CSSProperty.js
 const isUnitlessNumber = {
   animationIterationCount: true,
   borderImageOutset: true,

@@ -11,7 +11,6 @@
     "eslint-fix": "eslint --fix {{src,tests}/**/*.js,example/*.js}",
     "example": "cd example; rimraf build; webpack",
     "jest": "jest --verbose",
-    "lint": "eslint src/",
     "prepare": "rimraf lib; babel -q ./src --out-dir ./lib",
     "prettier": "prettier --single-quote --trailing-comma es5 --write '{{src,tests}/**/*.js,example/*.js}'",
     "start": "webpack-dev-server --config=example/webpack.config.js --hot --hotOnly --inline --historyApiFallback",

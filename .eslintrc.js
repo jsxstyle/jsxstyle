@@ -38,5 +38,6 @@ module.exports = {
     'no-var': 2,
     'prefer-const': 2,
     'object-shorthand': 2,
+    'no-use-before-define': 2,
   },
 };
