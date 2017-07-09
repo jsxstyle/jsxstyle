@@ -1,19 +1,44 @@
 'use strict';
 
-const invariant = require('invariant');
-
-const styleCache = {};
 const browserIsAvailable = typeof document !== 'undefined';
+
+let styleCache;
+let styleElement;
+let styleIndex = -1;
+
+if (module.hot) {
+  if (typeof module.hot.data === 'object') {
+    styleCache = module.hot.data.styleCache;
+    styleElement = module.hot.data.styleElement;
+    styleIndex = module.hot.data.styleIndex;
+  }
+
+  module.hot.addDisposeHandler(function(data) {
+    data.styleCache = styleCache;
+    data.styleElement = styleElement;
+    data.styleIndex = styleIndex;
+  });
+}
+
+if (!styleCache) {
+  styleCache = {};
+}
+
+if (browserIsAvailable && !styleElement) {
+  styleElement = document.createElement('style');
+  styleElement.type = 'text/css';
+  styleElement.appendChild(document.createTextNode('/* jsxstyle */'));
+  document.head.appendChild(styleElement);
+}
+
+window.disposeData = { styleElement, styleIndex, styleCache };
 
 function reap() {
   for (const key in styleCache) {
     if (styleCache[key].refs < 1) {
-      if (styleCache[key].domNode) {
-        const node = styleCache[key].domNode;
-        if (node && node.parentNode) {
-          node.parentNode.removeChild(node);
-        }
-      }
+      styleElement.sheet.deleteRule(styleCache[key].index);
+      styleElement.sheet.insertRule('_p {}', styleCache[key].index);
+      // TODO: reuse the ID?
       delete styleCache[key];
     }
   }
@@ -21,18 +46,9 @@ function reap() {
 
 let reaper = null;
 function installReaper(intervalMS = 10000) {
-  invariant(!reaper, 'jsxstyle stylesheet reaper has already been installed');
-  if (browserIsAvailable) {
+  if (!reaper && browserIsAvailable) {
     reaper = setInterval(reap, intervalMS);
   }
-}
-
-if (module.hot) {
-  // stop garbage collection when module is replaced
-  module.hot.dispose(function() {
-    clearInterval(reaper);
-    reaper = null;
-  });
 }
 
 function refClassName(className, styleObj) {
@@ -41,18 +57,12 @@ function refClassName(className, styleObj) {
     return;
   }
 
-  const stylesheet = { refs: 1 };
+  const stylesheet = { refs: 1, index: -1 };
   styleCache[className] = stylesheet;
 
   if (!browserIsAvailable) {
     return;
   }
-
-  const styleElement = document.createElement('style');
-  styleElement.type = 'text/css';
-  styleElement.appendChild(document.createTextNode(`/* ${className} */`));
-  document.head.appendChild(styleElement);
-  stylesheet.domNode = styleElement;
 
   let styleString =
     `.${className}` +
@@ -64,11 +74,8 @@ function refClassName(className, styleObj) {
     styleString = `@media ${styleObj.mediaQuery} { ${styleString} }`;
   }
 
-  if (process.env.NODE_ENV === 'production') {
-    styleElement.sheet.insertRule(styleString, 0);
-  } else {
-    styleElement.appendChild(document.createTextNode(styleString));
-  }
+  stylesheet.index = ++styleIndex;
+  styleElement.sheet.insertRule(styleString, stylesheet.index);
 }
 
 function unrefClassName(className) {
