@@ -4,7 +4,7 @@ const hyphenateStyleName = require('./hyphenateStyleName');
 const dangerousStyleValue = require('./dangerousStyleValue');
 
 const prefixCache = {};
-// global flag makes subsequent calls of exec advance to the next match
+// global flag makes subsequent calls of capRegex.test advance to the next match
 const capRegex = /[A-Z]/g;
 
 const pseudoelements = {
@@ -25,6 +25,16 @@ const pseudoclasses = {
   required: true,
   target: true,
   valid: true,
+};
+
+const specialCaseProps = {
+  children: true,
+  class: true,
+  className: true,
+  component: true,
+  props: true,
+  style: true,
+  mediaQueries: true,
 };
 
 function getStyleKeysForProps(props, pretty = false) {
@@ -51,19 +61,10 @@ function getStyleKeysForProps(props, pretty = false) {
   for (let idx = -1; ++idx < keyCount; ) {
     const originalPropName = propKeys[idx];
 
-    // jsxstyle special case props
     if (
-      originalPropName === 'children' ||
-      originalPropName === 'className' ||
-      originalPropName === 'component' ||
-      originalPropName === 'props' ||
-      originalPropName === 'style' ||
-      originalPropName === 'mediaQueries'
+      specialCaseProps.hasOwnProperty(originalPropName) ||
+      !props.hasOwnProperty(originalPropName)
     ) {
-      continue;
-    }
-
-    if (!props.hasOwnProperty(originalPropName)) {
       continue;
     }
 
@@ -95,6 +96,7 @@ function getStyleKeysForProps(props, pretty = false) {
             originalPropName.slice(splitIndex + 1, capRegex.lastIndex - 1);
       }
 
+    // check for pseudoelement prefix
       if (prefix && pseudoelements.hasOwnProperty(prefix)) {
         pseudoelement = prefix;
         splitIndex = capRegex.lastIndex - 1;
@@ -104,11 +106,13 @@ function getStyleKeysForProps(props, pretty = false) {
             originalPropName.slice(splitIndex + 1, capRegex.lastIndex - 1);
       }
 
+    // check for pseudoclass prefix
       if (prefix && pseudoclasses.hasOwnProperty(prefix)) {
         pseudoclass = prefix;
         splitIndex = capRegex.lastIndex - 1;
       }
 
+    // trim prefixes off propName
       if (splitIndex > 0) {
         propName =
           originalPropName[splitIndex].toLowerCase() +
@@ -133,9 +137,10 @@ function getStyleKeysForProps(props, pretty = false) {
 
     // key by pseudoclass and media query
     const key =
-      (pseudoclass || 'normal') +
-      (pseudoelement ? '~' + pseudoelement : '') +
-      (mediaQuery ? '~' + mediaQuery : '');
+      '.' +
+      (mediaQuery ? '@' + mediaQuery : '') +
+      (pseudoclass ? ':' + pseudoclass : '') +
+      (pseudoelement ? '::' + pseudoelement : '');
 
     if (!styleKeyObj.hasOwnProperty(key)) {
       styleKeyObj[key] = { css: pretty ? '\n' : '' };

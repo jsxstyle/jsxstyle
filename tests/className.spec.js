@@ -3,7 +3,7 @@
 const { Inline } = require('../');
 const React = require('react');
 const ReactDOMServer = require('react-dom/server');
-const getClassName = require('../src/getClassName');
+const getClassName = require('../lib/getClassName');
 
 describe('className', function() {
   it('combines class names if `className` prop is present', () => {

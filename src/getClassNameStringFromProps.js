@@ -22,14 +22,17 @@ if (!classNameCache) {
 
 function getClassNameStringFromProps(props) {
   const styleObj = getStyleKeysForProps(props);
+  if (typeof styleObj !== 'object' || styleObj === null) {
+    return props.className || null;
+  }
   const key = styleObj.classNameKey;
   let className;
   if (!classNameCache.hasOwnProperty(key)) {
     className = classNameCache[key] = '_j' + stringHash(key).toString(36);
     delete styleObj.classNameKey;
-    for (const keyPrefix in styleObj) {
-      addStyleToHead(className, styleObj[keyPrefix]);
-    }
+    Object.keys(styleObj)
+      .sort()
+      .forEach(k => addStyleToHead(className, styleObj[k]));
   } else {
     className = classNameCache[key];
   }
