@@ -39,7 +39,7 @@ function addStyleToHead(className, styleObj) {
   let styleString =
     `.${className}` +
     (styleObj.pseudoclass ? ':' + styleObj.pseudoclass : '') +
-    (styleObj.placeholder ? '::placeholder' : '') +
+    (styleObj.pseudoelement ? '::' + styleObj.pseudoelement : '') +
     ` {${styleObj.css}}`;
 
   if (styleObj.mediaQuery) {

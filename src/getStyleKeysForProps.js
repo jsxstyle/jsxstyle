@@ -7,6 +7,26 @@ const prefixCache = {};
 // global flag makes subsequent calls of exec advance to the next match
 const capRegex = /[A-Z]/g;
 
+const pseudoelements = {
+  after: true,
+  before: true,
+  placeholder: true,
+};
+
+const pseudoclasses = {
+  active: true,
+  checked: true,
+  disabled: true,
+  empty: true,
+  enabled: true,
+  focus: true,
+  hover: true,
+  invalid: true,
+  required: true,
+  target: true,
+  valid: true,
+};
+
 function getStyleKeysForProps(props, pretty = false) {
   if (typeof props !== 'object' || props === null) {
     return null;
@@ -47,7 +67,7 @@ function getStyleKeysForProps(props, pretty = false) {
     }
 
     let propName = originalPropName;
-    let placeholder;
+    let pseudoelement;
     let pseudoclass;
     let mediaQuery;
 
@@ -74,8 +94,8 @@ function getStyleKeysForProps(props, pretty = false) {
             originalPropName.slice(splitIndex + 1, capRegex.lastIndex - 1);
       }
 
-      if (prefix && prefix === 'placeholder') {
-        placeholder = true;
+      if (prefix && pseudoelements.hasOwnProperty(prefix)) {
+        pseudoelement = prefix;
         splitIndex = capRegex.lastIndex - 1;
         prefix =
           capRegex.test(originalPropName) &&
@@ -83,10 +103,7 @@ function getStyleKeysForProps(props, pretty = false) {
             originalPropName.slice(splitIndex + 1, capRegex.lastIndex - 1);
       }
 
-      if (
-        prefix &&
-        (prefix === 'active' || prefix === 'focus' || prefix === 'hover')
-      ) {
+      if (prefix && pseudoclasses.hasOwnProperty(prefix)) {
         pseudoclass = prefix;
         splitIndex = capRegex.lastIndex - 1;
       }
@@ -98,7 +115,7 @@ function getStyleKeysForProps(props, pretty = false) {
 
         prefixCache[originalPropName] = {
           mediaQueryPrefix,
-          placeholder,
+          pseudoelement,
           propName,
           pseudoclass,
         };
@@ -106,7 +123,7 @@ function getStyleKeysForProps(props, pretty = false) {
     } else if (typeof prefixCache[originalPropName] === 'object') {
       propName = prefixCache[originalPropName].propName;
       pseudoclass = prefixCache[originalPropName].pseudoclass;
-      placeholder = prefixCache[originalPropName].placeholder;
+      pseudoelement = prefixCache[originalPropName].placeholder;
       const mediaQueryPrefix = prefixCache[originalPropName].mediaQueryPrefix;
       if (hasMediaQueries && mediaQueries.hasOwnProperty(mediaQueryPrefix)) {
         mediaQuery = mediaQueries[mediaQueryPrefix];
@@ -116,14 +133,14 @@ function getStyleKeysForProps(props, pretty = false) {
     // key by pseudoclass and media query
     const key =
       (pseudoclass || 'normal') +
-      (placeholder ? '~p' : '') +
+      (pseudoelement ? '~' + pseudoelement : '') +
       (mediaQuery ? '~' + mediaQuery : '');
 
     if (!styleKeyObj.hasOwnProperty(key)) {
       styleKeyObj[key] = { css: pretty ? '\n' : '' };
-      if (pseudoclass) styleKeyObj[key].pseudoclass = pseudoclass;
       if (mediaQuery) styleKeyObj[key].mediaQuery = mediaQuery;
-      if (placeholder) styleKeyObj[key].placeholder = true;
+      if (pseudoclass) styleKeyObj[key].pseudoclass = pseudoclass;
+      if (pseudoelement) styleKeyObj[key].pseudoelement = pseudoelement;
     }
 
     styleKeyObj[key].css +=

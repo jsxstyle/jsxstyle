@@ -24,22 +24,22 @@ describe('getStyleKeysForProps', () => {
     }
 
     const markup = getStyleKeysForProps({
-      validProp1: 'string',
-      validProp2: 1234,
-      validProp3: 0,
-      validProp4: prototypeTest('wow'),
-      invalidProp1: null,
-      invalidProp2: undefined,
-      invalidProp3: false, // hmmmmmmmmmmmmm
+      prop1: 'string',
+      prop2: 1234,
+      prop3: 0,
+      prop4: prototypeTest('wow'),
+      prop5: null,
+      prop6: undefined,
+      prop7: false,
     });
 
     expect(markup).toEqual({
       normal: {
         css: `
-  valid-prop1:string;
-  valid-prop2:1234px;
-  valid-prop3:0;
-  valid-prop4:wow;
+  prop1:string;
+  prop2:1234px;
+  prop3:0;
+  prop4:wow;
 `,
       },
     });
