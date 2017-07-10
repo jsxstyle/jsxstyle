@@ -4,36 +4,36 @@ const getStyleKeysForProps = require('./getStyleKeysForProps');
 const addStyleToHead = require('./addStyleToHead');
 const stringHash = require('./stringHash');
 
-const classNameCache = {};
+let classNameCache;
+
+if (module.hot) {
+  if (typeof module.hot.data === 'object') {
+    classNameCache = module.hot.data.classNameCache;
+  }
+
+  module.hot.addDisposeHandler(function(data) {
+    data.classNameCache = classNameCache;
+  });
+}
+
+if (!classNameCache) {
+  classNameCache = {};
+}
 
 function getClassNameStringFromProps(props) {
-  let classNameString = props.className;
   const styleObj = getStyleKeysForProps(props);
-  if (styleObj) {
+  const key = styleObj.classNameKey;
+  let className;
+  if (!classNameCache.hasOwnProperty(key)) {
+    className = classNameCache[key] = '_j' + stringHash(key).toString(36);
+    delete styleObj.classNameKey;
     for (const keyPrefix in styleObj) {
-      const value = styleObj[keyPrefix];
-      const key = keyPrefix + value.css;
-      const classNamePrefix =
-        '_' +
-        (value.mediaQuery || value.pseudoclass
-          ? (value.mediaQuery ? 'm' : '') + (value.pseudoclass ? 'p' : '')
-          : 'j');
-
-      if (!classNameCache.hasOwnProperty(key)) {
-        classNameCache[key] = stringHash(key).toString(36);
-      }
-
-      const className = classNamePrefix + classNameCache[key];
-      if (!classNameString) {
-        classNameString = className;
-      } else {
-        classNameString += ' ' + className;
-      }
-
-      addStyleToHead(className, value);
+      addStyleToHead(className, styleObj[keyPrefix]);
     }
+  } else {
+    className = classNameCache[key];
   }
-  return classNameString;
+  return props.className ? props.className + ' ' + className : className;
 }
 
 module.exports = getClassNameStringFromProps;

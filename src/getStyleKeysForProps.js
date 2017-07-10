@@ -46,6 +46,7 @@ function getStyleKeysForProps(props, pretty = false) {
 
   // return value
   const styleKeyObj = {};
+  let classNameKey = '';
 
   for (let idx = -1; ++idx < keyCount; ) {
     const originalPropName = propKeys[idx];
@@ -143,15 +144,18 @@ function getStyleKeysForProps(props, pretty = false) {
       if (pseudoelement) styleKeyObj[key].pseudoelement = pseudoelement;
     }
 
+    const styleValue =
+      ':' + dangerousStyleValue(propName, props[originalPropName]) + ';';
+
+    classNameKey += originalPropName + styleValue;
     styleKeyObj[key].css +=
       (pretty ? '  ' : '') +
       hyphenateStyleName(propName) +
-      ':' +
-      dangerousStyleValue(propName, props[originalPropName]) +
-      ';' +
+      styleValue +
       (pretty ? '\n' : '');
   }
 
+  styleKeyObj.classNameKey = classNameKey;
   return styleKeyObj;
 }
 
