@@ -2,17 +2,26 @@
 
 const uppercasePattern = /([A-Z])/g;
 const msPattern = /^ms-/;
-const cache = {};
+const hyphenateCache = {};
+
+const invariant = require('invariant');
 
 function hyphenateStyleName(string) {
-  if (cache.hasOwnProperty(string)) {
-    return string;
+  invariant(
+    typeof string === 'string',
+    'hyphenateStyleName received a non-string thing: %s',
+    string
+  );
+  if (hyphenateCache.hasOwnProperty(string)) {
+    return hyphenateCache[string];
   }
-  cache[string] = string
+  const hyphenatedString = string
     .replace(uppercasePattern, '-$1')
     .toLowerCase()
     .replace(msPattern, '-ms-');
-  return cache[string];
+
+  hyphenateCache[string] = hyphenatedString;
+  return hyphenateCache[string];
 }
 
 module.exports = hyphenateStyleName;

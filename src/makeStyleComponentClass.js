@@ -1,10 +1,9 @@
 'use strict';
 
-const React = require('react');
-const getStyleKeysForProps = require('./getStyleKeysForProps');
-const getClassName = require('./getClassName');
-const { refClassName, unrefClassName } = require('./styleCache');
 const PropTypes = require('prop-types');
+const React = require('react');
+
+const getClassNameStringFromProps = require('./getClassNameStringFromProps');
 
 function makeStyleComponentClass(defaults, displayName, tagName) {
   tagName = tagName || 'div';
@@ -13,78 +12,23 @@ function makeStyleComponentClass(defaults, displayName, tagName) {
   class Style extends React.Component {
     constructor(props) {
       super(props);
-      this.updateRefs = this.updateRefs.bind(this);
-      this.updateRefs(props);
-    }
-
-    updateRefs(nextProps) {
-      const oldClassNames = this.classNameObject;
-      this.classNameObject = {};
-
-      this.component = nextProps.component || tagName;
-      this.classNameString = null;
-
-      const styleObj = getStyleKeysForProps(nextProps);
-      if (styleObj) {
-        for (const keyPrefix in styleObj) {
-          const value = styleObj[keyPrefix];
-          const key = keyPrefix + value.css;
-          const classNamePrefix =
-            '_' +
-            // if it's a prefixed prop, use special classname prefix
-            (value.mediaQuery || value.pseudoclass
-              ? (value.mediaQuery ? 'm' : '') + (value.pseudoclass ? 'p' : '')
-              : 'j');
-
-          const className = getClassName(key, classNamePrefix);
-          if (!this.classNameString) {
-            this.classNameString = className;
-          } else {
-            this.classNameString += ' ' + className;
-          }
-
-          this.classNameObject[className] = true;
-          // skip ref/unref of old style key
-          if (oldClassNames && oldClassNames.hasOwnProperty(className)) {
-            delete oldClassNames[className];
-            continue;
-          }
-          refClassName(className, value);
-        }
-      }
-
-      if (oldClassNames) {
-        for (const className in oldClassNames) {
-          unrefClassName(className);
-        }
-      }
+      this.component = props.component || tagName;
+      this.className = getClassNameStringFromProps(props);
     }
 
     componentWillReceiveProps(nextProps) {
-      this.updateRefs(nextProps);
-    }
-
-    componentWillUnmount() {
-      if (this.classNameObject) {
-        for (const className in this.classNameObject) {
-          unrefClassName(className);
-        }
-      }
+      this.component = nextProps.component || tagName;
+      this.className = getClassNameStringFromProps(nextProps);
     }
 
     render() {
       return React.createElement(
         this.component,
         Object.assign({}, this.props.props, {
-          className:
-            this.classNameString && this.props.className
-              ? this.props.className + ' ' + this.classNameString
-              : this.classNameString || this.props.className
-                ? this.classNameString || this.props.className
-                : null,
-          children: this.props.children,
+          className: this.className,
           style: this.props.style,
-        })
+        }),
+        this.props.children
       );
     }
   }

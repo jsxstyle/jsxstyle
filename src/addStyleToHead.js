@@ -31,36 +31,8 @@ if (browserIsAvailable && !styleElement) {
   document.head.appendChild(styleElement);
 }
 
-window.disposeData = { styleElement, styleIndex, styleCache };
-
-function reap() {
-  for (const key in styleCache) {
-    if (styleCache[key].refs < 1) {
-      styleElement.sheet.deleteRule(styleCache[key].index);
-      styleElement.sheet.insertRule('_p {}', styleCache[key].index);
-      // TODO: reuse the ID?
-      delete styleCache[key];
-    }
-  }
-}
-
-let reaper = null;
-function installReaper(intervalMS = 10000) {
-  if (!reaper && browserIsAvailable) {
-    reaper = setInterval(reap, intervalMS);
-  }
-}
-
-function refClassName(className, styleObj) {
-  if (styleCache.hasOwnProperty(className)) {
-    styleCache[className].refs++;
-    return;
-  }
-
-  const stylesheet = { refs: 1, index: -1 };
-  styleCache[className] = stylesheet;
-
-  if (!browserIsAvailable) {
+function addStyleToHead(className, styleObj) {
+  if (!browserIsAvailable || styleCache.hasOwnProperty(className)) {
     return;
   }
 
@@ -74,16 +46,8 @@ function refClassName(className, styleObj) {
     styleString = `@media ${styleObj.mediaQuery} { ${styleString} }`;
   }
 
-  stylesheet.index = ++styleIndex;
-  styleElement.sheet.insertRule(styleString, stylesheet.index);
+  styleCache[className] = true;
+  styleElement.sheet.insertRule(styleString, ++styleIndex);
 }
 
-function unrefClassName(className) {
-  styleCache[className].refs--;
-}
-
-module.exports = {
-  installReaper,
-  refClassName,
-  unrefClassName,
-};
+module.exports = addStyleToHead;

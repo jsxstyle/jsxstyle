@@ -1,15 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
-import { Block, install as installJsxstyle } from 'jsxstyle';
+import { Block } from 'jsxstyle';
 
 import Avatar from './Avatar';
 import LayoutConstants from './LayoutConstants';
 
 import './style.css';
-
-// install style reaper
-installJsxstyle();
 
 const reactRoot = document.getElementById('.jsxstyle-demo');
 

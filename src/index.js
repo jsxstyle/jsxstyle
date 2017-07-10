@@ -1,12 +1,9 @@
 'use strict';
 
-const { installReaper } = require('./styleCache');
 const makeStyleComponentClass = require('./makeStyleComponentClass');
 
 // prettier-ignore
 module.exports = {
-  install: installReaper,
-
   // completely unstyled component
   Box: makeStyleComponentClass(undefined, 'Box'),
 
