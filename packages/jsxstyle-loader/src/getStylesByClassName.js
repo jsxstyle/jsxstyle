@@ -2,8 +2,16 @@
 
 const invariant = require('invariant');
 
-const getStyleObjectFromProps = require('jsxstyle/lib/getStyleObjectFromProps');
 const getClassNameFromCache = require('./getClassNameFromCache');
+
+const nonStyleProps = {
+  children: true,
+  className: true,
+  component: true,
+  props: true,
+  style: true,
+  mediaQueries: true,
+};
 
 function getStylesByClassName(
   styleGroups,
@@ -23,8 +31,20 @@ function getStylesByClassName(
     'getStylesByClassName expects an object as its third parameter'
   );
 
-  const styleProps = getStyleObjectFromProps(staticAttributes);
-  if (Object.keys(styleProps).length === 0) {
+  let hasItems = false;
+  const styleProps = {};
+  for (const item in staticAttributes) {
+    if (
+      nonStyleProps.hasOwnProperty(item) ||
+      !staticAttributes.hasOwnProperty(item)
+    ) {
+      continue;
+    }
+    hasItems = true;
+    styleProps[item] = staticAttributes[item];
+  }
+
+  if (!hasItems) {
     return {};
   }
 
@@ -42,7 +62,7 @@ function getStylesByClassName(
       // prop --> value
       for (const prop in styleObject) {
         const value = styleObject[prop];
-        if (!styleProps.hasOwnProperty(prop) || styleProps[prop] !== value) {
+        if (styleProps[prop] !== value) {
           // skip to the next style object
           continue objLoop;
         }

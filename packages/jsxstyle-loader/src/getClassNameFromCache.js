@@ -1,7 +1,7 @@
 'use strict';
 
 const invariant = require('invariant');
-const getStyleKeyForStyleObject = require('jsxstyle/lib/getStyleKeyForStyleObject');
+const getStyleKeysForProps = require('jsxstyle/lib/getStyleKeysForProps');
 
 function getClassNameFromCache(
   styleObject,
@@ -20,21 +20,26 @@ function getClassNameFromCache(
     return null;
   }
 
-  if (Object.keys(styleObject).length > 0) {
-    const styleKey = getStyleKeyForStyleObject(styleObject);
-    if (styleKey) {
-      const counterKey = classNamePrefix + '~counter';
-      cacheObject[counterKey] = cacheObject[counterKey] || 0;
-      cacheObject.keys = cacheObject.keys || {};
-
-      const classNameKey = classNamePrefix + '~' + styleKey;
-      cacheObject.keys[classNameKey] =
-        cacheObject.keys[classNameKey] ||
-        (cacheObject[counterKey]++).toString(16);
-      return classNamePrefix + cacheObject.keys[classNameKey];
-    }
+  if (Object.keys(styleObject).length === 0) {
+    return null;
   }
-  return null;
+
+  const styleObjects = getStyleKeysForProps(styleObject);
+  const styleKey = styleObjects.classNameKey;
+
+  if (styleKey === '' || styleKey == null) {
+    return null;
+  }
+
+  const counterKey = classNamePrefix + '~counter';
+  cacheObject[counterKey] = cacheObject[counterKey] || 0;
+  cacheObject.keys = cacheObject.keys || {};
+
+  const classNameKey = classNamePrefix + '~' + styleKey;
+  cacheObject.keys[classNameKey] =
+    cacheObject.keys[classNameKey] || (cacheObject[counterKey]++).toString(36);
+
+  return classNamePrefix + cacheObject.keys[classNameKey];
 }
 
 module.exports = getClassNameFromCache;

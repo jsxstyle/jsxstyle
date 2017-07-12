@@ -7,12 +7,12 @@
   "main": "lib/index.js",
   "scripts": {
     "lint": "eslint {src,tests}/",
+    "jest": "jest",
     "prettier": "prettier --single-quote --trailing-comma es5 --write '{src,tests}/**/*.js'",
-    "build_lib": "rimraf lib; babel ./src --out-dir ./lib",
+    "build_lib": "rimraf lib; babel -q ./src --out-dir ./lib",
     "watch_lib": "rimraf lib; babel --watch ./src --out-dir ./lib",
     "ls_module": "LOADER_TMPFILE=$(npm --silent pack) && tar -tf $LOADER_TMPFILE && echo && rm -i $LOADER_TMPFILE",
-    "ls_module_yarn": "LOADER_TMPFILE=$(mktemp); yarn pack -s --filename $LOADER_TMPFILE; tar -tf $LOADER_TMPFILE",
-    "prepublish": "yarn run -s build_lib > /dev/null"
+    "prepare": "npm run -s build_lib"
   },
   "dependencies": {
     "babel-generator": "^6.24.1",
@@ -20,7 +20,7 @@
     "babel-types": "^6.24.1",
     "babylon": "^6.17.0",
     "invariant": "^2.2.1",
-    "jsxstyle": "^2.0.0-beta.1",
+    "jsxstyle": "^2.0.0-beta.2",
     "loader-utils": "^1.1.0"
   },
   "devDependencies": {

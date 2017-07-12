@@ -29,11 +29,11 @@ const val = 'thing';
     expect(rv.css).toEqual(
       `/* ./tests/mock/extract-static1.js:4 (Block) */
 ._x0 {
-  static-string:wow;
-  static-int:69px;
-  static-value:thing;
-  static-member-expression:ok;
   display:block;
+  static-int:69px;
+  static-member-expression:ok;
+  static-string:wow;
+  static-value:thing;
 }
 `
     );
@@ -73,10 +73,10 @@ import LC from './LC';
     expect(rv.css).toEqual(
       `/* ./tests/mock/extract-static2.js:4 (Block) */
 ._x0 {
-  static-string:wow;
   static-int:69px;
-  static-value:thing;
   static-member-expression:ok;
+  static-string:wow;
+  static-value:thing;
 }
 `
     );

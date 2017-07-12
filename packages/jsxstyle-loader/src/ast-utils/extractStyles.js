@@ -5,8 +5,7 @@ const path = require('path');
 const vm = require('vm');
 
 const jsxstyle = require('jsxstyle');
-const createMarkupForStyles = require('jsxstyle/lib/createMarkupForStyles');
-const explodePseudoStyles = require('jsxstyle/lib/explodePseudoStyles');
+const getStyleKeysForProps = require('jsxstyle/lib/getStyleKeysForProps');
 
 const canEvaluate = require('./canEvaluate');
 const extractStaticTernaries = require('./extractStaticTernaries');
@@ -21,9 +20,20 @@ const generate = require('babel-generator').default;
 const t = require('babel-types');
 
 // these props will be passed through as-is
-const UNTOUCHED_PROPS = ['ref', 'key', 'style'];
+const UNTOUCHED_PROPS = {
+  ref: true,
+  key: true,
+  style: true,
+};
+
 // these props cannot appear in the props prop (so meta)
-const ALL_SPECIAL_PROPS = ['component', 'className'].concat(UNTOUCHED_PROPS);
+const ALL_SPECIAL_PROPS = Object.assign(
+  {
+    component: true,
+    className: true,
+  },
+  UNTOUCHED_PROPS
+);
 
 function noop() {}
 
@@ -172,7 +182,7 @@ function extractStyles({
         }
 
         // pass ref, key, and style props through untouched
-        if (UNTOUCHED_PROPS.indexOf(attribute.name.name) > -1) {
+        if (UNTOUCHED_PROPS.hasOwnProperty(attribute.name.name)) {
           return true;
         }
 
@@ -220,7 +230,7 @@ function extractStyles({
         }
 
         // pass key and style props through untouched
-        if (UNTOUCHED_PROPS.indexOf(attribute.name.name) > -1) {
+        if (UNTOUCHED_PROPS.hasOwnProperty(attribute.name.name)) {
           return true;
         }
 
@@ -249,7 +259,7 @@ function extractStyles({
             for (const k in propsPropValue.properties) {
               const propObj = propsPropValue.properties[k];
               if (t.isObjectProperty(propObj)) {
-                if (ALL_SPECIAL_PROPS.indexOf(propObj.key.name) !== -1) {
+                if (ALL_SPECIAL_PROPS.hasOwnProperty(propObj.key.name)) {
                   errorCallback(
                     '`props` prop cannot contain `' +
                       propObj.key.name +
@@ -586,51 +596,31 @@ function extractStyles({
             cssMap.set(className, val);
           }
         } else {
-          const explodedStyles = explodePseudoStyles(
-            stylesByClassName[className]
-          );
+          let css = '';
+          const styleProps = stylesByClassName[className];
 
-          const baseCSS = createMarkupForStyles(
-            explodedStyles.base,
-            errorCallback
-          );
-          const hoverCSS = createMarkupForStyles(
-            explodedStyles.hover,
-            errorCallback
-          );
-          const activeCSS = createMarkupForStyles(
-            explodedStyles.active,
-            errorCallback
-          );
-          const focusCSS = createMarkupForStyles(
-            explodedStyles.focus,
-            errorCallback
-          );
+          // get object of style objects
+          const styleObjects = getStyleKeysForProps(styleProps, true);
+          delete styleObjects.classNameKey;
+          const styleObjectKeys = Object.keys(styleObjects).sort();
 
-          let cssString = '';
-          if (baseCSS) {
-            cssString += `.${className} {${baseCSS}}\n`;
-          }
-          if (hoverCSS) {
-            cssString += `.${className}:hover {${hoverCSS}}\n`;
-          }
-          if (activeCSS) {
-            cssString += `.${className}:active {${activeCSS}}\n`;
-          }
-          if (focusCSS) {
-            cssString += `.${className}:focus {${focusCSS}}\n`;
+          // loop throu
+          for (let idx = -1, len = styleObjectKeys.length; ++idx < len; ) {
+            const k = styleObjectKeys[idx];
+            const item = styleObjects[k];
+            let itemCSS =
+              `.${className}` +
+              (item.pseudoclass ? ':' + item.pseudoclass : '') +
+              (item.pseudoelement ? '::' + item.pseudoelement : '') +
+              ` {${item.css}}`;
+
+            if (item.mediaQuery) {
+              itemCSS = `@media ${item.mediaQuery} { ${itemCSS} }`;
+            }
+            css += itemCSS + '\n';
           }
 
-          const val = {
-            css: cssString,
-            commentTexts: [],
-          };
-
-          if (comment) {
-            val.commentTexts.push(comment);
-          }
-
-          cssMap.set(className, val);
+          cssMap.set(className, { css, commentTexts: [comment] });
         }
       }
     },
