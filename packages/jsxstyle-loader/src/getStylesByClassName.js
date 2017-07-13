@@ -75,6 +75,10 @@ function getStylesByClassName(
         stylesByClassName[classNameKey][prop] = styleObject[prop];
         delete styleProps[prop];
       }
+      if (staticAttributes.mediaQueries) {
+        stylesByClassName[classNameKey].mediaQueries =
+          staticAttributes.mediaQueries;
+      }
     }
   }
 
@@ -102,6 +106,10 @@ function getStylesByClassName(
         stylesByClassName[className][prop] = styleObject[prop];
         delete styleProps[prop];
       }
+      if (staticAttributes.mediaQueries) {
+        stylesByClassName[className].mediaQueries =
+          staticAttributes.mediaQueries;
+      }
     }
   }
 
@@ -109,6 +117,10 @@ function getStylesByClassName(
     const className = getClassNameFromCache(styleProps, cacheObject);
     if (className) {
       stylesByClassName[className] = styleProps;
+      if (staticAttributes.mediaQueries) {
+        stylesByClassName[className].mediaQueries =
+          staticAttributes.mediaQueries;
+      }
     }
   }
 

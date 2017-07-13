@@ -8,6 +8,7 @@ const jsxstyle = require('jsxstyle');
 const getStyleKeysForProps = require('jsxstyle/lib/getStyleKeysForProps');
 
 const canEvaluate = require('./canEvaluate');
+const canEvaluateObject = require('./canEvaluateObject');
 const extractStaticTernaries = require('./extractStaticTernaries');
 const getPropValueFromAttributes = require('./getPropValueFromAttributes');
 const getSourceModuleForItem = require('./getSourceModuleForItem');
@@ -175,6 +176,11 @@ function extractStyles({
           return true;
         }
 
+        const name = attribute.name.name;
+        const value = t.isJSXExpressionContainer(attribute.value)
+          ? attribute.value.expression
+          : attribute.value;
+
         // if one or more spread operators are present and we haven't hit the last one yet, the prop stays inline
         if (lastSpreadIndex !== null && idx <= lastSpreadIndex) {
           inlinePropCount++;
@@ -182,26 +188,19 @@ function extractStyles({
         }
 
         // pass ref, key, and style props through untouched
-        if (UNTOUCHED_PROPS.hasOwnProperty(attribute.name.name)) {
+        if (UNTOUCHED_PROPS.hasOwnProperty(name)) {
           return true;
         }
 
         // className prop will be handled below
-        if (attribute.name.name === 'className') {
+        if (name === 'className') {
           return true;
         }
 
         // validate component prop
-        if (attribute.name.name === 'component') {
-          const componentPropValue = t.isJSXExpressionContainer(attribute.value)
-            ? attribute.value.expression
-            : attribute.value;
-
-          if (
-            t.isLiteral(componentPropValue) &&
-            typeof componentPropValue.value === 'string'
-          ) {
-            const char1 = componentPropValue.value[0];
+        if (name === 'component') {
+          if (t.isLiteral(value) && typeof value.value === 'string') {
+            const char1 = value.value[0];
             // component="article"
             if (char1 === char1.toUpperCase()) {
               // an uppercase string with be turned into a component, which is not what we want.
@@ -209,20 +208,20 @@ function extractStyles({
               // main downside is that further transformations that rely on JSX won't work.
               inlinePropCount++;
             }
-          } else if (t.isIdentifier(componentPropValue)) {
-            const char1 = attribute.value.expression.name[0];
+          } else if (t.isIdentifier(value)) {
+            const char1 = value.name[0];
             // component={Avatar}
             if (char1 === char1.toLowerCase()) {
               // a lowercase identifier will be transformed to a DOM element. that's not good.
               inlinePropCount++;
             }
-          } else if (t.isMemberExpression(componentPropValue)) {
+          } else if (t.isMemberExpression(value)) {
             // component={variable.prop}
           } else {
             // TODO: extract more complex expressions out as separate var
             errorCallback(
               '`component` prop value was not handled by extractStyles: ' +
-                generate(componentPropValue).code
+                generate(value).code
             );
             inlinePropCount++;
           }
@@ -230,34 +229,23 @@ function extractStyles({
         }
 
         // pass key and style props through untouched
-        if (UNTOUCHED_PROPS.hasOwnProperty(attribute.name.name)) {
+        if (UNTOUCHED_PROPS.hasOwnProperty(name)) {
           return true;
         }
 
-        if (attribute.name.name === 'props') {
-          if (!attribute.value) {
+        if (name === 'props') {
+          if (!value) {
             errorCallback('`props` prop does not have a value');
             inlinePropCount++;
             return true;
           }
-          if (!t.isJSXExpressionContainer(attribute.value)) {
-            errorCallback(
-              '`props` prop should be wrapped in an expression container. received type `' +
-                attribute.value.type +
-                '`'
-            );
-            inlinePropCount++;
-            return true;
-          }
 
-          const propsPropValue = attribute.value.expression;
-
-          if (t.isObjectExpression(attribute.value.expression)) {
+          if (t.isObjectExpression(value)) {
             let errorCount = 0;
             const attributes = [];
 
-            for (const k in propsPropValue.properties) {
-              const propObj = propsPropValue.properties[k];
+            for (const k in value.properties) {
+              const propObj = value.properties[k];
               if (t.isObjectProperty(propObj)) {
                 if (ALL_SPECIAL_PROPS.hasOwnProperty(propObj.key.name)) {
                   errorCallback(
@@ -307,30 +295,42 @@ function extractStyles({
           if (
             // if it's not an object, spread it
             // props={wow()}
-            t.isCallExpression(propsPropValue) ||
+            t.isCallExpression(value) ||
             // props={wow.cool}
-            t.isMemberExpression(propsPropValue) ||
+            t.isMemberExpression(value) ||
             // props={wow}
-            t.isIdentifier(propsPropValue)
+            t.isIdentifier(value)
           ) {
-            propsAttributes = [t.jSXSpreadAttribute(propsPropValue)];
+            propsAttributes = [t.jSXSpreadAttribute(value)];
             return true;
           }
 
           // if props prop is weird-looking, leave it and warn
           errorCallback(
-            'props prop is an unhandled type: `' +
-              attribute.value.expression.type +
-              '`'
+            'props prop is an unhandled type: `' + value.type + '`'
           );
           inlinePropCount++;
           return true;
         }
 
-        const name = attribute.name.name;
-        const value = t.isJSXExpressionContainer(attribute.value)
-          ? attribute.value.expression
-          : attribute.value;
+        if (name === 'mediaQueries') {
+          if (canEvaluateObject(staticNamespace, value)) {
+            staticAttributes[name] = vm.runInContext(
+              // parens so V8 doesn't parse the object like a block
+              '(' + generate(value).code + ')',
+              evalContext
+            );
+          } else if (canEvaluate(staticNamespace, value)) {
+            staticAttributes[name] = vm.runInContext(
+              generate(value).code,
+              evalContext
+            );
+          } else {
+            inlinePropCount++;
+            return true;
+          }
+          return false;
+        }
 
         // if value can be evaluated, extract it and filter it out
         if (canEvaluate(staticNamespace, value)) {
@@ -604,7 +604,6 @@ function extractStyles({
           delete styleObjects.classNameKey;
           const styleObjectKeys = Object.keys(styleObjects).sort();
 
-          // loop throu
           for (let idx = -1, len = styleObjectKeys.length; ++idx < len; ) {
             const k = styleObjectKeys[idx];
             const item = styleObjects[k];

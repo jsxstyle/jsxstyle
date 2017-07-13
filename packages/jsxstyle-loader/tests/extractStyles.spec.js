@@ -29,11 +29,11 @@ const val = 'thing';
     expect(rv.css).toEqual(
       `/* ./tests/mock/extract-static1.js:4 (Block) */
 ._x0 {
-  display:block;
-  static-int:69px;
-  static-member-expression:ok;
-  static-string:wow;
-  static-value:thing;
+  display: block;
+  static-int: 69px;
+  static-member-expression: ok;
+  static-string: wow;
+  static-value: thing;
 }
 `
     );
@@ -73,10 +73,10 @@ import LC from './LC';
     expect(rv.css).toEqual(
       `/* ./tests/mock/extract-static2.js:4 (Block) */
 ._x0 {
-  static-int:69px;
-  static-member-expression:ok;
-  static-string:wow;
-  static-value:thing;
+  static-int: 69px;
+  static-member-expression: ok;
+  static-string: wow;
+  static-value: thing;
 }
 `
     );
@@ -99,8 +99,73 @@ import { Block } from 'jsxstyle';
     expect(rv.css).toEqual(
       `/* ./tests/mock/spread.js:2 (Block) */
 ._x0 {
-  extract:yep;
+  extract: yep;
 }
+`
+    );
+  });
+
+  it('handles the mediaQueries prop correctly', () => {
+    const rv = extractStyles({
+      src: `import {Block} from 'jsxstyle';
+<Block
+  mediaQueries={{ sm: 'only screen and (min-width: 640px)' }}
+  width={640}
+  smWidth="100%"
+/>;`,
+      sourceFileName: path.resolve(__dirname, 'mock/media-queries.js'),
+      cacheObject: {},
+    });
+
+    expect(rv.js).toEqual(
+      `require('./media-queries.jsxstyle.css');
+
+import { Block } from 'jsxstyle';
+<div className="_x0" />;`
+    );
+    expect(rv.css).toEqual(
+      `/* ./tests/mock/media-queries.js:2-6 (Block) */
+._x0 {
+  display: block;
+  width: 640px;
+}
+@media only screen and (min-width: 640px) { ._x0 {
+  width: 100%;
+} }
+`
+    );
+  });
+
+  it('evaluates the mediaQueries prop correctly', () => {
+    const rv = extractStyles({
+      src: `import {Block} from 'jsxstyle';
+import LC from './LC';
+<Block
+  mediaQueries={LC.mediaQueries}
+  width={640}
+  smWidth="100%"
+/>;`,
+      sourceFileName: path.resolve(__dirname, 'mock/media-queries.js'),
+      cacheObject: {},
+      whitelistedModules,
+    });
+
+    expect(rv.js).toEqual(
+      `require('./media-queries.jsxstyle.css');
+
+import { Block } from 'jsxstyle';
+import LC from './LC';
+<div className="_x0" />;`
+    );
+    expect(rv.css).toEqual(
+      `/* ./tests/mock/media-queries.js:3-7 (Block) */
+._x0 {
+  display: block;
+  width: 640px;
+}
+@media small media query { ._x0 {
+  width: 100%;
+} }
 `
     );
   });
@@ -131,7 +196,7 @@ import { Block } from 'jsxstyle';
     expect(rv.css).toEqual(
       `/* ./tests/mock/spread.js:2-11 (Block) */
 ._x0 {
-  color:red;
+  color: red;
 }
 `
     );
@@ -208,18 +273,18 @@ import { Block, InlineBlock } from 'jsxstyle';
       `/* ./tests/mock/named-style-groups.js:2 (Block) */
 /* ./tests/mock/named-style-groups.js:3 (Block) */
 ._x0 {
-  display:block;
+  display: block;
 }
 /* ./tests/mock/named-style-groups.js:3 (Block) */
 ._test1 {
-  thing:wow;
+  thing: wow;
 }
 ._test1:hover {
-  thing:ok;
+  thing: ok;
 }
 /* ./tests/mock/named-style-groups.js:4 (InlineBlock) */
 ._test2 {
-  display:inline-block;
+  display: inline-block;
 }
 `
     );
@@ -262,18 +327,18 @@ import { Block, InlineBlock } from 'jsxstyle';
       `/* ./tests/mock/style-groups.js:2 (Block) */
 /* ./tests/mock/style-groups.js:3 (Block) */
 ._x0 {
-  display:block;
+  display: block;
 }
 /* ./tests/mock/style-groups.js:3 (Block) */
 ._x1 {
-  thing:wow;
+  thing: wow;
 }
 ._x1:hover {
-  thing:ok;
+  thing: ok;
 }
 /* ./tests/mock/style-groups.js:4 (InlineBlock) */
 ._x2 {
-  display:inline-block;
+  display: inline-block;
 }
 `
     );
@@ -399,11 +464,11 @@ import { Block } from 'jsxstyle';
 
     expect(rv.css).toEqual(`/* ./tests/mock/ternary.js:2 (Block) */
 ._x0 {
-  display:block;
+  display: block;
 }
 /* ./tests/mock/ternary.js:2 (Block) */
 ._x1 {
-  color:red;
+  color: red;
 }
 `);
   });
@@ -430,15 +495,15 @@ const blue = 'blueberry';
 
     expect(rv.css).toEqual(`/* ./tests/mock/ternary.js:4 (Block) */
 ._x0 {
-  display:block;
+  display: block;
 }
 /* ./tests/mock/ternary.js:4 (Block) */
 ._x1 {
-  color:strawberry;
+  color: strawberry;
 }
 /* ./tests/mock/ternary.js:4 (Block) */
 ._x2 {
-  color:blueberry;
+  color: blueberry;
 }
 `);
   });
@@ -500,11 +565,11 @@ import { Block } from 'jsxstyle';
     expect(rv.css).toEqual(
       `/* ./tests/mock/ternary-with-spread.js:2 (Block) */
 ._x0 {
-  color:red;
+  color: red;
 }
 /* ./tests/mock/ternary-with-spread.js:2 (Block) */
 ._x1 {
-  color:blue;
+  color: blue;
 }
 `
     );
@@ -536,17 +601,17 @@ import { Block } from 'jsxstyle';
     expect(rv.css).toEqual(
       `/* ./tests/mock/ternary-groups.js:2 (Block) */
 ._x0 {
-  display:block;
+  display: block;
 }
 /* ./tests/mock/ternary-groups.js:2 (Block) */
 ._x1 {
-  color:red;
-  width:200px;
+  color: red;
+  width: 200px;
 }
 /* ./tests/mock/ternary-groups.js:2 (Block) */
 ._x2 {
-  color:blue;
-  width:400px;
+  color: blue;
+  width: 400px;
 }
 `
     );
@@ -571,11 +636,11 @@ import { Block } from 'jsxstyle';
     expect(rv.css).toEqual(
       `/* ./tests/mock/ternary-null-values.js:2 (Block) */
 ._x0 {
-  display:block;
+  display: block;
 }
 /* ./tests/mock/ternary-null-values.js:2 (Block) */
 ._x1 {
-  color:blue;
+  color: blue;
 }
 `
     );
