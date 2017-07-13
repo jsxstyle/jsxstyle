@@ -12,7 +12,14 @@ describe('extractStyles', function() {
       src: `import {Block} from 'jsxstyle';
 import LC from './LC';
 const val = 'thing';
-<Block staticString="wow" staticInt={69} staticValue={val} staticMemberExpression={LC.staticValue} />`,
+<Block
+  staticString="wow"
+  staticInt={69}
+  staticFloat={6.9}
+  staticNegativeInt={-420}
+  staticValue={val}
+  staticMemberExpression={LC.staticValue}
+/>`,
       sourceFileName: path.resolve(__dirname, 'mock/extract-static1.js'),
       cacheObject: {},
       whitelistedModules,
@@ -27,11 +34,13 @@ const val = 'thing';
 <div className="_x0" />;`
     );
     expect(rv.css).toEqual(
-      `/* ./tests/mock/extract-static1.js:4 (Block) */
+      `/* ./tests/mock/extract-static1.js:4-11 (Block) */
 ._x0 {
   display: block;
+  static-float: 6.9px;
   static-int: 69px;
   static-member-expression: ok;
+  static-negative-int: -420px;
   static-string: wow;
   static-value: thing;
 }

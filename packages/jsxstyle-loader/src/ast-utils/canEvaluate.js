@@ -15,6 +15,8 @@ function canEvaluate(staticNamespace, exprNode) {
   } else if (t.isLiteral(exprNode)) {
     // exprNode is a string, int, or null
     return true;
+  } else if (t.isUnaryExpression(exprNode) && exprNode.operator === '-') {
+    return canEvaluate(staticNamespace, exprNode.argument);
   } else if (t.isIdentifier(exprNode)) {
     // exprNode is a variable
     if (
