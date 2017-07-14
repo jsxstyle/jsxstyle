@@ -377,10 +377,13 @@ function extractStyles({
       });
 
       if (inlinePropCount === 0) {
-        Object.assign(
-          staticAttributes,
-          jsxstyle[jsxstyleSrcComponent].defaultProps
-        );
+        // copy default props over if they're not set to something else
+        const { defaultProps } = jsxstyle[jsxstyleSrcComponent];
+        for (const prop in defaultProps) {
+          if (!staticAttributes.hasOwnProperty(prop)) {
+            staticAttributes[prop] = defaultProps[prop];
+          }
+        }
       }
 
       let classNamePropValue;
