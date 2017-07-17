@@ -5,7 +5,6 @@ const addStyleToHead = require('./addStyleToHead');
 const stringHash = require('./stringHash');
 
 let classNameCache;
-
 if (module.hot) {
   if (typeof module.hot.data === 'object') {
     classNameCache = module.hot.data.classNameCache;
@@ -20,7 +19,16 @@ if (!classNameCache) {
   classNameCache = {};
 }
 
-function getClassNameStringFromProps(props, classNameProp) {
+function resetCache() {
+  classNameCache = {};
+}
+
+let insertRule = addStyleToHead;
+function injectAddRule(customAddFunction) {
+  insertRule = customAddFunction;
+}
+
+function getClassName(props, classNameProp) {
   const styleObj = getStyleKeysForProps(props);
   if (typeof styleObj !== 'object' || styleObj === null) {
     return classNameProp || null;
@@ -30,14 +38,31 @@ function getClassNameStringFromProps(props, classNameProp) {
   if (!classNameCache.hasOwnProperty(key)) {
     classNameCache[key] = '_' + stringHash(key).toString(36);
     delete styleObj.classNameKey;
-    Object.keys(styleObj)
-      .sort()
-      .forEach(k => addStyleToHead(classNameCache[key], styleObj[k]));
+    Object.keys(styleObj).sort().forEach(k => {
+      const selector = '.' + classNameCache[key];
+      const { pseudoclass, pseudoelement, mediaQuery, styles } = styleObj[k];
+
+      let rule =
+        selector +
+        (pseudoclass ? ':' + pseudoclass : '') +
+        (pseudoelement ? '::' + pseudoelement : '') +
+        ` {${styles}}`;
+
+      if (mediaQuery) {
+        rule = `@media ${mediaQuery} { ${rule} }`;
+      }
+
+      insertRule(rule);
+    });
   }
 
   return classNameCache[key] && classNameProp
-    ? classNameCache[key] + ' ' + classNameProp
+    ? classNameProp + ' ' + classNameCache[key]
     : classNameCache[key] || classNameProp || null;
 }
 
-module.exports = getClassNameStringFromProps;
+module.exports = {
+  getClassName,
+  injectAddRule,
+  resetCache,
+};

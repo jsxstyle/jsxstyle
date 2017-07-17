@@ -28,22 +28,10 @@ if (canUseDOM && !styleElement) {
   document.head.appendChild(styleElement);
 }
 
-function addStyleToHead(className, styleObj) {
-  if (!canUseDOM) {
-    return;
+function addStyleToHead(rule) {
+  if (canUseDOM) {
+    styleElement.sheet.insertRule(rule, ++styleIndex);
   }
-
-  let styleString =
-    `.${className}` +
-    (styleObj.pseudoclass ? ':' + styleObj.pseudoclass : '') +
-    (styleObj.pseudoelement ? '::' + styleObj.pseudoelement : '') +
-    ` {${styleObj.css}}`;
-
-  if (styleObj.mediaQuery) {
-    styleString = `@media ${styleObj.mediaQuery} { ${styleString} }`;
-  }
-
-  styleElement.sheet.insertRule(styleString, ++styleIndex);
 }
 
 module.exports = addStyleToHead;

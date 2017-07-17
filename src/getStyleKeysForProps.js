@@ -126,14 +126,14 @@ function getStyleKeysForProps(props, pretty = false) {
       (pseudoelement ? '::' + pseudoelement : '');
 
     if (!styleKeyObj.hasOwnProperty(key)) {
-      styleKeyObj[key] = { css: pretty ? '\n' : '' };
+      styleKeyObj[key] = { styles: pretty ? '\n' : '' };
       if (mediaQuery) styleKeyObj[key].mediaQuery = mediaQuery;
       if (pseudoclass) styleKeyObj[key].pseudoclass = pseudoclass;
       if (pseudoelement) styleKeyObj[key].pseudoelement = pseudoelement;
     }
 
     classNameKey += originalPropName + ':' + styleValue + ';';
-    styleKeyObj[key].css +=
+    styleKeyObj[key].styles +=
       (pretty ? '  ' : '') +
       hyphenateStyleName(propName) +
       ':' +

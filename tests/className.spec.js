@@ -12,7 +12,7 @@ describe('className', function() {
         honk
       </Inline>
     );
-    expect(markup).toBe('<div class="bla _j8r63k1">honk</div>');
+    expect(markup).toBe('<div class="bla _1ioutjs">honk</div>');
   });
 
   it('generates deterministic class names', () => {

@@ -34,14 +34,15 @@ describe('getStyleKeysForProps', () => {
     });
 
     expect(markup).toEqual({
-      normal: {
-        css: `
-  prop1:string;
-  prop2:1234px;
-  prop3:0;
-  prop4:wow;
+      '.': {
+        styles: `
+  prop1: string;
+  prop2: 1234px;
+  prop3: 0;
+  prop4: wow;
 `,
       },
+      classNameKey: 'prop1:string;prop2:1234px;prop3:0;prop4:wow;',
     });
   });
 });

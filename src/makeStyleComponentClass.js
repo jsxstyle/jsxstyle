@@ -4,7 +4,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const invariant = require('invariant');
 
-const getClassNameStringFromProps = require('./getClassNameStringFromProps');
+const { getClassName } = require('./styleCache');
 
 function makeStyleComponentClass(defaultProps, displayName, tagName) {
   tagName = tagName || 'div';
@@ -17,25 +17,23 @@ function makeStyleComponentClass(defaultProps, displayName, tagName) {
     constructor(props) {
       super(props);
       this.component = props.component || tagName;
-      this.className = getClassNameStringFromProps(props, props.className);
+      this.className = getClassName(props, props.className);
     }
 
-    componentWillReceiveProps(nextProps) {
-      this.component = nextProps.component || tagName;
-      this.className = getClassNameStringFromProps(
-        nextProps,
-        nextProps.className
-      );
+    componentWillReceiveProps(props) {
+      this.component = props.component || tagName;
+      this.className = getClassName(props, props.className);
     }
 
     render() {
-      return React.createElement(
-        this.component,
-        Object.assign({}, this.props.props, {
-          className: this.className,
-          style: this.props.style,
-        }),
-        this.props.children
+      return (
+        <this.component
+          {...this.props.props}
+          className={this.className}
+          style={this.props.style}
+        >
+          {this.props.children}
+        </this.component>
       );
     }
   }
