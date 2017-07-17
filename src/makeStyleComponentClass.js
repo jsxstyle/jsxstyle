@@ -2,23 +2,30 @@
 
 const PropTypes = require('prop-types');
 const React = require('react');
+const invariant = require('invariant');
 
 const getClassNameStringFromProps = require('./getClassNameStringFromProps');
 
-function makeStyleComponentClass(defaults, displayName, tagName) {
+function makeStyleComponentClass(defaultProps, displayName, tagName) {
   tagName = tagName || 'div';
-  displayName = displayName || 'Style';
+  invariant(
+    typeof displayName === 'string' && displayName !== '',
+    'makeStyleComponentClass expects param 2 to be a valid displayName'
+  );
 
   class Style extends React.Component {
     constructor(props) {
       super(props);
       this.component = props.component || tagName;
-      this.className = getClassNameStringFromProps(props);
+      this.className = getClassNameStringFromProps(props, props.className);
     }
 
     componentWillReceiveProps(nextProps) {
       this.component = nextProps.component || tagName;
-      this.className = getClassNameStringFromProps(nextProps);
+      this.className = getClassNameStringFromProps(
+        nextProps,
+        nextProps.className
+      );
     }
 
     render() {
@@ -46,7 +53,7 @@ function makeStyleComponentClass(defaults, displayName, tagName) {
     style: PropTypes.object,
   };
 
-  Style.defaultProps = defaults;
+  Style.defaultProps = defaultProps;
   Style.displayName = displayName;
 
   return Style;

@@ -3,7 +3,6 @@
 const hyphenateStyleName = require('./hyphenateStyleName');
 const dangerousStyleValue = require('./dangerousStyleValue');
 
-const prefixCache = {};
 // global flag makes subsequent calls of capRegex.test advance to the next match
 const capRegex = /[A-Z]/g;
 
@@ -73,66 +72,50 @@ function getStyleKeysForProps(props, pretty = false) {
     let pseudoclass;
     let mediaQuery;
 
-    if (!prefixCache.hasOwnProperty(originalPropName)) {
-      prefixCache[originalPropName] = false;
+    capRegex.lastIndex = 0;
+    let splitIndex = 0;
 
-      capRegex.lastIndex = 0;
-      let splitIndex = 0;
-      let mediaQueryPrefix;
+    let prefix =
+      capRegex.test(originalPropName) &&
+      capRegex.lastIndex > 1 &&
+      originalPropName.slice(0, capRegex.lastIndex - 1);
 
-      let prefix =
+    // check for media query prefix
+    if (prefix && hasMediaQueries && mediaQueries.hasOwnProperty(prefix)) {
+      mediaQuery = mediaQueries[prefix];
+      splitIndex = capRegex.lastIndex - 1;
+      prefix =
         capRegex.test(originalPropName) &&
-        capRegex.lastIndex > 1 &&
-        originalPropName.slice(0, capRegex.lastIndex - 1);
-
-      // check for media query prefix
-      if (prefix && hasMediaQueries && mediaQueries.hasOwnProperty(prefix)) {
-        mediaQueryPrefix = prefix;
-        mediaQuery = mediaQueries[mediaQueryPrefix];
-        splitIndex = capRegex.lastIndex - 1;
-        prefix =
-          capRegex.test(originalPropName) &&
-          originalPropName[splitIndex].toLowerCase() +
-            originalPropName.slice(splitIndex + 1, capRegex.lastIndex - 1);
-      }
+        originalPropName[splitIndex].toLowerCase() +
+          originalPropName.slice(splitIndex + 1, capRegex.lastIndex - 1);
+    }
 
     // check for pseudoelement prefix
-      if (prefix && pseudoelements.hasOwnProperty(prefix)) {
-        pseudoelement = prefix;
-        splitIndex = capRegex.lastIndex - 1;
-        prefix =
-          capRegex.test(originalPropName) &&
-          originalPropName[splitIndex].toLowerCase() +
-            originalPropName.slice(splitIndex + 1, capRegex.lastIndex - 1);
-      }
+    if (prefix && pseudoelements.hasOwnProperty(prefix)) {
+      pseudoelement = prefix;
+      splitIndex = capRegex.lastIndex - 1;
+      prefix =
+        capRegex.test(originalPropName) &&
+        originalPropName[splitIndex].toLowerCase() +
+          originalPropName.slice(splitIndex + 1, capRegex.lastIndex - 1);
+    }
 
     // check for pseudoclass prefix
-      if (prefix && pseudoclasses.hasOwnProperty(prefix)) {
-        pseudoclass = prefix;
-        splitIndex = capRegex.lastIndex - 1;
-      }
+    if (prefix && pseudoclasses.hasOwnProperty(prefix)) {
+      pseudoclass = prefix;
+      splitIndex = capRegex.lastIndex - 1;
+    }
 
     // trim prefixes off propName
-      if (splitIndex > 0) {
-        propName =
-          originalPropName[splitIndex].toLowerCase() +
-          originalPropName.slice(splitIndex + 1);
+    if (splitIndex > 0) {
+      propName =
+        originalPropName[splitIndex].toLowerCase() +
+        originalPropName.slice(splitIndex + 1);
+    }
 
-        prefixCache[originalPropName] = {
-          mediaQueryPrefix,
-          pseudoelement,
-          propName,
-          pseudoclass,
-        };
-      }
-    } else if (typeof prefixCache[originalPropName] === 'object') {
-      propName = prefixCache[originalPropName].propName;
-      pseudoclass = prefixCache[originalPropName].pseudoclass;
-      pseudoelement = prefixCache[originalPropName].placeholder;
-      const mediaQueryPrefix = prefixCache[originalPropName].mediaQueryPrefix;
-      if (hasMediaQueries && mediaQueries.hasOwnProperty(mediaQueryPrefix)) {
-        mediaQuery = mediaQueries[mediaQueryPrefix];
-      }
+    const styleValue = dangerousStyleValue(propName, props[originalPropName]);
+    if (styleValue === '') {
+      continue;
     }
 
     // key by pseudoclass and media query
@@ -149,14 +132,14 @@ function getStyleKeysForProps(props, pretty = false) {
       if (pseudoelement) styleKeyObj[key].pseudoelement = pseudoelement;
     }
 
-    const styleValue =
-      ':' + dangerousStyleValue(propName, props[originalPropName]) + ';';
-
-    classNameKey += originalPropName + styleValue;
+    classNameKey += originalPropName + ':' + styleValue + ';';
     styleKeyObj[key].css +=
       (pretty ? '  ' : '') +
       hyphenateStyleName(propName) +
+      ':' +
+      (pretty ? ' ' : '') +
       styleValue +
+      ';' +
       (pretty ? '\n' : '');
   }
 
