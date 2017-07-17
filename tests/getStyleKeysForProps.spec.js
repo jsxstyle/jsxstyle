@@ -23,15 +23,18 @@ describe('getStyleKeysForProps', () => {
       return new Useless(stuff);
     }
 
-    const markup = getStyleKeysForProps({
-      prop1: 'string',
-      prop2: 1234,
-      prop3: 0,
-      prop4: prototypeTest('wow'),
-      prop5: null,
-      prop6: undefined,
-      prop7: false,
-    });
+    const markup = getStyleKeysForProps(
+      {
+        prop1: 'string',
+        prop2: 1234,
+        prop3: 0,
+        prop4: prototypeTest('wow'),
+        prop5: null,
+        prop6: undefined,
+        prop7: false,
+      },
+      true
+    );
 
     expect(markup).toEqual({
       '.': {

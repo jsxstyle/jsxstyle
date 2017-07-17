@@ -48,8 +48,6 @@ function getStyleKeysForProps(props, pretty = false) {
     return null;
   }
 
-  pretty = process.env.NODE_ENV !== 'production';
-
   const mediaQueries = props.mediaQueries;
   const hasMediaQueries = typeof mediaQueries === 'object';
 

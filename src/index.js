@@ -4,6 +4,11 @@ const makeStyleComponentClass = require('./makeStyleComponentClass');
 
 // prettier-ignore
 module.exports = {
+  install() {
+    // eslint-disable-next-line no-console
+    console.error('jsxstyle.install is no longer required and will be removed in jsxstyle 2.0');
+  },
+
   // completely unstyled component
   Box: makeStyleComponentClass(undefined, 'Box'),
 

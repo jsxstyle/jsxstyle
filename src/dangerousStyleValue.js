@@ -1,6 +1,19 @@
+/**
+ * Copyright 2013-present, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ */
+
+//  A hearty blend of the following two files:
+// https://github.com/facebook/react/blob/master/src/renderers/dom/shared/CSSProperty.js
+// https://github.com/facebook/react/blob/master/src/renderers/dom/shared/dangerousStyleValue.js
+
 'use strict';
 
-// https://github.com/facebook/react/blob/master/src/renderers/dom/shared/CSSProperty.js
 const isUnitlessNumber = {
   animationIterationCount: true,
   borderImageOutset: true,
@@ -10,6 +23,7 @@ const isUnitlessNumber = {
   boxFlexGroup: true,
   boxOrdinalGroup: true,
   columnCount: true,
+  columns: true,
   flex: true,
   flexGrow: true,
   flexPositive: true,

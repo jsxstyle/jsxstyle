@@ -4,14 +4,7 @@ const uppercasePattern = /([A-Z])/g;
 const msPattern = /^ms-/;
 const hyphenateCache = {};
 
-const invariant = require('invariant');
-
 function hyphenateStyleName(string) {
-  invariant(
-    typeof string === 'string',
-    'hyphenateStyleName received a non-string thing: %s',
-    string
-  );
   if (hyphenateCache.hasOwnProperty(string)) {
     return hyphenateCache[string];
   }

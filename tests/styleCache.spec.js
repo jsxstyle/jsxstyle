@@ -2,6 +2,10 @@
 
 const styleCache = require('../lib/styleCache');
 
+const { Inline } = require('../');
+const React = require('react');
+const ReactDOMServer = require('react-dom/server');
+
 const kitchenSink = {
   mediaQueries: { test: 'test' },
   activeFlex: 3,
@@ -17,29 +21,45 @@ const kitchenSink = {
 };
 
 describe('styleCache', () => {
+  it('combines class names if `className` prop is present', () => {
+    styleCache.resetCache();
+    const markup = ReactDOMServer.renderToStaticMarkup(
+      React.createElement(Inline, { className: 'bla', color: 'red' }, 'honk')
+    );
+    expect(markup).toBe('<div class="bla _1ioutjs">honk</div>');
+  });
+
+  it('generates deterministic class names', () => {
+    styleCache.resetCache();
+    const className = styleCache.getClassName({ wow: 'cool' });
+    expect(className).toBe('_1lqd3t0');
+  });
+
   it('returns null when given an empty style object', () => {
-    const markup = styleCache.getClassName({});
-    expect(markup).toBeNull();
+    styleCache.resetCache();
+    const className = styleCache.getClassName({});
+    expect(className).toBeNull();
   });
 
   it('converts a style object to a sorted object of objects', () => {
+    styleCache.resetCache();
+    const styles = [];
+    styleCache.injectAddRule(css => styles.push(css));
     const className = styleCache.getClassName(kitchenSink);
-    const styleElement = document.querySelector('style');
-    const styles = Array.from(styleElement.sheet.cssRules).map(f => f.cssText);
 
     expect(styles).toEqual([
-      '._16u1swz {flex: 1;}',
-      '._16u1swz::placeholder {flex: 2;}',
-      '._16u1swz:active {flex: 3;}',
-      '._16u1swz:hover {flex: 4;}',
-      '._16u1swz:hover::placeholder {flex: 5;}',
-      '@media test {._16u1swz {flex: 6;}}',
-      '@media test {._16u1swz::placeholder {flex: 7;}}',
-      '@media test {._16u1swz:active {flex: 8;}}',
-      '@media test {._16u1swz:hover {flex: 9;}}',
-      '@media test {._16u1swz:hover::placeholder {flex: 10;}}',
+      `.${className} {flex:1;}`,
+      `.${className}::placeholder {flex:2;}`,
+      `.${className}:active {flex:3;}`,
+      `.${className}:hover {flex:4;}`,
+      `.${className}:hover::placeholder {flex:5;}`,
+      `@media test { .${className} {flex:6;} }`,
+      `@media test { .${className}::placeholder {flex:7;} }`,
+      `@media test { .${className}:active {flex:8;} }`,
+      `@media test { .${className}:hover {flex:9;} }`,
+      `@media test { .${className}:hover::placeholder {flex:10;} }`,
     ]);
-    expect(className).toEqual('_16u1swz');
+  });
 
   it('respects media query order', () => {
     let allCSS = '\n';
@@ -57,15 +77,9 @@ describe('styleCache', () => {
     });
 
     expect(allCSS).toEqual(`
-.${className} {
-  flex: 1;
-}
-@media zzzz { .${className} {
-  flex: 2;
-} }
-@media aaaa { .${className} {
-  flex: 3;
-} }
+.${className} {flex:1;}
+@media zzzz { .${className} {flex:2;} }
+@media aaaa { .${className} {flex:3;} }
 `);
   });
 
@@ -78,38 +92,17 @@ describe('styleCache', () => {
 
     expect(allCSS).toEqual(
       `
-._16u1swz {
-  flex: 1;
-}
-._16u1swz::placeholder {
-  flex: 2;
-}
-._16u1swz:active {
-  flex: 3;
-}
-._16u1swz:hover {
-  flex: 4;
-}
-._16u1swz:hover::placeholder {
-  flex: 5;
-}
-@media test { ._16u1swz {
-  flex: 6;
-} }
-@media test { ._16u1swz::placeholder {
-  flex: 7;
-} }
-@media test { ._16u1swz:active {
-  flex: 8;
-} }
-@media test { ._16u1swz:hover {
-  flex: 9;
-} }
-@media test { ._16u1swz:hover::placeholder {
-  flex: 10;
-} }
+.${className} {flex:1;}
+.${className}::placeholder {flex:2;}
+.${className}:active {flex:3;}
+.${className}:hover {flex:4;}
+.${className}:hover::placeholder {flex:5;}
+@media test { .${className} {flex:6;} }
+@media test { .${className}::placeholder {flex:7;} }
+@media test { .${className}:active {flex:8;} }
+@media test { .${className}:hover {flex:9;} }
+@media test { .${className}:hover::placeholder {flex:10;} }
 `
     );
-    expect(className).toEqual('_16u1swz');
   });
 });
