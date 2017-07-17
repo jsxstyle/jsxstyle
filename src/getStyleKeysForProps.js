@@ -57,6 +57,14 @@ function getStyleKeysForProps(props, pretty = false) {
   const styleKeyObj = {};
   let classNameKey = '';
 
+  const mqSortKeys = {};
+  if (hasMediaQueries) {
+    let idx = -1;
+    for (const k in mediaQueries) {
+      mqSortKeys[k] = 1000 + ++idx;
+    }
+  }
+
   for (let idx = -1; ++idx < keyCount; ) {
     const originalPropName = propKeys[idx];
 
@@ -71,6 +79,7 @@ function getStyleKeysForProps(props, pretty = false) {
     let pseudoelement;
     let pseudoclass;
     let mediaQuery;
+    let mqSortKey;
 
     capRegex.lastIndex = 0;
     let splitIndex = 0;
@@ -83,6 +92,7 @@ function getStyleKeysForProps(props, pretty = false) {
     // check for media query prefix
     if (prefix && hasMediaQueries && mediaQueries.hasOwnProperty(prefix)) {
       mediaQuery = mediaQueries[prefix];
+      mqSortKey = mqSortKeys[prefix];
       splitIndex = capRegex.lastIndex - 1;
       prefix =
         capRegex.test(originalPropName) &&
@@ -121,7 +131,7 @@ function getStyleKeysForProps(props, pretty = false) {
     // key by pseudoclass and media query
     const key =
       '.' +
-      (mediaQuery ? '@' + mediaQuery : '') +
+      (mediaQuery ? '@' + mqSortKey : '') +
       (pseudoclass ? ':' + pseudoclass : '') +
       (pseudoelement ? '::' + pseudoelement : '');
 

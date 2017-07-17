@@ -40,6 +40,33 @@ describe('styleCache', () => {
       '@media test {._16u1swz:hover::placeholder {flex: 10;}}',
     ]);
     expect(className).toEqual('_16u1swz');
+
+  it('respects media query order', () => {
+    let allCSS = '\n';
+    styleCache.resetCache();
+    styleCache.injectAddRule(css => (allCSS += css + '\n'));
+
+    const className = styleCache.getClassName({
+      mediaQueries: {
+        zzzz: 'zzzz',
+        aaaa: 'aaaa',
+      },
+      aaaaFlex: 3,
+      flex: 1,
+      zzzzFlex: 2,
+    });
+
+    expect(allCSS).toEqual(`
+.${className} {
+  flex: 1;
+}
+@media zzzz { .${className} {
+  flex: 2;
+} }
+@media aaaa { .${className} {
+  flex: 3;
+} }
+`);
   });
 
   it('works with injection', () => {
