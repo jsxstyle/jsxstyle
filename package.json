@@ -5,7 +5,7 @@
   "repository": "git@github.com:smyte/jsxstyle.git",
   "author": "Pete Hunt",
   "license": "Apache-2.0",
-  "main": "lib/index.js",
+  "main": "react.js",
   "scripts": {
     "eslint": "eslint  {{src,tests}/**/*.js,example/*.js}",
     "eslint-fix": "eslint --fix {{src,tests}/**/*.js,example/*.js}",

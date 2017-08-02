@@ -6,11 +6,11 @@ const invariant = require('invariant');
 
 const { getClassName } = require('./styleCache');
 
-function makeStyleComponentClass(defaultProps, displayName, tagName) {
+function makeStyleComponentClass(displayName, defaultProps, tagName) {
   tagName = tagName || 'div';
   invariant(
     typeof displayName === 'string' && displayName !== '',
-    'makeStyleComponentClass expects param 2 to be a valid displayName'
+    'makeStyleComponentClass expects param 1 to be a valid displayName'
   );
 
   class Style extends React.Component {
