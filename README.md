@@ -70,7 +70,7 @@ var MyComponent = React.createClass({
 ### Flexbox helpers
 
 `jsxstyle` includes `Row` and `Col` components, which correspond to
-`<Flex direction="row">` and `<Flex direction="column">` respectively.
+`<Flex flexDirection="row">` and `<Flex flexDirection="column">` respectively.
 
 ### Colors
 
