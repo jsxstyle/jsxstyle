@@ -22,14 +22,14 @@ into the browser that way (that is, there should be no performance penalty).
 `npm install jsxstyle` and then write code like this:
 
 ```jsx
-var Block = require('jsxstyle/Block');
-var React = require('react');
+import React from 'react';
+import { Block } from 'jsxstyle';
 
-var MyComponent = React.createClass({
-  render: function() {
+class MyComponent extends React.Component {
+  render() {
     return <Block color="red">Hello, world!</Block>;
   }
-});
+};
 ```
 
 `jsxstyle` includes components corresponding to every potential value of the CSS
@@ -56,11 +56,11 @@ They all take props that correspond to every CSS `style` property (such as `colo
 `:active`. You can prefix style props with the relevant pseudoclass to apply it:
 
 ```jsx
-var MyComponent = React.createClass({
-  render: function() {
+class MyComponent extends React.Component {
+  render() {
     return <Block color="red" hoverColor="yellow">Hello, world!</Block>;
   }
-});
+}
 ```
 
 ## Helpers

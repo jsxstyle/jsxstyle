@@ -2,6 +2,7 @@
 
 var GlobalStylesheets = require('./GlobalStylesheets');
 var React = require('react');
+var createReactClass = require('create-react-class');
 
 var assign = require('object-assign');
 
@@ -26,7 +27,7 @@ function makeStyleComponentClass(defaults, displayName, tagName) {
   tagName = tagName || 'div';
   displayName = displayName || 'Style';
 
-  var Style = React.createClass({
+  var Style = createReactClass({
     displayName: displayName,
 
     statics: {

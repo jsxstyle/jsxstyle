@@ -1,6 +1,7 @@
 'use strict';
 
 var React = require('react');
+var createReactClass = require('create-react-class');
 
 var assign = require('object-assign');
 
@@ -14,7 +15,7 @@ function curry(componentClass) {
     delete propTypes[key];
   }
 
-  return React.createClass({
+  return createReactClass({
     displayName: componentClass.displayName + ' (curried)',
     propTypes: propTypes,
     render: function() {

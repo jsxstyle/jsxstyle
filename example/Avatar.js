@@ -3,8 +3,9 @@
 var {Block, Row} = require('../');
 var LayoutConstants = require('./LayoutConstants');
 var React = require('react');
+var createReactClass = require('create-react-class');
 
-var Avatar = React.createClass({
+var Avatar = createReactClass({
   getInitialState: function() {
     return {hovered: false};
   },
