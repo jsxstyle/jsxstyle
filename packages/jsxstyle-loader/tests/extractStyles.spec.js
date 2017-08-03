@@ -438,6 +438,45 @@ const DynamicBlock = ({ wow, ...props }) => <Block dynamicProp={wow} {...props} 
     );
   });
 
+  it('extracts spreads from trusted sources', () => {
+    const rv = extractStyles({
+      src: `import {Block} from 'jsxstyle';
+import LC from './LC';
+const staticSpread = {color: '#444', width: 420};
+
+function Thing(props) {
+  return <Block width="100%" {...LC.containerStyles} {...staticSpread} />;
+}
+`,
+      sourceFileName: path.resolve(__dirname, 'mock/trusted-spreads.js'),
+      cacheObject: {},
+      whitelistedModules,
+    });
+
+    expect(rv.js).toEqual(
+      `require('./trusted-spreads.jsxstyle.css');
+
+import { Block } from 'jsxstyle';
+import LC from './LC';
+const staticSpread = { color: '#444', width: 420 };
+
+function Thing(props) {
+  return <div className="_x0" />;
+}`
+    );
+
+    expect(rv.css).toEqual(`/* ./tests/mock/trusted-spreads.js:6 (Block) */
+._x0 {
+  background-color: #FFF;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.07);
+  color: #444;
+  display: block;
+  width: 420px;
+}
+`);
+  });
+
   it('extracts a ternary expression that has static consequent and alternate', () => {
     const rv = extractStyles({
       src: `import { Block } from 'jsxstyle';

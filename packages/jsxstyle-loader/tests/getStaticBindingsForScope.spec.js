@@ -10,18 +10,20 @@ const whitelistedModules = [require.resolve('./mock/LC')];
 
 describe('getStaticBindingsForScope', function() {
   const ast = parse(`
-const outerValue = 42;
+const outerLiteral = 42;
+const outerObject = {};
 import LC from './LC';
 import {Block} from 'jsxstyle';
 
 function outerFunction(innerParam1, innerParam2) {
-  const innerValue = 'wow';
+  const innerLiteral = 'wow';
+  const innerObject = {};
   const nullLiteral = null;
 
   return <Block
-    prop1={innerValue}
+    prop1={innerLiteral}
     prop2={LC.staticValue}
-    prop3={outerValue}
+    prop3={outerLiteral}
   />;
 }
 `);
@@ -60,8 +62,9 @@ function outerFunction(innerParam1, innerParam2) {
     expect(bindings).toEqual({
       LC: require('./mock/LC'),
       nullLiteral: null,
-      outerValue: 42,
-      innerValue: 'wow',
+      outerLiteral: 42,
+      outerObject: {},
+      innerLiteral: 'wow',
     });
   });
 });

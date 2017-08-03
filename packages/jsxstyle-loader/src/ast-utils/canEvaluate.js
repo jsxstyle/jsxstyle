@@ -3,8 +3,8 @@
 const t = require('babel-types');
 
 function canEvaluate(staticNamespace, exprNode) {
+  // exprNode is a template literal and all expressions in the template literal can be evaluated
   if (t.isTemplateLiteral(exprNode)) {
-    // exprNode is a template literal and all expressions in the template literal can be evaluated
     for (let idx = -1, len = exprNode.expressions.length; ++idx < len; ) {
       const expr = exprNode.expressions[idx];
       if (!canEvaluate(staticNamespace, expr)) {
@@ -12,33 +12,41 @@ function canEvaluate(staticNamespace, exprNode) {
       }
     }
     return true;
-  } else if (t.isLiteral(exprNode)) {
-    // exprNode is a string, int, or null
+  }
+
+  // exprNode is a string, int, or null
+  if (t.isLiteral(exprNode)) {
     return true;
-  } else if (t.isUnaryExpression(exprNode) && exprNode.operator === '-') {
+  }
+
+  // exprNode is minus whatever
+  if (t.isUnaryExpression(exprNode) && exprNode.operator === '-') {
     return canEvaluate(staticNamespace, exprNode.argument);
-  } else if (t.isIdentifier(exprNode)) {
-    // exprNode is a variable
-    if (
+  }
+
+  // exprNode is a variable
+  if (t.isIdentifier(exprNode)) {
+    return (
       typeof staticNamespace === 'object' &&
       staticNamespace !== null &&
       staticNamespace.hasOwnProperty(exprNode.name)
-    ) {
-      return true;
-    }
-    return false;
-  } else if (t.isMemberExpression(exprNode)) {
-    // exprNode is a member expression (object.property or object['property'])
+    );
+  }
+
+  // exprNode is a member expression (object.property or object['property'])
+  if (t.isMemberExpression(exprNode)) {
     return (
       // object is in the provided namespace
       canEvaluate(staticNamespace, exprNode.object) &&
-      // property is either an identifier specified with dot notation
+      // property is either an identifier specified with dot notation...
       ((t.isIdentifier(exprNode.property) && !exprNode.computed) ||
-        // or it's specified with bracket notation and can be evaluated
+        // ...or it's specified with bracket notation and can be evaluated
         canEvaluate(staticNamespace, exprNode.property))
     );
-  } else if (t.isBinaryExpression(exprNode)) {
-    // exprNode is a binary expression and both sides can be evaluated
+  }
+
+  // exprNode is a binary expression and both sides can be evaluated
+  if (t.isBinaryExpression(exprNode)) {
     return (
       canEvaluate(staticNamespace, exprNode.left) &&
       canEvaluate(staticNamespace, exprNode.right)

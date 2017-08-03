@@ -3,10 +3,10 @@
 const t = require('babel-types');
 const path = require('path');
 const generate = require('babel-generator').default;
-const invariant = require('invariant');
 const vm = require('vm');
 
 const canEvaluate = require('./canEvaluate');
+const canEvaluateObject = require('./canEvaluateObject');
 const getSourceModule = require('./getSourceModule');
 
 function getStaticBindingsForScope(scope, whitelist = [], sourceFileName) {
@@ -51,8 +51,15 @@ function getStaticBindingsForScope(scope, whitelist = [], sourceFileName) {
       // TODO: handle spread syntax
       if (!dec) continue;
 
-      if (canEvaluate(null, dec.init)) {
-        ret[k] = vm.runInNewContext(generate(dec.init).code);
+      if (
+        canEvaluate(null, dec.init) ||
+        // if dec.init is an object defined in the program root, evaluate it
+        // NOTE: this assumes that objects defined in the program root are not mutated!
+        // TODO: make this behaviour opt-in (?)
+        (binding.path.parentPath.parentPath.type === 'Program' &&
+          canEvaluateObject(null, dec.init))
+      ) {
+        ret[k] = vm.runInNewContext('(' + generate(dec.init).code + ')');
       }
     }
   }

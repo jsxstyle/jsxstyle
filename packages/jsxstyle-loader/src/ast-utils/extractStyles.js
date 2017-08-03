@@ -152,11 +152,57 @@ function extractStyles({
       const originalNodeName = node.name.name;
 
       let lastSpreadIndex = null;
-      node.attributes.forEach((attr, idx) => {
+      const flattenedAttributes = [];
+      node.attributes.forEach(attr => {
         if (t.isJSXSpreadAttribute(attr)) {
-          lastSpreadIndex = idx;
+          if (canEvaluate(staticNamespace, attr.argument)) {
+            const spreadValue = vm.runInContext(
+              generate(attr.argument).code,
+              evalContext
+            );
+
+            if (typeof spreadValue !== 'object' || spreadValue === null) {
+              lastSpreadIndex = flattenedAttributes.push(attr) - 1;
+            } else {
+              for (const k in spreadValue) {
+                const value = spreadValue[k];
+
+                if (typeof value === 'number') {
+                  flattenedAttributes.push(
+                    t.jSXAttribute(
+                      t.jSXIdentifier(k),
+                      t.jSXExpressionContainer(t.numericLiteral(value))
+                    )
+                  );
+                } else if (value === null) {
+                  // why would you ever do this
+                  flattenedAttributes.push(
+                    t.jSXAttribute(
+                      t.jSXIdentifier(k),
+                      t.jSXExpressionContainer(t.nullLiteral())
+                    )
+                  );
+                } else {
+                  // toString anything else
+                  // TODO: is this a bad idea
+                  flattenedAttributes.push(
+                    t.jSXAttribute(
+                      t.jSXIdentifier(k),
+                      t.jSXExpressionContainer(t.stringLiteral('' + value))
+                    )
+                  );
+                }
+              }
+            }
+          } else {
+            lastSpreadIndex = flattenedAttributes.push(attr) - 1;
+          }
+        } else {
+          flattenedAttributes.push(attr);
         }
       });
+
+      node.attributes = flattenedAttributes;
 
       let propsAttributes;
       const staticAttributes = {};
