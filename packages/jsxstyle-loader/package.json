@@ -1,13 +1,13 @@
 {
   "name": "jsxstyle-loader",
-  "version": "1.0.0-beta.2",
+  "version": "1.0.0-beta.3",
   "description": "A webpack loader that extracts out static styles defined on jsxstyle components",
   "author": "Mike Meyer",
   "license": "Apache-2.0",
   "main": "lib/index.js",
   "scripts": {
     "lint": "eslint {src,tests}/",
-    "jest": "jest",
+    "jest": "jest --verbose",
     "prettier": "prettier --single-quote --trailing-comma es5 --write '{src,tests}/**/*.js'",
     "build_lib": "rimraf lib; babel -q ./src --out-dir ./lib",
     "watch_lib": "rimraf lib; babel --watch ./src --out-dir ./lib",
@@ -20,17 +20,17 @@
     "babel-types": "^6.24.1",
     "babylon": "^6.17.0",
     "invariant": "^2.2.1",
-    "jsxstyle": "^2.0.0-beta.2",
+    "jsxstyle": "2.0.0-beta.3",
     "loader-utils": "^1.1.0"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
     "babel-preset-env": "^1.4.0",
-    "eslint": "^3.19.0",
-    "eslint-plugin-jest": "^19.0.1",
-    "eslint-plugin-react": "^6.10.3",
-    "jest": "^19.0.2",
-    "prettier": "^1.1.0",
+    "eslint": "^4.3.0",
+    "eslint-plugin-jest": "^20.0.3",
+    "eslint-plugin-react": "^7.1.0",
+    "jest": "^20.0.4",
+    "prettier": "^1.5.3",
     "react": "^15.4.2",
     "rimraf": "^2.6.1"
   }

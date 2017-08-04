@@ -660,7 +660,7 @@ function extractStyles({
               `.${className}` +
               (item.pseudoclass ? ':' + item.pseudoclass : '') +
               (item.pseudoelement ? '::' + item.pseudoelement : '') +
-              ` {${item.css}}`;
+              ` {${item.styles}}`;
 
             if (item.mediaQuery) {
               itemCSS = `@media ${item.mediaQuery} { ${itemCSS} }`;
