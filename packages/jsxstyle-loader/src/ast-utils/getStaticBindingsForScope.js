@@ -29,7 +29,7 @@ function getStaticBindingsForScope(scope, whitelist = [], sourceFileName) {
         sourceModule.sourceModule.startsWith('/')
       ) {
         // if moduleName doesn't end with an extension, add .js
-        if (!/\.[a-z]{2,4}$/.test(moduleName)) {
+        if (path.extname(moduleName) === '') {
           moduleName += '.js';
         }
         // get absolute path
@@ -37,7 +37,18 @@ function getStaticBindingsForScope(scope, whitelist = [], sourceFileName) {
       }
 
       if (whitelist.indexOf(moduleName) > -1) {
-        ret[k] = require(moduleName);
+        const src = require(moduleName);
+        if (sourceModule.destructured) {
+          ret[k] = src[sourceModule.imported];
+        } else {
+          // crude esmodule check
+          // TODO: make sure this actually works
+          if (src && src.__esModule) {
+            ret[k] = src.default;
+          } else {
+            ret[k] = src;
+          }
+        }
       }
       continue;
     } else if (

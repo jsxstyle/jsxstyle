@@ -13,6 +13,7 @@ describe('getStaticBindingsForScope', function() {
 const outerLiteral = 42;
 const outerObject = {};
 import LC from './LC';
+import {blue} from './LC';
 import {Block} from 'jsxstyle';
 
 function outerFunction(innerParam1, innerParam2) {
@@ -61,6 +62,7 @@ function outerFunction(innerParam1, innerParam2) {
 
     expect(bindings).toEqual({
       LC: require('./mock/LC'),
+      blue: 'blueberry',
       nullLiteral: null,
       outerLiteral: 42,
       outerObject: {},
