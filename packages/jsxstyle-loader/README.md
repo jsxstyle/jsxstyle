@@ -1,27 +1,30 @@
 # jsxstyle-loader
 
-`jsxstyle-loader` is a webpack loader that extracts **static style props** from `jsxstyle` components into a separate CSS file.
+`jsxstyle-loader` is a webpack loader that extracts [**static style props**](#what-are-static-style-props) from `jsxstyle` components into a separate CSS file.
 
-## What do you mean by “static style props”?
+## Getting Started
 
-Simply put, static style props are props whose values can be evaluated at build time. By default, this consists of any literal type (`string`, `number`, `null`) as well as any variables provided to the evaluation context. The evaluation context is derived from the prop’s current scope.
+Add a new rule object for `jsxstyle-loader` to your webpack config. `jsxstyle-loader` will add a CSS `require` to each component that uses `jsxstyle`, so make sure you have a loader that handles `.css` files as well.
 
-For example, the `fontSize` prop in the following component will be marked as evaluatable and will be extracted as `42`:
-
-```jsx
-import { Block } from 'jsxstyle';
-
-const bestNumber = 42;
-<Block fontSize={bestNumber}>hello</Block>;
+```js
+module.exports = {
+  // ...
+  module: {
+    rules: [
+      // ...
+      {
+        test: /\.js$/,
+        use: 'jsxstyle-loader',
+      },
+      {
+        test: /\.css$/,
+        use: 'your-cool-css-loader',
+      },
+      // ...
+    ],
+  },
+};
 ```
-
-Any modules marked as whitelisted with the [`whitelistedModules`](#whitelistedmodules) config option will also be added to the evaluation context.
-
-### Ternary statements and simple logical expressions
-
-If the value of a style prop is a ternary and both sides can be evaluated, the prop will be extracted and the ternary condition will be moved to the `className`.
-
-If the value of a prop is a simple logical expression with the `&&` operator, it will be converted to a ternary with a null alternate.
 
 ## Loader Options
 
@@ -101,7 +104,45 @@ The `whitelistedModules` config option allows you to add modules to the evaluati
 // ...
 ```
 
-## FAQs
+## FAQs probably
+
+### It’s not working 😩
+
+1. Make sure the loader object `test` regex matches JS files that use `jsxstyle`.
+2. `jsxstyle-loader` relies on JSX still being around, so make sure it runs *before* `babel-loader` does its thing.
+3. `jsxstyle-loader` only supports destructured `require`/`import` syntax:
+    ```jsx
+    // Cool!
+    import { Block } from 'jsxstyle';
+    <Block />;
+
+    // Neat!
+    const { Block } = require('jsxstyle');
+    <Block />;
+
+    // Nope :(
+    const jsxstyle = require('jsxstyle');
+    <jsxstyle.Block>;
+    ```
+
+### What are “static style props”?
+
+Simply put, static style props are props whose values can be evaluated at build time. By default, this consists of any literal type (`string`, `number`, `null`) as well as any variables provided to the evaluation context. The evaluation context is derived from the prop’s current scope.
+
+For example, the `fontSize` prop in the following component will be marked as evaluatable and will be extracted as `42`:
+
+```jsx
+import { Block } from 'jsxstyle';
+
+const bestNumber = 42;
+<Block fontSize={bestNumber}>hello</Block>;
+```
+
+Any modules marked as whitelisted with the [`whitelistedModules`](#whitelistedmodules) config option will also be added to the evaluation context.
+
+If the value of a style prop is a ternary and both sides can be evaluated, the prop will be extracted and the ternary condition will be moved to the `className`.
+
+If the value of a prop is a simple logical expression with the `&&` operator, it will be converted to a ternary with a null alternate.
 
 ### Inline styles… _are bad_.
 
