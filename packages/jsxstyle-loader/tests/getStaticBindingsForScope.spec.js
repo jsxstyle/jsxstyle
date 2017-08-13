@@ -53,7 +53,7 @@ function outerFunction(innerParam1, innerParam2) {
     ]);
   });
 
-  it('does the thing', function() {
+  it('extracts static bindings', function() {
     const bindings = getStaticBindingsForScope(
       testItems.Block.scope,
       whitelistedModules,

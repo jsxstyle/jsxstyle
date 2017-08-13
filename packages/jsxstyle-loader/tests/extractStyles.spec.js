@@ -6,7 +6,65 @@ const extractStyles = require('../lib/ast-utils/extractStyles');
 
 const whitelistedModules = [require.resolve('./mock/LC')];
 
-describe('extractStyles', function() {
+describe('the basics', function() {
+  it('only extracts styles from valid jsxstyle components', () => {
+    const rv1 = extractStyles({
+      src: `import {Block as TestBlock} from 'jsxstyle';
+const {Col: TestCol, Row} = require('jsxstyle');
+<Block extract="nope" />;
+<TestBlock extract="yep" />;
+<Row extract="yep" />;
+<Col extract="nope" />;
+<InlineBlock extract="nope" />;
+<TestCol extract="yep" />;`,
+      sourceFileName: path.resolve(__dirname, 'mock/validate.js'),
+      cacheObject: {},
+      whitelistedModules,
+    });
+
+    expect(rv1.js).toEqual(
+      `require('./validate.jsxstyle.css');
+
+import { Block as TestBlock } from 'jsxstyle';
+const { Col: TestCol, Row } = require('jsxstyle');
+<Block extract="nope" />;
+<div className="_x0" />;
+<div className="_x1" />;
+<Col extract="nope" />;
+<InlineBlock extract="nope" />;
+<div className="_x2" />;`
+    );
+  });
+
+  it('skips JSXElements that do not have a JSXIdentifier as an opening element', () => {
+    const rv = extractStyles({
+      src:
+        '<member.expression color="red" />; <Member.Expression color="blue" />;',
+      sourceFileName: path.resolve(__dirname, 'mock/jsxidentifier.js'),
+      cacheObject: {},
+    });
+    expect(rv.js).toEqual(
+      '<member.expression color="red" />;<Member.Expression color="blue" />;'
+    );
+  });
+
+  it('puts spaces between each class name', () => {
+    const rv = extractStyles({
+      src: `import {Block} from 'jsxstyle';
+<Block className="orange" color={thing1 ? 'orange' : 'purple'} width={thing2 ? 200 : 400} />`,
+      sourceFileName: path.resolve(__dirname, 'mock/classname-spaces.js'),
+    });
+
+    expect(rv.js).toEqual(
+      `require('./classname-spaces.jsxstyle.css');
+
+import { Block } from 'jsxstyle';
+<div className={'orange ' + ((thing1 ? '_x1' : '_x2') + (' ' + (thing2 ? '_x3' : '_x4'))) + ' _x0'} />;`
+    );
+  });
+});
+
+describe('element conversion', function() {
   it('converts jsxstyle elements to plain elements when all props are static', () => {
     const rv = extractStyles({
       src: `import {Block} from 'jsxstyle';
@@ -48,18 +106,6 @@ const val = 'thing';
     );
   });
 
-  it('skips JSXElements that do not have a JSXIdentifier as an opening element', () => {
-    const rv = extractStyles({
-      src:
-        '<member.expression color="red" />; <Member.Expression color="blue" />;',
-      sourceFileName: path.resolve(__dirname, 'mock/jsxidentifier.js'),
-      cacheObject: {},
-    });
-    expect(rv.js).toEqual(
-      '<member.expression color="red" />;<Member.Expression color="blue" />;'
-    );
-  });
-
   it('converts jsxstyle elements to Block elements when some props aren\u2019t static', () => {
     const rv = extractStyles({
       src: `import {Block} from 'jsxstyle';
@@ -90,6 +136,26 @@ import LC from './LC';
 `
     );
   });
+});
+
+describe('spread operators', function() {
+  it("doesn't explode if you use the spread operator", () => {
+    const rv = extractStyles({
+      src: `import {Block} from 'jsxstyle';
+const BlueBlock = ({wow, ...props}) => <Block color="blue" {...props} test="wow" />;
+const DynamicBlock = ({wow, ...props}) => <Block dynamicProp={wow} {...props} />;`,
+      sourceFileName: path.resolve(__dirname, 'mock/rest-spread.js'),
+      cacheObject: {},
+    });
+
+    expect(rv.js).toEqual(
+      `require('./rest-spread.jsxstyle.css');
+
+import { Block } from 'jsxstyle';
+const BlueBlock = ({ wow, ...props }) => <Block color="blue" {...props} test={null} className="_x0" />;
+const DynamicBlock = ({ wow, ...props }) => <Block dynamicProp={wow} {...props} />;`
+    );
+  });
 
   it('handles props mixed with spread operators', () => {
     const rv = extractStyles({
@@ -110,71 +176,6 @@ import { Block } from 'jsxstyle';
 ._x0 {
   extract: yep;
 }
-`
-    );
-  });
-
-  it('handles the mediaQueries prop correctly', () => {
-    const rv = extractStyles({
-      src: `import {Block} from 'jsxstyle';
-<Block
-  mediaQueries={{ sm: 'only screen and (min-width: 640px)' }}
-  width={640}
-  smWidth="100%"
-/>;`,
-      sourceFileName: path.resolve(__dirname, 'mock/media-queries.js'),
-      cacheObject: {},
-    });
-
-    expect(rv.js).toEqual(
-      `require('./media-queries.jsxstyle.css');
-
-import { Block } from 'jsxstyle';
-<div className="_x0" />;`
-    );
-    expect(rv.css).toEqual(
-      `/* ./tests/mock/media-queries.js:2-6 (Block) */
-._x0 {
-  display: block;
-  width: 640px;
-}
-@media only screen and (min-width: 640px) { ._x0 {
-  width: 100%;
-} }
-`
-    );
-  });
-
-  it('evaluates the mediaQueries prop correctly', () => {
-    const rv = extractStyles({
-      src: `import {Block} from 'jsxstyle';
-import LC from './LC';
-<Block
-  mediaQueries={LC.mediaQueries}
-  width={640}
-  smWidth="100%"
-/>;`,
-      sourceFileName: path.resolve(__dirname, 'mock/media-queries.js'),
-      cacheObject: {},
-      whitelistedModules,
-    });
-
-    expect(rv.js).toEqual(
-      `require('./media-queries.jsxstyle.css');
-
-import { Block } from 'jsxstyle';
-import LC from './LC';
-<div className="_x0" />;`
-    );
-    expect(rv.css).toEqual(
-      `/* ./tests/mock/media-queries.js:3-7 (Block) */
-._x0 {
-  display: block;
-  width: 640px;
-}
-@media small media query { ._x0 {
-  width: 100%;
-} }
 `
     );
   });
@@ -211,6 +212,47 @@ import { Block } from 'jsxstyle';
     );
   });
 
+  it('extracts spreads from trusted sources', () => {
+    const rv = extractStyles({
+      src: `import {Block} from 'jsxstyle';
+import LC from './LC';
+const staticSpread = {color: '#444', width: 420};
+
+function Thing(props) {
+  return <Block width="100%" {...LC.containerStyles} {...staticSpread} />;
+}
+`,
+      sourceFileName: path.resolve(__dirname, 'mock/trusted-spreads.js'),
+      cacheObject: {},
+      whitelistedModules,
+    });
+
+    expect(rv.js).toEqual(
+      `require('./trusted-spreads.jsxstyle.css');
+
+import { Block } from 'jsxstyle';
+import LC from './LC';
+const staticSpread = { color: '#444', width: 420 };
+
+function Thing(props) {
+  return <div className="_x0" />;
+}`
+    );
+
+    expect(rv.css).toEqual(`/* ./tests/mock/trusted-spreads.js:6 (Block) */
+._x0 {
+  background-color: #FFF;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.07);
+  color: #444;
+  display: block;
+  width: 420px;
+}
+`);
+  });
+});
+
+describe('cache object', function() {
   it('updates `cacheObject` counter and key object', () => {
     const cacheObject = {};
 
@@ -243,6 +285,62 @@ import { Block } from 'jsxstyle';
         '_x~display:inline-block;': '2',
       },
     });
+  });
+});
+
+describe('style groups', function() {
+  it('groups styles when a `styleGroups` array is provided', () => {
+    const cacheObject = {};
+    const styleGroups = [
+      {
+        thing: 'wow',
+        hoverThing: 'ok',
+      },
+      {
+        display: 'inline-block',
+      },
+    ];
+
+    const rv = extractStyles({
+      src: `import {Block, InlineBlock} from 'jsxstyle';
+<Block>
+  <Block thing="wow" hoverThing="ok" />
+  <InlineBlock />
+</Block>`,
+      sourceFileName: path.resolve(__dirname, 'mock/style-groups.js'),
+      cacheObject,
+      styleGroups,
+    });
+
+    expect(rv.js).toEqual(
+      `require('./style-groups.jsxstyle.css');
+
+import { Block, InlineBlock } from 'jsxstyle';
+<div className="_x0">
+  <div className="_x1 _x0" />
+  <div className="_x2" />
+</div>;`
+    );
+
+    expect(rv.css).toEqual(
+      `/* ./tests/mock/style-groups.js:2 (Block) */
+/* ./tests/mock/style-groups.js:3 (Block) */
+._x0 {
+  display: block;
+}
+/* ./tests/mock/style-groups.js:3 (Block) */
+._x1 {
+  thing: wow;
+}
+._x1:hover {
+  thing: ok;
+}
+/* ./tests/mock/style-groups.js:4 (InlineBlock) */
+._x2 {
+  display: inline-block;
+}
+`
+    );
   });
 
   it('groups styles when a `namedStyleGroups` object is provided', () => {
@@ -298,61 +396,9 @@ import { Block, InlineBlock } from 'jsxstyle';
 `
     );
   });
+});
 
-  it('groups styles when a `styleGroups` array is provided', () => {
-    const cacheObject = {};
-    const styleGroups = [
-      {
-        thing: 'wow',
-        hoverThing: 'ok',
-      },
-      {
-        display: 'inline-block',
-      },
-    ];
-
-    const rv = extractStyles({
-      src: `import {Block, InlineBlock} from 'jsxstyle';
-<Block>
-  <Block thing="wow" hoverThing="ok" />
-  <InlineBlock />
-</Block>`,
-      sourceFileName: path.resolve(__dirname, 'mock/style-groups.js'),
-      cacheObject,
-      styleGroups,
-    });
-
-    expect(rv.js).toEqual(
-      `require('./style-groups.jsxstyle.css');
-
-import { Block, InlineBlock } from 'jsxstyle';
-<div className="_x0">
-  <div className="_x1 _x0" />
-  <div className="_x2" />
-</div>;`
-    );
-
-    expect(rv.css).toEqual(
-      `/* ./tests/mock/style-groups.js:2 (Block) */
-/* ./tests/mock/style-groups.js:3 (Block) */
-._x0 {
-  display: block;
-}
-/* ./tests/mock/style-groups.js:3 (Block) */
-._x1 {
-  thing: wow;
-}
-._x1:hover {
-  thing: ok;
-}
-/* ./tests/mock/style-groups.js:4 (InlineBlock) */
-._x2 {
-  display: inline-block;
-}
-`
-    );
-  });
-
+describe('jsxstyle-specific props', function() {
   it('handles the `props` prop correctly', () => {
     const errorCallback = jest.fn();
 
@@ -413,280 +459,6 @@ import { Block } from 'jsxstyle';
 
 import { Block } from 'jsxstyle';
 <div ref={r => this.testBlock = r} className="_x0" />;`
-    );
-  });
-
-  it("doesn't explode if you use the spread operator", () => {
-    const rv = extractStyles({
-      src: `import {Block} from 'jsxstyle';
-const BlueBlock = ({wow, ...props}) => <Block color="blue" {...props} test="wow" />;
-const DynamicBlock = ({wow, ...props}) => <Block dynamicProp={wow} {...props} />;`,
-      sourceFileName: path.resolve(__dirname, 'mock/rest-spread.js'),
-      cacheObject: {},
-    });
-
-    expect(rv.js).toEqual(
-      `require('./rest-spread.jsxstyle.css');
-
-import { Block } from 'jsxstyle';
-const BlueBlock = ({ wow, ...props }) => <Block color="blue" {...props} test={null} className="_x0" />;
-const DynamicBlock = ({ wow, ...props }) => <Block dynamicProp={wow} {...props} />;`
-    );
-  });
-
-  it('extracts spreads from trusted sources', () => {
-    const rv = extractStyles({
-      src: `import {Block} from 'jsxstyle';
-import LC from './LC';
-const staticSpread = {color: '#444', width: 420};
-
-function Thing(props) {
-  return <Block width="100%" {...LC.containerStyles} {...staticSpread} />;
-}
-`,
-      sourceFileName: path.resolve(__dirname, 'mock/trusted-spreads.js'),
-      cacheObject: {},
-      whitelistedModules,
-    });
-
-    expect(rv.js).toEqual(
-      `require('./trusted-spreads.jsxstyle.css');
-
-import { Block } from 'jsxstyle';
-import LC from './LC';
-const staticSpread = { color: '#444', width: 420 };
-
-function Thing(props) {
-  return <div className="_x0" />;
-}`
-    );
-
-    expect(rv.css).toEqual(`/* ./tests/mock/trusted-spreads.js:6 (Block) */
-._x0 {
-  background-color: #FFF;
-  border-radius: 4px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.07);
-  color: #444;
-  display: block;
-  width: 420px;
-}
-`);
-  });
-
-  it('extracts a ternary expression that has static consequent and alternate', () => {
-    const rv = extractStyles({
-      src: `import { Block } from 'jsxstyle';
-<Block color={dynamic ? 'red' : 'blue'} />`,
-      sourceFileName: path.resolve(__dirname, 'mock/ternary.js'),
-      cacheObject: {},
-      whitelistedModules,
-    });
-
-    expect(rv.js).toEqual(
-      `require('./ternary.jsxstyle.css');
-
-import { Block } from 'jsxstyle';
-<div className={(dynamic ? '_x1' : '_x2') + ' _x0'} />;`
-    );
-  });
-
-  it('extracts a simple conditional expression that has static right side', () => {
-    const rv = extractStyles({
-      src: `import {Block} from 'jsxstyle';
-<Block color={dynamic && 'red'} />`,
-      sourceFileName: path.resolve(__dirname, 'mock/ternary.js'),
-      cacheObject: {},
-      whitelistedModules,
-    });
-
-    expect(rv.js).toEqual(
-      `require('./ternary.jsxstyle.css');
-
-import { Block } from 'jsxstyle';
-<div className={(dynamic ? '_x1' : '') + ' _x0'} />;`
-    );
-
-    expect(rv.css).toEqual(`/* ./tests/mock/ternary.js:2 (Block) */
-._x0 {
-  display: block;
-}
-/* ./tests/mock/ternary.js:2 (Block) */
-._x1 {
-  color: red;
-}
-`);
-  });
-
-  it('extracts a ternary expression that has a whitelisted consequent and alternate', () => {
-    const rv = extractStyles({
-      src: `import LC from './LC';
-import {Block} from 'jsxstyle';
-const blue = 'blueberry';
-<Block color={dynamic ? LC.red : blue} />`,
-      sourceFileName: path.resolve(__dirname, 'mock/ternary.js'),
-      cacheObject: {},
-      whitelistedModules,
-    });
-
-    expect(rv.js).toEqual(
-      `require('./ternary.jsxstyle.css');
-
-import LC from './LC';
-import { Block } from 'jsxstyle';
-const blue = 'blueberry';
-<div className={(dynamic ? '_x1' : '_x2') + ' _x0'} />;`
-    );
-
-    expect(rv.css).toEqual(`/* ./tests/mock/ternary.js:4 (Block) */
-._x0 {
-  display: block;
-}
-/* ./tests/mock/ternary.js:4 (Block) */
-._x1 {
-  color: strawberry;
-}
-/* ./tests/mock/ternary.js:4 (Block) */
-._x2 {
-  color: blueberry;
-}
-`);
-  });
-
-  it('puts spaces between each class name', () => {
-    const rv = extractStyles({
-      src: `import {Block} from 'jsxstyle';
-<Block className="orange" color={thing1 ? 'orange' : 'purple'} width={thing2 ? 200 : 400} />`,
-      sourceFileName: path.resolve(__dirname, 'mock/classname-spaces.js'),
-    });
-
-    expect(rv.js).toEqual(
-      `require('./classname-spaces.jsxstyle.css');
-
-import { Block } from 'jsxstyle';
-<div className={'orange ' + ((thing1 ? '_x1' : '_x2') + (' ' + (thing2 ? '_x3' : '_x4'))) + ' _x0'} />;`
-    );
-  });
-
-  it('extracts a ternary expression from a component that has a className specified', () => {
-    const rv = extractStyles({
-      src: `import {Block} from 'jsxstyle';
-<Block className="cool" color={dynamic ? 'red' : 'blue'} />`,
-      sourceFileName: path.resolve(__dirname, 'mock/ternary-with-classname.js'),
-      cacheObject: {},
-      whitelistedModules,
-    });
-
-    expect(rv.js).toEqual(
-      `require('./ternary-with-classname.jsxstyle.css');
-
-import { Block } from 'jsxstyle';
-<div className={'cool ' + (dynamic ? '_x1' : '_x2') + ' _x0'} />;`
-    );
-  });
-
-  it('ignores a ternary expression that comes before a spread operator', () => {
-    const rv = extractStyles({
-      src: `import {Block} from 'jsxstyle';
-<Block color={dynamic ? 'red' : 'blue'} {...spread} className="cool" />`,
-      sourceFileName: path.resolve(__dirname, 'mock/ternary-with-classname.js'),
-      cacheObject: {},
-      whitelistedModules,
-    });
-
-    expect(rv.js).toEqual(`import { Block } from 'jsxstyle';
-<Block color={dynamic ? 'red' : 'blue'} {...spread} className="cool" />;`);
-  });
-
-  it('extracts a ternary expression from a component that has a className and spread operator', () => {
-    const rv = extractStyles({
-      src: `import {Block} from 'jsxstyle';
-<Block {...spread} color={dynamic ? 'red' : 'blue'} />`,
-      sourceFileName: path.resolve(__dirname, 'mock/ternary-with-spread.js'),
-      cacheObject: {},
-      whitelistedModules,
-    });
-
-    expect(rv.css).toEqual(
-      `/* ./tests/mock/ternary-with-spread.js:2 (Block) */
-._x0 {
-  color: red;
-}
-/* ./tests/mock/ternary-with-spread.js:2 (Block) */
-._x1 {
-  color: blue;
-}
-`
-    );
-
-    expect(rv.js).toEqual(
-      `require('./ternary-with-spread.jsxstyle.css');
-
-import { Block } from 'jsxstyle';
-<Block {...spread} color={null} className={dynamic ? '_x0' : '_x1'} />;`
-    );
-  });
-
-  it('groups extracted ternary statements', () => {
-    const rv = extractStyles({
-      src: `import {Block} from 'jsxstyle';
-<Block color={dynamic ? 'red' : 'blue'} width={dynamic ? 200 : 400} />`,
-      sourceFileName: path.resolve(__dirname, 'mock/ternary-groups.js'),
-      cacheObject: {},
-      whitelistedModules,
-    });
-
-    expect(rv.js).toEqual(
-      `require('./ternary-groups.jsxstyle.css');
-
-import { Block } from 'jsxstyle';
-<div className={(dynamic ? '_x1' : '_x2') + ' _x0'} />;`
-    );
-
-    expect(rv.css).toEqual(
-      `/* ./tests/mock/ternary-groups.js:2 (Block) */
-._x0 {
-  display: block;
-}
-/* ./tests/mock/ternary-groups.js:2 (Block) */
-._x1 {
-  color: red;
-  width: 200px;
-}
-/* ./tests/mock/ternary-groups.js:2 (Block) */
-._x2 {
-  color: blue;
-  width: 400px;
-}
-`
-    );
-  });
-
-  it('handles null values in ternaries correctly', () => {
-    const rv = extractStyles({
-      src: `import {Block} from 'jsxstyle';
-<Block color={dynamic ? null : 'blue'} />`,
-      sourceFileName: path.resolve(__dirname, 'mock/ternary-null-values.js'),
-      cacheObject: {},
-      whitelistedModules,
-    });
-
-    expect(rv.js).toEqual(
-      `require('./ternary-null-values.jsxstyle.css');
-
-import { Block } from 'jsxstyle';
-<div className={(dynamic ? '' : '_x1') + ' _x0'} />;`
-    );
-
-    expect(rv.css).toEqual(
-      `/* ./tests/mock/ternary-null-values.js:2 (Block) */
-._x0 {
-  display: block;
-}
-/* ./tests/mock/ternary-null-values.js:2 (Block) */
-._x1 {
-  color: blue;
-}
-`
     );
   });
 
@@ -776,32 +548,272 @@ import { Block, Row } from 'jsxstyle';
     );
   });
 
-  it('only extract styles from valid jsxstyle components', () => {
-    const rv1 = extractStyles({
-      src: `import {Block as TestBlock} from 'jsxstyle';
-const {Col: TestCol, Row} = require('jsxstyle');
-<Block extract="nope" />;
-<TestBlock extract="yep" />;
-<Row extract="yep" />;
-<Col extract="nope" />;
-<InlineBlock extract="nope" />;
-<TestCol extract="yep" />;`,
-      sourceFileName: path.resolve(__dirname, 'mock/validate.js'),
+  it('handles the `mediaQueries` prop correctly', () => {
+    const rv = extractStyles({
+      src: `import {Block} from 'jsxstyle';
+<Block
+  mediaQueries={{ sm: 'only screen and (min-width: 640px)' }}
+  width={640}
+  smWidth="100%"
+/>;`,
+      sourceFileName: path.resolve(__dirname, 'mock/media-queries.js'),
+      cacheObject: {},
+    });
+
+    expect(rv.js).toEqual(
+      `require('./media-queries.jsxstyle.css');
+
+import { Block } from 'jsxstyle';
+<div className="_x0" />;`
+    );
+    expect(rv.css).toEqual(
+      `/* ./tests/mock/media-queries.js:2-6 (Block) */
+._x0 {
+  display: block;
+  width: 640px;
+}
+@media only screen and (min-width: 640px) { ._x0 {
+  width: 100%;
+} }
+`
+    );
+  });
+
+  it('evaluates the `mediaQueries` prop correctly', () => {
+    const rv = extractStyles({
+      src: `import {Block} from 'jsxstyle';
+import LC from './LC';
+<Block
+  mediaQueries={LC.mediaQueries}
+  width={640}
+  smWidth="100%"
+/>;`,
+      sourceFileName: path.resolve(__dirname, 'mock/media-queries.js'),
       cacheObject: {},
       whitelistedModules,
     });
 
-    expect(rv1.js).toEqual(
-      `require('./validate.jsxstyle.css');
+    expect(rv.js).toEqual(
+      `require('./media-queries.jsxstyle.css');
 
-import { Block as TestBlock } from 'jsxstyle';
-const { Col: TestCol, Row } = require('jsxstyle');
-<Block extract="nope" />;
-<div className="_x0" />;
-<div className="_x1" />;
-<Col extract="nope" />;
-<InlineBlock extract="nope" />;
-<div className="_x2" />;`
+import { Block } from 'jsxstyle';
+import LC from './LC';
+<div className="_x0" />;`
+    );
+    expect(rv.css).toEqual(
+      `/* ./tests/mock/media-queries.js:3-7 (Block) */
+._x0 {
+  display: block;
+  width: 640px;
+}
+@media small media query { ._x0 {
+  width: 100%;
+} }
+`
+    );
+  });
+});
+
+describe('ternaries', function() {
+  it('extracts a ternary expression that has static consequent and alternate', () => {
+    const rv = extractStyles({
+      src: `import { Block } from 'jsxstyle';
+<Block color={dynamic ? 'red' : 'blue'} />`,
+      sourceFileName: path.resolve(__dirname, 'mock/ternary.js'),
+      cacheObject: {},
+      whitelistedModules,
+    });
+
+    expect(rv.js).toEqual(
+      `require('./ternary.jsxstyle.css');
+
+import { Block } from 'jsxstyle';
+<div className={(dynamic ? '_x1' : '_x2') + ' _x0'} />;`
+    );
+  });
+
+  it('extracts a simple conditional expression that has static right side', () => {
+    const rv = extractStyles({
+      src: `import {Block} from 'jsxstyle';
+<Block color={dynamic && 'red'} />`,
+      sourceFileName: path.resolve(__dirname, 'mock/ternary.js'),
+      cacheObject: {},
+      whitelistedModules,
+    });
+
+    expect(rv.js).toEqual(
+      `require('./ternary.jsxstyle.css');
+
+import { Block } from 'jsxstyle';
+<div className={(dynamic ? '_x1' : '') + ' _x0'} />;`
+    );
+
+    expect(rv.css).toEqual(`/* ./tests/mock/ternary.js:2 (Block) */
+._x0 {
+  display: block;
+}
+/* ./tests/mock/ternary.js:2 (Block) */
+._x1 {
+  color: red;
+}
+`);
+  });
+
+  it('extracts a ternary expression that has a whitelisted consequent and alternate', () => {
+    const rv = extractStyles({
+      src: `import LC from './LC';
+import {Block} from 'jsxstyle';
+const blue = 'blueberry';
+<Block color={dynamic ? LC.red : blue} />`,
+      sourceFileName: path.resolve(__dirname, 'mock/ternary.js'),
+      cacheObject: {},
+      whitelistedModules,
+    });
+
+    expect(rv.js).toEqual(
+      `require('./ternary.jsxstyle.css');
+
+import LC from './LC';
+import { Block } from 'jsxstyle';
+const blue = 'blueberry';
+<div className={(dynamic ? '_x1' : '_x2') + ' _x0'} />;`
+    );
+
+    expect(rv.css).toEqual(`/* ./tests/mock/ternary.js:4 (Block) */
+._x0 {
+  display: block;
+}
+/* ./tests/mock/ternary.js:4 (Block) */
+._x1 {
+  color: strawberry;
+}
+/* ./tests/mock/ternary.js:4 (Block) */
+._x2 {
+  color: blueberry;
+}
+`);
+  });
+
+  it('extracts a ternary expression from a component that has a className specified', () => {
+    const rv = extractStyles({
+      src: `import {Block} from 'jsxstyle';
+<Block className="cool" color={dynamic ? 'red' : 'blue'} />`,
+      sourceFileName: path.resolve(__dirname, 'mock/ternary-with-classname.js'),
+      cacheObject: {},
+      whitelistedModules,
+    });
+
+    expect(rv.js).toEqual(
+      `require('./ternary-with-classname.jsxstyle.css');
+
+import { Block } from 'jsxstyle';
+<div className={'cool ' + (dynamic ? '_x1' : '_x2') + ' _x0'} />;`
+    );
+  });
+
+  it('extracts a ternary expression from a component that has a className and spread operator', () => {
+    const rv = extractStyles({
+      src: `import {Block} from 'jsxstyle';
+<Block {...spread} color={dynamic ? 'red' : 'blue'} />`,
+      sourceFileName: path.resolve(__dirname, 'mock/ternary-with-spread.js'),
+      cacheObject: {},
+      whitelistedModules,
+    });
+
+    expect(rv.css).toEqual(
+      `/* ./tests/mock/ternary-with-spread.js:2 (Block) */
+._x0 {
+  color: red;
+}
+/* ./tests/mock/ternary-with-spread.js:2 (Block) */
+._x1 {
+  color: blue;
+}
+`
+    );
+
+    expect(rv.js).toEqual(
+      `require('./ternary-with-spread.jsxstyle.css');
+
+import { Block } from 'jsxstyle';
+<Block {...spread} color={null} className={dynamic ? '_x0' : '_x1'} />;`
+    );
+  });
+
+  it('ignores a ternary expression that comes before a spread operator', () => {
+    const rv = extractStyles({
+      src: `import {Block} from 'jsxstyle';
+<Block color={dynamic ? 'red' : 'blue'} {...spread} className="cool" />`,
+      sourceFileName: path.resolve(__dirname, 'mock/ternary-with-classname.js'),
+      cacheObject: {},
+      whitelistedModules,
+    });
+
+    expect(rv.js).toEqual(`import { Block } from 'jsxstyle';
+<Block color={dynamic ? 'red' : 'blue'} {...spread} className="cool" />;`);
+  });
+
+  it('groups extracted ternary statements', () => {
+    const rv = extractStyles({
+      src: `import {Block} from 'jsxstyle';
+<Block color={dynamic ? 'red' : 'blue'} width={dynamic ? 200 : 400} />`,
+      sourceFileName: path.resolve(__dirname, 'mock/ternary-groups.js'),
+      cacheObject: {},
+      whitelistedModules,
+    });
+
+    expect(rv.js).toEqual(
+      `require('./ternary-groups.jsxstyle.css');
+
+import { Block } from 'jsxstyle';
+<div className={(dynamic ? '_x1' : '_x2') + ' _x0'} />;`
+    );
+
+    expect(rv.css).toEqual(
+      `/* ./tests/mock/ternary-groups.js:2 (Block) */
+._x0 {
+  display: block;
+}
+/* ./tests/mock/ternary-groups.js:2 (Block) */
+._x1 {
+  color: red;
+  width: 200px;
+}
+/* ./tests/mock/ternary-groups.js:2 (Block) */
+._x2 {
+  color: blue;
+  width: 400px;
+}
+`
+    );
+  });
+
+  it('handles null values in ternaries correctly', () => {
+    const rv = extractStyles({
+      src: `import {Block} from 'jsxstyle';
+<Block color={dynamic ? null : 'blue'} />`,
+      sourceFileName: path.resolve(__dirname, 'mock/ternary-null-values.js'),
+      cacheObject: {},
+      whitelistedModules,
+    });
+
+    expect(rv.js).toEqual(
+      `require('./ternary-null-values.jsxstyle.css');
+
+import { Block } from 'jsxstyle';
+<div className={(dynamic ? '' : '_x1') + ' _x0'} />;`
+    );
+
+    expect(rv.css).toEqual(
+      `/* ./tests/mock/ternary-null-values.js:2 (Block) */
+._x0 {
+  display: block;
+}
+/* ./tests/mock/ternary-null-values.js:2 (Block) */
+._x1 {
+  color: blue;
+}
+`
     );
   });
 });

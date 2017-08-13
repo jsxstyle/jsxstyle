@@ -19,7 +19,7 @@ const staticNamespace = {
 };
 
 describe('canEvaluate', () => {
-  it('will not evaluate dynamic props', () => {
+  it('does not evaluate dynamic props', () => {
     const ast = parse(
       `<Block
   dynamicValue={dynamicValue}
@@ -39,7 +39,7 @@ describe('canEvaluate', () => {
     expect(errors).toEqual([]);
   });
 
-  it('will evaluate static props', () => {
+  it('evaluates static props', () => {
     const ast = parse(
       `<Block
   staticValue={staticValue}
