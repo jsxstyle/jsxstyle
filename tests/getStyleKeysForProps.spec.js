@@ -4,8 +4,8 @@ const getStyleKeysForProps = require('../lib/getStyleKeysForProps');
 
 describe('getStyleKeysForProps', () => {
   it('returns null when given an empty style object', () => {
-    const markup = getStyleKeysForProps({});
-    expect(markup).toBeNull();
+    const keyObj = getStyleKeysForProps({});
+    expect(keyObj).toBeNull();
   });
 
   it('converts a style object to a style string that only contains valid styles', () => {
@@ -23,7 +23,7 @@ describe('getStyleKeysForProps', () => {
       return new Useless(stuff);
     }
 
-    const markup = getStyleKeysForProps(
+    const keyObj = getStyleKeysForProps(
       {
         prop1: 'string',
         prop2: 1234,
@@ -36,7 +36,7 @@ describe('getStyleKeysForProps', () => {
       true
     );
 
-    expect(markup).toEqual({
+    expect(keyObj).toEqual({
       '.': {
         styles: `
   prop1: string;
@@ -46,6 +46,39 @@ describe('getStyleKeysForProps', () => {
 `,
       },
       classNameKey: 'prop1:string;prop2:1234px;prop3:0;prop4:wow;',
+    });
+  });
+
+  it('splits out pseudoelements and pseudoclasses', function() {
+    const keyObj = getStyleKeysForProps(
+      {
+        selectionBackgroundColor: 'red',
+        placeholderColor: 'blue',
+        hoverColor: 'orange',
+        activeColor: 'purple',
+      },
+      false
+    );
+
+    expect(keyObj).toEqual({
+      '.::placeholder': {
+        pseudoelement: 'placeholder',
+        styles: 'color:blue;',
+      },
+      '.::selection': {
+        pseudoelement: 'selection',
+        styles: 'background-color:red;',
+      },
+      '.:active': {
+        pseudoclass: 'active',
+        styles: 'color:purple;',
+      },
+      '.:hover': {
+        pseudoclass: 'hover',
+        styles: 'color:orange;',
+      },
+      classNameKey:
+        'activeColor:purple;hoverColor:orange;placeholderColor:blue;selectionBackgroundColor:red;',
     });
   });
 });

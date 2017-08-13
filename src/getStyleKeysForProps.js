@@ -7,9 +7,8 @@ const dangerousStyleValue = require('./dangerousStyleValue');
 const capRegex = /[A-Z]/g;
 
 const pseudoelements = {
-  after: true,
-  before: true,
   placeholder: true,
+  selection: true,
 };
 
 const pseudoclasses = {
