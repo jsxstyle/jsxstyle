@@ -354,6 +354,8 @@ import { Block, InlineBlock } from 'jsxstyle';
   });
 
   it('handles the `props` prop correctly', () => {
+    const errorCallback = jest.fn();
+
     const rv1 = extractStyles({
       src: `import {Block} from 'jsxstyle';
 <Block props={{staticObject: 'yep'}} />;
@@ -362,10 +364,18 @@ import { Block, InlineBlock } from 'jsxstyle';
 <Block props={calledFunction()} />;
 <Block props={member.expression} />;
 <Block props={{objectShorthand}} />;
-<Block props={{...one, two: {three, four: 'five', ...six}}} seven="eight" />;`,
+<Block props={{...one, two: {three, four: 'five', ...six}}} seven="eight" />;
+<Block props={{ 'aria-hidden': true }} />;
+<Block props={{className: 'test'}} />;
+<Block props={{style: 'test'}} />;
+<Block props="invalid" />;
+<Block dynamicProp={wow} props="invalid" />;
+<Block props={{ 'aria hidden': true }} />;
+<Block props={{ '-aria-hidden': true }} />;`,
       sourceFileName: path.resolve(__dirname, 'mock/props-prop1.js'),
       cacheObject: {},
       whitelistedModules,
+      errorCallback,
     });
 
     expect(rv1.js).toEqual(
@@ -378,8 +388,17 @@ import { Block } from 'jsxstyle';
 <div {...calledFunction()} className="_x0" />;
 <div {...member.expression} className="_x0" />;
 <div objectShorthand={objectShorthand} className="_x0" />;
-<div {...one} two={{ three, four: 'five', ...six }} className="_x1" />;`
+<div {...one} two={{ three, four: 'five', ...six }} className="_x1" />;
+<div aria-hidden={true} className="_x0" />;
+<Block props={{ className: 'test' }} />;
+<Block props={{ style: 'test' }} />;
+<Block props="invalid" />;
+<Block dynamicProp={wow} props="invalid" />;
+<Block props={{ 'aria hidden': true }} />;
+<Block props={{ '-aria-hidden': true }} />;`
     );
+
+    expect(errorCallback).toHaveBeenCalledTimes(6);
 
     const rv2 = extractStyles({
       src: `import {Block} from 'jsxstyle';
@@ -395,29 +414,6 @@ import { Block } from 'jsxstyle';
 import { Block } from 'jsxstyle';
 <div ref={r => this.testBlock = r} className="_x0" />;`
     );
-
-    const errorCallback = jest.fn();
-    const rv3 = extractStyles({
-      src: `import {Block} from 'jsxstyle';
-<Block props={{className: 'test'}} />;
-<Block props={{style: 'test'}} />;
-<Block props="invalid" />;
-<Block dynamicProp={wow} props="invalid" />;`,
-      sourceFileName: path.resolve(__dirname, 'mock/props-prop4.js'),
-      cacheObject: {},
-      whitelistedModules,
-      errorCallback,
-    });
-
-    expect(rv3.js).toEqual(
-      `import { Block } from 'jsxstyle';
-<Block props={{ className: 'test' }} />;
-<Block props={{ style: 'test' }} />;
-<Block props="invalid" />;
-<Block dynamicProp={wow} props="invalid" />;`
-    );
-
-    expect(errorCallback).toHaveBeenCalledTimes(4);
   });
 
   it("doesn't explode if you use the spread operator", () => {

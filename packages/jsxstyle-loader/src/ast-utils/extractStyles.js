@@ -292,21 +292,49 @@ function extractStyles({
 
             for (const k in value.properties) {
               const propObj = value.properties[k];
+
               if (t.isObjectProperty(propObj)) {
-                if (ALL_SPECIAL_PROPS.hasOwnProperty(propObj.key.name)) {
+                let key;
+
+                if (t.isIdentifier(propObj.key)) {
+                  key = propObj.key.name;
+                } else if (t.isStringLiteral(propObj.key)) {
+                  // starts with a-z or _ followed by a-z, -, or _
+                  if (/^\w[\w-]+$/.test(propObj.key.value)) {
+                    key = propObj.key.value;
+                  } else {
+                    errorCallback(
+                      '`props` prop contains an invalid key: `' +
+                        propObj.key.value +
+                        '`'
+                    );
+                    errorCount++;
+                    continue;
+                  }
+                } else {
+                  errorCallback(
+                    'unhandled object property key type: `' +
+                      propObj.type +
+                      +'`'
+                  );
+                  errorCount++;
+                }
+
+                if (ALL_SPECIAL_PROPS.hasOwnProperty(key)) {
                   errorCallback(
                     '`props` prop cannot contain `' +
-                      propObj.key.name +
+                      key +
                       '` as it is used by jsxstyle and will be overwritten.'
                   );
                   errorCount++;
                   continue;
                 }
+
                 if (t.isStringLiteral(propObj.value)) {
                   // convert literal value back to literal to ensure it has double quotes (siiiigh)
                   attributes.push(
                     t.jSXAttribute(
-                      t.jSXIdentifier(propObj.key.name),
+                      t.jSXIdentifier(key),
                       t.stringLiteral(propObj.value.value)
                     )
                   );
@@ -314,7 +342,7 @@ function extractStyles({
                   // wrap everything else in a JSXExpressionContainer
                   attributes.push(
                     t.jSXAttribute(
-                      t.jSXIdentifier(propObj.key.name),
+                      t.jSXIdentifier(key),
                       t.jSXExpressionContainer(propObj.value)
                     )
                   );
@@ -323,7 +351,9 @@ function extractStyles({
                 attributes.push(t.jSXSpreadAttribute(propObj.argument));
               } else {
                 errorCallback(
-                  'unhandled object property type: `' + propObj.type + +'`'
+                  'unhandled object property value type: `' +
+                    propObj.type +
+                    +'`'
                 );
                 errorCount++;
               }
