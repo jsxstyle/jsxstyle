@@ -4,14 +4,12 @@ const invariant = require('invariant');
 const path = require('path');
 const vm = require('vm');
 
-const jsxstyle = require('jsxstyle');
 const getStyleKeysForProps = require('jsxstyle/lib/getStyleKeysForProps');
 
 const canEvaluate = require('./canEvaluate');
 const canEvaluateObject = require('./canEvaluateObject');
 const extractStaticTernaries = require('./extractStaticTernaries');
 const getPropValueFromAttributes = require('./getPropValueFromAttributes');
-const getSourceModuleForItem = require('./getSourceModuleForItem');
 const getStaticBindingsForScope = require('./getStaticBindingsForScope');
 const getStylesByClassName = require('../getStylesByClassName');
 
@@ -97,7 +95,164 @@ function extractStyles({
   // Using a map for (officially supported) guaranteed insertion order
   const cssMap = new Map();
 
+  const ast = parse(src, { sourceFileName });
+
   let jsxstyleSrc;
+  let validComponents;
+
+  for (let idx = -1, len = ast.program.body.length; ++idx < len; ) {
+    const item = ast.program.body[idx];
+    if (t.isVariableDeclaration(item)) {
+      //
+      for (let idx = -1, len = item.declarations.length; ++idx < len; ) {
+        const dec = item.declarations[idx];
+
+        if (
+          // var ...
+          !t.isVariableDeclarator(dec) ||
+          // var {...}
+          !t.isObjectPattern(dec.id) ||
+          // var {x} = require(...)
+          !t.isCallExpression(dec.init) ||
+          !t.isIdentifier(dec.init.callee) ||
+          dec.init.callee.name !== 'require' ||
+          // var {x} = require('one-thing')
+          dec.init.arguments.length !== 1 ||
+          !t.isStringLiteral(dec.init.arguments[0])
+        ) {
+          continue;
+        }
+
+        // ignore spelunkers
+        if (dec.init.arguments[0].value.startsWith('jsxstyle/lib/')) {
+          continue;
+        }
+
+        // var {x} = require('jsxstyle')
+        // or
+        // var {x} = require('jsxstyle/thing')
+        if (
+          dec.init.arguments[0].value !== 'jsxstyle' &&
+          !dec.init.arguments[0].value.startsWith('jsxstyle/')
+        ) {
+          continue;
+        }
+
+        if (jsxstyleSrc) {
+          invariant(
+            jsxstyleSrc === dec.init.arguments[0].value,
+            'Expected duplicate `require` to be from "%s", received "%s"',
+            jsxstyleSrc,
+            dec.init.arguments[0].value
+          );
+        }
+
+        for (let idx = -1, len = dec.id.properties.length; ++idx < len; ) {
+          const prop = dec.id.properties[idx];
+          if (
+            !t.isObjectProperty(prop) ||
+            !t.isIdentifier(prop.key) ||
+            !t.isIdentifier(prop.value)
+          ) {
+            continue;
+          }
+
+          // only add uppercase identifiers to validComponents
+          if (
+            prop.key.name[0] !== prop.key.name[0].toUpperCase() ||
+            prop.value.name[0] !== prop.value.name[0].toUpperCase()
+          ) {
+            continue;
+          }
+
+          // map imported name to source component name
+          validComponents = validComponents || {};
+          validComponents[prop.value.name] = prop.key.name;
+        }
+
+        jsxstyleSrc = dec.init.arguments[0].value;
+      }
+    } else if (t.isImportDeclaration(item)) {
+      // omfg everyone please just use import syntax
+
+      // ignore spelunkers
+      if (item.source.value.startsWith('jsxstyle/lib/')) {
+        continue;
+      }
+
+      // not imported from jsxstyle? byeeee
+      if (
+        !t.isStringLiteral(item.source) ||
+        (item.source.value !== 'jsxstyle' &&
+          !item.source.value.startsWith('jsxstyle/'))
+      ) {
+        continue;
+      }
+
+      if (jsxstyleSrc) {
+        invariant(
+          jsxstyleSrc === item.source.value,
+          'Expected duplicate `import` to be from "%s", received "%s"',
+          jsxstyleSrc,
+          item.source.value
+        );
+      }
+
+      jsxstyleSrc = item.source.value;
+
+      for (let idx = -1, len = item.specifiers.length; ++idx < len; ) {
+        const specifier = item.specifiers[idx];
+        if (
+          !t.isImportSpecifier(specifier) ||
+          !t.isIdentifier(specifier.imported) ||
+          !t.isIdentifier(specifier.local)
+        ) {
+          continue;
+        }
+
+        if (
+          specifier.imported.name[0] !==
+            specifier.imported.name[0].toUpperCase() ||
+          specifier.local.name[0] !== specifier.local.name[0].toUpperCase()
+        ) {
+          continue;
+        }
+
+        validComponents = validComponents || {};
+        validComponents[specifier.local.name] = specifier.imported.name;
+      }
+    } else {
+      continue;
+    }
+  }
+
+  // jsxstyle isn't included anywhere, so let's bail
+  if (!jsxstyleSrc || !validComponents) {
+    return {
+      js: src,
+      css: '',
+      cssFileName: null,
+      ast,
+      map: null,
+    };
+  }
+
+  // Add Box require to the top of the document
+  // var Jsxstyle$Box = require('jsxstyle').Box;
+  const boxComponentName = 'Jsxstyle$Box';
+  ast.program.body.unshift(
+    t.variableDeclaration('var', [
+      t.variableDeclarator(
+        t.identifier(boxComponentName),
+        t.memberExpression(
+          t.callExpression(t.identifier('require'), [
+            t.stringLiteral(jsxstyleSrc),
+          ]),
+          t.identifier('Box')
+        )
+      ),
+    ])
+  );
 
   const traverseOptions = {
     JSXElement(path) {
@@ -107,65 +262,64 @@ function extractStyles({
         // skip non-identifier opening elements (member expressions, etc.)
         !t.isJSXIdentifier(node.name) ||
         // skip elements that are not components
-        node.name.name === node.name.name.toLowerCase()
+        node.name.name[0] !== node.name.name[0].toUpperCase()
       ) {
         return;
       }
 
-      // TODO: build this lazily? no sense in building a whole context object if it's not needed
+      // Remember the source component
+      const originalNodeName = node.name.name;
+      const jsxstyleSrcComponent = validComponents[originalNodeName];
+
+      if (!jsxstyleSrcComponent) {
+        return;
+      }
+
+      node.name.name = boxComponentName;
+
+      const srcComponent = require(jsxstyleSrc)[jsxstyleSrcComponent];
+
+      invariant(
+        srcComponent,
+        `require(${jsxstyleSrc})[${jsxstyleSrcComponent}] does not exist!`
+      );
+
+      const defaultProps =
+        srcComponent.defaultProps &&
+        Object.assign({}, srcComponent.defaultProps);
+
+      if (defaultProps) {
+        const propKeys = Object.keys(defaultProps);
+        // looping backwards because of unshift
+        for (let idx = propKeys.length; --idx >= 0; ) {
+          const prop = propKeys[idx];
+          const value = defaultProps[prop];
+          if (value == null || value === '') {
+            continue;
+          }
+
+          let valueEx;
+          if (typeof value === 'number') {
+            valueEx = t.jSXExpressionContainer(t.numericLiteral(value));
+          } else if (typeof value === 'string') {
+            valueEx = t.stringLiteral(value);
+          } else {
+            continue;
+          }
+
+          node.attributes.unshift(
+            t.jSXAttribute(t.jSXIdentifier(prop), valueEx)
+          );
+        }
+      }
+
+      // Generate scope object at this level
       const staticNamespace = getStaticBindingsForScope(
         path.scope,
         whitelistedModules,
         sourceFileName
       );
       const evalContext = vm.createContext(staticNamespace);
-
-      const src = getSourceModuleForItem(
-        node.name.name,
-        path.scope,
-        errorCallback
-      );
-
-      // item is not in scope
-      if (src === null) return;
-
-      if (
-        // jsxstyle
-        src.sourceModule !== 'jsxstyle' &&
-        // jsxstyle variant
-        !src.sourceModule.startsWith('jsxstyle/')
-      ) {
-        return;
-      }
-
-      if (!src.destructured) {
-        console.error(
-          'jsxstyle-loader only supports destructured import/require syntax'
-        );
-        return;
-      }
-
-      if (!jsxstyleSrc) {
-        jsxstyleSrc = src.sourceModule;
-      } else {
-        // this is a very dumb thing to do
-        invariant(
-          jsxstyleSrc === src.sourceModule,
-          'jsxstyle %ss must all be from the same source. ' +
-            '`%s` from "%s" must be changed to "%s"',
-          src.usesImportSyntax ? 'import' : 'require',
-          src.usesImportSyntax ? 'import' : 'require',
-          src.sourceModule,
-          jsxstyleSrc
-        );
-      }
-      const jsxstyleSrcComponent = src.imported;
-
-      if (!jsxstyle.hasOwnProperty(jsxstyleSrcComponent)) {
-        return;
-      }
-
-      const originalNodeName = node.name.name;
 
       let lastSpreadIndex = null;
       const flattenedAttributes = [];
@@ -468,16 +622,6 @@ function extractStyles({
         return true;
       });
 
-      if (inlinePropCount === 0) {
-        // copy default props over if they're not set to something else
-        const { defaultProps } = jsxstyle[jsxstyleSrcComponent];
-        for (const prop in defaultProps) {
-          if (!staticAttributes.hasOwnProperty(prop)) {
-            staticAttributes[prop] = defaultProps[prop];
-          }
-        }
-      }
-
       let classNamePropValue;
       const classNamePropIndex = node.attributes.findIndex(
         attr => attr.name && attr.name.name === 'className'
@@ -719,8 +863,6 @@ function extractStyles({
       }
     },
   };
-
-  const ast = parse(src, { sourceFileName });
 
   traverse(ast, traverseOptions);
 
