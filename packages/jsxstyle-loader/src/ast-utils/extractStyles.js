@@ -46,7 +46,6 @@ function extractStyles({
   sourceFileName,
   whitelistedModules,
   cacheObject,
-  validateComponent,
   errorCallback,
 }) {
   invariant(typeof src === 'string', '`src` must be a string of javascript');
@@ -95,13 +94,10 @@ function extractStyles({
     errorCallback = noop;
   }
 
-  // default to true
-  if (typeof validateComponent === 'undefined') {
-    validateComponent = true;
-  }
-
   // Using a map for (officially supported) guaranteed insertion order
   const cssMap = new Map();
+
+  let jsxstyleSrc;
 
   const traverseOptions = {
     JSXElement(path) {
@@ -124,26 +120,46 @@ function extractStyles({
       );
       const evalContext = vm.createContext(staticNamespace);
 
-      let jsxstyleSrcComponent;
-      if (validateComponent) {
-        const src = getSourceModuleForItem(
-          node.name.name,
-          path.scope,
-          errorCallback
-        );
-        if (src === null || src.sourceModule !== 'jsxstyle') {
-          return;
-        }
-        if (!src.destructured) {
-          console.error(
-            'jsxstyle-loader only supports destructured import/require syntax'
-          );
-          return;
-        }
-        jsxstyleSrcComponent = src.imported;
-      } else {
-        jsxstyleSrcComponent = node.name.name;
+      const src = getSourceModuleForItem(
+        node.name.name,
+        path.scope,
+        errorCallback
+      );
+
+      // item is not in scope
+      if (src === null) return;
+
+      if (
+        // jsxstyle
+        src.sourceModule !== 'jsxstyle' &&
+        // jsxstyle variant
+        !src.sourceModule.startsWith('jsxstyle/')
+      ) {
+        return;
       }
+
+      if (!src.destructured) {
+        console.error(
+          'jsxstyle-loader only supports destructured import/require syntax'
+        );
+        return;
+      }
+
+      if (!jsxstyleSrc) {
+        jsxstyleSrc = src.sourceModule;
+      } else {
+        // this is a very dumb thing to do
+        invariant(
+          jsxstyleSrc === src.sourceModule,
+          'jsxstyle %ss must all be from the same source. ' +
+            '`%s` from "%s" must be changed to "%s"',
+          src.usesImportSyntax ? 'import' : 'require',
+          src.usesImportSyntax ? 'import' : 'require',
+          src.sourceModule,
+          jsxstyleSrc
+        );
+      }
+      const jsxstyleSrcComponent = src.imported;
 
       if (!jsxstyle.hasOwnProperty(jsxstyleSrcComponent)) {
         return;

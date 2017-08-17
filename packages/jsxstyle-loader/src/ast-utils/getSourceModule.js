@@ -12,6 +12,7 @@ function getSourceModule(itemName, itemBinding) {
   let imported;
   let local;
   let destructured;
+  let usesImportSyntax = false;
 
   if (
     // import x from 'y';
@@ -25,6 +26,7 @@ function getSourceModule(itemName, itemBinding) {
     ) {
       sourceModule = itemBinding.path.parent.source.value;
       local = itemBinding.path.node.local.name;
+      usesImportSyntax = true;
       if (itemBinding.path.node.imported) {
         imported = itemBinding.path.node.imported.name;
         destructured = true;
@@ -74,6 +76,7 @@ function getSourceModule(itemName, itemBinding) {
     imported,
     local,
     destructured,
+    usesImportSyntax,
   };
 }
 
