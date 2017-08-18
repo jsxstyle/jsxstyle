@@ -125,7 +125,6 @@ function getStyleKeysForProps(props, pretty = false) {
       continue;
     }
 
-    // key by pseudoclass and media query
     const key =
       '.' +
       (mediaQuery ? '@' + mqSortKey : '') +
@@ -143,14 +142,17 @@ function getStyleKeysForProps(props, pretty = false) {
     styleKeyObj[key].styles +=
       (pretty ? '  ' : '') +
       hyphenateStyleName(propName) +
-      ':' +
-      (pretty ? ' ' : '') +
+      (pretty ? ': ' : ':') +
       styleValue +
-      ';' +
-      (pretty ? '\n' : '');
+      (pretty ? ';\n' : ';');
+  }
+
+  if (classNameKey === '') {
+    return null;
   }
 
   styleKeyObj.classNameKey = classNameKey;
+
   return styleKeyObj;
 }
 
