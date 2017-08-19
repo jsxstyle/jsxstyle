@@ -83,6 +83,9 @@ function dangerousStyleValue(name, value) {
     value !== 0 &&
     !(isUnitlessNumber.hasOwnProperty(name) && isUnitlessNumber[name])
   ) {
+    if (value > -1 && value < 1) {
+      return Math.round(value * 1e6) / 1e4 + '%';
+    }
     return value + 'px';
   }
 
