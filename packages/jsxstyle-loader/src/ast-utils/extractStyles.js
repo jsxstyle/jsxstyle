@@ -237,6 +237,10 @@ function extractStyles({
     };
   }
 
+  // class or className?
+  const classPropName =
+    jsxstyleSrc === 'jsxstyle/preact' ? 'class' : 'className';
+
   // Add Box require to the top of the document
   // var Jsxstyle$Box = require('jsxstyle').Box;
   const boxComponentName = 'Jsxstyle$Box';
@@ -409,7 +413,7 @@ function extractStyles({
         }
 
         // className prop will be handled below
-        if (name === 'className') {
+        if (name === classPropName) {
           return true;
         }
 
@@ -624,11 +628,11 @@ function extractStyles({
 
       let classNamePropValue;
       const classNamePropIndex = node.attributes.findIndex(
-        attr => attr.name && attr.name.name === 'className'
+        attr => attr.name && attr.name.name === classPropName
       );
       if (classNamePropIndex > -1 && Object.keys(staticAttributes).length > 0) {
         classNamePropValue = getPropValueFromAttributes(
-          'className',
+          classPropName,
           node.attributes
         );
         node.attributes.splice(classNamePropIndex, 1);
@@ -805,14 +809,14 @@ function extractStyles({
         ) {
           node.attributes.push(
             t.jSXAttribute(
-              t.jSXIdentifier('className'),
+              t.jSXIdentifier(classPropName),
               t.stringLiteral(classNamePropValueForReals.value)
             )
           );
         } else {
           node.attributes.push(
             t.jSXAttribute(
-              t.jSXIdentifier('className'),
+              t.jSXIdentifier(classPropName),
               t.jSXExpressionContainer(classNamePropValueForReals)
             )
           );
