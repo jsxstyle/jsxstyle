@@ -1,46 +1,46 @@
 'use strict';
 
 const PropTypes = require('prop-types');
-const React = require('react');
 const invariant = require('invariant');
+
+const { h, Component } = require('preact');
 
 const { getClassName } = require('./styleCache');
 
-function makeStyleComponentClass(displayName, defaultProps, tagName) {
+function makePreactStyleComponentClass(displayName, defaultProps, tagName) {
   tagName = tagName || 'div';
   invariant(
     typeof displayName === 'string' && displayName !== '',
-    'makeStyleComponentClass expects param 1 to be a valid displayName'
+    'makePreactStyleComponentClass expects param 1 to be a valid displayName'
   );
 
-  class Style extends React.Component {
+  class Style extends Component {
     constructor(props) {
       super(props);
       this.component = props.component || tagName;
-      this.className = getClassName(props, props.className);
+      this.className = getClassName(props, props.class);
     }
 
     componentWillReceiveProps(props) {
       this.component = props.component || tagName;
-      this.className = getClassName(props, props.className);
+      this.className = getClassName(props, props.class);
     }
 
-    render() {
-      return (
-        <this.component
-          {...this.props.props}
-          className={this.className}
-          style={this.props.style}
-        >
-          {this.props.children}
-        </this.component>
+    render({ style, props, children }) {
+      return h(
+        this.component,
+        Object.assign({}, props, {
+          class: this.className,
+          style,
+        }),
+        children
       );
     }
   }
 
   Style.propTypes = {
     children: PropTypes.node,
-    className: PropTypes.string,
+    class: PropTypes.string,
     component: PropTypes.oneOfType([
       PropTypes.string,
       PropTypes.object,
@@ -57,4 +57,4 @@ function makeStyleComponentClass(displayName, defaultProps, tagName) {
   return Style;
 }
 
-module.exports = makeStyleComponentClass;
+module.exports = makePreactStyleComponentClass;

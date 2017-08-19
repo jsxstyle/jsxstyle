@@ -1,7 +1,7 @@
 'use strict';
 /* eslint-disable no-var */
 
-var factory = require('./lib/makeReactStyleComponentClass');
+var factory = require('./lib/makePreactStyleComponentClass');
 var jsxstyleDefaults = require('./lib/jsxstyleDefaults');
 
 module.exports = {
