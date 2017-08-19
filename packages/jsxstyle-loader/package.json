@@ -9,8 +9,8 @@
     "lint": "eslint {src,tests}/",
     "jest": "jest --verbose",
     "prettier": "prettier --single-quote --trailing-comma es5 --write '{src,tests}/**/*.js'",
-    "build_lib": "rimraf lib; babel -q ./src --out-dir ./lib",
-    "watch_lib": "rimraf lib; babel --watch ./src --out-dir ./lib",
+    "build": "rimraf lib; babel -q ./src --out-dir ./lib",
+    "watch": "rimraf lib; babel --watch ./src --out-dir ./lib",
     "ls_module": "LOADER_TMPFILE=$(npm --silent pack) && tar -tf $LOADER_TMPFILE && echo && rm -i $LOADER_TMPFILE",
     "prepare": "npm run -s build_lib"
   },
@@ -20,7 +20,7 @@
     "babel-types": "^6.24.1",
     "babylon": "^6.17.0",
     "invariant": "^2.2.1",
-    "jsxstyle": "2.0.0-beta.3",
+    "jsxstyle": "^2.0.0-beta.4",
     "loader-utils": "^1.1.0"
   },
   "devDependencies": {

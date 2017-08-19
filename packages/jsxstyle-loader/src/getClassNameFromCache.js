@@ -25,12 +25,11 @@ function getClassNameFromCache(
   }
 
   const styleObjects = getStyleKeysForProps(styleObject);
-  const styleKey = styleObjects.classNameKey;
-
-  if (styleKey === '' || styleKey == null) {
+  if (!styleObjects) {
     return null;
   }
 
+  const styleKey = styleObjects.classNameKey;
   const counterKey = classNamePrefix + '~counter';
   cacheObject[counterKey] = cacheObject[counterKey] || 0;
   cacheObject.keys = cacheObject.keys || {};
