@@ -4,7 +4,7 @@
   "description": "A webpack loader that extracts out static styles defined on jsxstyle components",
   "author": "Mike Meyer",
   "license": "Apache-2.0",
-  "main": "src/index.js",
+  "main": "src/loader.js",
   "engines": {
     "node": ">=6.0.0"
   },
@@ -13,7 +13,8 @@
     "jest": "jest --verbose",
     "prettier": "prettier --single-quote --trailing-comma es5 --write '{src,tests}/**/*.js'",
     "ls_module": "LOADER_TMPFILE=$(npm --silent pack) && tar -tf $LOADER_TMPFILE && echo && rm -i $LOADER_TMPFILE",
-    "prepare": "npm run lint"
+    "prepare": "npm run lint",
+    "example": "webpack-dev-server --hot --config tests/webpack/webpack.config.js"
   },
   "dependencies": {
     "babel-generator": "^6.26.0",
@@ -22,14 +23,26 @@
     "babylon": "^6.17.0",
     "invariant": "^2.2.1",
     "jsxstyle": "^2.0.0-beta.4",
-    "loader-utils": "^1.1.0"
+    "loader-utils": "^1.1.0",
+    "memory-fs": "^0.4.1"
   },
   "devDependencies": {
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.0",
+    "babel-preset-react": "^6.24.1",
+    "css-loader": "^0.28.5",
     "eslint": "^4.5.0",
     "eslint-plugin-jest": "^20.0.3",
     "eslint-plugin-node": "^5.1.1",
+    "eslint-plugin-react": "^7.3.0",
+    "extract-text-webpack-plugin": "^3.0.0",
     "jest": "^20.0.4",
     "prettier": "^1.5.3",
-    "react": "^15.4.2"
+    "react": "^15.4.2",
+    "react-dom": "^15.6.1",
+    "rimraf": "^2.6.1",
+    "style-loader": "^0.18.2",
+    "webpack": "^3.5.5",
+    "webpack-dev-server": "^2.7.1"
   }
 }

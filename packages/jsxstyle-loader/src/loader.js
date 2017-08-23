@@ -1,15 +1,21 @@
 'use strict';
 
 const extractStyles = require('./ast-utils/extractStyles');
-const writeVirtualModule = require('./writeVirtualModule');
 
 const invariant = require('invariant');
 const loaderUtils = require('loader-utils');
+const path = require('path');
 
 function webpackLoader(content) {
   this.cacheable && this.cacheable();
   let whitelistedModules = [];
   let parserPlugins = [];
+  const memoryFS = this._compiler['__JSXSTYLE_LOADER_FS__'];
+
+  invariant(
+    memoryFS,
+    'jsxstyle-loader cannot be used without the corresponding plugin'
+  );
 
   const query = loaderUtils.getOptions(this) || {};
 
@@ -34,6 +40,7 @@ function webpackLoader(content) {
         '`parserPlugins` option must be an array of babylon plugins. You can see a full list of available plugins here: https://git.io/v5ITC'
       );
       parserPlugins = option.slice(0);
+      return false;
     } else {
       return true;
     }
@@ -58,8 +65,8 @@ function webpackLoader(content) {
     return content;
   }
 
-  // Add CSS file contents as virtual module
-  writeVirtualModule.call(this, rv.cssFileName, rv.css);
+  memoryFS.mkdirpSync(path.dirname(rv.cssFileName));
+  memoryFS.writeFileSync(rv.cssFileName, rv.css);
 
   this.callback(null, rv.js, rv.map, rv.ast);
 }
