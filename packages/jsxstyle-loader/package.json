@@ -1,6 +1,6 @@
 {
   "name": "jsxstyle-loader",
-  "version": "1.0.0-beta.3",
+  "version": "1.0.0-beta.4",
   "description": "A webpack loader that extracts out static styles defined on jsxstyle components",
   "author": "Mike Meyer",
   "license": "Apache-2.0",
@@ -16,16 +16,16 @@
     "prepare": "npm run lint"
   },
   "dependencies": {
-    "babel-generator": "^6.24.1",
-    "babel-traverse": "^6.24.1",
-    "babel-types": "^6.24.1",
+    "babel-generator": "^6.26.0",
+    "babel-traverse": "^6.26.0",
+    "babel-types": "^6.26.0",
     "babylon": "^6.17.0",
     "invariant": "^2.2.1",
     "jsxstyle": "^2.0.0-beta.4",
     "loader-utils": "^1.1.0"
   },
   "devDependencies": {
-    "eslint": "^4.3.0",
+    "eslint": "^4.5.0",
     "eslint-plugin-jest": "^20.0.3",
     "eslint-plugin-node": "^5.1.1",
     "jest": "^20.0.4",
