@@ -4,15 +4,16 @@
   "description": "A webpack loader that extracts out static styles defined on jsxstyle components",
   "author": "Mike Meyer",
   "license": "Apache-2.0",
-  "main": "lib/index.js",
+  "main": "src/index.js",
+  "engines": {
+    "node": ">=6.0.0"
+  },
   "scripts": {
     "lint": "eslint {src,tests}/",
     "jest": "jest --verbose",
     "prettier": "prettier --single-quote --trailing-comma es5 --write '{src,tests}/**/*.js'",
-    "build": "rimraf lib; babel -q ./src --out-dir ./lib",
-    "watch": "rimraf lib; babel --watch ./src --out-dir ./lib",
     "ls_module": "LOADER_TMPFILE=$(npm --silent pack) && tar -tf $LOADER_TMPFILE && echo && rm -i $LOADER_TMPFILE",
-    "prepare": "npm run -s build_lib"
+    "prepare": "npm run lint"
   },
   "dependencies": {
     "babel-generator": "^6.24.1",
@@ -24,14 +25,11 @@
     "loader-utils": "^1.1.0"
   },
   "devDependencies": {
-    "babel-cli": "^6.24.1",
-    "babel-preset-env": "^1.4.0",
     "eslint": "^4.3.0",
     "eslint-plugin-jest": "^20.0.3",
-    "eslint-plugin-react": "^7.1.0",
+    "eslint-plugin-node": "^5.1.1",
     "jest": "^20.0.4",
     "prettier": "^1.5.3",
-    "react": "^15.4.2",
-    "rimraf": "^2.6.1"
+    "react": "^15.4.2"
   }
 }

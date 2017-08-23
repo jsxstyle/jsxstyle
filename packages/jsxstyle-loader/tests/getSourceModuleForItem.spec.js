@@ -1,9 +1,9 @@
 'use strict';
 
-const getSourceModuleForItem = require('../lib/ast-utils/getSourceModuleForItem');
+const getSourceModuleForItem = require('../src/ast-utils/getSourceModuleForItem');
 
 const traverse = require('babel-traverse').default;
-const parse = require('../lib/ast-utils/parse');
+const parse = require('../src/ast-utils/parse');
 
 describe('getSourceModuleForItem', function() {
   const ast = parse(`

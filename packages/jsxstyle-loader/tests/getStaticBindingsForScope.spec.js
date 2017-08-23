@@ -1,9 +1,9 @@
 'use strict';
 
-const getStaticBindingsForScope = require('../lib/ast-utils/getStaticBindingsForScope');
+const getStaticBindingsForScope = require('../src/ast-utils/getStaticBindingsForScope');
 
 const traverse = require('babel-traverse').default;
-const parse = require('../lib/ast-utils/parse');
+const parse = require('../src/ast-utils/parse');
 const path = require('path');
 
 const whitelistedModules = [require.resolve('./mock/LC')];

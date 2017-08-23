@@ -3,7 +3,7 @@
 
 'use strict';
 
-const constants = require('constants');
+const { constants } = require('fs');
 
 /**
  * Create a new stats object.
