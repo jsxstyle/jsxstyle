@@ -2,10 +2,21 @@
 
 const babylon = require('babylon');
 
-function parse(src) {
+function parse(src, plugins) {
   return babylon.parse(src, {
     sourceType: 'module',
-    plugins: ['jsx', 'objectRestSpread'],
+    plugins: Array.from(
+      new Set(
+        [
+          'asyncGenerators',
+          'classProperties',
+          'dynamicImport',
+          'functionBind',
+          'jsx',
+          'objectRestSpread',
+        ].concat(plugins)
+      )
+    ),
   });
 }
 

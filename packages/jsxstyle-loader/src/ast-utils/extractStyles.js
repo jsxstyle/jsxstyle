@@ -45,6 +45,7 @@ function extractStyles({
   whitelistedModules,
   cacheObject,
   errorCallback,
+  parserPlugins,
 }) {
   invariant(typeof src === 'string', '`src` must be a string of javascript');
 
@@ -95,7 +96,7 @@ function extractStyles({
   // Using a map for (officially supported) guaranteed insertion order
   const cssMap = new Map();
 
-  const ast = parse(src, { sourceFileName });
+  const ast = parse(src, parserPlugins);
 
   let jsxstyleSrc;
   let validComponents;

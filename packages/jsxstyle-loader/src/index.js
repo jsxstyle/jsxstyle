@@ -9,6 +9,7 @@ const loaderUtils = require('loader-utils');
 function webpackLoader(content) {
   this.cacheable && this.cacheable();
   let whitelistedModules = [];
+  let parserPlugins = [];
 
   const query = loaderUtils.getOptions(this) || {};
 
@@ -27,6 +28,12 @@ function webpackLoader(content) {
       // TODO: absolute check (?)
       whitelistedModules = option.slice(0);
       return false;
+    } else if (k === 'parserPlugins') {
+      invariant(
+        Array.isArray(option),
+        '`parserPlugins` option must be an array of babylon plugins. You can see a full list of available plugins here: https://git.io/v5ITC'
+      );
+      parserPlugins = option.slice(0);
     } else {
       return true;
     }
@@ -44,6 +51,7 @@ function webpackLoader(content) {
     whitelistedModules,
     styleGroups: query.styleGroups,
     namedStyleGroups: query.namedStyleGroups,
+    parserPlugins,
   });
 
   if (rv.css.length === 0) {

@@ -104,7 +104,22 @@ The `whitelistedModules` config option allows you to add modules to the evaluati
 // ...
 ```
 
+### `parserPlugins`
+
+`jsxstyle-loader` uses `babylon` to parse javascript into an AST. By default, `jsxstyle-loader` is preconfigured with most of `babylon`’s plugins enabled, but if you need to enable additional plugins, you can specify an array of plugins with the `parserPlugins` option.
+
+You can see a list of all available plugins in [the `babylon` README][babylon 6 plugins].
+
+
 ## FAQs probably
+
+### Can I use `jsxstyle-loader` with Flow?
+
+Yes! Add the `flow` plugin to the `parserPlugins` array.
+
+### Can I use `jsxstyle-loader` with Typescript?
+
+Not yet, but soon! Typescript support is blocked by the release of `babylon`/`babel-generator` 7 (currently in beta).
 
 ### It’s not working 😩
 
@@ -159,3 +174,5 @@ One big one for now: CSS class names are not de-duplicated. It’s a feature I�
 
 [jsxstyle]: https://github.com/smyte/jsxstyle#readme
 [discard dupes]: https://github.com/ben-eb/postcss-discard-duplicates
+[babylon 6 plugins]: https://github.com/babel/babylon/tree/6.x#plugins
+[babylon 7 plugins]: https://github.com/babel/babylon#plugins
