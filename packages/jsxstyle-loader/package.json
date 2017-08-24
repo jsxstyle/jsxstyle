@@ -1,6 +1,6 @@
 {
   "name": "jsxstyle-loader",
-  "version": "1.0.0-beta.4",
+  "version": "1.0.0-beta.5",
   "description": "A webpack loader that extracts out static styles defined on jsxstyle components",
   "author": "Mike Meyer",
   "license": "Apache-2.0",
@@ -13,7 +13,6 @@
     "jest": "jest --verbose",
     "prettier": "prettier --single-quote --trailing-comma es5 --write '{src,tests}/**/*.js'",
     "ls_module": "LOADER_TMPFILE=$(npm --silent pack) && tar -tf $LOADER_TMPFILE && echo && rm -i $LOADER_TMPFILE",
-    "prepare": "npm run lint",
     "example": "webpack-dev-server --hot --config tests/webpack/webpack.config.js"
   },
   "dependencies": {
