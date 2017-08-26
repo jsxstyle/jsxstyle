@@ -13,7 +13,9 @@
     "jest": "jest --verbose",
     "prettier": "prettier --single-quote --trailing-comma es5 --write '{src,tests}/**/*.js'",
     "ls_module": "LOADER_TMPFILE=$(npm --silent pack) && tar -tf $LOADER_TMPFILE && echo && rm -i $LOADER_TMPFILE",
-    "example": "webpack-dev-server --hot --config tests/webpack/webpack.config.js"
+    "build": "rimraf tests/webpack/build; webpack --config tests/webpack/webpack.config.js",
+    "build_stats": "npm run build -s -- --json > stats.json",
+    "example": "webpack-dev-server --hot --hotOnly --config tests/webpack/webpack.config.js"
   },
   "dependencies": {
     "babel-generator": "^6.26.0",
@@ -23,7 +25,7 @@
     "invariant": "^2.2.1",
     "jsxstyle": "^2.0.0-beta.4",
     "loader-utils": "^1.1.0",
-    "memory-fs": "^0.4.1"
+    "webpack": "^3.5.5"
   },
   "devDependencies": {
     "babel-loader": "^7.1.2",
@@ -41,7 +43,6 @@
     "react-dom": "^15.6.1",
     "rimraf": "^2.6.1",
     "style-loader": "^0.18.2",
-    "webpack": "^3.5.5",
     "webpack-dev-server": "^2.7.1"
   }
 }

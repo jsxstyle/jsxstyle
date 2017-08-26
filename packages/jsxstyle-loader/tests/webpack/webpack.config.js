@@ -5,33 +5,35 @@ const path = require('path');
 const JsxstyleWebpackPlugin = require('../../src/plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
-function ReactIndexPlugin() {}
-ReactIndexPlugin.prototype.apply = function(compiler) {
-  compiler.plugin('emit', (compilation, callback) => {
-    const statsObj = compilation.getStats().toJson();
-    const bundleFile = path.join(
-      statsObj.publicPath,
-      Array.isArray(statsObj.assetsByChunkName.main)
-        ? statsObj.assetsByChunkName.main[0]
-        : statsObj.assetsByChunkName.main
-    );
+class ReactIndexPlugin {
+  apply(compiler) {
+    compiler.plugin('emit', (compilation, callback) => {
+      const statsObj = compilation.getStats().toJson();
+      // this seems fragile
+      const bundleFile = path.join(
+        statsObj.publicPath,
+        Array.isArray(statsObj.assetsByChunkName.main)
+          ? statsObj.assetsByChunkName.main[0]
+          : statsObj.assetsByChunkName.main
+      );
 
-    const indexFileContents = []
-      .concat(
-        '<!doctype html>',
-        '<div id=".jsxstyle-demo"></div>',
-        `<script src="${bundleFile}"></script>`
-      )
-      .join('\n');
+      const indexFileContents = []
+        .concat(
+          '<!doctype html>',
+          '<div id=".jsxstyle-demo"></div>',
+          `<script src="${bundleFile}"></script>`
+        )
+        .join('\n');
 
-    compilation.assets['index.html'] = {
-      source: () => indexFileContents,
-      size: () => indexFileContents.length,
-    };
+      compilation.assets['index.html'] = {
+        source: () => indexFileContents,
+        size: () => indexFileContents.length,
+      };
 
-    callback();
-  });
-};
+      callback();
+    });
+  }
+}
 
 module.exports = function(env, options) {
   return {

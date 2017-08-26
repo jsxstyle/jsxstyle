@@ -1,6 +1,7 @@
 'use strict';
 
 const extractStyles = require('./ast-utils/extractStyles');
+const jsxstyleKey = require('./getKey')();
 
 const invariant = require('invariant');
 const loaderUtils = require('loader-utils');
@@ -10,7 +11,7 @@ function webpackLoader(content) {
   this.cacheable && this.cacheable();
   let whitelistedModules = [];
   let parserPlugins = [];
-  const memoryFS = this._compiler['__JSXSTYLE_LOADER_FS__'];
+  const { memoryFS, cacheObject } = this[jsxstyleKey];
 
   invariant(
     memoryFS,
@@ -59,6 +60,7 @@ function webpackLoader(content) {
     styleGroups: query.styleGroups,
     namedStyleGroups: query.namedStyleGroups,
     parserPlugins,
+    cacheObject,
   });
 
   if (rv.css.length === 0) {

@@ -3,13 +3,12 @@
 const path = require('path');
 const webpackConfig = require('./webpack/webpack.config');
 const webpack = require('webpack');
-const MemoryFS = require('memory-fs');
 
 // TODO: evaluate webpack bundle
 it('builds without issue', function() {
   const config = webpackConfig(null, {});
   const compiler = webpack(config);
-  const fs = new MemoryFS();
+  const fs = new webpack.MemoryOutputFileSystem();
   compiler.outputFileSystem = fs;
 
   expect.assertions(1);

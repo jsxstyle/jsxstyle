@@ -1,8 +1,10 @@
 'use strict';
 
+const webpack = require('webpack');
 // eslint-disable-next-line node/no-extraneous-require
 const NodeWatchFileSystem = require('webpack/lib/node/NodeWatchFileSystem');
-const MemoryFileSystem = require('memory-fs');
+
+const jsxstyleKey = require('./getKey')();
 
 const handledMethods = {
   // exists: true,
@@ -27,37 +29,48 @@ const handledMethods = {
   writeFileSync: true,
 };
 
-function JsxstyleWebpackPlugin() {
-  this._fsObj = {};
-  this.memoryFS = new MemoryFileSystem(this._fsObj);
-}
+class JsxstyleWebpackPlugin {
+  constructor() {
+    this.fsObj = {};
+    this.memoryFS = new webpack.MemoryOutputFileSystem(this.fsObj);
+    this.cacheObject = {};
+  }
 
-JsxstyleWebpackPlugin.prototype.apply = function(compiler) {
-  compiler['__JSXSTYLE_LOADER_FS__'] = this.memoryFS;
-  const memoryFS = this.memoryFS;
+  apply(compiler) {
+    const memoryFS = this.memoryFS;
 
-  compiler.plugin('environment', () => {
-    compiler.inputFileSystem = new Proxy(compiler.inputFileSystem, {
-      get: (target, key) => {
-        const value = target[key];
-
-        if (handledMethods.hasOwnProperty(key)) {
-          return function(filePath, ...args) {
-            if (filePath.endsWith('.jsxstyle.css')) {
-              return memoryFS[key](filePath, ...args);
-            }
-            return value.call(this, filePath, ...args);
-          };
-        }
-
-        return value;
-      },
+    compiler.plugin('compilation', compilation => {
+      compilation.plugin('normal-module-loader', loaderContext => {
+        loaderContext[jsxstyleKey] = {
+          cacheObject: this.cacheObject,
+          memoryFS,
+        };
+      });
     });
 
-    compiler.watchFileSystem = new NodeWatchFileSystem(
-      compiler.inputFileSystem
-    );
-  });
-};
+    compiler.plugin('environment', () => {
+      compiler.inputFileSystem = new Proxy(compiler.inputFileSystem, {
+        get: (target, key) => {
+          const value = target[key];
+
+          if (handledMethods.hasOwnProperty(key)) {
+            return function(filePath, ...args) {
+              if (filePath.endsWith('.jsxstyle.css')) {
+                return memoryFS[key](filePath, ...args);
+              }
+              return value.call(this, filePath, ...args);
+            };
+          }
+
+          return value;
+        },
+      });
+
+      compiler.watchFileSystem = new NodeWatchFileSystem(
+        compiler.inputFileSystem
+      );
+    });
+  }
+}
 
 module.exports = JsxstyleWebpackPlugin;
