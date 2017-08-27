@@ -1,14 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './App';
+import BlueApp from './BlueApp';
 
 if (typeof document !== 'undefined') {
   const reactRoot = document.getElementById('.jsxstyle-demo');
-  ReactDOM.render(<App />, reactRoot);
+  ReactDOM.render(<BlueApp />, reactRoot);
 
   if (module.hot) {
-    module.hot.accept('./App', () => {
-      ReactDOM.render(<App />, reactRoot);
+    module.hot.accept('./BlueApp', () => {
+      ReactDOM.render(<BlueApp />, reactRoot);
     });
   }
 }

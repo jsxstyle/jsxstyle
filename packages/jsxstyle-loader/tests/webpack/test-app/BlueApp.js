@@ -3,9 +3,9 @@ import { Block } from 'jsxstyle';
 
 const fontFamily = '-apple-system, BlinkMacSystemFont, sans-serif';
 
-export default function App() {
+export default function BlueApp() {
   return (
-    <Block color="red" fontFamily={fontFamily} fontSize={18} lineHeight="22px">
+    <Block color="blue" fontFamily={fontFamily} fontSize={18} lineHeight="22px">
       Wow!
     </Block>
   );

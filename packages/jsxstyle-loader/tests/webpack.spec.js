@@ -15,14 +15,21 @@ it('builds without issue', function() {
   const compilePromise = new Promise((resolve, reject) => {
     compiler.run(err => {
       if (err) reject(err);
-      resolve(
-        fs.readFileSync(path.join(config.output.path, 'bundle.css'), 'utf8')
-      );
+      resolve({
+        red: fs.readFileSync(
+          path.join(config.output.path, 'bundle-red.css'),
+          'utf8'
+        ),
+        blue: fs.readFileSync(
+          path.join(config.output.path, 'bundle-blue.css'),
+          'utf8'
+        ),
+      });
     });
   });
 
-  return expect(compilePromise).resolves
-    .toEqual(`/* ./tests/webpack/test-app/App.js:8 (Block) */
+  return expect(compilePromise).resolves.toEqual({
+    red: `/* ./tests/webpack/test-app/RedApp.js:8 (Block) */
 ._x0 {
   color: red;
   display: block;
@@ -30,5 +37,15 @@ it('builds without issue', function() {
   font-size: 18px;
   line-height: 22px;
 }
-`);
+`,
+    blue: `/* ./tests/webpack/test-app/BlueApp.js:8 (Block) */
+._x1 {
+  color: blue;
+  display: block;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 18px;
+  line-height: 22px;
+}
+`,
+  });
 });
