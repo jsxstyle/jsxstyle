@@ -6,7 +6,7 @@ const webpack = require('webpack');
 
 // TODO: evaluate webpack bundle
 it('builds without issue', function() {
-  const config = webpackConfig(null, {});
+  const config = webpackConfig({multipleEntrypoints: true}, {});
   const compiler = webpack(config);
   const fs = new webpack.MemoryOutputFileSystem();
   compiler.outputFileSystem = fs;

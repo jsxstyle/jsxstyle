@@ -6,12 +6,28 @@ const JsxstyleWebpackPlugin = require('../../src/plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const ReactIndexPlugin = require('./ReactIndexPlugin');
 
+function progressHandler(percentage, msg, ...args) {
+  if (percentage === 0 || percentage === 1) return;
+  process.stderr.write(
+    [('   ' + Math.round(percentage * 100)).slice(-3) + '%', msg]
+      .concat(
+        args
+          .filter(m => m != null)
+          .map(m => m + '')
+          .map(m => (m.length > 40 ? `...${m.substr(m.length - 37)}` : m))
+      )
+      .join(' ') + '\n'
+  );
+}
+
 module.exports = function(env, options) {
   return {
-    entry: {
-      red: require.resolve('./test-app/red-entrypoint'),
-      blue: require.resolve('./test-app/blue-entrypoint'),
-    },
+    entry: env.experimental
+      ? require.resolve('./test-app/red-entrypoint')
+      : {
+          red: require.resolve('./test-app/red-entrypoint'),
+          blue: require.resolve('./test-app/blue-entrypoint'),
+        },
     output: {
       path: path.join(__dirname, 'build'),
       publicPath: '/',
@@ -19,9 +35,12 @@ module.exports = function(env, options) {
     },
     plugins: [
       new webpack.NamedModulesPlugin(),
-      new JsxstyleWebpackPlugin(),
+      new JsxstyleWebpackPlugin(
+        env.experimental && { __experimental__combineCSS: true }
+      ),
       !options.hot && new ExtractTextPlugin('bundle-[name].css'),
       options.hot && new ReactIndexPlugin(),
+      env.experimental && new webpack.ProgressPlugin(progressHandler),
     ].filter(Boolean),
     module: {
       rules: [

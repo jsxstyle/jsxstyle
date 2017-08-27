@@ -17,7 +17,13 @@ function webpackLoader(content) {
     'jsxstyle-loader cannot be used without the corresponding plugin'
   );
 
-  const { memoryFS, cacheObject } = this[jsxstyleKey];
+  const {
+    memoryFS,
+    cacheObject,
+    fileList,
+    combineCSS,
+    needsAdditionalPass,
+  } = this[jsxstyleKey];
 
   const query = loaderUtils.getOptions(this) || {};
 
@@ -62,6 +68,7 @@ function webpackLoader(content) {
     namedStyleGroups: query.namedStyleGroups,
     parserPlugins,
     cacheObject,
+    addCSSRequire: !combineCSS,
   });
 
   if (rv.css.length === 0) {
@@ -70,6 +77,9 @@ function webpackLoader(content) {
 
   memoryFS.mkdirpSync(path.dirname(rv.cssFileName));
   memoryFS.writeFileSync(rv.cssFileName, rv.css);
+  if (combineCSS && !needsAdditionalPass) {
+    fileList.add(rv.cssFileName);
+  }
 
   this.callback(null, rv.js, rv.map, rv.ast);
 }

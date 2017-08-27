@@ -9,9 +9,9 @@ class ReactIndexPlugin {
       // this seems fragile
       const bundleFile = path.join(
         statsObj.publicPath,
-        Array.isArray(statsObj.assetsByChunkName.main)
-          ? statsObj.assetsByChunkName.main[0]
-          : statsObj.assetsByChunkName.main
+        Array.isArray(statsObj.assetsByChunkName.red)
+          ? statsObj.assetsByChunkName.red[0]
+          : statsObj.assetsByChunkName.red
       );
 
       const indexFileContents = []

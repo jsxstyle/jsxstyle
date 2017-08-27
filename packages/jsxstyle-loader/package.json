@@ -15,6 +15,7 @@
     "ls_module": "LOADER_TMPFILE=$(npm --silent pack) && tar -tf $LOADER_TMPFILE && echo && rm -i $LOADER_TMPFILE",
     "build": "rimraf tests/webpack/build; webpack --config tests/webpack/webpack.config.js",
     "build_stats": "npm run build -s -- --json > stats.json",
+    "build_exp": "npm run build -- --env.experimental",
     "example": "webpack-dev-server --hot --hotOnly --config tests/webpack/webpack.config.js"
   },
   "dependencies": {

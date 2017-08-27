@@ -46,6 +46,7 @@ function extractStyles({
   cacheObject,
   errorCallback,
   parserPlugins,
+  addCSSRequire,
 }) {
   invariant(typeof src === 'string', '`src` must be a string of javascript');
 
@@ -91,6 +92,10 @@ function extractStyles({
     );
   } else {
     errorCallback = noop;
+  }
+
+  if (typeof addCSSRequire === 'undefined') {
+    addCSSRequire = true;
   }
 
   // Using a map for (officially supported) guaranteed insertion order
@@ -879,7 +884,8 @@ function extractStyles({
   const baseName = path.basename(sourceFileName, '.js');
   const cssRelativeFileName = `./${baseName}.jsxstyle.css`;
   const cssFileName = path.join(dirName, cssRelativeFileName);
-  if (css !== '') {
+
+  if (addCSSRequire && css !== '') {
     // append require statement to the document
     // TODO: make sure this doesn't break something valuable
     ast.program.body.unshift(
