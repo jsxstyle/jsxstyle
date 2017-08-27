@@ -11,12 +11,13 @@ function webpackLoader(content) {
   this.cacheable && this.cacheable();
   let whitelistedModules = [];
   let parserPlugins = [];
-  const { memoryFS, cacheObject } = this[jsxstyleKey];
 
   invariant(
-    memoryFS,
+    this[jsxstyleKey],
     'jsxstyle-loader cannot be used without the corresponding plugin'
   );
+
+  const { memoryFS, cacheObject } = this[jsxstyleKey];
 
   const query = loaderUtils.getOptions(this) || {};
 
