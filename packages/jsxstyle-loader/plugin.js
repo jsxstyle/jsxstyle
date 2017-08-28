@@ -6,7 +6,7 @@ const webpack = require('webpack');
 // eslint-disable-next-line node/no-extraneous-require
 const NodeWatchFileSystem = require('webpack/lib/node/NodeWatchFileSystem');
 
-const jsxstyleKey = require('./getKey')();
+const jsxstyleKey = require('./utils/getKey')();
 const resultLoader = require.resolve('./result-loader');
 
 const handledMethods = {

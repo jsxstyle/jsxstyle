@@ -2,7 +2,7 @@
 
 const webpack = require('webpack');
 const path = require('path');
-const JsxstyleWebpackPlugin = require('../../src/plugin');
+const JsxstyleWebpackPlugin = require('../../plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const ReactIndexPlugin = require('./ReactIndexPlugin');
 

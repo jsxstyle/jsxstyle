@@ -1,6 +1,12 @@
 'use strict';
 
-const jsxstyleKey = require('./getKey')();
+// Hey! Listen!
+// This webpack loader is not designed to be used in isolation.
+// It will automatically be applied when it is needed.
+
+// If you're looking for the public-facing loader, check out loader.js.
+
+const jsxstyleKey = require('./utils/getKey')();
 const path = require('path');
 const invariant = require('invariant');
 

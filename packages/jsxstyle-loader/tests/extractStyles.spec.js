@@ -2,7 +2,7 @@
 
 const path = require('path');
 
-const extractStyles = require('../src/ast-utils/extractStyles');
+const extractStyles = require('../utils/ast/extractStyles');
 
 const whitelistedModules = [require.resolve('./mock/LC')];
 

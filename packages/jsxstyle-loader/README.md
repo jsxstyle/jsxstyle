@@ -4,10 +4,24 @@
 
 ## Getting Started
 
-Add a new rule object for `jsxstyle-loader` to your webpack config. `jsxstyle-loader` will add a CSS `require` to each component that uses `jsxstyle`, so make sure you have a loader that handles `.css` files as well.
+Just three easy steps™:
+
+1. Add a new rule object for `jsxstyle-loader` to your webpack config.
+
+2. Add a loader that handles `.css` files to your webpack config, because `jsxstyle-loader` adds a `.css` `require` to each component that uses `jsxstyle`.
+
+3. Add `jsxstyle-loader`’s companion plugin to the `plugins` section of your webpack config.
+
+When you’re done, the relevant parts of your webpack config should look like this:
 
 ```js
+const JsxstyleLoaderPlugin = require('jsxstyle-loader/plugin');
+
 module.exports = {
+  // ...
+  plugins: [
+    new JsxstyleLoaderPlugin(),
+  ],
   // ...
   module: {
     rules: [

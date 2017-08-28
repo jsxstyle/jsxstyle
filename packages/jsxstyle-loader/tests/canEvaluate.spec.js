@@ -1,7 +1,7 @@
 'use strict';
 
-const canEvaluate = require('../src/ast-utils/canEvaluate');
-const parse = require('../src/ast-utils/parse');
+const canEvaluate = require('../utils/ast/canEvaluate');
+const parse = require('../utils/ast/parse');
 
 const staticNamespace = {
   LC: {

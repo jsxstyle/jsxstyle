@@ -1,6 +1,6 @@
 'use strict';
 
-const parse = require('../src/ast-utils/parse');
+const parse = require('../utils/ast/parse');
 const generate = require('babel-generator').default;
 
 // parse helper

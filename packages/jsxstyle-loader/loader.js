@@ -1,13 +1,13 @@
 'use strict';
 
-const extractStyles = require('./ast-utils/extractStyles');
-const jsxstyleKey = require('./getKey')();
+const extractStyles = require('./utils/ast/extractStyles');
+const jsxstyleKey = require('./utils/getKey')();
 
 const invariant = require('invariant');
 const loaderUtils = require('loader-utils');
 const path = require('path');
 
-function webpackLoader(content) {
+function jsxstyleLoader(content) {
   this.cacheable && this.cacheable();
   let whitelistedModules = [];
   let parserPlugins = [];
@@ -84,4 +84,4 @@ function webpackLoader(content) {
   this.callback(null, rv.js, rv.map, rv.ast);
 }
 
-module.exports = webpackLoader;
+module.exports = jsxstyleLoader;

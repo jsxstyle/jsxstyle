@@ -1,9 +1,9 @@
 'use strict';
 
-const parse = require('../src/ast-utils/parse');
+const parse = require('../utils/ast/parse');
 const generate = require('babel-generator').default;
 
-const getPropValueFromAttributes = require('../src/ast-utils/getPropValueFromAttributes');
+const getPropValueFromAttributes = require('../utils/ast/getPropValueFromAttributes');
 
 describe('getPropValueFromAttributes', () => {
   it('returns the original prop value if no spread attributes appear before the requested prop', () => {
