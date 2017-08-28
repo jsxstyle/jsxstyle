@@ -69,7 +69,6 @@ class JsxstyleWebpackPlugin {
 
     compiler.plugin('environment', () => {
       if (this.ctx.combineCSS) {
-        // Prepend jsxstyle-result-loader to
         // TODO: figure out the webpack-y way of getting the current entrypoint
         let entry = compiler.options.entry;
         if (Array.isArray(entry)) {
@@ -113,6 +112,9 @@ class JsxstyleWebpackPlugin {
         compiler.inputFileSystem
       );
     });
+
+    // emit only after the second pass
+    compiler.plugin('should-emit', () => this.ctx.needAdditionalPass);
 
     compiler.plugin('compilation', compilation => {
       compilation.plugin('normal-module-loader', loaderContext => {

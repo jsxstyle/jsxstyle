@@ -7,7 +7,6 @@
 // If you're looking for the public-facing loader, check out loader.js.
 
 const jsxstyleKey = require('./utils/getKey')();
-const path = require('path');
 const invariant = require('invariant');
 
 // jsxstyleResultLoader replaces the contents of what it's loading with the CSS
@@ -16,23 +15,15 @@ function jsxstyleResultLoader() {
   this.cacheable && this.cacheable();
   invariant(this[jsxstyleKey], 'this[jsxstyleKey] is not set!');
 
-  const {
-    fileList,
-    needsAdditionalPass,
-    aggregateFile,
-    useCSSImport,
-    memoryFS,
-  } = this[jsxstyleKey];
+  const { fileList, needsAdditionalPass, memoryFS } = this[jsxstyleKey];
 
   if (needsAdditionalPass) return '/* first pass */';
 
-  const relativeTo = path.dirname(aggregateFile);
+  const css = Array.from(fileList).map(filePath =>
+    memoryFS.readFileSync(filePath, 'utf8').trim()
+  );
 
-  const mapFn = useCSSImport
-    ? f => `@import ${JSON.stringify(path.relative(relativeTo, f))};`
-    : f => memoryFS.readFileSync(f, 'utf8') + '\n';
-
-  this.callback(null, Array.from(fileList).map(mapFn).join('\n'));
+  this.callback(null, css.join('\n\n') + '\n');
 }
 
 jsxstyleResultLoader.pitch = function() {
