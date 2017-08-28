@@ -7,17 +7,14 @@ const canUseDOM = !!(
 );
 
 let styleElement;
-let styleIndex = -1;
 
 if (module.hot) {
   if (typeof module.hot.data === 'object') {
     styleElement = module.hot.data.styleElement;
-    styleIndex = module.hot.data.styleIndex;
   }
 
   module.hot.addDisposeHandler(function(data) {
     data.styleElement = styleElement;
-    data.styleIndex = styleIndex;
   });
 }
 
@@ -30,7 +27,19 @@ if (canUseDOM && !styleElement) {
 
 function addStyleToHead(rule) {
   if (canUseDOM) {
-    styleElement.sheet.insertRule(rule, ++styleIndex);
+    try {
+      styleElement.sheet.insertRule(rule, styleElement.sheet.cssRules.length);
+    } catch (insertError) {
+      // insertRule will fail for rules with pseudoelements the browser doesn't support.
+      // see: https://github.com/smyte/jsxstyle/issues/75
+      if (process.env.NODE_ENV !== 'production') {
+        // eslint-disable-next-line no-console
+        console.error(
+          '[jsxstyle] Could not add style to head: %O',
+          insertError
+        );
+      }
+    }
   }
 }
 
