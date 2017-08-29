@@ -43,6 +43,7 @@ const { Col: TestCol, Row } = require('jsxstyle');
       src: `import {Block} from 'jsxstyle';
 <Block className="orange" color={thing1 ? 'orange' : 'purple'} width={thing2 ? 200 : 400} />`,
       sourceFileName: path.resolve(__dirname, 'mock/classname-spaces.js'),
+      cacheObject: {},
     });
 
     expect(rv.js).toEqual(
@@ -852,5 +853,73 @@ import { Block } from 'jsxstyle';
 }
 `
     );
+  });
+});
+
+describe('experimental: relative URL rewriting', function() {
+  const resultCSS = `/* ./tests/mock/relative-urls.js:2 (Block) */
+._x0 {
+  b: url("./mock/path/to/file.png");
+  display: block;
+}
+`;
+
+  it('ignores invalid URLs', () => {
+    const rv = extractStyles({
+      src: `import {Block} from 'jsxstyle';
+<Block a="url(https://google.com)" b="url(/absolute/url)" c="url(data:uri)" />`,
+      sourceFileName: path.resolve(__dirname, 'mock/relative-urls.js'),
+      rootFileName: path.resolve(__dirname, 'thing.js'),
+      addCSSRequire: false,
+      cacheObject: {},
+    });
+
+    expect(rv.css).toEqual(`/* ./tests/mock/relative-urls.js:2 (Block) */
+._x0 {
+  a: url(https://google.com);
+  b: url(/absolute/url);
+  c: url(data:uri);
+  display: block;
+}
+`);
+  });
+
+  it('rewrites relative URLs without dots', () => {
+    const rv = extractStyles({
+      src: `import {Block} from 'jsxstyle';
+<Block b="url(path/to/file.png)" />`,
+      sourceFileName: path.resolve(__dirname, 'mock/relative-urls.js'),
+      rootFileName: path.resolve(__dirname, 'thing.js'),
+      addCSSRequire: false,
+      cacheObject: {},
+    });
+
+    expect(rv.css).toEqual(resultCSS);
+  });
+
+  it('rewrites relative URLs with dots', () => {
+    const rv = extractStyles({
+      src: `import {Block} from 'jsxstyle';
+<Block b="url(./path/to/file.png)" />`,
+      sourceFileName: path.resolve(__dirname, 'mock/relative-urls.js'),
+      rootFileName: path.resolve(__dirname, 'thing.js'),
+      addCSSRequire: false,
+      cacheObject: {},
+    });
+
+    expect(rv.css).toEqual(resultCSS);
+  });
+
+  it('rewrites relative URLs with quotes', () => {
+    const rv = extractStyles({
+      src: `import {Block} from 'jsxstyle';
+<Block b="url('./path/to/file.png')" />`,
+      sourceFileName: path.resolve(__dirname, 'mock/relative-urls.js'),
+      rootFileName: path.resolve(__dirname, 'thing.js'),
+      addCSSRequire: false,
+      cacheObject: {},
+    });
+
+    expect(rv.css).toEqual(resultCSS);
   });
 });

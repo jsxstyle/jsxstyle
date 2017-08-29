@@ -26,6 +26,8 @@
     "invariant": "^2.2.1",
     "jsxstyle": "^2.0.0-beta.4",
     "loader-utils": "^1.1.0",
+    "postcss": "^6.0.10",
+    "postcss-value-parser": "^3.3.0",
     "webpack": "^3.5.5"
   },
   "devDependencies": {

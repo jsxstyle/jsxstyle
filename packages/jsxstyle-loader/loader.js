@@ -23,6 +23,7 @@ function jsxstyleLoader(content) {
     fileList,
     combineCSS,
     needsAdditionalPass,
+    aggregateFile: rootFileName,
   } = this[jsxstyleKey];
 
   const query = loaderUtils.getOptions(this) || {};
@@ -63,6 +64,7 @@ function jsxstyleLoader(content) {
   const rv = extractStyles({
     src: content,
     sourceFileName: this.resourcePath,
+    rootFileName,
     whitelistedModules,
     styleGroups: query.styleGroups,
     namedStyleGroups: query.namedStyleGroups,

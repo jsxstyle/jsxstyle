@@ -12,6 +12,7 @@ const extractStaticTernaries = require('./extractStaticTernaries');
 const getPropValueFromAttributes = require('./getPropValueFromAttributes');
 const getStaticBindingsForScope = require('./getStaticBindingsForScope');
 const getStylesByClassName = require('../getStylesByClassName');
+const cssRelativeURL = require('../cssRelativeURL');
 
 const parse = require('./parse');
 const traverse = require('babel-traverse').default;
@@ -36,12 +37,12 @@ const ALL_SPECIAL_PROPS = Object.assign(
 
 function noop() {}
 
-const defaultCacheObject = {};
 function extractStyles({
   src,
   styleGroups,
   namedStyleGroups,
   sourceFileName,
+  rootFileName,
   whitelistedModules,
   cacheObject,
   errorCallback,
@@ -55,14 +56,10 @@ function extractStyles({
     '`sourceFileName` must be an absolute path to a .js file'
   );
 
-  if (typeof cacheObject !== 'undefined') {
-    invariant(
-      typeof cacheObject === 'object' && cacheObject !== null,
-      '`cacheObject` must be an object'
-    );
-  } else {
-    cacheObject = defaultCacheObject;
-  }
+  invariant(
+    typeof cacheObject === 'object' && cacheObject !== null,
+    '`cacheObject` must be an object'
+  );
 
   if (typeof styleGroups !== 'undefined') {
     invariant(
@@ -97,6 +94,9 @@ function extractStyles({
   if (typeof addCSSRequire === 'undefined') {
     addCSSRequire = true;
   }
+
+  const sourceDir = path.dirname(sourceFileName);
+  const rootDir = rootFileName ? path.dirname(rootFileName) : sourceDir;
 
   // Using a map for (officially supported) guaranteed insertion order
   const cssMap = new Map();
@@ -702,6 +702,15 @@ function extractStyles({
         path.node.closingElement.name.name = node.name.name;
       }
 
+      if (!addCSSRequire) {
+        for (const key in staticAttributes) {
+          const value = staticAttributes[key];
+          if (typeof value !== 'string' || value.indexOf('url(') === -1)
+            continue;
+          staticAttributes[key] = cssRelativeURL(value, sourceDir, rootDir);
+        }
+      }
+
       const stylesByClassName = getStylesByClassName(
         styleGroups,
         namedStyleGroups,
@@ -880,10 +889,9 @@ function extractStyles({
     .map(n => n.commentTexts.map(t => `${t}\n`).join('') + n.css)
     .join('');
   // path.parse doesn't exist in the webpack'd bundle but path.dirname and path.basename do.
-  const dirName = path.dirname(sourceFileName);
   const baseName = path.basename(sourceFileName, '.js');
   const cssRelativeFileName = `./${baseName}.jsxstyle.css`;
-  const cssFileName = path.join(dirName, cssRelativeFileName);
+  const cssFileName = path.join(sourceDir, cssRelativeFileName);
 
   if (addCSSRequire && css !== '') {
     // append require statement to the document
