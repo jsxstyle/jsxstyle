@@ -925,8 +925,13 @@ describe('experimental: relative URL rewriting', function() {
 });
 
 describe('experimental: jsxstyle/lite', function() {
-  it('leaves no trace', () => {
-    const emitWarning = jest.fn();
+  const msg =
+    'jsxstyle-loader encountered a dynamic prop (`%s`) on a jsxstyle ' +
+    'component that was imported from `%s`. If you would like to pass ' +
+    'dynamic styles to this component, specify them in the `style` prop.';
+
+  it('leaves no trace (React)', () => {
+    const errorCallback = jest.fn();
 
     const rv = extractStyles({
       src: `import {Block} from 'jsxstyle/lite';
@@ -934,7 +939,7 @@ import thing from 'jsxstyle/lib/thing';
 <Block static="value" dynamic={value} />`,
       sourceFileName: path.resolve(__dirname, 'mock/jsxstyle-lite.js'),
       cacheObject: {},
-      emitWarning,
+      errorCallback,
     });
 
     expect(rv.js).toEqual(`require('./jsxstyle-lite.jsxstyle.css');
@@ -948,14 +953,127 @@ import thing from 'jsxstyle/lib/thing';
   static: value;
 }
 `);
-    expect(emitWarning).toHaveBeenCalledTimes(1);
-    expect(emitWarning).toHaveBeenCalledWith(
-      new Error(
-        'jsxstyle-loader encountered a dynamic prop (`dynamic={value}`) on ' +
-          'a jsxstyle component that was imported from `jsxstyle/lite`. ' +
-          'If you would like to pass dynamic styles to this component, ' +
-          'specify them in the `style` prop.'
-      )
+    expect(errorCallback).toHaveBeenCalledTimes(1);
+    expect(errorCallback).toHaveBeenCalledWith(
+      msg,
+      'dynamic={value}',
+      'jsxstyle/lite'
+    );
+  });
+
+  it('leaves no trace (Preact)', () => {
+    const errorCallback = jest.fn();
+
+    const rv = extractStyles({
+      src: `import {Block} from 'jsxstyle/lite/preact';
+import thing from 'jsxstyle/lib/thing';
+<Block static="value" dynamic={value} />`,
+      sourceFileName: path.resolve(__dirname, 'mock/jsxstyle-lite-preact.js'),
+      cacheObject: {},
+      errorCallback,
+    });
+
+    expect(rv.js).toEqual(`require('./jsxstyle-lite-preact.jsxstyle.css');
+
+import thing from 'jsxstyle/lib/thing';
+<div class="_x0" />;`);
+
+    expect(rv.css).toEqual(`/* ./tests/mock/jsxstyle-lite-preact.js:3 (Block) */
+._x0 {
+  display: block;
+  static: value;
+}
+`);
+    expect(errorCallback).toHaveBeenCalledTimes(1);
+    expect(errorCallback).toHaveBeenCalledWith(
+      msg,
+      'dynamic={value}',
+      'jsxstyle/lite/preact'
+    );
+  });
+
+  it('is extremely lite (React)', () => {
+    const errorCallback = jest.fn();
+
+    const rv = extractStyles({
+      src: `import thing from 'jsxstyle/lib/thing';
+<block static="value" dynamic={value} />;
+<inline-block color="blue" />;`,
+      sourceFileName: path.resolve(
+        __dirname,
+        'mock/jsxstyle-extremely-lite.js'
+      ),
+      cacheObject: {},
+      errorCallback,
+      extremelyLiteMode: 'react',
+    });
+
+    expect(rv.js).toEqual(`require('./jsxstyle-extremely-lite.jsxstyle.css');
+
+import thing from 'jsxstyle/lib/thing';
+<div className="_x0" />;
+<div className="_x1" />;`);
+
+    expect(rv.css)
+      .toEqual(`/* ./tests/mock/jsxstyle-extremely-lite.js:2 (block) */
+._x0 {
+  display: block;
+  static: value;
+}
+/* ./tests/mock/jsxstyle-extremely-lite.js:3 (inline-block) */
+._x1 {
+  color: blue;
+  display: inline-block;
+}
+`);
+    expect(errorCallback).toHaveBeenCalledTimes(1);
+    expect(errorCallback).toHaveBeenCalledWith(
+      msg,
+      'dynamic={value}',
+      'jsxstyle/lite'
+    );
+  });
+
+  it('is extremely lite (Preact)', () => {
+    const errorCallback = jest.fn();
+
+    const rv = extractStyles({
+      src: `import thing from 'jsxstyle/lib/thing';
+<block static="value" dynamic={value} />;
+<inline-block color="blue" />;`,
+      sourceFileName: path.resolve(
+        __dirname,
+        'mock/jsxstyle-extremely-lite-preact.js'
+      ),
+      cacheObject: {},
+      errorCallback,
+      extremelyLiteMode: 'preact',
+    });
+
+    expect(rv.js)
+      .toEqual(`require('./jsxstyle-extremely-lite-preact.jsxstyle.css');
+
+import thing from 'jsxstyle/lib/thing';
+<div class="_x0" />;
+<div class="_x1" />;`);
+
+    expect(rv.css)
+      .toEqual(`/* ./tests/mock/jsxstyle-extremely-lite-preact.js:2 (block) */
+._x0 {
+  display: block;
+  static: value;
+}
+/* ./tests/mock/jsxstyle-extremely-lite-preact.js:3 (inline-block) */
+._x1 {
+  color: blue;
+  display: inline-block;
+}
+`);
+    expect(errorCallback).toHaveBeenCalledTimes(1);
+    expect(errorCallback).toHaveBeenCalledWith(
+      msg,
+      'dynamic={value}',
+      'jsxstyle/lite/preact'
     );
   });
 });

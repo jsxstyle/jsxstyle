@@ -6,6 +6,7 @@ const jsxstyleKey = require('./utils/getKey')();
 const invariant = require('invariant');
 const loaderUtils = require('loader-utils');
 const path = require('path');
+const util = require('util');
 
 function jsxstyleLoader(content) {
   this.cacheable && this.cacheable();
@@ -24,6 +25,7 @@ function jsxstyleLoader(content) {
     combineCSS,
     needsAdditionalPass,
     aggregateFile: rootFileName,
+    extremelyLiteMode,
   } = this[jsxstyleKey];
 
   const query = loaderUtils.getOptions(this) || {};
@@ -71,7 +73,9 @@ function jsxstyleLoader(content) {
     parserPlugins,
     cacheObject,
     addCSSRequire: !combineCSS,
-    emitWarning: this.emitWarning,
+    extremelyLiteMode,
+    errorCallback: (...args) =>
+      this.emitWarning(new Error(util.format(...args))),
   });
 
   if (rv.css.length === 0) {

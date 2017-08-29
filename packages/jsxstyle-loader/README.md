@@ -191,7 +191,22 @@ One big one for now: CSS class names are not de-duplicated. It’s a feature I�
 
 ### jsxstyle lite
 
-This is a smokey the bear “leave no trace” type of deal right here. In your components, require from `jsxstyle/lite` instead of `jsxstyle` or `jsxstyle/preact`. `jsxstyle-loader` will still extract every style it can, but dynamic styles will be ignored (with a warning) and all traces of runtime `jsxstyle` will be removed. WhoOOOoAoOA thAT’s CRAzyy.
+This is a smokey the bear “leave no trace” type of deal right here. In your components, require from `jsxstyle/lite` instead of `jsxstyle` or `jsxstyle/lite/preact` instead of `jsxstyle/preact`. `jsxstyle-loader` will still extract every style it can, but dynamic styles will be ignored (with a warning) and all traces of runtime `jsxstyle` will be removed. WhoOOOoAoOA thAT’s CRAzyy.
+
+### jsxstyle even lite-r
+
+Close your eyes for a second and imagine with me… imagine if you didn’t even have to require `jsxstyle` to use it. Just think… all those dozens of characters you don’t have to type anymore.
+
+Ok, now open your eyes and then lay them upon this piece of JSX:
+
+```jsx
+// look ma, no jsxstyle import
+<block color="red">This text will be red</block>
+```
+
+Instead of importing components from `jsxstyle` or `jsxstyle/preact`, don’t import _anything_ and just use the dash-case version of the component name as if it’s a valid DOM element. When `jsxstyle-loader` encounters one of these dash-case elements, it’ll treat it like the PascalCased equivalent component imported from `jsxstyle/lite`.
+
+To enable this feature, pass an options object to `JsxstyleLoaderPlugin` with the `__experimental__extremelyLiteMode` key set to either `"react"` or `"preact"`.
 
 ### Stylesheet aggregation
 

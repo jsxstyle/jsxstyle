@@ -39,6 +39,9 @@ class JsxstyleWebpackPlugin {
         // instead of `require`ing css in every module that uses jsxstyle,
         // combine all the requires into one CSS file and prepend it to `entry`.
         __experimental__combineCSS: false,
+        // if the loader encounters a dash-cased element matching a default,
+        // treat it like a lite component instead of an element.
+        __experimental__extremelyLiteMode: false,
       },
       options
     );
@@ -57,6 +60,7 @@ class JsxstyleWebpackPlugin {
       compileCallback: null,
       aggregateFile: null,
       combineCSS: !!options.__experimental__combineCSS,
+      extremelyLiteMode: options.__experimental__extremelyLiteMode,
     };
   }
 

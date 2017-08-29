@@ -8,7 +8,7 @@ function getSourceModuleForItem(itemName, scope, errorCallback) {
   if (scope.hasBinding(itemName)) {
     itemBinding = scope.getBinding(itemName);
   } else {
-    errorCallback('Item `' + itemName + '` is not in scope', itemName);
+    errorCallback('Item `%s` is not in scope', itemName);
     return null;
   }
 
