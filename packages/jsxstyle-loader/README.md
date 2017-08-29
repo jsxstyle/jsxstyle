@@ -185,8 +185,23 @@ It sure does, but using it in development will only cause confusion, since what 
 
 One big one for now: CSS class names are not de-duplicated. It’s a feature I’d like to add before 1.0, but for now, I recommend using `postcss-loader` with the [`postcss-discard-duplicates`][discard dupes] plugin.
 
+---
+
+## :warning: Experimental :warning:
+
+### jsxstyle lite
+
+This is a smokey the bear “leave no trace” type of deal right here. In your components, require from `jsxstyle/lite` instead of `jsxstyle` or `jsxstyle/preact`. `jsxstyle-loader` will still extract every style it can, but the dynamic styles will be be ignored (with a warning) and all traces of frontend `jsxstyle` will be removed. WhoOOOoAoOA thAT’s CRAzyy.
+
+### Stylesheet aggregation
+
+By default, `jsxstyle-loader` adds one stylesheet per component that uses `jsxstyle`. It’s nice for debugging and it tends to work well for smaller projects (i.e. dozens of components that use `jsxstyle`). However, if you’re using `css-loader` on those extracted stylesheets, `css-loader` will add hundreds of `<style>` elements to the document head. Maybe that’s not your [style][pun-ishment]. Pass an object to `JsxstyleLoaderPlugin` with the `__experimental__combineCSS` set to `true` and `jsxstyle-loader` smash all those MF stylesheets into one megastylesheet.
+
+Shhhh don’t tell anyone but it’ll also rewrite relative `url()` paths to point to the right thing. “But why would I want to use relative paths?”, you say. Well, combine an extracted stylesheet with `css-loader` and you’ve got the full power of webpack in any CSS prop that uses a URL. `backgroundImage="url(!!cool-base64-loader!./path/to/an.svg)"`‼️
 
 [jsxstyle]: https://github.com/smyte/jsxstyle#readme
 [discard dupes]: https://github.com/ben-eb/postcss-discard-duplicates
 [babylon 6 plugins]: https://github.com/babel/babylon/tree/6.x#plugins
 [babylon 7 plugins]: https://github.com/babel/babylon#plugins
+[pun-ishment]: https://www.youtube.com/watch?v=2Tt04ZSlbZ0
+[css-loader]: https://github.com/webpack-contrib/css-loader#usage

@@ -71,6 +71,7 @@ function jsxstyleLoader(content) {
     parserPlugins,
     cacheObject,
     addCSSRequire: !combineCSS,
+    emitWarning: this.emitWarning,
   });
 
   if (rv.css.length === 0) {

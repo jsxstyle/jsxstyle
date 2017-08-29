@@ -923,3 +923,39 @@ describe('experimental: relative URL rewriting', function() {
     expect(rv.css).toEqual(resultCSS);
   });
 });
+
+describe('experimental: jsxstyle/lite', function() {
+  it('leaves no trace', () => {
+    const emitWarning = jest.fn();
+
+    const rv = extractStyles({
+      src: `import {Block} from 'jsxstyle/lite';
+import thing from 'jsxstyle/lib/thing';
+<Block static="value" dynamic={value} />`,
+      sourceFileName: path.resolve(__dirname, 'mock/jsxstyle-lite.js'),
+      cacheObject: {},
+      emitWarning,
+    });
+
+    expect(rv.js).toEqual(`require('./jsxstyle-lite.jsxstyle.css');
+
+import thing from 'jsxstyle/lib/thing';
+<div className="_x0" />;`);
+
+    expect(rv.css).toEqual(`/* ./tests/mock/jsxstyle-lite.js:3 (Block) */
+._x0 {
+  display: block;
+  static: value;
+}
+`);
+    expect(emitWarning).toHaveBeenCalledTimes(1);
+    expect(emitWarning).toHaveBeenCalledWith(
+      new Error(
+        'jsxstyle-loader encountered a dynamic prop (`dynamic={value}`) on ' +
+          'a jsxstyle component that was imported from `jsxstyle/lite`. ' +
+          'If you would like to pass dynamic styles to this component, ' +
+          'specify them in the `style` prop.'
+      )
+    );
+  });
+});

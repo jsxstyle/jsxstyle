@@ -48,6 +48,7 @@ function extractStyles({
   errorCallback,
   parserPlugins,
   addCSSRequire,
+  emitWarning,
 }) {
   invariant(typeof src === 'string', '`src` must be a string of javascript');
 
@@ -106,10 +107,8 @@ function extractStyles({
   let jsxstyleSrc;
   let validComponents;
 
-  for (let idx = -1, len = ast.program.body.length; ++idx < len; ) {
-    const item = ast.program.body[idx];
+  ast.program.body = ast.program.body.filter(item => {
     if (t.isVariableDeclaration(item)) {
-      //
       for (let idx = -1, len = item.declarations.length; ++idx < len; ) {
         const dec = item.declarations[idx];
 
@@ -177,13 +176,17 @@ function extractStyles({
         }
 
         jsxstyleSrc = dec.init.arguments[0].value;
+
+        if (jsxstyleSrc === 'jsxstyle/lite') {
+          return false;
+        }
       }
     } else if (t.isImportDeclaration(item)) {
       // omfg everyone please just use import syntax
 
       // ignore spelunkers
       if (item.source.value.startsWith('jsxstyle/lib/')) {
-        continue;
+        return true;
       }
 
       // not imported from jsxstyle? byeeee
@@ -192,7 +195,7 @@ function extractStyles({
         (item.source.value !== 'jsxstyle' &&
           !item.source.value.startsWith('jsxstyle/'))
       ) {
-        continue;
+        return true;
       }
 
       if (jsxstyleSrc) {
@@ -227,10 +230,13 @@ function extractStyles({
         validComponents = validComponents || {};
         validComponents[specifier.local.name] = specifier.imported.name;
       }
-    } else {
-      continue;
+
+      if (jsxstyleSrc === 'jsxstyle/lite') {
+        return false;
+      }
     }
-  }
+    return true;
+  });
 
   // jsxstyle isn't included anywhere, so let's bail
   if (!jsxstyleSrc || !validComponents) {
@@ -247,22 +253,26 @@ function extractStyles({
   const classPropName =
     jsxstyleSrc === 'jsxstyle/preact' ? 'class' : 'className';
 
-  // Add Box require to the top of the document
-  // var Jsxstyle$Box = require('jsxstyle').Box;
+  const removeAllTrace = jsxstyleSrc === 'jsxstyle/lite';
+
   const boxComponentName = 'Jsxstyle$Box';
-  ast.program.body.unshift(
-    t.variableDeclaration('var', [
-      t.variableDeclarator(
-        t.identifier(boxComponentName),
-        t.memberExpression(
-          t.callExpression(t.identifier('require'), [
-            t.stringLiteral(jsxstyleSrc),
-          ]),
-          t.identifier('Box')
-        )
-      ),
-    ])
-  );
+  if (!removeAllTrace) {
+    // Add Box require to the top of the document
+    // var Jsxstyle$Box = require('jsxstyle').Box;
+    ast.program.body.unshift(
+      t.variableDeclaration('var', [
+        t.variableDeclarator(
+          t.identifier(boxComponentName),
+          t.memberExpression(
+            t.callExpression(t.identifier('require'), [
+              t.stringLiteral(jsxstyleSrc),
+            ]),
+            t.identifier('Box')
+          )
+        ),
+      ])
+    );
+  }
 
   const traverseOptions = {
     JSXElement(path) {
@@ -279,48 +289,34 @@ function extractStyles({
 
       // Remember the source component
       const originalNodeName = node.name.name;
-      const jsxstyleSrcComponent = validComponents[originalNodeName];
+      const src = validComponents[originalNodeName];
 
-      if (!jsxstyleSrcComponent) {
-        return;
-      }
+      if (!src) return;
 
-      node.name.name = boxComponentName;
+      if (!removeAllTrace) node.name.name = boxComponentName;
 
-      const srcComponent = require(jsxstyleSrc)[jsxstyleSrcComponent];
+      const defaultProps = require('jsxstyle/lib/jsxstyleDefaults')[src];
+      invariant(defaultProps, `jsxstyle component <${src} /> does not exist!`);
 
-      invariant(
-        srcComponent,
-        `require(${jsxstyleSrc})[${jsxstyleSrcComponent}] does not exist!`
-      );
-
-      const defaultProps =
-        srcComponent.defaultProps &&
-        Object.assign({}, srcComponent.defaultProps);
-
-      if (defaultProps) {
-        const propKeys = Object.keys(defaultProps);
-        // looping backwards because of unshift
-        for (let idx = propKeys.length; --idx >= 0; ) {
-          const prop = propKeys[idx];
-          const value = defaultProps[prop];
-          if (value == null || value === '') {
-            continue;
-          }
-
-          let valueEx;
-          if (typeof value === 'number') {
-            valueEx = t.jSXExpressionContainer(t.numericLiteral(value));
-          } else if (typeof value === 'string') {
-            valueEx = t.stringLiteral(value);
-          } else {
-            continue;
-          }
-
-          node.attributes.unshift(
-            t.jSXAttribute(t.jSXIdentifier(prop), valueEx)
-          );
+      const propKeys = Object.keys(defaultProps);
+      // looping backwards because of unshift
+      for (let idx = propKeys.length; --idx >= 0; ) {
+        const prop = propKeys[idx];
+        const value = defaultProps[prop];
+        if (value == null || value === '') {
+          continue;
         }
+
+        let valueEx;
+        if (typeof value === 'number') {
+          valueEx = t.jSXExpressionContainer(t.numericLiteral(value));
+        } else if (typeof value === 'string') {
+          valueEx = t.stringLiteral(value);
+        } else {
+          continue;
+        }
+
+        node.attributes.unshift(t.jSXAttribute(t.jSXIdentifier(prop), valueEx));
       }
 
       // Generate scope object at this level
@@ -625,6 +621,19 @@ function extractStyles({
             staticAttributes[name] = null;
             return false;
           }
+        }
+
+        if (removeAllTrace) {
+          emitWarning(
+            new Error(
+              'jsxstyle-loader encountered a dynamic prop (`' +
+                generate(attribute).code +
+                '`) on a jsxstyle component ' +
+                'that was imported from `jsxstyle/lite`. If you would like to pass ' +
+                'dynamic styles to this component, specify them in the `style` prop.'
+            )
+          );
+          return false;
         }
 
         // if we've made it this far, the prop stays inline
