@@ -191,13 +191,19 @@ One big one for now: CSS class names are not de-duplicated. It’s a feature I�
 
 ### jsxstyle lite
 
-This is a smokey the bear “leave no trace” type of deal right here. In your components, require from `jsxstyle/lite` instead of `jsxstyle` or `jsxstyle/preact`. `jsxstyle-loader` will still extract every style it can, but the dynamic styles will be be ignored (with a warning) and all traces of frontend `jsxstyle` will be removed. WhoOOOoAoOA thAT’s CRAzyy.
+This is a smokey the bear “leave no trace” type of deal right here. In your components, require from `jsxstyle/lite` instead of `jsxstyle` or `jsxstyle/preact`. `jsxstyle-loader` will still extract every style it can, but dynamic styles will be ignored (with a warning) and all traces of runtime `jsxstyle` will be removed. WhoOOOoAoOA thAT’s CRAzyy.
 
 ### Stylesheet aggregation
 
-By default, `jsxstyle-loader` adds one stylesheet per component that uses `jsxstyle`. It’s nice for debugging and it tends to work well for smaller projects (i.e. dozens of components that use `jsxstyle`). However, if you’re using `css-loader` on those extracted stylesheets, `css-loader` will add hundreds of `<style>` elements to the document head. Maybe that’s not your [style][pun-ishment]. Pass an object to `JsxstyleLoaderPlugin` with the `__experimental__combineCSS` set to `true` and `jsxstyle-loader` smash all those MF stylesheets into one megastylesheet.
+By default, `jsxstyle-loader` adds one stylesheet for each component that uses `jsxstyle`. It’s nice for debugging and tends to work well for small to medium projects (i.e. < 100 components that use `jsxstyle`). However, if you’ve got hundreds of components that use `jsxstyle` and you use `css-loader` on all those extracted stylesheets, you’ll end up with hundreds of elements added to your document head on page load. Maybe that’s not your [style][pun-ishment]. Pass an object to `JsxstyleLoaderPlugin` with the `__experimental__combineCSS` set to `true` and `jsxstyle-loader` smash all those MF stylesheets into one megastylesheet.
 
-Shhhh don’t tell anyone but it’ll also rewrite relative `url()` paths to point to the right thing. “But why would I want to use relative paths?”, you say. Well, combine an extracted stylesheet with `css-loader` and you’ve got the full power of webpack in any CSS prop that uses a URL. `backgroundImage="url(!!cool-base64-loader!./path/to/an.svg)"`‼️
+Shhhh don’t tell anyone but it’ll also rewrite relative `url()` paths to point to the right thing. “But why would I want to use relative paths?”, you say. Well, combine an extracted stylesheet with `css-loader` and you’ve got the full power of webpack `require()` in any CSS prop that uses a URL:
+
+```jsx
+<Block backgroundImage="url(!!cool-base64-loader!./path/to/an.svg)" />
+```
+
+Ideally this would only be a feature in `jsxstyle/lite` since the runtime version of `jsxstyle` (obviously) doesn’t support this feature. That’s why it’s experimental.
 
 [jsxstyle]: https://github.com/smyte/jsxstyle#readme
 [discard dupes]: https://github.com/ben-eb/postcss-discard-duplicates
