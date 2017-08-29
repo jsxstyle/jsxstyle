@@ -20,7 +20,7 @@ function progressHandler(percentage, msg, ...args) {
   );
 }
 
-module.exports = function(env, options) {
+module.exports = function(env = {}, options = {}) {
   return {
     entry: env.experimental
       ? require.resolve('./test-app/red-entrypoint')

@@ -16,7 +16,8 @@
     "build": "rimraf tests/webpack/build; webpack --config tests/webpack/webpack.config.js",
     "build_stats": "npm run build -s -- --json > stats.json",
     "build_exp": "npm run build -- --env.experimental",
-    "example": "webpack-dev-server --hot --hotOnly --config tests/webpack/webpack.config.js"
+    "example": "webpack-dev-server --hot --hotOnly --config tests/webpack/webpack.config.js",
+    "example_exp": "npm run example -- --env.experimental"
   },
   "dependencies": {
     "babel-generator": "^6.26.0",

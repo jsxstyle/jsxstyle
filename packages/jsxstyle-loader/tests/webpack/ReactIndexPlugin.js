@@ -6,26 +6,30 @@ class ReactIndexPlugin {
   apply(compiler) {
     compiler.plugin('emit', (compilation, callback) => {
       const statsObj = compilation.getStats().toJson();
-      // this seems fragile
-      const bundleFile = path.join(
-        statsObj.publicPath,
-        Array.isArray(statsObj.assetsByChunkName.red)
-          ? statsObj.assetsByChunkName.red[0]
-          : statsObj.assetsByChunkName.red
-      );
 
-      const indexFileContents = []
-        .concat(
-          '<!doctype html>',
-          '<div id=".jsxstyle-demo"></div>',
-          `<script src="${bundleFile}"></script>`
-        )
-        .join('\n');
+      for (const entryName in statsObj.assetsByChunkName) {
+        const bundleFile = path.join(
+          statsObj.publicPath,
+          Array.isArray(statsObj.assetsByChunkName[entryName])
+            ? statsObj.assetsByChunkName[entryName][0]
+            : statsObj.assetsByChunkName[entryName]
+        );
 
-      compilation.assets['index.html'] = {
-        source: () => indexFileContents,
-        size: () => indexFileContents.length,
-      };
+        const indexFileContents = []
+          .concat(
+            '<!doctype html>',
+            '<div id=".jsxstyle-demo"></div>',
+            `<script src="${bundleFile}"></script>`
+          )
+          .join('\n');
+
+        const fileName = (entryName === 'main' ? 'index' : entryName) + '.html';
+
+        compilation.assets[fileName] = {
+          source: () => indexFileContents,
+          size: () => indexFileContents.length,
+        };
+      }
 
       callback();
     });

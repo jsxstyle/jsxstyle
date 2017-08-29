@@ -15,9 +15,12 @@ function jsxstyleResultLoader() {
   this.cacheable && this.cacheable();
   invariant(this[jsxstyleKey], 'this[jsxstyleKey] is not set!');
 
-  const { fileList, needsAdditionalPass, memoryFS } = this[jsxstyleKey];
+  const { fileList, memoryFS } = this[jsxstyleKey];
 
-  if (needsAdditionalPass) return '/* first pass */';
+  if (fileList.size === 0) {
+    this.callback(null, '');
+    return;
+  }
 
   const css = Array.from(fileList).map(filePath =>
     memoryFS.readFileSync(filePath, 'utf8').trim()

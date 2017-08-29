@@ -39,16 +39,13 @@ class JsxstyleWebpackPlugin {
         // instead of `require`ing css in every module that uses jsxstyle,
         // combine all the requires into one CSS file and prepend it to `entry`.
         __experimental__combineCSS: false,
-        // use @import in the single CSS file instead of dumping file contents.
-        // this option should be enabled if you rely on URLs in CSS props that
-        // are relative to the component in which the styles are written.
-        __experimental__useCSSImport: false,
       },
       options
     );
 
     this.memoryFS = new webpack.MemoryOutputFileSystem();
     this.cacheObject = {};
+    this.watching = false;
 
     // context object that gets passed to each loader.
     // available in each loader as this[require('./getKey')()]
@@ -60,12 +57,16 @@ class JsxstyleWebpackPlugin {
       compileCallback: null,
       aggregateFile: null,
       combineCSS: !!options.__experimental__combineCSS,
-      useCSSImport: !!options.__experimental__useCSSImport,
     };
   }
 
   apply(compiler) {
     const memoryFS = this.memoryFS;
+
+    compiler.plugin('watch-run', (compiler, callback) => {
+      this.watching = true;
+      callback();
+    });
 
     compiler.plugin('environment', () => {
       if (this.ctx.combineCSS) {
@@ -114,7 +115,9 @@ class JsxstyleWebpackPlugin {
     });
 
     // emit only after the second pass
-    compiler.plugin('should-emit', () => this.ctx.needAdditionalPass);
+    compiler.plugin('should-emit', () => {
+      return this.watching || this.ctx.needAdditionalPass;
+    });
 
     compiler.plugin('compilation', compilation => {
       compilation.plugin('normal-module-loader', loaderContext => {
