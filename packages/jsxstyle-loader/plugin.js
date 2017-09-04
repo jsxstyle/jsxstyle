@@ -49,6 +49,7 @@ class JsxstyleWebpackPlugin {
     this.memoryFS = new webpack.MemoryOutputFileSystem();
     this.cacheObject = {};
     this.watching = false;
+    this.needAdditionalPass = true;
 
     // context object that gets passed to each loader.
     // available in each loader as this[require('./getKey')()]
@@ -56,9 +57,8 @@ class JsxstyleWebpackPlugin {
       cacheObject: this.cacheObject,
       memoryFS: this.memoryFS,
       fileList: new Set(),
-      needAdditionalPass: true,
       compileCallback: null,
-      aggregateFile: null,
+      // aggregateFile: null,
       combineCSS: !!options.__experimental__combineCSS,
       extremelyLiteMode: options.__experimental__extremelyLiteMode,
     };
@@ -120,7 +120,7 @@ class JsxstyleWebpackPlugin {
 
     // emit only after the second pass
     compiler.plugin('should-emit', () => {
-      return this.watching || this.ctx.needAdditionalPass;
+      return this.watching || this.needAdditionalPass;
     });
 
     compiler.plugin('compilation', compilation => {
@@ -131,12 +131,12 @@ class JsxstyleWebpackPlugin {
       if (!this.ctx.combineCSS || compilation.compiler.isChild()) return;
 
       compilation.plugin('need-additional-pass', () => {
-        if (this.ctx.needAdditionalPass) {
-          this.ctx.needAdditionalPass = false;
+        if (this.needAdditionalPass) {
+          this.needAdditionalPass = false;
           return true;
         }
 
-        this.ctx.needAdditionalPass = true;
+        this.needAdditionalPass = true;
         this.ctx.fileList.clear();
       });
     });

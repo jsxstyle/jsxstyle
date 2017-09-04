@@ -7,11 +7,10 @@ const invariant = require('invariant');
 const loaderUtils = require('loader-utils');
 const path = require('path');
 const util = require('util');
+const validateOptions = require('schema-utils');
 
 function jsxstyleLoader(content) {
   this.cacheable && this.cacheable();
-  let whitelistedModules = [];
-  let parserPlugins = [];
 
   invariant(
     this[jsxstyleKey],
@@ -28,49 +27,22 @@ function jsxstyleLoader(content) {
     extremelyLiteMode,
   } = this[jsxstyleKey];
 
-  const query = loaderUtils.getOptions(this) || {};
+  const options = loaderUtils.getOptions(this) || {};
 
-  const invalidOptions = Object.keys(query).filter(k => {
-    // style group props are validated by extractStyles
-    if (k === 'styleGroups' || k === 'namedStyleGroups') {
-      return false;
-    }
-    const option = query[k];
-
-    if (k === 'whitelistedModules') {
-      invariant(
-        Array.isArray(option),
-        '`whitelistedModules` option must be an array of absolute paths'
-      );
-      // TODO: absolute check (?)
-      whitelistedModules = option.slice(0);
-      return false;
-    } else if (k === 'parserPlugins') {
-      invariant(
-        Array.isArray(option),
-        '`parserPlugins` option must be an array of babylon plugins. You can see a full list of available plugins here: https://git.io/v5ITC'
-      );
-      parserPlugins = option.slice(0);
-      return false;
-    } else {
-      return true;
-    }
-  });
-
-  invariant(
-    invalidOptions.length === 0,
-    // prettier-ignore
-    `jsxstyle loader received ${invalidOptions.length} invalid option${invalidOptions.length === 1 ? '' : 's'}: ${invalidOptions.join(', ')}`
+  validateOptions(
+    path.resolve(__dirname, './schema/loader.json'),
+    options,
+    'jsxstyle-loader'
   );
 
   const rv = extractStyles({
     src: content,
     sourceFileName: this.resourcePath,
     rootFileName,
-    whitelistedModules,
-    styleGroups: query.styleGroups,
-    namedStyleGroups: query.namedStyleGroups,
-    parserPlugins,
+    whitelistedModules: (options.whitelistedModules || []).slice(0),
+    styleGroups: options.styleGroups,
+    namedStyleGroups: options.namedStyleGroups,
+    parserPlugins: (options.parserPlugins || []).slice(0),
     cacheObject,
     addCSSRequire: !combineCSS,
     extremelyLiteMode,
