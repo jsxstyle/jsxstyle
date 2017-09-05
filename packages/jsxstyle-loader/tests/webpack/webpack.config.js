@@ -22,12 +22,10 @@ function progressHandler(percentage, msg, ...args) {
 
 module.exports = function(env = {}, options = {}) {
   return {
-    entry: env.experimental
-      ? require.resolve('./test-app/red-entrypoint')
-      : {
-          red: require.resolve('./test-app/red-entrypoint'),
-          blue: require.resolve('./test-app/blue-entrypoint'),
-        },
+    entry: {
+      red: require.resolve('./test-app/red-entrypoint'),
+      blue: require.resolve('./test-app/blue-entrypoint'),
+    },
     output: {
       path: path.join(__dirname, 'build'),
       publicPath: '/',

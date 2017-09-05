@@ -3,8 +3,9 @@
 const invariant = require('invariant');
 const path = require('path');
 const webpack = require('webpack');
-// eslint-disable-next-line node/no-extraneous-require
+
 const NodeWatchFileSystem = require('webpack/lib/node/NodeWatchFileSystem');
+const MultiEntryPlugin = require('webpack/lib/MultiEntryPlugin');
 
 const jsxstyleKey = require('./utils/getKey')();
 const resultLoader = require.resolve('./result-loader');
@@ -48,8 +49,6 @@ class JsxstyleWebpackPlugin {
 
     this.memoryFS = new webpack.MemoryOutputFileSystem();
     this.cacheObject = {};
-    this.watching = false;
-    this.needAdditionalPass = true;
 
     // context object that gets passed to each loader.
     // available in each loader as this[require('./getKey')()]
@@ -58,8 +57,7 @@ class JsxstyleWebpackPlugin {
       memoryFS: this.memoryFS,
       fileList: new Set(),
       compileCallback: null,
-      // aggregateFile: null,
-      combineCSS: !!options.__experimental__combineCSS,
+      combineCSS: options.__experimental__combineCSS,
       extremelyLiteMode: options.__experimental__extremelyLiteMode,
     };
   }
@@ -67,35 +65,34 @@ class JsxstyleWebpackPlugin {
   apply(compiler) {
     const memoryFS = this.memoryFS;
 
-    compiler.plugin('watch-run', (compiler, callback) => {
-      this.watching = true;
-      callback();
-    });
+    if (this.ctx.combineCSS) {
+      // TODO: one CSS file per entry
+      compiler.plugin('entry-option', (context, entry) => {
+        const getEntry = (item, name) => {
+          const aggregateFile = path.join(context, name + '.jsxstyle.css');
+          memoryFS.mkdirpSync(context);
+          memoryFS.writeFileSync(aggregateFile, '/* placeholder */');
 
-    compiler.plugin('environment', () => {
-      if (this.ctx.combineCSS) {
-        // TODO: figure out the webpack-y way of getting the current entrypoint
-        let entry = compiler.options.entry;
-        if (Array.isArray(entry)) {
-          entry = compiler.options.entry[compiler.options.entry.length - 1];
-        } else {
-          invariant(
-            typeof entry === 'string',
-            'JsxstyleLoaderPlugin only supports array and string `entry` values for now.'
+          return new MultiEntryPlugin(
+            context,
+            [resultLoader + '!' + aggregateFile].concat(item),
+            name
           );
+        };
+
+        if (typeof entry === 'string' || Array.isArray(entry)) {
+          compiler.apply(getEntry(entry, 'main'));
+        } else if (typeof entry === 'object') {
+          Object.keys(entry).forEach(name => {
+            compiler.apply(getEntry(entry[name], name));
+          });
         }
 
-        const baseDir = path.dirname(entry);
-        this.ctx.aggregateFile = path.join(baseDir, '_main.jsxstyle.css');
-        memoryFS.mkdirpSync(baseDir);
-        memoryFS.writeFileSync(this.ctx.aggregateFile, '/* placeholder */');
+        return true;
+      });
+    }
 
-        compiler.options.entry = [].concat(
-          resultLoader + '!' + this.ctx.aggregateFile,
-          compiler.options.entry
-        );
-      }
-
+    compiler.plugin('environment', () => {
       compiler.inputFileSystem = new Proxy(compiler.inputFileSystem, {
         get: (target, key) => {
           const value = target[key];
@@ -103,6 +100,7 @@ class JsxstyleWebpackPlugin {
           if (handledMethods.hasOwnProperty(key)) {
             return function(filePath, ...args) {
               if (filePath.endsWith('.jsxstyle.css')) {
+                process.stderr.write(key + ' -- ' + filePath);
                 return memoryFS[key](filePath, ...args);
               }
               return value.call(this, filePath, ...args);
@@ -118,27 +116,12 @@ class JsxstyleWebpackPlugin {
       );
     });
 
-    // emit only after the second pass
-    compiler.plugin('should-emit', () => {
-      return this.watching || this.needAdditionalPass;
-    });
-
     compiler.plugin('compilation', compilation => {
       compilation.plugin('normal-module-loader', loaderContext => {
         loaderContext[jsxstyleKey] = this.ctx;
       });
 
       if (!this.ctx.combineCSS || compilation.compiler.isChild()) return;
-
-      compilation.plugin('need-additional-pass', () => {
-        if (this.needAdditionalPass) {
-          this.needAdditionalPass = false;
-          return true;
-        }
-
-        this.needAdditionalPass = true;
-        this.ctx.fileList.clear();
-      });
     });
   }
 }

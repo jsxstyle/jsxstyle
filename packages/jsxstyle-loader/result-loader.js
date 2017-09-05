@@ -18,7 +18,7 @@ function jsxstyleResultLoader() {
   const { fileList, memoryFS } = this[jsxstyleKey];
 
   if (fileList.size === 0) {
-    this.callback(null, '');
+    this.callback(null, '/* fileList is empty */');
     return;
   }
 

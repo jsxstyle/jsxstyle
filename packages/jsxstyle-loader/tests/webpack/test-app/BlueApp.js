@@ -1,12 +1,11 @@
 import React from 'react';
-import { Block } from 'jsxstyle';
-
-const fontFamily = '-apple-system, BlinkMacSystemFont, sans-serif';
+import { Inline } from 'jsxstyle';
+import Shared from './Shared';
 
 export default function BlueApp() {
   return (
-    <Block color="blue" fontFamily={fontFamily} fontSize={18} lineHeight="22px">
-      Wow!
-    </Block>
+    <Shared>
+      <Inline color="blue">Wow!</Inline>
+    </Shared>
   );
 }
