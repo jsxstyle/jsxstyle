@@ -39,7 +39,6 @@ function makeReactStyleComponentClass(displayName, defaultProps, tagName) {
   }
 
   Style.propTypes = {
-    children: PropTypes.node,
     className: PropTypes.string,
     component: PropTypes.oneOfType([
       PropTypes.string,

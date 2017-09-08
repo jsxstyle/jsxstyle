@@ -39,5 +39,6 @@ module.exports = {
     'prefer-const': 2,
     'object-shorthand': 2,
     'no-use-before-define': 2,
+    'react/prop-types': [1, { ignore: ['children'] }],
   },
 };

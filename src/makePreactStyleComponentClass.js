@@ -39,7 +39,6 @@ function makePreactStyleComponentClass(displayName, defaultProps, tagName) {
   }
 
   Style.propTypes = {
-    children: PropTypes.node,
     class: PropTypes.string,
     component: PropTypes.oneOfType([
       PropTypes.string,
