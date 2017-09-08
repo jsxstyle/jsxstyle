@@ -1,10 +1,8 @@
-'use strict';
+import { Inline } from '../';
+import * as styleCache from '../src/styleCache';
 
-const styleCache = require('../lib/styleCache');
-
-const { Inline } = require('../');
-const React = require('react');
-const ReactDOMServer = require('react-dom/server');
+import React from 'react';
+import ReactDOMServer from 'react-dom/server';
 
 const kitchenSink = {
   mediaQueries: { test: 'test' },

@@ -1,6 +1,4 @@
-'use strict';
-
-const dangerousStyleValue = require('../lib/dangerousStyleValue');
+import dangerousStyleValue from '../src/dangerousStyleValue';
 
 describe('dangerousStyleValue', () => {
   it('adds a px prefix to whitelisted unitless values', () => {

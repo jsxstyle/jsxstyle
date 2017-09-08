@@ -1,13 +1,15 @@
-'use strict';
+import PropTypes from 'prop-types';
+import invariant from 'invariant';
 
-const PropTypes = require('prop-types');
-const invariant = require('invariant');
+import { h, Component } from 'preact';
 
-const { h, Component } = require('preact');
+import { _getClassName as getClassName } from 'jsxstyle';
 
-const { getClassName } = require('./styleCache');
-
-function makePreactStyleComponentClass(displayName, defaultProps, tagName) {
+export default function makePreactStyleComponentClass(
+  displayName,
+  defaultProps,
+  tagName
+) {
   tagName = tagName || 'div';
   invariant(
     typeof displayName === 'string' && displayName !== '',
@@ -55,5 +57,3 @@ function makePreactStyleComponentClass(displayName, defaultProps, tagName) {
 
   return Style;
 }
-
-module.exports = makePreactStyleComponentClass;

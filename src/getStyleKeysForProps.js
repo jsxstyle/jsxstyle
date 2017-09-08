@@ -1,7 +1,5 @@
-'use strict';
-
-const hyphenateStyleName = require('./hyphenateStyleName');
-const dangerousStyleValue = require('./dangerousStyleValue');
+import hyphenateStyleName from './hyphenateStyleName';
+import dangerousStyleValue from './dangerousStyleValue';
 
 // global flag makes subsequent calls of capRegex.test advance to the next match
 const capRegex = /[A-Z]/g;
@@ -35,7 +33,7 @@ const specialCaseProps = {
   mediaQueries: true,
 };
 
-function getStyleKeysForProps(props, pretty = false) {
+export default function getStyleKeysForProps(props, pretty = false) {
   if (typeof props !== 'object' || props === null) {
     return null;
   }
@@ -155,5 +153,3 @@ function getStyleKeysForProps(props, pretty = false) {
 
   return styleKeyObj;
 }
-
-module.exports = getStyleKeysForProps;

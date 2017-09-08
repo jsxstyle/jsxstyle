@@ -1,5 +1,3 @@
-'use strict';
-
 const canUseDOM = !!(
   typeof window !== 'undefined' &&
   window.document &&
@@ -25,7 +23,7 @@ if (canUseDOM && !styleElement) {
   document.head.appendChild(styleElement);
 }
 
-function addStyleToHead(rule) {
+export default function addStyleToHead(rule) {
   if (canUseDOM) {
     try {
       styleElement.sheet.insertRule(rule, styleElement.sheet.cssRules.length);
@@ -42,5 +40,3 @@ function addStyleToHead(rule) {
     }
   }
 }
-
-module.exports = addStyleToHead;

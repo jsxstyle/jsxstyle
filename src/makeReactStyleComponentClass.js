@@ -1,13 +1,15 @@
-'use strict';
+import PropTypes from 'prop-types';
+import invariant from 'invariant';
 
-const PropTypes = require('prop-types');
-const invariant = require('invariant');
+import { createElement as h, Component } from 'react';
 
-const { createElement: h, Component } = require('react');
+import { getClassName } from './styleCache';
 
-const { getClassName } = require('./styleCache');
-
-function makeReactStyleComponentClass(displayName, defaultProps, tagName) {
+export default function makeReactStyleComponentClass(
+  displayName,
+  defaultProps,
+  tagName
+) {
   tagName = tagName || 'div';
   invariant(
     typeof displayName === 'string' && displayName !== '',
@@ -55,5 +57,3 @@ function makeReactStyleComponentClass(displayName, defaultProps, tagName) {
 
   return Style;
 }
-
-module.exports = makeReactStyleComponentClass;

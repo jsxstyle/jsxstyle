@@ -1,8 +1,5 @@
 module.exports = {
   extends: ['plugin:jest/recommended'],
-  env: {
-    'jest/globals': true,
-    es6: true,
-  },
+  env: { 'jest/globals': true },
   plugins: ['jest'],
 };

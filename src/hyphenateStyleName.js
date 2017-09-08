@@ -1,10 +1,8 @@
-'use strict';
-
 const uppercasePattern = /([A-Z])/g;
 const msPattern = /^ms-/;
 const hyphenateCache = {};
 
-function hyphenateStyleName(string) {
+export default function hyphenateStyleName(string) {
   if (hyphenateCache.hasOwnProperty(string)) {
     return hyphenateCache[string];
   }
@@ -16,5 +14,3 @@ function hyphenateStyleName(string) {
   hyphenateCache[string] = hyphenatedString;
   return hyphenateCache[string];
 }
-
-module.exports = hyphenateStyleName;

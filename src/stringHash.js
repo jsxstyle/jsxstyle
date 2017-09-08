@@ -1,7 +1,5 @@
-'use strict';
-
 // thx darksky: https://git.io/v9kWO
-function stringHash(str) {
+export default function stringHash(str) {
   let hash = 5381,
     i = str.length;
 
@@ -14,5 +12,3 @@ function stringHash(str) {
    * signed int to an unsigned by doing an unsigned bitshift. */
   return hash >>> 0;
 }
-
-module.exports = stringHash;

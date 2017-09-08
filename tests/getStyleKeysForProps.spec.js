@@ -1,6 +1,4 @@
-'use strict';
-
-const getStyleKeysForProps = require('../lib/getStyleKeysForProps');
+import getStyleKeysForProps from '../src/getStyleKeysForProps';
 
 describe('getStyleKeysForProps', () => {
   it('returns null when given an empty style object', () => {

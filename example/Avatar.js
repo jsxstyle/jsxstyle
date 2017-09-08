@@ -29,9 +29,7 @@ export default function Avatar(props) {
         width={LayoutConstants.gridUnit * 6}
         height={LayoutConstants.gridUnit * 6}
       />
-      <Block marginLeft={LayoutConstants.gridUnit}>
-        {props.username}
-      </Block>
+      <Block marginLeft={LayoutConstants.gridUnit}>{props.username}</Block>
     </Row>
   );
 }

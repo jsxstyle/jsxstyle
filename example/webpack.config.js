@@ -3,10 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
 
 module.exports = (env, options) => ({
-  entry: [
-    options.hot && 'react-hot-loader/patch',
-    require.resolve('./main'),
-  ].filter(f => f),
+  entry: require.resolve('./entry'),
   output: {
     path: __dirname + '/build',
     filename: 'bundle.js',
@@ -39,15 +36,12 @@ module.exports = (env, options) => ({
                 targets: {
                   browsers: ['last 2 versions'],
                 },
+                modules: false,
               },
             ],
             'react',
           ],
-          plugins: [
-            options.hot && 'react-hot-loader/babel',
-            'transform-object-rest-spread',
-            'transform-object-assign',
-          ].filter(f => f),
+          plugins: ['transform-object-rest-spread', 'transform-object-assign'],
         },
       },
       options.hot

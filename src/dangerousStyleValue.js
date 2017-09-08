@@ -12,8 +12,6 @@
 // https://github.com/facebook/react/blob/master/src/renderers/dom/shared/CSSProperty.js
 // https://github.com/facebook/react/blob/master/src/renderers/dom/shared/dangerousStyleValue.js
 
-'use strict';
-
 const isUnitlessNumber = {
   animationIterationCount: true,
   borderImageOutset: true,
@@ -72,7 +70,7 @@ Object.keys(isUnitlessNumber).forEach(function(prop) {
   });
 });
 
-function dangerousStyleValue(name, value) {
+export default function dangerousStyleValue(name, value) {
   const isEmpty = value == null || typeof value === 'boolean' || value === '';
   if (isEmpty) {
     return '';
@@ -91,5 +89,3 @@ function dangerousStyleValue(name, value) {
 
   return ('' + value).trim();
 }
-
-module.exports = dangerousStyleValue;

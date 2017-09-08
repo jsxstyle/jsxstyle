@@ -1,8 +1,6 @@
-'use strict';
-
-const getStyleKeysForProps = require('./getStyleKeysForProps');
-const addStyleToHead = require('./addStyleToHead');
-const stringHash = require('./stringHash');
+import getStyleKeysForProps from './getStyleKeysForProps';
+import addStyleToHead from './addStyleToHead';
+import stringHash from './stringHash';
 
 let classNameCache;
 if (module.hot) {
@@ -19,21 +17,21 @@ if (!classNameCache) {
   classNameCache = {};
 }
 
-function resetCache() {
+export function resetCache() {
   classNameCache = {};
 }
 
-let insertRule = addStyleToHead;
-function injectAddRule(customAddFunction) {
+let insertRule;
+export function injectAddRule(customAddFunction) {
   insertRule = customAddFunction;
 }
 
 let getClassNameForKey = key => '_' + stringHash(key).toString(36);
-function injectClassNameStrategy(customClassNameFunction) {
+export function injectClassNameStrategy(customClassNameFunction) {
   getClassNameForKey = customClassNameFunction;
 }
 
-function getClassName(props, classNameProp) {
+export function getClassName(props, classNameProp) {
   const styleObj = getStyleKeysForProps(props);
   if (typeof styleObj !== 'object' || styleObj === null) {
     return classNameProp || null;
@@ -43,32 +41,34 @@ function getClassName(props, classNameProp) {
   if (!classNameCache.hasOwnProperty(key)) {
     classNameCache[key] = getClassNameForKey(key);
     delete styleObj.classNameKey;
-    Object.keys(styleObj).sort().forEach(k => {
-      const selector = '.' + classNameCache[key];
-      const { pseudoclass, pseudoelement, mediaQuery, styles } = styleObj[k];
+    Object.keys(styleObj)
+      .sort()
+      .forEach(k => {
+        const selector = '.' + classNameCache[key];
+        const { pseudoclass, pseudoelement, mediaQuery, styles } = styleObj[k];
 
-      let rule =
-        selector +
-        (pseudoclass ? ':' + pseudoclass : '') +
-        (pseudoelement ? '::' + pseudoelement : '') +
-        ` {${styles}}`;
+        let rule =
+          selector +
+          (pseudoclass ? ':' + pseudoclass : '') +
+          (pseudoelement ? '::' + pseudoelement : '') +
+          ` {${styles}}`;
 
-      if (mediaQuery) {
-        rule = `@media ${mediaQuery} { ${rule} }`;
-      }
+        if (mediaQuery) {
+          rule = `@media ${mediaQuery} { ${rule} }`;
+        }
 
-      insertRule(rule);
-    });
+        if (
+          typeof insertRule === 'function' &&
+          // if the function returns nothing, bail.
+          typeof insertRule(rule) === 'undefined'
+        ) {
+          return;
+        }
+        addStyleToHead(rule);
+      });
   }
 
   return classNameCache[key] && classNameProp
     ? classNameProp + ' ' + classNameCache[key]
     : classNameCache[key] || classNameProp || null;
 }
-
-module.exports = {
-  getClassName,
-  injectAddRule,
-  injectClassNameStrategy,
-  resetCache,
-};
