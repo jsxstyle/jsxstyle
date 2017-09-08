@@ -3,6 +3,7 @@
 
 var factory = require('./lib/makeReactStyleComponentClass');
 var jsxstyleDefaults = require('./lib/jsxstyleDefaults');
+var styleCache = require('./lib/styleCache');
 
 module.exports = {
   install: function install__deprecated() {
@@ -13,6 +14,8 @@ module.exports = {
       );
     }
   },
+  injectAddRule: styleCache.injectAddRule,
+  injectClassNameStrategy: styleCache.injectClassNameStrategy,
 };
 
 for (var name in jsxstyleDefaults) {
