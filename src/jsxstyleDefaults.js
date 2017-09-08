@@ -6,7 +6,6 @@ module.exports = {
 
   // display components
   Block: { display: 'block' },
-  Flex: { display: 'flex' },
   InlineBlock: { display: 'inline-block' },
   InlineFlex: { display: 'inline-flex' },
   Table: { display: 'table' },
