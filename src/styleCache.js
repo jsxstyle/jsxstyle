@@ -28,6 +28,11 @@ function injectAddRule(customAddFunction) {
   insertRule = customAddFunction;
 }
 
+let getClassNameForKey = key => '_' + stringHash(key).toString(36);
+function injectClassNameStrategy(customClassNameFunction) {
+  getClassNameForKey = customClassNameFunction;
+}
+
 function getClassName(props, classNameProp) {
   const styleObj = getStyleKeysForProps(props);
   if (typeof styleObj !== 'object' || styleObj === null) {
@@ -36,7 +41,7 @@ function getClassName(props, classNameProp) {
 
   const key = styleObj.classNameKey;
   if (!classNameCache.hasOwnProperty(key)) {
-    classNameCache[key] = '_' + stringHash(key).toString(36);
+    classNameCache[key] = getClassNameForKey(key);
     delete styleObj.classNameKey;
     Object.keys(styleObj).sort().forEach(k => {
       const selector = '.' + classNameCache[key];
@@ -64,5 +69,6 @@ function getClassName(props, classNameProp) {
 module.exports = {
   getClassName,
   injectAddRule,
+  injectClassNameStrategy,
   resetCache,
 };

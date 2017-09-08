@@ -83,7 +83,7 @@ describe('styleCache', () => {
 `);
   });
 
-  it('works with injection', () => {
+  it('works with addRule injection', () => {
     let allCSS = '\n';
     styleCache.resetCache();
     styleCache.injectAddRule(css => (allCSS += css + '\n'));
@@ -104,5 +104,25 @@ describe('styleCache', () => {
 @media test { .${className}:hover::placeholder {flex:10;} }
 `
     );
+  });
+
+  it('works with classname strategy injection', () => {
+    styleCache.resetCache();
+    let idx = -1;
+    styleCache.injectClassNameStrategy(() => 'jsxstyle' + ++idx);
+
+    const classNames = [
+      styleCache.getClassName({ a: 1 }),
+      styleCache.getClassName({ b: 2 }),
+      styleCache.getClassName({ c: 3 }),
+      styleCache.getClassName({ a: 1 }),
+    ];
+
+    expect(classNames).toEqual([
+      'jsxstyle0',
+      'jsxstyle1',
+      'jsxstyle2',
+      'jsxstyle0',
+    ]);
   });
 });
