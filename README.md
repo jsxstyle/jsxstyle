@@ -117,3 +117,5 @@ presentational only and do not render large strings of inline styles under the h
 
 Yes, [Smyte](https://www.smyte.com/) has used jsxstyle exclusively in production for
 almost two years.
+
+[![Sauce Test Status](https://saucelabs.com/browser-matrix/jsxstyle.svg)](https://saucelabs.com/u/jsxstyle)

@@ -1,8 +1,5 @@
-src/
-example/
-experimental/
-tests/
-.eslintrc.js
-.babelrc
-*.md
-!README.md
+.*
+*.*
+!*.es.js
+!*.cjs.js
+**/node_modules

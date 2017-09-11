@@ -16,6 +16,7 @@ export const Grid = factory('Grid', defaults.Grid);
 
 // injections
 export { injectAddRule, injectClassNameStrategy } from './styleCache';
+export { resetCache } from './styleCache';
 
 // methods used by jsxstyle-loader
 export { defaults as _defaults };

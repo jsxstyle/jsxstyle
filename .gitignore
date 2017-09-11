@@ -3,3 +3,5 @@ tests/bundle.js
 example/build
 lib/
 .vscode
+.env
+*.log
