@@ -18,7 +18,8 @@
     "rollup": "rimraf {preact/,}lib/*.{es,cjs}.js; rollup -c; prettier --write {preact/,}lib/*.{es,cjs}.js",
     "version_sync": "cd preact; npm version $npm_package_version",
     "start": "webpack-dev-server --hot --hotOnly --inline --historyApiFallback --config=example/webpack.config.js",
-    "build": "rimraf example/build/*; webpack -p --progress --config=example/webpack.config.js"
+    "build": "rimraf example/build/*; webpack -p --progress --config=example/webpack.config.js",
+    "ci": "npm run jest && npm run rollup && npm run karma"
   },
   "dependencies": {
     "invariant": "^2.2.1",
