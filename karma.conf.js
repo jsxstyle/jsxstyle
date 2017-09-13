@@ -1,5 +1,7 @@
 require('dotenv').config();
 
+const isTravis = !!process.env.CI;
+
 module.exports = function(config) {
   const customLaunchers = {};
 
@@ -59,8 +61,15 @@ module.exports = function(config) {
 
   for (const k in customLaunchers) {
     customLaunchers[k].base = 'SauceLabs';
-    customLaunchers[k].recordVideo = false;
-    customLaunchers[k].recordScreenshots = false;
+  }
+
+  const testName = isTravis
+    ? `Travis: ${process.env.TRAVIS_EVENT_TYPE.replace(/_/g, ' ')}`
+    : 'Manual test';
+
+  let tunnelIdentifier;
+  if (isTravis) {
+    tunnelIdentifier = process.env.TRAVIS_JOB_NUMBER;
   }
 
   config.set({
@@ -81,9 +90,9 @@ module.exports = function(config) {
     },
     sauceLabs: {
       recordScreenshots: false,
-      testName: `Manual test (${new Date().toLocaleString('en-ZA')})`,
-      startConnect: false,
-      tunnelIdentifier: process.env.TRAVIS_JOB_NUMBER,
+      testName: `${testName} (${new Date().toLocaleString('en-ZA')})`,
+      startConnect: !isTravis,
+      tunnelIdentifier,
       connectOptions: {
         logfile: 'sauce_connect.log',
       },

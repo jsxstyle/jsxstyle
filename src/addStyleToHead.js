@@ -33,8 +33,11 @@ export default function addStyleToHead(rule) {
       if (process.env.NODE_ENV !== 'production') {
         // eslint-disable-next-line no-console
         console.error(
-          '[jsxstyle] Could not add style to head: %O',
-          insertError
+          '[jsxstyle] Could not insert rule at position ' +
+            styleElement.sheet.cssRules.length +
+            ': `' +
+            rule +
+            '`'
         );
       }
     }
