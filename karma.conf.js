@@ -81,7 +81,7 @@ module.exports = function(config) {
     sauceLabs: {
       recordScreenshots: false,
       testName: `Manual test (${new Date().toLocaleString('en-ZA')})`,
-      // startConnect: false,
+      startConnect: false,
       tunnelIdentifier: process.env.TRAVIS_JOB_NUMBER,
       connectOptions: {
         logfile: 'sauce_connect.log',
