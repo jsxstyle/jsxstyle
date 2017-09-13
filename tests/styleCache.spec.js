@@ -1,4 +1,4 @@
-import { Inline } from '../';
+import { Inline } from '../src';
 import * as styleCache from '../src/styleCache';
 
 import React from 'react';
