@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-const isTravis = !!process.env.CI;
+const isCI = !!process.env.CI;
 
 module.exports = function(config) {
   const customLaunchers = {};
@@ -16,8 +16,9 @@ module.exports = function(config) {
     ['Android', '6.0', 'Chrome', 'Android Emulator'],
   ].forEach(([p, v, b, d]) => {
     // prettier-ignore
-    const k = `sl_${b.replace(/\W+/g, '_')}_${v.replace(/\D+/g, '_')}`.toLowerCase();
+    const k = `sl_${p}_${b}_${v}`.replace(/[^a-z0-9]/gi, '_').toLowerCase();
     customLaunchers[k] = {
+      name: `${b}, ${p} ${v}`,
       platformName: p,
       platformVersion: v,
       browserName: b,
@@ -29,17 +30,18 @@ module.exports = function(config) {
 
   // IE and Safari
   [
-    ['Windows 8.1', 'internet explorer', '11.0'],
-    ['Windows 8', 'internet explorer', '10.0'],
-    ['Windows 7', 'internet explorer', '9.0'],
-    ['macOS 10.12', 'safari', '10.0'],
-    ['OS X 10.11', 'safari', '9.0'],
-    ['OS X 10.10', 'safari', '8.0'],
-    ['OS X 10.9', 'safari', '7.0'],
+    ['Windows 8.1', 'Internet Explorer', '11.0'],
+    ['Windows 8', 'Internet Explorer', '10.0'],
+    ['Windows 7', 'Internet Explorer', '9.0'],
+    ['macOS 10.12', 'Safari', '10.0'],
+    ['OS X 10.11', 'Safari', '9.0'],
+    ['OS X 10.10', 'Safari', '8.0'],
+    ['OS X 10.9', 'Safari', '7.0'],
   ].forEach(([p, b, v]) => {
     // prettier-ignore
-    const k = `sl_${b.replace(/\W+/g, '_')}_${v.replace(/\D+/g, '_')}`.toLowerCase();
+    const k = `sl_${p}_${b}_${v}`.replace(/[^a-z0-9]/gi, '_').toLowerCase();
     customLaunchers[k] = {
+      name: `${b} ${v}, ${p}`,
       browserName: b,
       version: v,
       platform: p,
@@ -47,28 +49,39 @@ module.exports = function(config) {
   });
 
   // Chrome, Firefox, and Edge latest
-  ['chrome', 'firefox', 'MicrosoftEdge'].forEach(b => {
+  ['Chrome', 'Firefox', 'MicrosoftEdge'].forEach(b => {
     const total = b === 'MicrosoftEdge' ? 3 : 4;
+    const niceName = b === 'MicrosoftEdge' ? 'Edge' : b;
     for (let idx = -1; ++idx < total; ) {
-      const k = `sl_${b}_latest${idx > 0 ? `_${idx}` : ''}`.toLowerCase();
+      const k = `sl_win10_${b}_latest${idx > 0 ? `_${idx}` : ''}`.toLowerCase();
+      const version = `latest${idx > 0 ? `-${idx}` : ''}`;
       customLaunchers[k] = {
+        name: `${niceName} ${version}, Windows 10`,
         browserName: b,
-        version: `latest${idx > 0 ? `-${idx}` : ''}`,
+        version,
         platform: 'Windows 10',
       };
     }
   });
 
+  const testPrefix = isCI
+    ? 'Travis ' + process.env.TRAVIS_EVENT_TYPE.replace(/_/g, ' ')
+    : 'Local test';
+
+  // gross
+  const tzOffset = new Date().getTimezoneOffset();
+  const [dateString, timeString] = new Date(Date.now() - tzOffset * 60000)
+    .toISOString()
+    .split(/[T.]/);
+  const when = ` @ ${dateString} ${timeString} GMT${-tzOffset / 60}: `;
+
   for (const k in customLaunchers) {
     customLaunchers[k].base = 'SauceLabs';
+    customLaunchers[k].name = testPrefix + when + customLaunchers[k].name;
   }
 
-  const testName = isTravis
-    ? `Travis: ${process.env.TRAVIS_EVENT_TYPE.replace(/_/g, ' ')}`
-    : 'Manual test';
-
   let tunnelIdentifier;
-  if (isTravis) {
+  if (isCI) {
     tunnelIdentifier = process.env.TRAVIS_JOB_NUMBER;
   }
 
@@ -90,9 +103,11 @@ module.exports = function(config) {
     },
     sauceLabs: {
       recordScreenshots: false,
-      testName: `${testName} (${new Date().toLocaleString('en-ZA')})`,
-      startConnect: !isTravis,
+      startConnect: !isCI,
       tunnelIdentifier,
+      tags: isCI
+        ? ['ci', 'travis:' + process.env.TRAVIS_EVENT_TYPE]
+        : ['local'],
       connectOptions: {
         logfile: 'sauce_connect.log',
       },
