@@ -5,8 +5,10 @@ const path = require('path');
 const vm = require('vm');
 const util = require('util');
 
-const getStyleKeysForProps = require('jsxstyle/lib/getStyleKeysForProps');
-const jsxstyleDefaults = require('jsxstyle/lib/jsxstyleDefaults');
+const {
+  _getStyleKeysForProps: getStyleKeysForProps,
+  _defaults: jsxstyleDefaults,
+} = require('jsxstyle');
 
 const canEvaluate = require('./canEvaluate');
 const canEvaluateObject = require('./canEvaluateObject');

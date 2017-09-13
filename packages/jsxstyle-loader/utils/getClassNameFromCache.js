@@ -1,7 +1,7 @@
 'use strict';
 
 const invariant = require('invariant');
-const getStyleKeysForProps = require('jsxstyle/lib/getStyleKeysForProps');
+const { _getStyleKeysForProps: getStyleKeysForProps } = require('jsxstyle');
 
 function getClassNameFromCache(
   styleObject,
@@ -13,7 +13,7 @@ function getClassNameFromCache(
     'getClassNameFromCache expects an object as its second parameter'
   );
 
-  if (!styleObject || typeof styleObject !== 'object' || styleObject === null) {
+  if (!styleObject || typeof styleObject !== 'object') {
     console.warn(
       'getClassNameFromCache received an invalid styleObject as its first parameter'
     );
