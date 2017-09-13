@@ -46,7 +46,8 @@ module.exports = function(config) {
 
   // Chrome, Firefox, and Edge latest
   ['chrome', 'firefox', 'MicrosoftEdge'].forEach(b => {
-    for (let idx = -1; ++idx < 4; ) {
+    const total = b === 'MicrosoftEdge' ? 3 : 4;
+    for (let idx = -1; ++idx < total; ) {
       const k = `sl_${b}_latest${idx > 0 ? `_${idx}` : ''}`.toLowerCase();
       customLaunchers[k] = {
         browserName: b,
