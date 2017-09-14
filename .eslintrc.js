@@ -13,6 +13,8 @@ module.exports = {
 
   plugins: ['react'],
 
+  parser: 'babel-eslint',
+
   parserOptions: {
     sourceType: 'module',
     ecmaFeatures: {
@@ -22,7 +24,7 @@ module.exports = {
   },
 
   rules: {
-    strict: [2, 'global'],
+    strict: 0,
     'no-console': [2, { allow: ['error'] }],
     'no-var': 2,
     'prefer-const': 2,

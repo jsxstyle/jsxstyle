@@ -96,10 +96,10 @@ module.exports = function(config) {
     autoWatch: false,
     singleRun: true,
     concurrency: 5,
-    files: ['tests/*.webpack.js'],
+    files: ['packages/*/tests/*.karma.js'],
     reporters: ['progress', 'saucelabs'],
     preprocessors: {
-      'tests/*.webpack.js': ['webpack', 'sourcemap'],
+      '*.karma.js': ['webpack', 'sourcemap'],
     },
     sauceLabs: {
       recordScreenshots: false,

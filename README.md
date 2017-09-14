@@ -1,121 +1,103 @@
-# jsxstyle
+# jsxstyle & friends
 
-`jsxstyle` is intended to be the best way to style React components. It has the
-goals of having a best-in-class developer experience without sacrificing
-performance, and has little regard for existing CSS orthodoxy :)
+This is the monorepo for jsxstyle and tools built for use with jsxstyle.
 
-## Philosophy
+jsxstyle is intended to be the best way to style JSX components. It provides a best-in-class developer experience without sacrificing performance, and has little regard for [existing CSS orthodoxy][rip bem].
 
-Many of the DOM nodes in your app exist solely for style purposes. Styling
-them can be cumbersome because of *name fatigue* (coming up with unique class
-names for nodes that don't need a name, like `.outerWrapperWrapper`), selector
-complexity, and constantly bouncing between your JS code and your CSS code in
-your editor.
+Styles are written _inline_ on a special set of components exported by jsxstyle. When the component is rendered, these inline styles are converted to CSS rules and added to the document.
 
-`jsxstyle` believes that, for the nodes that exist for pure styling purposes,
-you should write styles inline with a friendly syntax, and furthermore, that just
-because you're writing your styles inline, doesn't mean that they actually get rendered
-into the browser that way (that is, there should be no performance penalty).
-
-## Hello world
-
-`npm install jsxstyle` and then write code like this:
+With jsxstyle, your component code looks like this:
 
 ```jsx
-var Block = require('jsxstyle/Block');
-var React = require('react');
-
-var MyComponent = React.createClass({
-  render: function() {
-    return <Block color="red">Hello, world!</Block>;
-  }
-});
+<Row alignItems="center" padding={15}>
+  <Block
+    backgroundColor="#EEE"
+    boxShadow="inset 0 0 0 1px rgba(0,0,0,0.15)"
+    borderRadius={5}
+    height={64}
+    width={64}
+    marginRight={15}
+    backgroundSize="contain"
+    backgroundImage="url('http://graph.facebook.com/justinbieber/picture?type=large')"
+  />
+  <Col fontFamily="sans-serif" fontSize={16} lineHeight="24px">
+    <Block fontWeight={500}>Justin Bieber</Block>
+    <Block fontStyle="italic">Canadian</Block>
+  </Col>
+</Row>
 ```
 
-`jsxstyle` provides a few components that correspond to the most commonly used
-values of the CSS `display` property:
+With jsxstyle, jumping between JS and CSS in your editor is no longer necessary. Problems that have historically been difficult to solve, like specificity clashes and dead CSS, are _completely sidestepped_. Thanks to the declarative nature of inline styles, frontend contributors can see at a glance exactly how an element is styled. Onboarding new frontend contributors takes seconds, not hours, because jsxstyle’s mental model is easy to teach and easy to learn. Problems stemming from multiple frontend contributors writing styles in a shared codebase are completely avoided, because styles are tied to _component instances_ instead of abstract reusable _CSS classes_.
 
-  * Block
-  * Flex
-  * Inline
-  * InlineBlock
-  * InlineFlex
-  * Table
-  * TableCell
-  * TableRow
+## 📦 Packages
 
-`jsxstyle` also includes a few flexbox helper components that set
-the `flex-direction` property:
+### [`jsxstyle`][jsxstyle]
 
-  * Row
-  * Col
+This package provides a set of stylable components to be used with React.
 
-All props passed to these components are assumed to be CSS properties.
-There are four exceptions to this rule:
+At runtime, these stylable components convert inline styles to a single CSS rule with a hashed, content-based class name. The generated CSS rule is added to the document and a `div` (or specified `component`) with the hashed class name is output.
 
-  * `className`: additional CSS classes you would like to apply.
-  * `component`: the underlying HTML tag or React component to render.
-  * `props`: additional props to pass directly to the underlying HTML tag or React component.
-  * `style`: styles to apply directly to the DOM node as actual inline styles. CSS properties that change frequently (when animating, for example) should be passed as a `style` object to avoid generating a massive number of classNames.
-
-## Pseudoclasses
-
-`jsxstyle` supports the `:hover`, `:focus`, and `:active` pseudoclasses.
-You can prefix style props with the relevant pseudoclass to apply it:
+jsxstyle was built to take full advantage of paradigms familiar to anyone who’s written JSX. Here’s an example of a stylable input with a few initial styles set::
 
 ```jsx
-var MyComponent = React.createClass({
-  render: function() {
-    return (
-      <Block
-        color="red"
-        hoverColor="yellow">
-        Hello, world!
-      </Block>
-    );
-  }
-});
+import { Block } from 'jsxstyle';
+import React from 'react';
+
+export default function FancyInput({type, placeholder, value, onChange, ...props}) {
+  return (
+    <Block
+      fontSize={16}
+      lineHeight="20px"
+      fontWeight={400}
+      color="#444"
+      placeholderColor="#999"
+      backgroundColor="#FFF"
+      padding="4px 6px"
+      marginBottom={10}
+      borderRadius={3}
+      borderWidth="1px"
+      borderColor="#BBB"
+      activeBorderColor="#999"
+      borderStyle="solid"
+      {...props}
+      component="input"
+      props={{ type, placeholder, value, onChange }}
+    />
+  );
+}
 ```
 
-## Optimizations
+To read more about the reasoning behind jsxstyle, check out the [`jsxstyle` README][jsxstyle readme].
 
-### Style garbage collection
+### [`jsxstyle-preact`][jsxstyle-preact]
 
-For big applications you'll want to call `jsxstyle.install()` to run the style garbage
-collector. This will periodically prune dead stylesheets from the browser to improve
-performance, especially in single-page apps.
+The same set of components exported by `jsxstyle`, but with a few Preact-specific changes.
 
-## Experimental Optimizations
+### [`jsxstyle-loader`][jsxstyle-loader]
 
-At build time, you can enable an optional **webpack loader** and **webpack plugin**
-that will extract out static expressions (i.e. `margin={5}`) and expressions that only
-reference globally-known constants and precompile them into static style sheets. This
-has the advantage of reducing the number of props that React has to diff, and also, if
-you use `JsxstylePlugin` with webpack, will let you deliver a separate static `.css`
-file that can be cached and downloaded in parallel with the JS for maximum performance.
+`jsxstyle-loader` is a `webpack` loader that extracts static styles from jsxstyle components at build time, reducing or in some cases _entirely removing_ the need for runtime jsxstyle. `jsxstyle-loader` is a production optimization.
 
-The webpack plugin and loader are experimental and remain undocumented. For more
-information see the `experimental/` directory.
+To read more about `jsxstyle-loader`, check out the [`jsxstyle-loader` README][jsxstyle-loader readme].
 
-## Under the hood
+[pr]: https://github.com/smyte/jsxstyle/pulls
+[new issue]: https://github.com/smyte/jsxstyle/issues/new
+[new framework]: https://github.com/smyte/jsxstyle/issues/67
 
-At runtime, `jsxstyle` inserts stylesheets into the DOM that take the form of a single
-unique class name per node. If two or more nodes share the same styles, the stylesheet
-will be reused between the two nodes. Periodically, `jsxstyle` will reap stylesheets
-that were inserted into the DOM if they are no longer used.
+[jsxstyle]: https://github.com/smyte/jsxstyle/tree/master/packages/jsxstyle
+[jsxstyle-preact]: https://github.com/smyte/jsxstyle/tree/master/packages/jsxstyle-preact
+[jsxstyle readme]: https://github.com/smyte/jsxstyle/tree/master/packages/jsxstyle#README
+[rip bem]: https://github.com/smyte/jsxstyle/tree/master/packages/jsxstyle#why-use-jsxstyle-instead-of-bemoocsssmacssetc
+[jsxstyle-loader]: https://github.com/smyte/jsxstyle/tree/master/packages/jsxstyle-loader
+[jsxstyle-loader readme]: https://github.com/smyte/jsxstyle/tree/master/packages/jsxstyle#README
 
-## FAQ
+[styled-components]: https://www.styled-components.com
+[emotion]: https://github.com/emotion-js/emotion
+[rebass]: https://github.com/jxnblk/rebass
+[jxnblk]: https://github.com/jxnblk
+[mrmrs]: https://github.com/mrmrs
+[tachyons]: http://tachyons.io
 
-### Inline styles are bad.
+[travis]: https://travis-ci.org/smyte/jsxstyle
+[sauce]: https://saucelabs.com/u/jsxstyle
 
-`jsxstyle` is predicated on the idea that stylesheet rules are not a great way to reuse
-styles and that components are the correct abstraction. `jsxstyle` does not have many
-of the downsides of inline styles because the components are designed to be
-presentational only and do not render large strings of inline styles under the hood.
-
-### Is this used in production?
-
-Yes, [Smyte](https://www.smyte.com/) has used jsxstyle exclusively in production for
-almost two years.
-
-[![Sauce Test Status](https://saucelabs.com/browser-matrix/jsxstyle.svg)](https://saucelabs.com/u/jsxstyle)
+[bam]: https://www.youtube.com/watch?v=o4BOZcDMw_A

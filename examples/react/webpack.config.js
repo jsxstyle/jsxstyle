@@ -18,7 +18,7 @@ module.exports = (env = {}, options = {}) => ({
   ].filter(f => f),
   resolve: {
     alias: {
-      jsxstyle: require.resolve('../'),
+      jsxstyle: require.resolve('jsxstyle'),
     },
   },
   module: {
@@ -41,7 +41,10 @@ module.exports = (env = {}, options = {}) => ({
             ],
             'react',
           ],
-          plugins: ['transform-object-rest-spread', 'transform-object-assign'],
+          plugins: [
+            require.resolve('babel-plugin-transform-object-rest-spread'),
+            require.resolve('babel-plugin-transform-object-assign'),
+          ],
         },
       },
       options.hot

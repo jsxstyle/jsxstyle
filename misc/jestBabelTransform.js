@@ -5,4 +5,5 @@ module.exports = require('babel-jest').createTransformer({
     // transform imports
     ['env', { targets: { node: 'current' } }],
   ],
+  plugins: ['transform-class-properties'],
 });

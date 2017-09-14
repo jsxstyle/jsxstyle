@@ -15,9 +15,9 @@ const babelConfig = {
   exclude: 'node_modules/**',
   babelrc: false,
   presets: [
-    'react',
+    require.resolve('babel-preset-react'),
     [
-      'env',
+      require.resolve('babel-preset-env'),
       {
         targets: { browsers: ['last 2 versions'] },
         loose: true,
@@ -30,25 +30,29 @@ const babelConfig = {
       },
     ],
   ],
-  plugins: ['transform-object-assign', 'external-helpers'],
+  plugins: [
+    require.resolve('babel-plugin-transform-class-properties'),
+    require.resolve('babel-plugin-transform-object-assign'),
+    require.resolve('babel-plugin-external-helpers'),
+  ],
 };
 
 export default [
   {
-    input: 'src/index.js',
+    input: 'packages/jsxstyle/src/index.js',
     output: [
-      { format: 'cjs', file: 'lib/jsxstyle.cjs.js' },
-      { format: 'es', file: 'lib/jsxstyle.es.js' },
+      { format: 'cjs', file: 'packages/jsxstyle/lib/jsxstyle.cjs.js' },
+      { format: 'es', file: 'packages/jsxstyle/lib/jsxstyle.es.js' },
     ],
     plugins: [babel(babelConfig)],
     external,
     watch,
   },
   {
-    input: 'preact/src/index.js',
+    input: 'packages/jsxstyle-preact/src/index.js',
     output: [
-      { format: 'cjs', file: 'preact/lib/jsxstyle-preact.cjs.js' },
-      { format: 'es', file: 'preact/lib/jsxstyle-preact.es.js' },
+      { format: 'cjs', file: 'packages/jsxstyle-preact/lib/jsxstyle.cjs.js' },
+      { format: 'es', file: 'packages/jsxstyle-preact/lib/jsxstyle.es.js' },
     ],
     plugins: [babel(babelConfig)],
     external,

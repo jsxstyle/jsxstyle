@@ -16,12 +16,27 @@ export default function makePreactStyleComponentClass(
     'makePreactStyleComponentClass expects param 1 to be a valid displayName'
   );
 
-  class Style extends Component {
+  return class extends Component {
     constructor(props) {
       super(props);
       this.component = props.component || tagName;
       this.className = getClassName(props, props.class);
     }
+
+    static propTypes = {
+      class: PropTypes.string,
+      component: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.object,
+        PropTypes.func,
+      ]),
+      mediaQueries: PropTypes.object,
+      props: PropTypes.object,
+      style: PropTypes.object,
+    };
+
+    static defaultProps = defaultProps;
+    static displayName = displayName;
 
     componentWillReceiveProps(props) {
       this.component = props.component || tagName;
@@ -38,22 +53,5 @@ export default function makePreactStyleComponentClass(
         children
       );
     }
-  }
-
-  Style.propTypes = {
-    class: PropTypes.string,
-    component: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.object,
-      PropTypes.func,
-    ]),
-    mediaQueries: PropTypes.object,
-    props: PropTypes.object,
-    style: PropTypes.object,
   };
-
-  Style.defaultProps = defaultProps;
-  Style.displayName = displayName;
-
-  return Style;
 }

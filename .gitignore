@@ -1,6 +1,4 @@
 node_modules
-tests/bundle.js
-example/build
 lib/
 .vscode
 .env

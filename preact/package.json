@@ -1,8 +1,0 @@
-{
-  "name": "jsxstyle-preact",
-  "version": "2.0.0-beta.6",
-  "private": true,
-  "main": "lib/jsxstyle-preact.cjs.js",
-  "module": "lib/jsxstyle-preact.es.js",
-  "jsnext:main": "lib/jsxstyle-preact.es.js"
-}
