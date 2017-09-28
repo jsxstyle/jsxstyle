@@ -19,13 +19,14 @@ With jsxstyle, your component code looks like this:
     backgroundImage="url('http://graph.facebook.com/justinbieber/picture?type=large')"
   />
   <Col fontFamily="sans-serif" fontSize={16} lineHeight="24px">
-    <Block fontWeight={500}>Justin Bieber</Block>
+    <Block fontWeight={600}>Justin Bieber</Block>
     <Block fontStyle="italic">Canadian</Block>
   </Col>
 </Row>
 ```
 
-With jsxstyle, jumping between JS and CSS in your editor is no longer necessary. Problems that have historically been difficult to solve, like specificity clashes and dead CSS, are _completely sidestepped_. Thanks to the declarative nature of inline styles, frontend contributors can see at a glance exactly how an element is styled. Onboarding new frontend contributors takes seconds, not hours, because jsxstyle’s mental model is easy to teach and easy to learn. Problems stemming from multiple frontend contributors writing styles in a shared codebase are completely avoided, because styles are tied to _component instances_ instead of abstract reusable _CSS classes_.
+With jsxstyle, bouncing between JS and CSS in your editor is no longer necessary.
+jsxstyle is built for teams. Problems stemming from multiple frontend contributors writing styles in a shared codebase are completely avoided, because styles are tied to _component instances_ instead of abstract reusable _CSS classes_. Onboarding new frontend contributors takes seconds, not hours, because jsxstyle’s mental model is easy to teach and easy to learn. Thanks to the declarative nature of inline styles, frontend contributors can see at a glance exactly how an element is styled.
 
 Carry on to read a brief overview, or [skip to the FAQs](#faqs).
 
@@ -124,11 +125,14 @@ Define a `mediaQueries` property with an object of media queries keyed by whatev
 />
 ```
 
-<br><br>
+<br>
 
 # FAQs
 
 ## Why write styles inline with jsxstyle?
+
+<details>
+<summary>Writing styles inline does away with name fatigue and constantly bouncing between CSS and component code in your editor, and jsxstyle’s approach to inline styles ensures that a best-in-class developer experience comes with no performance cost.</summary>
 
 1. ### Naming things is hard.
 
@@ -152,11 +156,16 @@ Define a `mediaQueries` property with an object of media queries keyed by whatev
 
     Statically analyzing inline styles on known components is trivial. Most of the styles you’ll end up writing on jsxstyle primitive components are static. Once you’re done perusing this README, check out [`jsxstyle-loader`][loader]. It’s a webpack loader that, at build time, extracts static styles defined on jsxstyle components into separate CSS files. `jsxstyle-loader` reduces and in some cases _entirely removes_ the need for runtime jsxstyle. jsxstyle becomes nothing more than syntactic sugar for styling components, much like how JSX itself is syntactic sugar for nested function calls. Dude, that’s next level!
 
+</details>
+
 ## Why use jsxstyle instead of BEM/SMACSS/OOCSS/etc.?
+
+<details>
+<summary>jsxstyle provides all the benefits of a CSS class naming/organization system, but <em>without the system</em>.</summary><br>
 
 [Writing CSS at scale is hard][scalable css]. Overly specific selectors cause specificity collisions. More generic selectors cause overstyling. Being a responsible frontend contributor in a shared codebase means you have to have a working knowledge of the system before you can contribute new code without introducing redundancies or errors.
 
-Countless systems have been developed to either solve or circumvent inherent problems with writing CSS in a team environment. Most of these systems attempt to solve the complexity of writing CSS with _even more complex systems_. Also, CSS systems are fantastic in theory, but in practice, a CSS system is only as good as the most negligent frontend contributor on your team.
+Countless systems have been developed to either solve or circumvent inherent problems with writing CSS in a team environment. Most of these systems attempt to solve the complexity of writing CSS with _even more complex systems_. Once a system is implemented it has to be closely adhered to. CSS systems are fantastic in theory, but in practice, a CSS system is only as good as the most negligent frontend contributor on your team.
 
 jsxstyle provides all the benefits of a good CSS class-naming system, with the added benefit of _not having to learn or remember a CSS class-naming system_.
 
@@ -168,23 +177,27 @@ jsxstyle provides all the benefits of a good CSS class-naming system, with the a
 
 - ### Onboarding new frontend contributors takes seconds, not hours.
   A knowledge of existing styles is _not required_ for a new frontend contributor to be 100% productive right from the start. In codebases without jsxstyle, in order for someone to be able to contribute, they usually have to know what styles to put where and where to look to put new styles. There are usually mixins and variables they don’t know exist because they don’t yet “know their way around the place”. With jsxstyle, you’re just writing styles on components.
+</details>
 
 ## Can I use jsxstyle with existing CSS?
 
-You certainly can. jsxstyle is designed to work alongside existing styles. Migrating to jsxstyle can happen one element at a time. In order to avoid class name collisions, class names generated by jsxstyle are hashed names that are intentionally unlike class names that a human would write. jsxstyle uses single class names as selectors, which makes overriding styles in your existing system easy.
+Yes! jsxstyle is designed to work _alongside_ existing styles and style systems. In order to avoid class name collisions, class names generated by jsxstyle are hashed names that are _intentionally unlike_ class names that a human would write. As far as specificity is concerned, jsxstyle uses single class names as selectors, which makes overriding styles in your existing system easy (though not recommended).
 
-## What about server rendering?
+## Does jsxstyle support server rendering?
 
-jsxstyle exports a few utility functions, including two functions that make adding support for server rendering a breeze. Two things you need to know:
+<details>
+<summary>Yep!</summary><br>
 
-1. jsxstyle builds a cache of styles that have been added to the document to ensure they’re added exactly once. When server rendering, that cache will need to be reset between each render.
+jsxstyle exports a `cache` object with a few functions that make adding support for server rendering a breeze. Two things you need to know:
 
-2. In a server environment, the function that adds styles to the document is a noop, but it can be replaced with any arbitrary function. When server rendering, you can aggregate jsxstyle-injected styles when rendering your app to a string, and then add those styles to the response you send to the client.
+1. In a server environment, the function that adds styles to the document is a noop, but it can be replaced with any arbitrary function. When server rendering, you can aggregate jsxstyle-injected styles when rendering your app to a string, and then add those styles to the response you send to the client.
 
-Here’s a minimal example of jsxstyle server rendering with Koa:
+2. jsxstyle builds a cache of styles that have been added to the document to ensure they’re added exactly once. When server rendering, this cache will need to be reset between each render.
+
+Here’s a minimal (untested!) example of jsxstyle server rendering with Koa:
 
 ```jsx
-import { injectAddRule, resetCache } from 'PACKAGE_NAME';
+import { cache } from 'PACKAGE_NAME';
 import Koa from 'koa';
 RENDERTOSTRING_IMPORT
 
@@ -192,14 +205,14 @@ import App from './App';
 
 // aggregate styles as they’re added to the document
 let styles = '';
-injectAddRule(css => {
+cache.injectAddRule(css => {
   styles += css;
 });
 
 const app = new Koa();
 app.use(async ctx => {
   // Reset cache and style string before each call to `renderToString`
-  resetCache();
+  cache.reset();
   styles = '';
   const html = renderToString(<App path={ctx.request.path} />);
 
@@ -211,7 +224,13 @@ app.use(async ctx => {
 });
 ```
 
-## What browsers does jsxstyle support?
+</details>
+
+## What about global styles?
+
+jsxstyle only manages styles written on jsxstyle components. Where you put global styles is entirely up to you. At Smyte, we use a separate shared style sheet that contains a few reset styles.
+
+# Browser support
 
 jsxstyle is tested [on every push][travis] in [a wide array of browsers, both old and new][sauce]. Shout out to **Sauce Labs** for making cross browser testing _free_ for open source projects. Sauce Labs is _shockingly easy_ to integrate with other services. I’m not gonna say it’s simple to get set up, because it’s not, but once it’s up and running, damn, it’s easy. They even make an SVG test matrix you can drop into your README:
 
@@ -219,24 +238,19 @@ jsxstyle is tested [on every push][travis] in [a wide array of browsers, both ol
 
 Another shout out to **Travis CI** for 1. making dope software and 2. making their open source plan free as well. The plan doesn’t have a cool, punny name like _Open Sauce_ but whatever. Gotta play with the hand you’re dealt I suppose.
 
+# Contributing
 
-## I have an idea for jsxstyle!
+Got an idea for jsxstyle? Did you encounter a bug? [Open an issue][new issue] and let’s talk it through. [PRs welcome too][pr]!
 
-That’s not a question but I’ll take it anyway. Got an idea for jsxstyle? Did you encounter a bug? [Open an issue][new issue] and let’s talk it through. PRs welcome too!
+# Alternatives
 
----
-<br><br>
+So you don’t think jsxstyle is the thing for you? That’s quite alright. It’s a good time to be picky about exactly how and where your styles are written. We’re in the golden age of component-based web frameworks, and a lot of ancient “best practices” that were set in place by the old guard are being rethought, to everyones benefit. It’s a weird and exciting time to be making stuff for the web.
 
-## Alternatives
+- [Tachyons][] by [Adam Morse][mrmrs] enables a lot of the the same benefits as jsxstyle but allows you to still write CSS classes. I love the “no new CSS” concept behind Tachyons. Tachyons elegantly solves the issues that Adam covers in [his excellent blog post on scalable CSS][scalable css].
 
-So you don’t think jsxstyle is the thing for you? That’s quite alright. There’s a veritable cornucopia of CSS-in-JS solutions out there for you.
+- [Rebass][] by [jxnblk][] is “A functional React UI component library, built with `styled-components”`. Rebass has similar API to jsxstyle. Syntactically it’s more compact, and it has a few more tricks. We don’t like tricks over here at jsxstyle dot com but we do give Rebass two meaty thumbs up.
 
-| Project name | Description |
-|:--|:--|
-| [Tachyons][] by [mrmrs][] | enables a lot of the the same benefits as jsxstyle but allows you to still write CSS class names. I love the “no new CSS” concept behind Tachyons. |
-| [Rebass][] by [jxnblk][] | “A functional React UI component library, built with `styled-components”`. Very similar API to jsxstyle—more compact and with a few more tricks. We don’t like tricks over here at jsxstyle dot com but we do give Rebass two meaty thumbs up. |
-| [`styled-components`][styled-components] | jsxstyle equivalent that embraces descendant selectors, tagged template literals, and emoji. If you want to write your CSS in a CSS-like format, this is the thing for you. |
-| [`emotion`][emotion] | A CSS-in-JS solution that’s also all up on those tagged template literals. Damn, maybe everyone’s onto something. |
+[`styled-components`][styled-components] and (more recently) [`emotion`][emotion] have both gained serious traction in the frontend JS community. I can’t do either system justice in a single sentence and I’ve never used either system, but they both seem like reasonable jsxstyle alternatives that embrace the funky things you can do with tagged template literals.
 
 [pr]: https://github.com/smyte/jsxstyle/pulls
 [new issue]: https://github.com/smyte/jsxstyle/issues/new
@@ -246,13 +260,14 @@ So you don’t think jsxstyle is the thing for you? That’s quite alright. Ther
 [preact]: https://github.com/smyte/jsxstyle/packages/jsxstyle-preact
 [loader]: https://github.com/smyte/jsxstyle/packages/jsxstyle-loader
 
-[styled-components]: https://www.styled-components.com
-[emotion]: https://github.com/emotion-js/emotion
 [rebass]: https://github.com/jxnblk/rebass
 [jxnblk]: https://github.com/jxnblk
 [mrmrs]: https://github.com/mrmrs
 [scalable css]: http://mrmrs.github.io/writing/2016/03/24/scalable-css/
 [tachyons]: http://tachyons.io
+
+[styled-components]: https://www.styled-components.com
+[emotion]: https://github.com/emotion-js/emotion
 
 [travis]: https://travis-ci.org/smyte/jsxstyle
 [sauce]: https://saucelabs.com/u/jsxstyle

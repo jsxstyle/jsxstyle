@@ -1,9 +1,9 @@
-import PropTypes from 'prop-types';
 import invariant from 'invariant';
-
+import PropTypes from 'prop-types';
+import { getStyleCache } from 'jsxstyle-utils';
 import { h, Component } from 'preact';
 
-import { _getClassName as getClassName } from 'jsxstyle';
+export const cache = getStyleCache();
 
 export default function makePreactStyleComponentClass(
   displayName,
@@ -20,7 +20,7 @@ export default function makePreactStyleComponentClass(
     constructor(props) {
       super(props);
       this.component = props.component || tagName;
-      this.className = getClassName(props, props.class);
+      this.className = cache.getClassName(props, props.class);
     }
 
     static propTypes = {
@@ -40,7 +40,7 @@ export default function makePreactStyleComponentClass(
 
     componentWillReceiveProps(props) {
       this.component = props.component || tagName;
-      this.className = getClassName(props, props.class);
+      this.className = cache.getClassName(props, props.class);
     }
 
     render({ style, props, children }) {

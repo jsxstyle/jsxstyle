@@ -1,6 +1,13 @@
 import babel from 'rollup-plugin-babel';
 
-const external = ['invariant', 'jsxstyle', 'preact', 'prop-types', 'react'];
+const external = [
+  'invariant',
+  'jsxstyle',
+  'jsxstyle-utils',
+  'preact',
+  'prop-types',
+  'react',
+];
 
 const watch = { exclude: ['node_modules/**'] };
 
@@ -37,25 +44,13 @@ const babelConfig = {
   ],
 };
 
-export default [
-  {
-    input: 'packages/jsxstyle/src/index.js',
-    output: [
-      { format: 'cjs', file: 'packages/jsxstyle/lib/jsxstyle.cjs.js' },
-      { format: 'es', file: 'packages/jsxstyle/lib/jsxstyle.es.js' },
-    ],
-    plugins: [babel(babelConfig)],
-    external,
-    watch,
-  },
-  {
-    input: 'packages/jsxstyle-preact/src/index.js',
-    output: [
-      { format: 'cjs', file: 'packages/jsxstyle-preact/lib/jsxstyle.cjs.js' },
-      { format: 'es', file: 'packages/jsxstyle-preact/lib/jsxstyle.es.js' },
-    ],
-    plugins: [babel(babelConfig)],
-    external,
-    watch,
-  },
-];
+export default ['jsxstyle-utils', 'jsxstyle', 'jsxstyle-preact'].map(pkg => ({
+  input: `packages/${pkg}/src/index.js`,
+  output: [
+    { format: 'cjs', file: `packages/${pkg}/lib/${pkg}.cjs.js` },
+    { format: 'es', file: `packages/${pkg}/lib/${pkg}.es.js` },
+  ],
+  plugins: [babel(babelConfig)],
+  external,
+  watch,
+}));

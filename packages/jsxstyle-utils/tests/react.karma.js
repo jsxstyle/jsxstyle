@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Block, InlineBlock, Row, Col, resetCache } from 'jsxstyle';
+import { Block, InlineBlock, Row, Col, cache } from 'jsxstyle';
 
 describe('jsxstyle', () => {
   const node = document.createElement('div');
@@ -9,7 +9,7 @@ describe('jsxstyle', () => {
 
   afterEach(() => {
     ReactDOM.unmountComponentAtNode(node);
-    resetCache();
+    cache.reset();
   });
 
   it('does the thing', () => {

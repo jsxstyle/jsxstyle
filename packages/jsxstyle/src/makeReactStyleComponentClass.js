@@ -1,9 +1,9 @@
-import PropTypes from 'prop-types';
 import invariant from 'invariant';
-
+import PropTypes from 'prop-types';
+import { getStyleCache } from 'jsxstyle-utils';
 import { createElement as h, Component } from 'react';
 
-import { getClassName } from './styleCache';
+export const cache = getStyleCache();
 
 export default function makeReactStyleComponentClass(
   displayName,
@@ -20,10 +20,10 @@ export default function makeReactStyleComponentClass(
     constructor(props) {
       super(props);
       this.component = props.component || tagName;
-      this.className = getClassName(props, props.className);
+      this.className = cache.getClassName(props, props.className);
     }
 
-    propTypes = {
+    static propTypes = {
       className: PropTypes.string,
       component: PropTypes.oneOfType([
         PropTypes.string,
@@ -40,7 +40,7 @@ export default function makeReactStyleComponentClass(
 
     componentWillReceiveProps(props) {
       this.component = props.component || tagName;
-      this.className = getClassName(props, props.className);
+      this.className = cache.getClassName(props, props.className);
     }
 
     render() {

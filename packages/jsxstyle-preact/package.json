@@ -1,15 +1,24 @@
 {
   "name": "jsxstyle-preact",
   "version": "2.0.0-beta.6",
-  "description": "Preact component styler",
+  "description": "Inline style system for Preact",
   "repository": "git@github.com:smyte/jsxstyle.git",
   "author": "Pete Hunt",
   "license": "Apache-2.0",
-  "main": "lib/jsxstyle.cjs.js",
-  "module": "lib/jsxstyle.es.js",
-  "jsnext:main": "lib/jsxstyle.es.js",
+  "main": "lib/jsxstyle-preact.cjs.js",
+  "module": "lib/jsxstyle-preact.es.js",
+  "jsnext:main": "lib/jsxstyle-preact.es.js",
   "dependencies": {
     "invariant": "^2.2.1",
-    "jsxstyle": "^2.0.0-beta.6"
-  }
+    "jsxstyle-utils": "^2.0.0-beta.6",
+    "prop-types": ">=15"
+  },
+  "peerDependencies": {
+    "preact": "*"
+  },
+  "keywords": [
+    "jsxstyle",
+    "preact",
+    "css-in-js"
+  ]
 }

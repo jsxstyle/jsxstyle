@@ -1,8 +1,4 @@
-import { Inline } from '../src';
-import * as styleCache from '../src/styleCache';
-
-import React from 'react';
-import ReactDOMServer from 'react-dom/server';
+import getStyleCache from '../src/getStyleCache';
 
 const kitchenSink = {
   mediaQueries: { test: 'test' },
@@ -20,27 +16,28 @@ const kitchenSink = {
 
 describe('styleCache', () => {
   it('combines class names if `className` prop is present', () => {
-    styleCache.resetCache();
-    const markup = ReactDOMServer.renderToStaticMarkup(
-      React.createElement(Inline, { className: 'bla', color: 'red' }, 'honk')
+    const styleCache = getStyleCache();
+    const className = styleCache.getClassName(
+      { display: 'inline', color: 'red' },
+      'bla'
     );
-    expect(markup).toBe('<div class="bla _1ioutjs">honk</div>');
+    expect(className).toBe('bla _1ioutjs');
   });
 
   it('generates deterministic class names', () => {
-    styleCache.resetCache();
+    const styleCache = getStyleCache();
     const className = styleCache.getClassName({ wow: 'cool' });
     expect(className).toBe('_1lqd3t0');
   });
 
   it('returns null when given an empty style object', () => {
-    styleCache.resetCache();
+    const styleCache = getStyleCache();
     const className = styleCache.getClassName({});
     expect(className).toBeNull();
   });
 
   it('converts a style object to a sorted object of objects', () => {
-    styleCache.resetCache();
+    const styleCache = getStyleCache();
     const styles = [];
     styleCache.injectAddRule(css => styles.push(css));
     const className = styleCache.getClassName(kitchenSink);
@@ -61,7 +58,7 @@ describe('styleCache', () => {
 
   it('respects media query order', () => {
     let allCSS = '\n';
-    styleCache.resetCache();
+    const styleCache = getStyleCache();
     styleCache.injectAddRule(css => (allCSS += css + '\n'));
 
     const className = styleCache.getClassName({
@@ -83,7 +80,7 @@ describe('styleCache', () => {
 
   it('works with addRule injection', () => {
     let allCSS = '\n';
-    styleCache.resetCache();
+    const styleCache = getStyleCache();
     styleCache.injectAddRule(css => (allCSS += css + '\n'));
 
     const className = styleCache.getClassName(kitchenSink);
@@ -105,7 +102,7 @@ describe('styleCache', () => {
   });
 
   it('works with classname strategy injection', () => {
-    styleCache.resetCache();
+    const styleCache = getStyleCache();
     let idx = -1;
     styleCache.injectClassNameStrategy(() => 'jsxstyle' + ++idx);
 
@@ -122,5 +119,37 @@ describe('styleCache', () => {
       'jsxstyle2',
       'jsxstyle0',
     ]);
+  });
+
+  it('resets', () => {
+    const styleCache = getStyleCache();
+    let idx = -1;
+    styleCache.injectClassNameStrategy(() => 'jsxstyle' + ++idx);
+
+    expect(styleCache.getClassName({ a: 1 })).toEqual('jsxstyle0');
+    expect(styleCache.getClassName({ a: 1 })).toEqual('jsxstyle0');
+    styleCache.reset();
+    expect(styleCache.getClassName({ a: 1 })).toEqual('jsxstyle1');
+  });
+
+  // prettier-ignore
+  it('throws an errors when injections are added incorrectly', () => {
+    const styleCache = getStyleCache();
+
+    const alreadyInjectedMsg = 'jsxstyle error: injection functions should be called once and only once.';
+    const cannotInjectMsg = 'jsxstyle error: injection functions must be called before any jsxstyle components mount.';
+
+    expect(() => styleCache.injectAddRule(() => {})).not.toThrow();
+    expect(() => styleCache.injectClassNameStrategy(() => {})).not.toThrow();
+
+    // no repeated injections
+    expect(() => styleCache.injectAddRule(() => {})).toThrowError(alreadyInjectedMsg);
+    expect(() => styleCache.injectClassNameStrategy(() => {})).toThrowError(alreadyInjectedMsg);
+
+    styleCache.getClassName({ a: 1 });
+
+    // no injections after getClassName is called
+    expect(() => styleCache.injectAddRule(() => {})).toThrowError(cannotInjectMsg);
+    expect(() => styleCache.injectClassNameStrategy(() => {})).toThrowError(cannotInjectMsg);
   });
 });
