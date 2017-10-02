@@ -1,6 +1,5 @@
 'use strict';
 
-const invariant = require('invariant');
 const path = require('path');
 const webpack = require('webpack');
 
@@ -100,7 +99,6 @@ class JsxstyleWebpackPlugin {
           if (handledMethods.hasOwnProperty(key)) {
             return function(filePath, ...args) {
               if (filePath.endsWith('.jsxstyle.css')) {
-                process.stderr.write(key + ' -- ' + filePath);
                 return memoryFS[key](filePath, ...args);
               }
               return value.call(this, filePath, ...args);

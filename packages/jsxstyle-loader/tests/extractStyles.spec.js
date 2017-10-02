@@ -6,6 +6,8 @@ const extractStyles = require('../utils/ast/extractStyles');
 
 const whitelistedModules = [require.resolve('./mock/LC')];
 
+const pathTo = thing => path.resolve(__dirname, thing);
+
 describe('the basics', function() {
   it('only extracts styles from valid jsxstyle components', () => {
     const rv1 = extractStyles({
@@ -17,7 +19,7 @@ const {Col: TestCol, Row} = require('jsxstyle');
 <Col extract="nope" />;
 <InlineBlock extract="nope" />;
 <TestCol extract="yep" />;`,
-      sourceFileName: path.resolve(__dirname, 'mock/validate.js'),
+      sourceFileName: pathTo('mock/validate.js'),
       cacheObject: {},
       whitelistedModules,
     });
@@ -42,7 +44,7 @@ const { Col: TestCol, Row } = require('jsxstyle');
     const rv = extractStyles({
       src: `import {Block} from 'jsxstyle';
 <Block className="orange" color={thing1 ? 'orange' : 'purple'} width={thing2 ? 200 : 400} />`,
-      sourceFileName: path.resolve(__dirname, 'mock/classname-spaces.js'),
+      sourceFileName: pathTo('mock/classname-spaces.js'),
       cacheObject: {},
     });
 
@@ -71,7 +73,7 @@ const val = 'thing';
   staticValue={val}
   staticMemberExpression={LC.staticValue}
 />`,
-      sourceFileName: path.resolve(__dirname, 'mock/extract-static1.js'),
+      sourceFileName: pathTo('mock/extract-static1.js'),
       cacheObject: {},
       whitelistedModules,
     });
@@ -87,7 +89,7 @@ const val = 'thing';
 <div className="_x0" />;`
     );
     expect(rv.css).toEqual(
-      `/* ./tests/mock/extract-static1.js:4-11 (Block) */
+      `/* ./packages/jsxstyle-loader/tests/mock/extract-static1.js:4-11 (Block) */
 ._x0 {
   display: block;
   static-float: 6.9px;
@@ -107,7 +109,7 @@ const val = 'thing';
 const val = 'thing';
 import LC from './LC';
 <Block staticString="wow" staticInt={69} staticValue={val} staticMemberExpression={LC.staticValue} dynamicValue={notStatic} />`,
-      sourceFileName: path.resolve(__dirname, 'mock/extract-static2.js'),
+      sourceFileName: pathTo('mock/extract-static2.js'),
       cacheObject: {},
       whitelistedModules,
     });
@@ -123,7 +125,7 @@ import LC from './LC';
 <Jsxstyle$Box dynamicValue={notStatic} className="_x0" />;`
     );
     expect(rv.css).toEqual(
-      `/* ./tests/mock/extract-static2.js:4 (Block) */
+      `/* ./packages/jsxstyle-loader/tests/mock/extract-static2.js:4 (Block) */
 ._x0 {
   display: block;
   static-int: 69px;
@@ -142,7 +144,7 @@ describe('spread operators', function() {
       src: `import {Block} from 'jsxstyle';
 const BlueBlock = ({wow, ...props}) => <Block color="blue" {...props} test="wow" />;
 const DynamicBlock = ({wow, ...props}) => <Block dynamicProp={wow} {...props} />;`,
-      sourceFileName: path.resolve(__dirname, 'mock/rest-spread.js'),
+      sourceFileName: pathTo('mock/rest-spread.js'),
       cacheObject: {},
     });
 
@@ -161,7 +163,7 @@ const DynamicBlock = ({ wow, ...props }) => <Jsxstyle$Box display="block" dynami
     const rv = extractStyles({
       src: `import {Block} from 'jsxstyle';
 <Block doNotExtract="no" {...spread} extract="yep" />`,
-      sourceFileName: path.resolve(__dirname, 'mock/spread.js'),
+      sourceFileName: pathTo('mock/spread.js'),
       cacheObject: {},
     });
 
@@ -174,7 +176,7 @@ import { Block } from 'jsxstyle';
 <Jsxstyle$Box display="block" doNotExtract="no" {...spread} extract={null} className="_x0" />;`
     );
     expect(rv.css).toEqual(
-      `/* ./tests/mock/spread.js:2 (Block) */
+      `/* ./packages/jsxstyle-loader/tests/mock/spread.js:2 (Block) */
 ._x0 {
   extract: yep;
 }
@@ -195,7 +197,7 @@ import { Block } from 'jsxstyle';
   {...spread}
   color="red"
 />`,
-      sourceFileName: path.resolve(__dirname, 'mock/spread.js'),
+      sourceFileName: pathTo('mock/spread.js'),
       cacheObject: {},
     });
 
@@ -208,7 +210,7 @@ import { Block } from 'jsxstyle';
 <Jsxstyle$Box display="block" component="wow" props={{ test: 4 }} key={test} ref={test} style={{}} {...spread} color={null} className={(typeof spread === 'object' && spread !== null && spread.className || wow || '') + ' _x0'} />;`
     );
     expect(rv.css).toEqual(
-      `/* ./tests/mock/spread.js:2-11 (Block) */
+      `/* ./packages/jsxstyle-loader/tests/mock/spread.js:2-11 (Block) */
 ._x0 {
   color: red;
 }
@@ -226,7 +228,7 @@ function Thing(props) {
   return <Block width="100%" {...LC.containerStyles} {...staticSpread} />;
 }
 `,
-      sourceFileName: path.resolve(__dirname, 'mock/trusted-spreads.js'),
+      sourceFileName: pathTo('mock/trusted-spreads.js'),
       cacheObject: {},
       whitelistedModules,
     });
@@ -245,7 +247,8 @@ function Thing(props) {
 }`
     );
 
-    expect(rv.css).toEqual(`/* ./tests/mock/trusted-spreads.js:6 (Block) */
+    expect(rv.css)
+      .toEqual(`/* ./packages/jsxstyle-loader/tests/mock/trusted-spreads.js:6 (Block) */
 ._x0 {
   background-color: #FFF;
   border-radius: 4px;
@@ -265,21 +268,21 @@ describe('cache object', function() {
     extractStyles({
       src: `import {Block} from 'jsxstyle';
 <Block />`,
-      sourceFileName: path.resolve(__dirname, 'mock/cache-object.js'),
+      sourceFileName: pathTo('mock/cache-object.js'),
       cacheObject,
     });
 
     extractStyles({
       src: `import {Block} from 'jsxstyle';
 <Block staticThing="wow" />`,
-      sourceFileName: path.resolve(__dirname, 'mock/cache-object.js'),
+      sourceFileName: pathTo('mock/cache-object.js'),
       cacheObject,
     });
 
     extractStyles({
       src: `import {InlineBlock} from 'jsxstyle';
 <InlineBlock />`,
-      sourceFileName: path.resolve(__dirname, 'mock/cache-object.js'),
+      sourceFileName: pathTo('mock/cache-object.js'),
       cacheObject,
     });
 
@@ -313,7 +316,7 @@ describe('style groups', function() {
   <Block thing="wow" hoverThing="ok" />
   <InlineBlock />
 </Block>`,
-      sourceFileName: path.resolve(__dirname, 'mock/style-groups.js'),
+      sourceFileName: pathTo('mock/style-groups.js'),
       cacheObject,
       styleGroups,
     });
@@ -331,19 +334,19 @@ import { Block, InlineBlock } from 'jsxstyle';
     );
 
     expect(rv.css).toEqual(
-      `/* ./tests/mock/style-groups.js:2 (Block) */
-/* ./tests/mock/style-groups.js:3 (Block) */
+      `/* ./packages/jsxstyle-loader/tests/mock/style-groups.js:2 (Block) */
+/* ./packages/jsxstyle-loader/tests/mock/style-groups.js:3 (Block) */
 ._x0 {
   display: block;
 }
-/* ./tests/mock/style-groups.js:3 (Block) */
+/* ./packages/jsxstyle-loader/tests/mock/style-groups.js:3 (Block) */
 ._x1 {
   thing: wow;
 }
 ._x1:hover {
   thing: ok;
 }
-/* ./tests/mock/style-groups.js:4 (InlineBlock) */
+/* ./packages/jsxstyle-loader/tests/mock/style-groups.js:4 (InlineBlock) */
 ._x2 {
   display: inline-block;
 }
@@ -369,7 +372,7 @@ import { Block, InlineBlock } from 'jsxstyle';
   <Block thing="wow" hoverThing="ok" />
   <InlineBlock />
 </Block>`,
-      sourceFileName: path.resolve(__dirname, 'mock/named-style-groups.js'),
+      sourceFileName: pathTo('mock/named-style-groups.js'),
       cacheObject,
       namedStyleGroups,
     });
@@ -387,19 +390,19 @@ import { Block, InlineBlock } from 'jsxstyle';
     );
 
     expect(rv.css).toEqual(
-      `/* ./tests/mock/named-style-groups.js:2 (Block) */
-/* ./tests/mock/named-style-groups.js:3 (Block) */
+      `/* ./packages/jsxstyle-loader/tests/mock/named-style-groups.js:2 (Block) */
+/* ./packages/jsxstyle-loader/tests/mock/named-style-groups.js:3 (Block) */
 ._x0 {
   display: block;
 }
-/* ./tests/mock/named-style-groups.js:3 (Block) */
+/* ./packages/jsxstyle-loader/tests/mock/named-style-groups.js:3 (Block) */
 ._test1 {
   thing: wow;
 }
 ._test1:hover {
   thing: ok;
 }
-/* ./tests/mock/named-style-groups.js:4 (InlineBlock) */
+/* ./packages/jsxstyle-loader/tests/mock/named-style-groups.js:4 (InlineBlock) */
 ._test2 {
   display: inline-block;
 }
@@ -428,7 +431,7 @@ describe('jsxstyle-specific props', function() {
 <Block dynamicProp={wow} props="invalid" />;
 <Block props={{ 'aria hidden': true }} />;
 <Block props={{ '-aria-hidden': true }} />;`,
-      sourceFileName: path.resolve(__dirname, 'mock/props-prop1.js'),
+      sourceFileName: pathTo('mock/props-prop1.js'),
       cacheObject: {},
       whitelistedModules,
       errorCallback,
@@ -461,7 +464,7 @@ import { Block } from 'jsxstyle';
     const rv2 = extractStyles({
       src: `import {Block} from 'jsxstyle';
 <Block color="red" ref={r => this.testBlock = r} />`,
-      sourceFileName: path.resolve(__dirname, 'mock/props-prop2.js'),
+      sourceFileName: pathTo('mock/props-prop2.js'),
       cacheObject: {},
       whitelistedModules,
     });
@@ -484,7 +487,7 @@ import { Block } from 'jsxstyle';
 <Block component={thing.cool} />;
 <Block component="h1" {...spread} />;
 <Block before="wow" component="h1" dynamic={wow} color="red" />;`,
-      sourceFileName: path.resolve(__dirname, 'mock/component-prop1.js'),
+      sourceFileName: pathTo('mock/component-prop1.js'),
       cacheObject: {},
       whitelistedModules,
     });
@@ -508,7 +511,7 @@ import { Block } from 'jsxstyle';
     extractStyles({
       src: `import {Block} from 'jsxstyle';
 <Block component="CapitalisedString" />`,
-      sourceFileName: path.resolve(__dirname, 'mock/component-prop2.js'),
+      sourceFileName: pathTo('mock/component-prop2.js'),
       cacheObject: {},
       whitelistedModules,
       errorCallback,
@@ -518,7 +521,7 @@ import { Block } from 'jsxstyle';
     extractStyles({
       src: `import {Block} from 'jsxstyle';
 <Block component={lowercaseIdentifier} />`,
-      sourceFileName: path.resolve(__dirname, 'mock/component-prop3.js'),
+      sourceFileName: pathTo('mock/component-prop3.js'),
       cacheObject: {},
       whitelistedModules,
       errorCallback,
@@ -527,7 +530,7 @@ import { Block } from 'jsxstyle';
     extractStyles({
       src: `import {Block} from 'jsxstyle';
 <Block component={functionCall()} />`,
-      sourceFileName: path.resolve(__dirname, 'mock/component-prop4.js'),
+      sourceFileName: pathTo('mock/component-prop4.js'),
       cacheObject: {},
       whitelistedModules,
       errorCallback,
@@ -536,7 +539,7 @@ import { Block } from 'jsxstyle';
     extractStyles({
       src: `import {Block} from 'jsxstyle';
 <Block component={member.expression()} />`,
-      sourceFileName: path.resolve(__dirname, 'mock/component-prop4.js'),
+      sourceFileName: pathTo('mock/component-prop4.js'),
       cacheObject: {},
       whitelistedModules,
       errorCallback,
@@ -550,7 +553,7 @@ import { Block } from 'jsxstyle';
       src: `import {Block, Row} from 'jsxstyle';
 <Row className={member.expression} {...spread} />;
 <Block className="orange" />;`,
-      sourceFileName: path.resolve(__dirname, 'mock/class-name1.js'),
+      sourceFileName: pathTo('mock/class-name1.js'),
       cacheObject: {},
       whitelistedModules,
     });
@@ -574,7 +577,7 @@ import { Block, Row } from 'jsxstyle';
   width={640}
   smWidth="100%"
 />;`,
-      sourceFileName: path.resolve(__dirname, 'mock/media-queries.js'),
+      sourceFileName: pathTo('mock/media-queries.js'),
       cacheObject: {},
     });
 
@@ -587,7 +590,7 @@ import { Block } from 'jsxstyle';
 <div className="_x0" />;`
     );
     expect(rv.css).toEqual(
-      `/* ./tests/mock/media-queries.js:2-6 (Block) */
+      `/* ./packages/jsxstyle-loader/tests/mock/media-queries.js:2-6 (Block) */
 ._x0 {
   display: block;
   width: 640px;
@@ -608,7 +611,7 @@ import LC from './LC';
   width={640}
   smWidth="100%"
 />;`,
-      sourceFileName: path.resolve(__dirname, 'mock/media-queries.js'),
+      sourceFileName: pathTo('mock/media-queries.js'),
       cacheObject: {},
       whitelistedModules,
     });
@@ -623,7 +626,7 @@ import LC from './LC';
 <div className="_x0" />;`
     );
     expect(rv.css).toEqual(
-      `/* ./tests/mock/media-queries.js:3-7 (Block) */
+      `/* ./packages/jsxstyle-loader/tests/mock/media-queries.js:3-7 (Block) */
 ._x0 {
   display: block;
   width: 640px;
@@ -641,7 +644,7 @@ describe('ternaries', function() {
     const rv = extractStyles({
       src: `import { Block } from 'jsxstyle';
 <Block color={dynamic ? 'red' : 'blue'} />`,
-      sourceFileName: path.resolve(__dirname, 'mock/ternary.js'),
+      sourceFileName: pathTo('mock/ternary.js'),
       cacheObject: {},
       whitelistedModules,
     });
@@ -660,7 +663,7 @@ import { Block } from 'jsxstyle';
     const rv = extractStyles({
       src: `import {Block} from 'jsxstyle';
 <Block color={dynamic && 'red'} />`,
-      sourceFileName: path.resolve(__dirname, 'mock/ternary.js'),
+      sourceFileName: pathTo('mock/ternary.js'),
       cacheObject: {},
       whitelistedModules,
     });
@@ -674,11 +677,12 @@ import { Block } from 'jsxstyle';
 <div className={(dynamic ? '_x1' : '') + ' _x0'} />;`
     );
 
-    expect(rv.css).toEqual(`/* ./tests/mock/ternary.js:2 (Block) */
+    expect(rv.css)
+      .toEqual(`/* ./packages/jsxstyle-loader/tests/mock/ternary.js:2 (Block) */
 ._x0 {
   display: block;
 }
-/* ./tests/mock/ternary.js:2 (Block) */
+/* ./packages/jsxstyle-loader/tests/mock/ternary.js:2 (Block) */
 ._x1 {
   color: red;
 }
@@ -691,7 +695,7 @@ import { Block } from 'jsxstyle';
 import {Block} from 'jsxstyle';
 const blue = 'blueberry';
 <Block color={dynamic ? LC.red : blue} />`,
-      sourceFileName: path.resolve(__dirname, 'mock/ternary.js'),
+      sourceFileName: pathTo('mock/ternary.js'),
       cacheObject: {},
       whitelistedModules,
     });
@@ -707,15 +711,16 @@ const blue = 'blueberry';
 <div className={(dynamic ? '_x1' : '_x2') + ' _x0'} />;`
     );
 
-    expect(rv.css).toEqual(`/* ./tests/mock/ternary.js:4 (Block) */
+    expect(rv.css)
+      .toEqual(`/* ./packages/jsxstyle-loader/tests/mock/ternary.js:4 (Block) */
 ._x0 {
   display: block;
 }
-/* ./tests/mock/ternary.js:4 (Block) */
+/* ./packages/jsxstyle-loader/tests/mock/ternary.js:4 (Block) */
 ._x1 {
   color: strawberry;
 }
-/* ./tests/mock/ternary.js:4 (Block) */
+/* ./packages/jsxstyle-loader/tests/mock/ternary.js:4 (Block) */
 ._x2 {
   color: blueberry;
 }
@@ -726,7 +731,7 @@ const blue = 'blueberry';
     const rv = extractStyles({
       src: `import {Block} from 'jsxstyle';
 <Block className="cool" color={dynamic ? 'red' : 'blue'} />`,
-      sourceFileName: path.resolve(__dirname, 'mock/ternary-with-classname.js'),
+      sourceFileName: pathTo('mock/ternary-with-classname.js'),
       cacheObject: {},
       whitelistedModules,
     });
@@ -745,17 +750,17 @@ import { Block } from 'jsxstyle';
     const rv = extractStyles({
       src: `import {Block} from 'jsxstyle';
 <Block {...spread} color={dynamic ? 'red' : 'blue'} />`,
-      sourceFileName: path.resolve(__dirname, 'mock/ternary-with-spread.js'),
+      sourceFileName: pathTo('mock/ternary-with-spread.js'),
       cacheObject: {},
       whitelistedModules,
     });
 
     expect(rv.css).toEqual(
-      `/* ./tests/mock/ternary-with-spread.js:2 (Block) */
+      `/* ./packages/jsxstyle-loader/tests/mock/ternary-with-spread.js:2 (Block) */
 ._x0 {
   color: red;
 }
-/* ./tests/mock/ternary-with-spread.js:2 (Block) */
+/* ./packages/jsxstyle-loader/tests/mock/ternary-with-spread.js:2 (Block) */
 ._x1 {
   color: blue;
 }
@@ -776,7 +781,7 @@ import { Block } from 'jsxstyle';
     const rv = extractStyles({
       src: `import {Block} from 'jsxstyle';
 <Block color={dynamic ? 'red' : 'blue'} {...spread} className="cool" />`,
-      sourceFileName: path.resolve(__dirname, 'mock/ternary-with-classname.js'),
+      sourceFileName: pathTo('mock/ternary-with-classname.js'),
       cacheObject: {},
       whitelistedModules,
     });
@@ -791,7 +796,7 @@ import { Block } from 'jsxstyle';
     const rv = extractStyles({
       src: `import {Block} from 'jsxstyle';
 <Block color={dynamic ? 'red' : 'blue'} width={dynamic ? 200 : 400} />`,
-      sourceFileName: path.resolve(__dirname, 'mock/ternary-groups.js'),
+      sourceFileName: pathTo('mock/ternary-groups.js'),
       cacheObject: {},
       whitelistedModules,
     });
@@ -806,16 +811,16 @@ import { Block } from 'jsxstyle';
     );
 
     expect(rv.css).toEqual(
-      `/* ./tests/mock/ternary-groups.js:2 (Block) */
+      `/* ./packages/jsxstyle-loader/tests/mock/ternary-groups.js:2 (Block) */
 ._x0 {
   display: block;
 }
-/* ./tests/mock/ternary-groups.js:2 (Block) */
+/* ./packages/jsxstyle-loader/tests/mock/ternary-groups.js:2 (Block) */
 ._x1 {
   color: red;
   width: 200px;
 }
-/* ./tests/mock/ternary-groups.js:2 (Block) */
+/* ./packages/jsxstyle-loader/tests/mock/ternary-groups.js:2 (Block) */
 ._x2 {
   color: blue;
   width: 400px;
@@ -828,7 +833,7 @@ import { Block } from 'jsxstyle';
     const rv = extractStyles({
       src: `import {Block} from 'jsxstyle';
 <Block color={dynamic ? null : 'blue'} />`,
-      sourceFileName: path.resolve(__dirname, 'mock/ternary-null-values.js'),
+      sourceFileName: pathTo('mock/ternary-null-values.js'),
       cacheObject: {},
       whitelistedModules,
     });
@@ -843,11 +848,11 @@ import { Block } from 'jsxstyle';
     );
 
     expect(rv.css).toEqual(
-      `/* ./tests/mock/ternary-null-values.js:2 (Block) */
+      `/* ./packages/jsxstyle-loader/tests/mock/ternary-null-values.js:2 (Block) */
 ._x0 {
   display: block;
 }
-/* ./tests/mock/ternary-null-values.js:2 (Block) */
+/* ./packages/jsxstyle-loader/tests/mock/ternary-null-values.js:2 (Block) */
 ._x1 {
   color: blue;
 }
@@ -857,7 +862,7 @@ import { Block } from 'jsxstyle';
 });
 
 describe('experimental: relative URL rewriting', function() {
-  const resultCSS = `/* ./tests/mock/relative-urls.js:2 (Block) */
+  const resultCSS = `/* ./packages/jsxstyle-loader/tests/mock/relative-urls.js:2 (Block) */
 ._x0 {
   b: url("./mock/path/to/file.png");
   display: block;
@@ -868,13 +873,14 @@ describe('experimental: relative URL rewriting', function() {
     const rv = extractStyles({
       src: `import {Block} from 'jsxstyle';
 <Block a="url(https://google.com)" b="url(/absolute/url)" c="url(data:uri)" />`,
-      sourceFileName: path.resolve(__dirname, 'mock/relative-urls.js'),
-      rootFileName: path.resolve(__dirname, 'thing.js'),
+      sourceFileName: pathTo('mock/relative-urls.js'),
+      rootFileName: pathTo('thing.js'),
       addCSSRequire: false,
       cacheObject: {},
     });
 
-    expect(rv.css).toEqual(`/* ./tests/mock/relative-urls.js:2 (Block) */
+    expect(rv.css)
+      .toEqual(`/* ./packages/jsxstyle-loader/tests/mock/relative-urls.js:2 (Block) */
 ._x0 {
   a: url(https://google.com);
   b: url(/absolute/url);
@@ -888,8 +894,8 @@ describe('experimental: relative URL rewriting', function() {
     const rv = extractStyles({
       src: `import {Block} from 'jsxstyle';
 <Block b="url(path/to/file.png)" />`,
-      sourceFileName: path.resolve(__dirname, 'mock/relative-urls.js'),
-      rootFileName: path.resolve(__dirname, 'thing.js'),
+      sourceFileName: pathTo('mock/relative-urls.js'),
+      rootFileName: pathTo('thing.js'),
       addCSSRequire: false,
       cacheObject: {},
     });
@@ -901,8 +907,8 @@ describe('experimental: relative URL rewriting', function() {
     const rv = extractStyles({
       src: `import {Block} from 'jsxstyle';
 <Block b="url(./path/to/file.png)" />`,
-      sourceFileName: path.resolve(__dirname, 'mock/relative-urls.js'),
-      rootFileName: path.resolve(__dirname, 'thing.js'),
+      sourceFileName: pathTo('mock/relative-urls.js'),
+      rootFileName: pathTo('thing.js'),
       addCSSRequire: false,
       cacheObject: {},
     });
@@ -914,8 +920,8 @@ describe('experimental: relative URL rewriting', function() {
     const rv = extractStyles({
       src: `import {Block} from 'jsxstyle';
 <Block b="url('./path/to/file.png')" />`,
-      sourceFileName: path.resolve(__dirname, 'mock/relative-urls.js'),
-      rootFileName: path.resolve(__dirname, 'thing.js'),
+      sourceFileName: pathTo('mock/relative-urls.js'),
+      rootFileName: pathTo('thing.js'),
       addCSSRequire: false,
       cacheObject: {},
     });
@@ -937,7 +943,7 @@ describe('experimental: jsxstyle/lite', function() {
       src: `import {Block} from 'jsxstyle/lite';
 import thing from 'jsxstyle/lib/thing';
 <Block static="value" dynamic={value} />`,
-      sourceFileName: path.resolve(__dirname, 'mock/jsxstyle-lite.js'),
+      sourceFileName: pathTo('mock/jsxstyle-lite.js'),
       cacheObject: {},
       errorCallback,
     });
@@ -947,7 +953,8 @@ import thing from 'jsxstyle/lib/thing';
 import thing from 'jsxstyle/lib/thing';
 <div className="_x0" />;`);
 
-    expect(rv.css).toEqual(`/* ./tests/mock/jsxstyle-lite.js:3 (Block) */
+    expect(rv.css)
+      .toEqual(`/* ./packages/jsxstyle-loader/tests/mock/jsxstyle-lite.js:3 (Block) */
 ._x0 {
   display: block;
   static: value;
@@ -968,7 +975,7 @@ import thing from 'jsxstyle/lib/thing';
       src: `import {Block} from 'jsxstyle/lite/preact';
 import thing from 'jsxstyle/lib/thing';
 <Block static="value" dynamic={value} />`,
-      sourceFileName: path.resolve(__dirname, 'mock/jsxstyle-lite-preact.js'),
+      sourceFileName: pathTo('mock/jsxstyle-lite-preact.js'),
       cacheObject: {},
       errorCallback,
     });
@@ -978,7 +985,8 @@ import thing from 'jsxstyle/lib/thing';
 import thing from 'jsxstyle/lib/thing';
 <div class="_x0" />;`);
 
-    expect(rv.css).toEqual(`/* ./tests/mock/jsxstyle-lite-preact.js:3 (Block) */
+    expect(rv.css)
+      .toEqual(`/* ./packages/jsxstyle-loader/tests/mock/jsxstyle-lite-preact.js:3 (Block) */
 ._x0 {
   display: block;
   static: value;
@@ -999,10 +1007,7 @@ import thing from 'jsxstyle/lib/thing';
       src: `import thing from 'jsxstyle/lib/thing';
 <block static="value" dynamic={value} />;
 <inline-block color="blue" />;`,
-      sourceFileName: path.resolve(
-        __dirname,
-        'mock/jsxstyle-extremely-lite.js'
-      ),
+      sourceFileName: pathTo('mock/jsxstyle-extremely-lite.js'),
       cacheObject: {},
       errorCallback,
       extremelyLiteMode: 'react',
@@ -1015,12 +1020,12 @@ import thing from 'jsxstyle/lib/thing';
 <div className="_x1" />;`);
 
     expect(rv.css)
-      .toEqual(`/* ./tests/mock/jsxstyle-extremely-lite.js:2 (block) */
+      .toEqual(`/* ./packages/jsxstyle-loader/tests/mock/jsxstyle-extremely-lite.js:2 (block) */
 ._x0 {
   display: block;
   static: value;
 }
-/* ./tests/mock/jsxstyle-extremely-lite.js:3 (inline-block) */
+/* ./packages/jsxstyle-loader/tests/mock/jsxstyle-extremely-lite.js:3 (inline-block) */
 ._x1 {
   color: blue;
   display: inline-block;
@@ -1041,10 +1046,7 @@ import thing from 'jsxstyle/lib/thing';
       src: `import thing from 'jsxstyle/lib/thing';
 <block static="value" dynamic={value} />;
 <inline-block color="blue" />;`,
-      sourceFileName: path.resolve(
-        __dirname,
-        'mock/jsxstyle-extremely-lite-preact.js'
-      ),
+      sourceFileName: pathTo('mock/jsxstyle-extremely-lite-preact.js'),
       cacheObject: {},
       errorCallback,
       extremelyLiteMode: 'preact',
@@ -1058,12 +1060,12 @@ import thing from 'jsxstyle/lib/thing';
 <div class="_x1" />;`);
 
     expect(rv.css)
-      .toEqual(`/* ./tests/mock/jsxstyle-extremely-lite-preact.js:2 (block) */
+      .toEqual(`/* ./packages/jsxstyle-loader/tests/mock/jsxstyle-extremely-lite-preact.js:2 (block) */
 ._x0 {
   display: block;
   static: value;
 }
-/* ./tests/mock/jsxstyle-extremely-lite-preact.js:3 (inline-block) */
+/* ./packages/jsxstyle-loader/tests/mock/jsxstyle-extremely-lite-preact.js:3 (inline-block) */
 ._x1 {
   color: blue;
   display: inline-block;

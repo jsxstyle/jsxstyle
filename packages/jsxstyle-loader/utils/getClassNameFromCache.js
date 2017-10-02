@@ -1,7 +1,7 @@
 'use strict';
 
 const invariant = require('invariant');
-const { _getStyleKeysForProps: getStyleKeysForProps } = require('jsxstyle');
+const { getStyleKeysForProps } = require('jsxstyle-utils');
 
 function getClassNameFromCache(
   styleObject,

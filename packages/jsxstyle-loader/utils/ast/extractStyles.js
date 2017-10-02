@@ -5,10 +5,7 @@ const path = require('path');
 const vm = require('vm');
 const util = require('util');
 
-const {
-  _getStyleKeysForProps: getStyleKeysForProps,
-  _defaults: jsxstyleDefaults,
-} = require('jsxstyle');
+const { getStyleKeysForProps, componentStyles } = require('jsxstyle-utils');
 
 const canEvaluate = require('./canEvaluate');
 const canEvaluateObject = require('./canEvaluateObject');
@@ -117,8 +114,11 @@ function extractStyles({
         ? 'jsxstyle/lite'
         : `jsxstyle/lite/${extremelyLiteMode}`;
     validComponents = validComponents || {};
-    for (const key in jsxstyleDefaults) {
-      const dashCaseName = key.replace(ucRegex, '-$1').toLowerCase().slice(1);
+    for (const key in componentStyles) {
+      const dashCaseName = key
+        .replace(ucRegex, '-$1')
+        .toLowerCase()
+        .slice(1);
       validComponents[dashCaseName] = key;
     }
   } else {
@@ -320,7 +320,7 @@ function extractStyles({
         node.name.name = boxComponentName;
       }
 
-      const defaultProps = jsxstyleDefaults[src];
+      const defaultProps = componentStyles[src];
       invariant(defaultProps, `jsxstyle component <${src} /> does not exist!`);
 
       const propKeys = Object.keys(defaultProps);
