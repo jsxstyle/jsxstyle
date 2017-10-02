@@ -5,6 +5,8 @@ import dangerousStyleValue from './dangerousStyleValue';
 const capRegex = /[A-Z]/g;
 
 const pseudoelements = {
+  after: true,
+  before: true,
   placeholder: true,
   selection: true,
 };
