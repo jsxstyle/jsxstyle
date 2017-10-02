@@ -1,6 +1,6 @@
 {
   "name": "jsxstyle-utils",
-  "version": "2.0.0-beta.6",
+  "version": "2.0.0-rc.0",
   "description": "Utilities used by jsxstyle and tooling built for jsxstyle",
   "author": "Pete Hunt",
   "license": "Apache-2.0",
