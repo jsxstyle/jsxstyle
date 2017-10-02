@@ -91,7 +91,7 @@ To read more about `jsxstyle-loader`, check out the [`jsxstyle-loader` README][j
 [jsxstyle]: https://github.com/smyte/jsxstyle/tree/master/packages/jsxstyle
 [jsxstyle-preact]: https://github.com/smyte/jsxstyle/tree/master/packages/jsxstyle-preact
 [jsxstyle readme]: https://github.com/smyte/jsxstyle/tree/master/packages/jsxstyle#README
-[rip bem]: https://github.com/smyte/jsxstyle/tree/master/packages/jsxstyle#why-use-jsxstyle-instead-of-bemoocsssmacssetc
+[rip bem]: https://github.com/smyte/jsxstyle/tree/master/packages/jsxstyle#why-use-jsxstyle-instead-of-bemsmacssoocssetc
 [jsxstyle-loader]: https://github.com/smyte/jsxstyle/tree/master/packages/jsxstyle-loader
 [jsxstyle-loader readme]: https://github.com/smyte/jsxstyle/tree/master/packages/jsxstyle#README
 [jsxstyle-utils]: https://github.com/smyte/jsxstyle/tree/master/packages/jsxstyle-utils
