@@ -1,15 +1,20 @@
 {
   "name": "jsxstyle-monorepo",
-  "version": "2.0.0-beta.6",
   "description": "The monorepo for jsxstyle and tools built for jsxstyle",
-  "main": ".eslintrc.js",
+  "license": "Apache-2.0",
   "private": true,
-  "directories": {
-    "example": "examples"
-  },
-  "prettier": {
-    "single-quote": true,
-    "trailing-comma": "es5"
+  "homepage": "https://github.com/smyte/jsxstyle#readme",
+  "scripts": {
+    "ci": "npm run jest && npm run rollup && npm run karma",
+    "eslint": "eslint {packages,examples}/{src,tests}/*.js",
+    "jest": "jest --verbose",
+    "karma": "karma start",
+    "karma_local": "KARMA_LOCAL=yep karma start",
+    "ls_module": "LOADER_TMPFILE=$(npm --silent pack) && tar -tf $LOADER_TMPFILE && echo && rm -i $LOADER_TMPFILE",
+    "prepublishOnly": "npm run rollup",
+    "prettier": "prettier --write {packages,examples}/{src,tests}/*.js",
+    "rollup": "rimraf packages/jsxstyle{,-*}/lib/*.{es,cjs}.js; rollup -c; prettier --write packages/jsxstyle{,-*}/lib/*.{es,cjs}.js",
+    "start": "webpack-dev-server --hot --hotOnly --inline --historyApiFallback --config=example/webpack.config.js"
   },
   "dependencies": {
     "babel-eslint": "^8.0.0",
@@ -39,7 +44,7 @@
     "karma-sourcemap-loader": "^0.3.7",
     "karma-webpack": "^2.0.4",
     "lerna": "^2.2.0",
-    "prettier": "^1.6.1",
+    "prettier": "^1.7.3",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
     "rimraf": "^2.6.2",
@@ -49,32 +54,17 @@
     "webpack": "^3.6.0",
     "webpack-dev-server": "^2.7.1"
   },
-  "scripts": {
-    "ci": "npm run jest && npm run rollup && npm run karma",
-    "eslint": "eslint {packages,examples}/{src,tests}/*.js",
-    "jest": "jest --verbose",
-    "karma": "karma start",
-    "karma_local": "KARMA_LOCAL=yep karma start",
-    "ls_module": "LOADER_TMPFILE=$(npm --silent pack) && tar -tf $LOADER_TMPFILE && echo && rm -i $LOADER_TMPFILE",
-    "prepublishOnly": "npm run rollup",
-    "prettier": "prettier --write {packages,examples}/{src,tests}/*.js",
-    "rollup": "rimraf packages/jsxstyle{,-*}/lib/*.{es,cjs}.js; rollup -c; prettier --write packages/jsxstyle{,-*}/lib/*.{es,cjs}.js",
-    "start": "webpack-dev-server --hot --hotOnly --inline --historyApiFallback --config=example/webpack.config.js"
+  "prettier": {
+    "single-quote": true,
+    "trailing-comma": "es5"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/smyte/jsxstyle.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/smyte/jsxstyle/issues"
-  },
-  "homepage": "https://github.com/smyte/jsxstyle#readme",
   "jest": {
     "transform": {
       ".js": "<rootDir>/misc/jestBabelTransform.js"
-    }
+    },
+    "watchman": false,
+    "testMatch": [
+      "<rootDir>/packages/*/tests/*.spec.js"
+    ]
   }
 }

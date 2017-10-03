@@ -113,6 +113,10 @@ module.exports = function(config) {
     colors: true,
     autoWatch: false,
     singleRun: true,
+    // three minutes
+    captureTimeout: 180000,
+    // 30 seconds
+    browserNoActivityTimeout: 30000,
     files: ['packages/*/tests/*.karma.js'],
     preprocessors: {
       '**/*.karma.js': ['webpack', 'sourcemap'],
