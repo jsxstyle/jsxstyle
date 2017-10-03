@@ -1,6 +1,6 @@
 language: node_js
 node_js:
-  - "node"
+  - node
 sudo: false
 before_install:
   - export TZ=America/Los_Angeles
@@ -8,9 +8,9 @@ install:
   - npm install -g lerna
   - npm install
   - lerna bootstrap
+  - npm run rollup
 script:
   - npm run jest
-  - npm run rollup
   - travis_retry npm run karma
 addons:
   sauce_connect:

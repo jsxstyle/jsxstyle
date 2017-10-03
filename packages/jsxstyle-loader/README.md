@@ -1,6 +1,6 @@
 # jsxstyle-loader
 
-`jsxstyle-loader` is a webpack loader that extracts [**static style props**](#what-are-static-style-props) from `jsxstyle` components into a separate CSS file.
+`jsxstyle-loader` is a webpack loader that extracts [**static style props**](#what-are-static-style-props) from jsxstyle components into a separate CSS file.
 
 ## Getting Started
 
@@ -8,7 +8,7 @@ Just three easy steps™:
 
 1. Add a new rule object for `jsxstyle-loader` to your webpack config.
 
-2. Add a loader that handles `.css` files to your webpack config, because `jsxstyle-loader` adds a `.css` `require` to each component that uses `jsxstyle`.
+2. Add a loader that handles `.css` files to your webpack config, because `jsxstyle-loader` adds a `.css` `require` to each component that uses jsxstyle.
 
 3. Add `jsxstyle-loader`’s companion plugin to the `plugins` section of your webpack config.
 
@@ -43,7 +43,7 @@ module.exports = {
 ## Loader Options
 
 ### `styleGroups`
-By default, `jsxstyle-loader` will extract all static style props on a `jsxstyle` component into one class. This can lead to CSS classes that contain a lot of common style declarations. A good CSS minifier should help with this, but if you want a bit more control over how styles are grouped into CSS classes, you can provide an _array_ of CSS style objects. When `jsxstyle-loader` encounters a component that contains all styles in a style object, those styles will be extracted into a separate class name.
+By default, `jsxstyle-loader` will extract all static style props on a jsxstyle component into one class. This can lead to CSS classes that contain a lot of common style declarations. A good CSS minifier should help with this, but if you want a bit more control over how styles are grouped into CSS classes, you can provide an _array_ of CSS style objects. When `jsxstyle-loader` encounters a component that contains all styles in a style object, those styles will be extracted into a separate class name.
 
 For example, with the following loader config:
 
@@ -66,7 +66,7 @@ For example, with the following loader config:
 // ...
 ```
 
-...and a `jsxstyle` component that looks like this:
+...and a jsxstyle component that looks like this:
 
 ```js
 import { Block } from 'jsxstyle';
@@ -99,11 +99,11 @@ Without the `styleGroups` parameter, all five extracted style props would be in 
 
 ### `namedStyleGroups`
 
-The `namedStyleGroups` config option is just like the `styleGroups` config option, with one key difference: it is expected to be an _object_ of CSS style objects, not an array. The key of the CSS style object will be used as the class name if all props and values are present on a `jsxstyle` component.
+The `namedStyleGroups` config option is just like the `styleGroups` config option, with one key difference: it is expected to be an _object_ of CSS style objects, not an array. The key of the CSS style object will be used as the class name if all props and values are present on a jsxstyle component.
 
 ### `whitelistedModules`
 
-The `whitelistedModules` config option allows you to add modules to the evaluation context. For example, with the following loader config, any prop on a `jsxstyle` component that references a value from `./LayoutConstants.js` will be assumed to be evaluatable:
+The `whitelistedModules` config option allows you to add modules to the evaluation context. For example, with the following loader config, any prop on a jsxstyle component that references a value from `./LayoutConstants.js` will be assumed to be evaluatable:
 
 ```js
 // ...
@@ -137,7 +137,7 @@ Not yet, but soon! Typescript support is blocked by the release of `babylon`/`ba
 
 ### It’s not working 😩
 
-1. Make sure the loader object `test` regex matches JS files that use `jsxstyle`.
+1. Make sure the loader object `test` regex matches JS files that use jsxstyle.
 2. `jsxstyle-loader` relies on JSX still being around, so make sure it runs *before* `babel-loader` does its thing.
 3. `jsxstyle-loader` only supports destructured `require`/`import` syntax:
     ```jsx
@@ -150,8 +150,8 @@ Not yet, but soon! Typescript support is blocked by the release of `babylon`/`ba
     <Block />;
 
     // Nope :(
-    const jsxstyle = require('jsxstyle');
-    <jsxstyle.Block>;
+    const Block = require('jsxstyle').Block;
+    <Block />;
     ```
 
 ### What are “static style props”?
@@ -175,7 +175,7 @@ If the value of a prop is a simple logical expression with the `&&` operator, it
 
 ### Inline styles… _are bad_.
 
-See [the `jsxstyle` README](https://github.com/smyte/jsxstyle#faq).
+See [the jsxstyle README](https://github.com/smyte/jsxstyle#faq).
 
 ### Does it work with hot reloading?
 
@@ -191,11 +191,11 @@ One big one for now: CSS class names are not de-duplicated. It’s a feature I�
 
 ### jsxstyle lite
 
-This is a smokey the bear “leave no trace” type of deal right here. In your components, require from `jsxstyle/lite` instead of `jsxstyle` or `jsxstyle/lite/preact` instead of `jsxstyle/preact`. `jsxstyle-loader` will still extract every style it can, but dynamic styles will be ignored (with a warning) and all traces of runtime `jsxstyle` will be removed. WhoOOOoAoOA thAT’s CRAzyy.
+This is a smokey the bear “leave no trace” type of deal right here. In your components, require from `jsxstyle/lite` instead of jsxstyle or `jsxstyle/lite/preact` instead of `jsxstyle/preact`. `jsxstyle-loader` will still extract every style it can, but dynamic styles will be ignored (with a warning) and all traces of runtime jsxstyle will be removed. WhoOOOoAoOA thAT’s CRAzyy.
 
 ### jsxstyle even lite-r
 
-Close your eyes for a second and imagine with me… imagine if you didn’t even have to require `jsxstyle` to use it. Just think… all those dozens of characters you don’t have to type anymore.
+Close your eyes for a second and imagine with me… imagine if you didn’t even have to require jsxstyle to use it. Just think… all those dozens of characters you don’t have to type anymore.
 
 Ok, now open your eyes and then lay them upon this piece of JSX:
 
@@ -204,13 +204,13 @@ Ok, now open your eyes and then lay them upon this piece of JSX:
 <block color="red">This text will be red</block>
 ```
 
-Instead of importing components from `jsxstyle` or `jsxstyle/preact`, don’t import _anything_ and just use the dash-case version of the component name as if it’s a valid DOM element. When `jsxstyle-loader` encounters one of these dash-case elements, it’ll treat it like the PascalCased equivalent component imported from `jsxstyle/lite`.
+Instead of importing components from jsxstyle or `jsxstyle/preact`, don’t import _anything_ and just use the dash-case version of the component name as if it’s a valid DOM element. When `jsxstyle-loader` encounters one of these dash-case elements, it’ll treat it like the PascalCased equivalent component imported from `jsxstyle/lite`.
 
 To enable this feature, pass an options object to `JsxstyleLoaderPlugin` with the `__experimental__extremelyLiteMode` key set to either `"react"` or `"preact"`.
 
 ### Stylesheet aggregation
 
-By default, `jsxstyle-loader` adds one stylesheet for each component that uses `jsxstyle`. It’s nice for debugging and tends to work well for small to medium projects (i.e. < 100 components that use `jsxstyle`). However, if you’ve got hundreds of components that use `jsxstyle` and you use `css-loader` on all those extracted stylesheets, you’ll end up with hundreds of elements added to your document head on page load. Maybe that’s not your [style][pun-ishment]. Pass an object to `JsxstyleLoaderPlugin` with the `__experimental__combineCSS` set to `true` and `jsxstyle-loader` smash all those MF stylesheets into one megastylesheet.
+By default, `jsxstyle-loader` adds one stylesheet for each component that uses jsxstyle. It’s nice for debugging and tends to work well for small to medium projects (i.e. < 100 components that use jsxstyle). However, if you’ve got hundreds of components that use jsxstyle and you use `css-loader` on all those extracted stylesheets, you’ll end up with hundreds of elements added to your document head on page load. Maybe that’s not your [style][pun-ishment]. Pass an object to `JsxstyleLoaderPlugin` with the `__experimental__combineCSS` set to `true` and `jsxstyle-loader` smash all those MF stylesheets into one megastylesheet.
 
 Shhhh don’t tell anyone but it’ll also rewrite relative `url()` paths to point to the right thing. “But why would I want to use relative paths?”, you say. Well, combine an extracted stylesheet with `css-loader` and you’ve got the full power of webpack `require()` in any CSS prop that uses a URL:
 
@@ -218,7 +218,7 @@ Shhhh don’t tell anyone but it’ll also rewrite relative `url()` paths to poi
 <Block backgroundImage="url(!!cool-base64-loader!./path/to/an.svg)" />
 ```
 
-Ideally this would only be a feature in `jsxstyle/lite` since the runtime version of `jsxstyle` (obviously) doesn’t support this feature. That’s why it’s experimental.
+Ideally this would only be a feature in `jsxstyle/lite` since the runtime version of jsxstyle (obviously) doesn’t support this feature. That’s why it’s experimental.
 
 [jsxstyle]: https://github.com/smyte/jsxstyle#readme
 [discard dupes]: https://github.com/ben-eb/postcss-discard-duplicates

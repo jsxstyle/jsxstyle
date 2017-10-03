@@ -118,8 +118,6 @@ class JsxstyleWebpackPlugin {
       compilation.plugin('normal-module-loader', loaderContext => {
         loaderContext[jsxstyleKey] = this.ctx;
       });
-
-      if (!this.ctx.combineCSS || compilation.compiler.isChild()) return;
     });
   }
 }

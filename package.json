@@ -5,7 +5,7 @@
   "private": true,
   "homepage": "https://github.com/smyte/jsxstyle#readme",
   "scripts": {
-    "ci": "npm run jest && npm run rollup && npm run karma",
+    "ci": "lerna bootstrap && npm run reset && npm run rollup && npm run jest && npm run karma",
     "eslint": "eslint {packages,examples}/{src,tests}/*.js",
     "jest": "jest --verbose",
     "karma": "karma start",
@@ -13,7 +13,8 @@
     "ls_module": "LOADER_TMPFILE=$(npm --silent pack) && tar -tf $LOADER_TMPFILE && echo && rm -i $LOADER_TMPFILE",
     "prepublishOnly": "npm run rollup",
     "prettier": "prettier --write {packages,examples}/{src,tests}/*.js",
-    "rollup": "rimraf packages/jsxstyle{,-*}/lib/*.{es,cjs}.js; rollup -c; prettier --write packages/jsxstyle{,-*}/lib/*.{es,cjs}.js",
+    "reset": "rimraf packages/*/lib/*.{es,cjs}.js",
+    "rollup": "npm run reset; rollup -c; prettier --write packages/jsxstyle{,-*}/lib/*.{es,cjs}.js",
     "start": "webpack-dev-server --hot --hotOnly --inline --historyApiFallback --config=example/webpack.config.js"
   },
   "dependencies": {
