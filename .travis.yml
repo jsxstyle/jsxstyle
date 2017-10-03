@@ -4,7 +4,10 @@ node_js:
 sudo: false
 before_install:
   - export TZ=America/Los_Angeles
-install: npm install
+install:
+  - npm install -g lerna
+  - npm install
+  - lerna bootstrap
 script:
   - npm run jest
   - npm run rollup
