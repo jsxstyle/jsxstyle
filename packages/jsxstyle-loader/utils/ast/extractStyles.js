@@ -36,6 +36,11 @@ const ALL_SPECIAL_PROPS = Object.assign(
   UNTOUCHED_PROPS
 );
 
+const JSXSTYLE_SOURCES = {
+  jsxstyle: true,
+  'jsxstyle-preact': true,
+};
+
 const ucRegex = /([A-Z])/g;
 
 function extractStyles({
@@ -107,12 +112,13 @@ function extractStyles({
 
   let jsxstyleSrc;
   let validComponents;
+  let useImportSyntax = false;
 
   if (typeof extremelyLiteMode === 'string') {
     jsxstyleSrc =
       extremelyLiteMode === 'react'
-        ? 'jsxstyle/lite'
-        : `jsxstyle/lite/${extremelyLiteMode}`;
+        ? 'jsxstyle'
+        : `jsxstyle-${extremelyLiteMode}`;
     validComponents = validComponents || {};
     for (const key in componentStyles) {
       const dashCaseName = key
@@ -143,18 +149,8 @@ function extractStyles({
             continue;
           }
 
-          // ignore spelunkers
-          if (dec.init.arguments[0].value.startsWith('jsxstyle/lib/')) {
-            continue;
-          }
-
           // var {x} = require('jsxstyle')
-          // or
-          // var {x} = require('jsxstyle/thing')
-          if (
-            dec.init.arguments[0].value !== 'jsxstyle' &&
-            !dec.init.arguments[0].value.startsWith('jsxstyle/')
-          ) {
+          if (!JSXSTYLE_SOURCES.hasOwnProperty(dec.init.arguments[0].value)) {
             continue;
           }
 
@@ -191,27 +187,14 @@ function extractStyles({
           }
 
           jsxstyleSrc = dec.init.arguments[0].value;
-
-          if (
-            jsxstyleSrc === 'jsxstyle/lite' ||
-            jsxstyleSrc.startsWith('jsxstyle/lite/')
-          ) {
-            return false;
-          }
         }
       } else if (t.isImportDeclaration(item)) {
         // omfg everyone please just use import syntax
 
-        // ignore spelunkers
-        if (item.source.value.startsWith('jsxstyle/lib/')) {
-          return true;
-        }
-
         // not imported from jsxstyle? byeeee
         if (
           !t.isStringLiteral(item.source) ||
-          (item.source.value !== 'jsxstyle' &&
-            !item.source.value.startsWith('jsxstyle/'))
+          !JSXSTYLE_SOURCES.hasOwnProperty(item.source.value)
         ) {
           return true;
         }
@@ -226,6 +209,7 @@ function extractStyles({
         }
 
         jsxstyleSrc = item.source.value;
+        useImportSyntax = true;
 
         for (let idx = -1, len = item.specifiers.length; ++idx < len; ) {
           const specifier = item.specifiers[idx];
@@ -248,13 +232,6 @@ function extractStyles({
           validComponents = validComponents || {};
           validComponents[specifier.local.name] = specifier.imported.name;
         }
-
-        if (
-          jsxstyleSrc === 'jsxstyle/lite' ||
-          jsxstyleSrc.startsWith('jsxstyle/lite/')
-        ) {
-          return false;
-        }
       }
       return true;
     });
@@ -273,15 +250,24 @@ function extractStyles({
 
   // class or className?
   const classPropName =
-    jsxstyleSrc === 'jsxstyle/preact' || jsxstyleSrc === 'jsxstyle/lite/preact'
-      ? 'class'
-      : 'className';
+    jsxstyleSrc === 'jsxstyle-preact' ? 'class' : 'className';
 
-  const removeAllTrace =
-    jsxstyleSrc === 'jsxstyle/lite' || jsxstyleSrc.startsWith('jsxstyle/lite/');
+  const removeAllTrace = !!extremelyLiteMode;
 
   const boxComponentName = 'Jsxstyle$Box';
-  if (!removeAllTrace) {
+  if (useImportSyntax) {
+    ast.program.body.unshift(
+      t.importDeclaration(
+        [
+          t.importSpecifier(
+            t.identifier(boxComponentName),
+            t.identifier('Box')
+          ),
+        ],
+        t.stringLiteral(jsxstyleSrc)
+      )
+    );
+  } else {
     // Add Box require to the top of the document
     // var Jsxstyle$Box = require('jsxstyle').Box;
     ast.program.body.unshift(
