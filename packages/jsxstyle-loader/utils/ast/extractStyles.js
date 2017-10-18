@@ -254,7 +254,13 @@ function extractStyles({
 
   const removeAllTrace = !!extremelyLiteMode;
 
-  const boxComponentName = 'Jsxstyle$Box';
+  let boxComponentName;
+  traverse(ast, {
+    Program(path) {
+      boxComponentName = path.scope.generateUid('Box');
+    },
+  });
+
   if (useImportSyntax) {
     ast.program.body.unshift(
       t.importDeclaration(
@@ -285,7 +291,7 @@ function extractStyles({
     );
   }
 
-  const traverseOptions = {
+  traverse(ast, {
     JSXElement(path) {
       const node = path.node.openingElement;
 
@@ -899,9 +905,7 @@ function extractStyles({
         }
       }
     },
-  };
-
-  traverse(ast, traverseOptions);
+  });
 
   const css = Array.from(cssMap.values())
     .map(n => n.commentTexts.map(t => `${t}\n`).join('') + n.css)
@@ -911,16 +915,21 @@ function extractStyles({
   const cssRelativeFileName = `./${baseName}.jsxstyle.css`;
   const cssFileName = path.join(sourceDir, cssRelativeFileName);
 
+  // append require/import statement to the document
   if (addCSSRequire && css !== '') {
-    // append require statement to the document
-    // TODO: make sure this doesn't break something valuable
-    ast.program.body.unshift(
-      t.expressionStatement(
-        t.callExpression(t.identifier('require'), [
-          t.stringLiteral(cssRelativeFileName),
-        ])
-      )
-    );
+    if (useImportSyntax) {
+      ast.program.body.unshift(
+        t.importDeclaration([], t.stringLiteral(cssRelativeFileName))
+      );
+    } else {
+      ast.program.body.unshift(
+        t.expressionStatement(
+          t.callExpression(t.identifier('require'), [
+            t.stringLiteral(cssRelativeFileName),
+          ])
+        )
+      );
+    }
   }
 
   const result = generate(
