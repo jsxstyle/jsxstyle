@@ -1,8 +1,10 @@
 # jsxstyle
 
-jsxstyle is intended to be the best way to style JSX components. It provides a best-in-class developer experience without sacrificing performance, and has little regard for [existing CSS orthodoxy](#why-use-jsxstyle-instead-of-bemsmacssoocssetc).
+jsxstyle is the best way to style React (and Preact) components. It provides a best-in-class developer experience without sacrificing performance, and has little regard for [existing CSS orthodoxy][rip bem].
 
-Styles are written _inline_ on a special set of components exported by jsxstyle. When the component is rendered, these inline styles are converted to CSS rules and added to the document.
+## The gist
+
+With jsxstyle, there is no more ceremony surrounding styles. Instead of awkward tagged template literals or magical style functions, CSS declarations are passed as camel-cased JSX props to a set of primitive components exported by jsxstyle. When a component mounts, jsxstyle converts these props to optimized CSS classes and adds them to the document's `<head>`.
 
 With jsxstyle, your component code looks like this:
 
@@ -25,9 +27,7 @@ With jsxstyle, your component code looks like this:
 </Row>
 ```
 
-With jsxstyle, bouncing between JS and CSS in your editor is no longer necessary.
-jsxstyle is built for teams. Problems stemming from multiple frontend contributors writing styles in a shared codebase are completely avoided, because styles are tied to _component instances_ instead of abstract reusable _CSS classes_. Onboarding new frontend contributors takes seconds, not hours, because jsxstyle’s mental model is easy to teach and easy to learn. Thanks to the declarative nature of inline styles, frontend contributors can see at a glance exactly how an element is styled.
-
+With jsxstyle, bouncing between JS and CSS in your editor is no longer necessary. Thanks to the declarative nature of inline styles, frontend contributors can see at a glance exactly how an element is styled. By writing styles with _component instances_ instead of abstract "reusable" _CSS classes_ or prematurely abstracted style-only components, problems stemming from multiple contributors writing styles in a shared codebase are completely avoided.
 Carry on to read a brief overview, or [skip to the FAQs](#faqs).
 
 ## Hello world 👋
