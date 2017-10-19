@@ -17,15 +17,7 @@ function jsxstyleLoader(content) {
     'jsxstyle-loader cannot be used without the corresponding plugin'
   );
 
-  const {
-    memoryFS,
-    cacheObject,
-    fileList,
-    combineCSS,
-    needsAdditionalPass,
-    aggregateFile: rootFileName,
-    extremelyLiteMode,
-  } = this[jsxstyleKey];
+  const { memoryFS, cacheObject, extremelyLiteMode } = this[jsxstyleKey];
 
   const options = loaderUtils.getOptions(this) || {};
 
@@ -38,13 +30,11 @@ function jsxstyleLoader(content) {
   const rv = extractStyles({
     src: content,
     sourceFileName: this.resourcePath,
-    rootFileName,
     whitelistedModules: (options.whitelistedModules || []).slice(0),
     styleGroups: options.styleGroups,
     namedStyleGroups: options.namedStyleGroups,
     parserPlugins: (options.parserPlugins || []).slice(0),
     cacheObject,
-    addCSSRequire: !combineCSS,
     extremelyLiteMode,
     errorCallback: (...args) =>
       this.emitWarning(new Error(util.format(...args))),
@@ -56,10 +46,6 @@ function jsxstyleLoader(content) {
 
   memoryFS.mkdirpSync(path.dirname(rv.cssFileName));
   memoryFS.writeFileSync(rv.cssFileName, rv.css);
-  if (combineCSS && !needsAdditionalPass) {
-    fileList.add(rv.cssFileName);
-  }
-
   this.callback(null, rv.js, rv.map, rv.ast);
 }
 

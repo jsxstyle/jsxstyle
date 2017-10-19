@@ -33,9 +33,7 @@ module.exports = function(env = {}, options = {}) {
     },
     plugins: [
       new webpack.NamedModulesPlugin(),
-      new JsxstyleWebpackPlugin(
-        env.experimental && { __experimental__combineCSS: true }
-      ),
+      new JsxstyleWebpackPlugin(),
       !options.hot && new ExtractTextPlugin('bundle-[name].css'),
       options.hot && new ReactIndexPlugin(),
       env.experimental && new webpack.ProgressPlugin(progressHandler),
