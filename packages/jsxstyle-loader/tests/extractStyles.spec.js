@@ -925,35 +925,55 @@ describe('experimental: jsxstyle lite', function() {
     'jsxstyle component (`%s`). If you would like to pass dynamic ' +
     'styles to this component, specify them in the `style` prop.';
 
+  const srcJS = `<block static="value" dynamic={value} />;
+<inline-block color="blue" />;
+<box />;
+<row />;
+<col flexGrow={1} />;`;
+
+  const expectedCSS = `/* ./packages/jsxstyle-loader/tests/mock/extremely-lite.js:1 (block) */
+._x0 {
+  display: block;
+  static: value;
+}
+/* ./packages/jsxstyle-loader/tests/mock/extremely-lite.js:2 (inline-block) */
+._x1 {
+  color: blue;
+  display: inline-block;
+}
+/* ./packages/jsxstyle-loader/tests/mock/extremely-lite.js:4 (row) */
+._x2 {
+  display: flex;
+  flex-direction: row;
+}
+/* ./packages/jsxstyle-loader/tests/mock/extremely-lite.js:5 (col) */
+._x3 {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+`;
+
   it('is extremely lite (React)', () => {
     const errorCallback = jest.fn();
 
     const rv = extractStyles({
-      src: `<block static="value" dynamic={value} />;
-<inline-block color="blue" />;`,
-      sourceFileName: pathTo('mock/jsxstyle-extremely-lite.js'),
+      src: srcJS,
+      sourceFileName: pathTo('mock/extremely-lite.js'),
       cacheObject: {},
       errorCallback,
       extremelyLiteMode: 'react',
     });
 
-    expect(rv.js).toEqual(`require("./jsxstyle-extremely-lite.jsxstyle.css");
+    expect(rv.js).toEqual(`require("./extremely-lite.jsxstyle.css");
 
 <div className="_x0" />;
-<div className="_x1" />;`);
+<div className="_x1" />;
+<div />;
+<div className="_x2" />;
+<div className="_x3" />;`);
 
-    expect(rv.css)
-      .toEqual(`/* ./packages/jsxstyle-loader/tests/mock/jsxstyle-extremely-lite.js:1 (block) */
-._x0 {
-  display: block;
-  static: value;
-}
-/* ./packages/jsxstyle-loader/tests/mock/jsxstyle-extremely-lite.js:2 (inline-block) */
-._x1 {
-  color: blue;
-  display: inline-block;
-}
-`);
+    expect(rv.css).toEqual(expectedCSS);
     expect(errorCallback).toHaveBeenCalledTimes(1);
     expect(errorCallback).toHaveBeenCalledWith(msg, 'dynamic={value}', 'block');
   });
@@ -962,32 +982,22 @@ describe('experimental: jsxstyle lite', function() {
     const errorCallback = jest.fn();
 
     const rv = extractStyles({
-      src: `<block static="value" dynamic={value} />;
-<inline-block color="blue" />;`,
-      sourceFileName: pathTo('mock/jsxstyle-extremely-lite-preact.js'),
+      src: srcJS,
+      sourceFileName: pathTo('mock/extremely-lite.js'),
       cacheObject: {},
       errorCallback,
       extremelyLiteMode: 'preact',
     });
 
-    expect(rv.js)
-      .toEqual(`require("./jsxstyle-extremely-lite-preact.jsxstyle.css");
+    expect(rv.js).toEqual(`require("./extremely-lite.jsxstyle.css");
 
 <div class="_x0" />;
-<div class="_x1" />;`);
+<div class="_x1" />;
+<div />;
+<div class="_x2" />;
+<div class="_x3" />;`);
 
-    expect(rv.css)
-      .toEqual(`/* ./packages/jsxstyle-loader/tests/mock/jsxstyle-extremely-lite-preact.js:1 (block) */
-._x0 {
-  display: block;
-  static: value;
-}
-/* ./packages/jsxstyle-loader/tests/mock/jsxstyle-extremely-lite-preact.js:2 (inline-block) */
-._x1 {
-  color: blue;
-  display: inline-block;
-}
-`);
+    expect(rv.css).toEqual(expectedCSS);
     expect(errorCallback).toHaveBeenCalledTimes(1);
     expect(errorCallback).toHaveBeenCalledWith(msg, 'dynamic={value}', 'block');
   });

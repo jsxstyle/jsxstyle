@@ -43,12 +43,49 @@ const JSXSTYLE_SOURCES = {
 // InlineBlock --> inline-block
 const liteComponents = {};
 const ucRegex = /([A-Z])/g;
-for (const key in componentStyles) {
-  const dashCaseName = key
+const defaultStyleAttributes = {};
+
+for (const componentName in componentStyles) {
+  const dashCaseName = componentName
     .replace(ucRegex, '-$1')
     .toLowerCase()
     .slice(1);
-  liteComponents[dashCaseName] = key;
+  liteComponents[dashCaseName] = componentName;
+
+  const styleObj = componentStyles[componentName];
+
+  // skip `Box`
+  if (!styleObj) continue;
+
+  const propKeys = Object.keys(styleObj);
+  const styleProps = [];
+
+  for (let idx = -1, len = propKeys.length; ++idx < len; ) {
+    const prop = propKeys[idx];
+    const value = styleObj[prop];
+    if (value == null || value === '') {
+      continue;
+    }
+
+    let valueEx;
+    if (typeof value === 'number') {
+      valueEx = t.jSXExpressionContainer(t.numericLiteral(value));
+    } else if (typeof value === 'string') {
+      valueEx = t.stringLiteral(value);
+    } else {
+      invariant(
+        false,
+        'Unhandled type `%s` for `%s` component styles',
+        typeof value,
+        componentName
+      );
+      continue;
+    }
+
+    styleProps.push(t.jSXAttribute(t.jSXIdentifier(prop), valueEx));
+  }
+
+  defaultStyleAttributes[componentName] = styleProps;
 }
 
 function extractStyles({
@@ -314,28 +351,10 @@ function extractStyles({
         node.name.name = boxComponentName;
       }
 
-      const defaultProps = componentStyles[src];
-      invariant(defaultProps, `jsxstyle component <${src} /> does not exist!`);
-
-      const propKeys = Object.keys(defaultProps);
-      // looping backwards because of unshift
-      for (let idx = propKeys.length; --idx >= 0; ) {
-        const prop = propKeys[idx];
-        const value = defaultProps[prop];
-        if (value == null || value === '') {
-          continue;
-        }
-
-        let valueEx;
-        if (typeof value === 'number') {
-          valueEx = t.jSXExpressionContainer(t.numericLiteral(value));
-        } else if (typeof value === 'string') {
-          valueEx = t.stringLiteral(value);
-        } else {
-          continue;
-        }
-
-        node.attributes.unshift(t.jSXAttribute(t.jSXIdentifier(prop), valueEx));
+      // prepend initial styles
+      const initialStyles = defaultStyleAttributes[src];
+      if (initialStyles) {
+        node.attributes = [].concat(initialStyles, node.attributes);
       }
 
       // Generate scope object at this level
