@@ -753,57 +753,96 @@ import { Box as _Box } from "jsxstyle";
     );
   });
 
-  it.skip('positivizes negated identifiers', () => {
-    const rv = extractStyles({
-      src: `import {Block} from "jsxstyle";
-<Block
-  thing1={dynamic && "one"}
-  thing2={!dynamic && "two"}
-  thing3={dynamic ? "con" : "alt"}
-  thing4={!dynamic ? "con" : "alt"}
-/>`,
-      sourceFileName: pathTo('mock/ternary-with-spread.js'),
-      cacheObject: {},
-      whitelistedModules,
-    });
-
-    expect(rv.css).toEqual(``);
-  });
-
-  it.skip('positivizes negated comparisons', () => {
-    const rv = extractStyles({
+  it('positivizes binary expressions', () => {
+    const rv1 = extractStyles({
       src: `import {Block} from "jsxstyle";
   <Block
-    thing1={dynamic === 4 && "one"}
-    thing2={dynamic !== 4 && "two"}
+    thing1={dynamic === 4 && "four"}
+    thing2={dynamic !== 4 && "not four"}
+    thing3={dynamic === 4 ? "four" : "not four"}
+    thing4={dynamic !== 4 ? "not four" : "four"}
   />`,
-      sourceFileName: pathTo('mock/ternary-with-spread.js'),
+      sourceFileName: pathTo('mock/binary-expressions.js'),
       cacheObject: {},
       whitelistedModules,
     });
 
-    expect(rv.css).toEqual(``);
+    const rv2 = extractStyles({
+      src: `import {Block} from "jsxstyle";
+  <Block
+    thing1={dynamic == 4 && "four"}
+    thing2={dynamic != 4 && "not four"}
+    thing3={dynamic == 4 ? "four" : "not four"}
+    thing4={dynamic != 4 ? "not four" : "four"}
+  />`,
+      sourceFileName: pathTo('mock/binary-expressions.js'),
+      cacheObject: {},
+      whitelistedModules,
+    });
+
+    expect(rv1.js).toEqual(`import "./binary-expressions.jsxstyle.css";
+<div className={(dynamic === 4 ? "_x1" : "_x2") + " _x0"} />;`);
+
+    expect(rv2.js).toEqual(`import "./binary-expressions.jsxstyle.css";
+<div className={(dynamic == 4 ? "_x1" : "_x2") + " _x0"} />;`);
+
+    const resultCSS = `/* ./packages/jsxstyle-loader/tests/mock/binary-expressions.js:2-7 (Block) */
+._x0 {
+  display: block;
+}
+/* ./packages/jsxstyle-loader/tests/mock/binary-expressions.js:2-7 (Block) */
+._x1 {
+  thing1: four;
+  thing3: four;
+  thing4: four;
+}
+/* ./packages/jsxstyle-loader/tests/mock/binary-expressions.js:2-7 (Block) */
+._x2 {
+  thing2: not four;
+  thing3: not four;
+  thing4: not four;
+}
+`;
+
+    expect(rv1.css).toEqual(resultCSS);
+    expect(rv2.css).toEqual(resultCSS);
   });
 
-  it.skip('positivizes negated expressions', () => {
+  it('positivizes unary expressions', () => {
     const rv = extractStyles({
       src: `import {Block} from "jsxstyle";
     <Block
-      thing1={!(dynamic % 2) && "one"}
-      thing2={dynamic % 2 && "two"}
+      thing1={dynamic % 2 && "mod 2"}
+      thing2={!(dynamic % 2) && "not mod 2"}
+      thing3={dynamic % 2 ? "mod 2" : "not mod 2"}
+      thing4={!(dynamic % 2) ? "not mod 2" : "mod 2"}
     />`,
-      sourceFileName: pathTo('mock/ternary-with-spread.js'),
+      sourceFileName: pathTo('mock/unary-expressions.js'),
       cacheObject: {},
       whitelistedModules,
     });
 
-    expect(rv.css).toEqual(``);
+    expect(rv.js).toEqual(`import "./unary-expressions.jsxstyle.css";
+<div className={(dynamic % 2 ? "_x1" : "_x2") + " _x0"} />;`);
 
-    expect(rv.js).toEqual(
-      `import "./ternary-with-spread.jsxstyle.css";
-import { Box as _Box } from "jsxstyle";
-<_Box display="block" {...spread} color={null} className={dynamic ? "_x0" : "_x1"} />;`
-    );
+    expect(rv.css)
+      .toEqual(`/* ./packages/jsxstyle-loader/tests/mock/unary-expressions.js:2-7 (Block) */
+._x0 {
+  display: block;
+}
+/* ./packages/jsxstyle-loader/tests/mock/unary-expressions.js:2-7 (Block) */
+._x1 {
+  thing1: mod 2;
+  thing3: mod 2;
+  thing4: mod 2;
+}
+/* ./packages/jsxstyle-loader/tests/mock/unary-expressions.js:2-7 (Block) */
+._x2 {
+  thing2: not mod 2;
+  thing3: not mod 2;
+  thing4: not mod 2;
+}
+`);
   });
 
   it('ignores a ternary expression that comes before a spread operator', () => {

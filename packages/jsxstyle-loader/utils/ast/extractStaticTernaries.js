@@ -28,19 +28,45 @@ function extractStaticTernaries(ternaries, evalContext, cacheObject) {
   const ternariesByKey = {};
   for (let idx = -1, len = ternaries.length; ++idx < len; ) {
     const { name, ternary } = ternaries[idx];
+    let { test, consequent, alternate } = ternary;
+
+    // strip parens
+    if (t.isExpressionStatement(test)) {
+      test = test.expression;
+    }
+
+    // convert `!thing` to `thing` with swapped consequent and alternate
+    let shouldSwap = false;
+    if (t.isUnaryExpression(test) && test.operator === '!') {
+      test = test.argument;
+      shouldSwap = true;
+    } else if (t.isBinaryExpression(test)) {
+      if (test.operator === '!==') {
+        test = t.binaryExpression('===', test.left, test.right);
+        shouldSwap = true;
+      } else if (test.operator === '!=') {
+        test = t.binaryExpression('==', test.left, test.right);
+        shouldSwap = true;
+      }
+    }
+
+    if (shouldSwap) {
+      consequent = ternary.alternate;
+      alternate = ternary.consequent;
+    }
 
     const consequentValue = vm.runInContext(
-      generate(ternary.consequent).code,
+      generate(consequent).code,
       evalContext
     );
     const alternateValue = vm.runInContext(
-      generate(ternary.alternate).code,
+      generate(alternate).code,
       evalContext
     );
 
-    const key = generate(ternary.test).code;
+    const key = generate(test).code;
     ternariesByKey[key] = ternariesByKey[key] || {
-      test: ternary.test,
+      test,
       consequentStyles: {},
       alternateStyles: {},
     };
