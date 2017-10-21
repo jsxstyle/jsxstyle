@@ -1,9 +1,10 @@
 'use strict';
 
 const t = require('babel-types');
-const generate = require('babel-generator').default;
 const vm = require('vm');
 const invariant = require('invariant');
+
+const generate = require('./generate');
 const getClassNameFromCache = require('../getClassNameFromCache');
 
 function extractStaticTernaries(ternaries, evalContext, cacheObject) {

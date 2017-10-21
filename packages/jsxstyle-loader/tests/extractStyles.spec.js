@@ -11,8 +11,8 @@ const pathTo = thing => path.resolve(__dirname, thing);
 describe('the basics', function() {
   it('only extracts styles from valid jsxstyle components', () => {
     const rv1 = extractStyles({
-      src: `import {Block as TestBlock} from 'jsxstyle';
-const {Col: TestCol, Row} = require('jsxstyle');
+      src: `import {Block as TestBlock} from "jsxstyle";
+const {Col: TestCol, Row} = require("jsxstyle");
 <Block extract="nope" />;
 <TestBlock extract="yep" />;
 <Row extract="yep" />;
@@ -25,8 +25,7 @@ const {Col: TestCol, Row} = require('jsxstyle');
     });
 
     expect(rv1.js).toEqual(
-      `import './validate.jsxstyle.css';
-
+      `import "./validate.jsxstyle.css";
 <Block extract="nope" />;
 <div className="_x0" />;
 <div className="_x1" />;
@@ -38,16 +37,15 @@ const {Col: TestCol, Row} = require('jsxstyle');
 
   it('puts spaces between each class name', () => {
     const rv = extractStyles({
-      src: `import {Block} from 'jsxstyle';
-<Block className="orange" color={thing1 ? 'orange' : 'purple'} width={thing2 ? 200 : 400} />`,
+      src: `import {Block} from "jsxstyle";
+<Block className="orange" color={thing1 ? "orange" : "purple"} width={thing2 ? 200 : 400} />`,
       sourceFileName: pathTo('mock/classname-spaces.js'),
       cacheObject: {},
     });
 
     expect(rv.js).toEqual(
-      `import './classname-spaces.jsxstyle.css';
-
-<div className={'orange ' + ((thing1 ? '_x1' : '_x2') + (' ' + (thing2 ? '_x3' : '_x4'))) + ' _x0'} />;`
+      `import "./classname-spaces.jsxstyle.css";
+<div className={"orange " + ((thing1 ? "_x1" : "_x2") + (" " + (thing2 ? "_x3" : "_x4"))) + " _x0"} />;`
     );
   });
 });
@@ -55,9 +53,9 @@ const {Col: TestCol, Row} = require('jsxstyle');
 describe('element conversion', function() {
   it('converts jsxstyle elements to plain elements when all props are static', () => {
     const rv = extractStyles({
-      src: `import {Block} from 'jsxstyle';
-import LC from './LC';
-const val = 'thing';
+      src: `import {Block} from "jsxstyle";
+import LC from "./LC";
+const val = "thing";
 <Block
   staticString="wow"
   staticInt={69}
@@ -72,10 +70,9 @@ const val = 'thing';
     });
 
     expect(rv.js).toEqual(
-      `import './extract-static1.jsxstyle.css';
-
-import LC from './LC';
-const val = 'thing';
+      `import "./extract-static1.jsxstyle.css";
+import LC from "./LC";
+const val = "thing";
 <div className="_x0" />;`
     );
     expect(rv.css).toEqual(
@@ -95,9 +92,9 @@ const val = 'thing';
 
   it('converts jsxstyle elements to Block elements when some props aren\u2019t static', () => {
     const rv = extractStyles({
-      src: `import {Block} from 'jsxstyle';
-const val = 'thing';
-import LC from './LC';
+      src: `import {Block} from "jsxstyle";
+const val = "thing";
+import LC from "./LC";
 <Block staticString="wow" staticInt={69} staticValue={val} staticMemberExpression={LC.staticValue} dynamicValue={notStatic} />`,
       sourceFileName: pathTo('mock/extract-static2.js'),
       cacheObject: {},
@@ -105,11 +102,10 @@ import LC from './LC';
     });
 
     expect(rv.js).toEqual(
-      `import './extract-static2.jsxstyle.css';
-import { Box as _Box } from 'jsxstyle';
-
-const val = 'thing';
-import LC from './LC';
+      `import "./extract-static2.jsxstyle.css";
+import { Box as _Box } from "jsxstyle";
+const val = "thing";
+import LC from "./LC";
 <_Box dynamicValue={notStatic} className="_x0" />;`
     );
     expect(rv.css).toEqual(
@@ -129,7 +125,7 @@ import LC from './LC';
 describe('spread operators', function() {
   it("doesn't explode if you use the spread operator", () => {
     const rv = extractStyles({
-      src: `import {Block} from 'jsxstyle';
+      src: `import {Block} from "jsxstyle";
 const BlueBlock = ({wow, ...props}) => <Block color="blue" {...props} test="wow" />;
 const DynamicBlock = ({wow, ...props}) => <Block dynamicProp={wow} {...props} />;`,
       sourceFileName: pathTo('mock/rest-spread.js'),
@@ -137,26 +133,32 @@ const DynamicBlock = ({wow, ...props}) => <Block dynamicProp={wow} {...props} />
     });
 
     expect(rv.js).toEqual(
-      `import './rest-spread.jsxstyle.css';
-import { Box as _Box } from 'jsxstyle';
+      `import "./rest-spread.jsxstyle.css";
+import { Box as _Box } from "jsxstyle";
 
-const BlueBlock = ({ wow, ...props }) => <_Box display="block" color="blue" {...props} test={null} className="_x0" />;
-const DynamicBlock = ({ wow, ...props }) => <_Box display="block" dynamicProp={wow} {...props} />;`
+const BlueBlock = ({
+  wow,
+  ...props
+}) => <_Box display="block" color="blue" {...props} test={null} className="_x0" />;
+
+const DynamicBlock = ({
+  wow,
+  ...props
+}) => <_Box display="block" dynamicProp={wow} {...props} />;`
     );
   });
 
   it('handles props mixed with spread operators', () => {
     const rv = extractStyles({
-      src: `import {Block} from 'jsxstyle';
+      src: `import {Block} from "jsxstyle";
 <Block doNotExtract="no" {...spread} extract="yep" />`,
       sourceFileName: pathTo('mock/spread.js'),
       cacheObject: {},
     });
 
     expect(rv.js).toEqual(
-      `import './spread.jsxstyle.css';
-import { Box as _Box } from 'jsxstyle';
-
+      `import "./spread.jsxstyle.css";
+import { Box as _Box } from "jsxstyle";
 <_Box display="block" doNotExtract="no" {...spread} extract={null} className="_x0" />;`
     );
     expect(rv.css).toEqual(
@@ -170,7 +172,7 @@ import { Box as _Box } from 'jsxstyle';
 
   it('handles reserved props before the spread operators', () => {
     const rv = extractStyles({
-      src: `import {Block} from 'jsxstyle';
+      src: `import {Block} from "jsxstyle";
 <Block
   className={wow}
   component="wow"
@@ -186,10 +188,11 @@ import { Box as _Box } from 'jsxstyle';
     });
 
     expect(rv.js).toEqual(
-      `import './spread.jsxstyle.css';
-import { Box as _Box } from 'jsxstyle';
-
-<_Box display="block" component="wow" props={{ test: 4 }} key={test} ref={test} style={{}} {...spread} color={null} className={(typeof spread === 'object' && spread !== null && spread.className || wow || '') + ' _x0'} />;`
+      `import "./spread.jsxstyle.css";
+import { Box as _Box } from "jsxstyle";
+<_Box display="block" component="wow" props={{
+  test: 4
+}} key={test} ref={test} style={{}} {...spread} color={null} className={(typeof spread === "object" && spread !== null && spread.className || wow || "") + " _x0"} />;`
     );
     expect(rv.css).toEqual(
       `/* ./packages/jsxstyle-loader/tests/mock/spread.js:2-11 (Block) */
@@ -202,9 +205,12 @@ import { Box as _Box } from 'jsxstyle';
 
   it('extracts spreads from trusted sources', () => {
     const rv = extractStyles({
-      src: `import {Block} from 'jsxstyle';
-import LC from './LC';
-const staticSpread = {color: '#444', width: 420};
+      src: `import {Block} from "jsxstyle";
+import LC from "./LC";
+const staticSpread = {
+  color: "#444",
+  width: 420
+};
 
 function Thing(props) {
   return <Block width="100%" {...LC.containerStyles} {...staticSpread} />;
@@ -216,10 +222,12 @@ function Thing(props) {
     });
 
     expect(rv.js).toEqual(
-      `import './trusted-spreads.jsxstyle.css';
-
-import LC from './LC';
-const staticSpread = { color: '#444', width: 420 };
+      `import "./trusted-spreads.jsxstyle.css";
+import LC from "./LC";
+const staticSpread = {
+  color: "#444",
+  width: 420
+};
 
 function Thing(props) {
   return <div className="_x0" />;
@@ -227,7 +235,7 @@ function Thing(props) {
     );
 
     expect(rv.css)
-      .toEqual(`/* ./packages/jsxstyle-loader/tests/mock/trusted-spreads.js:6 (Block) */
+      .toEqual(`/* ./packages/jsxstyle-loader/tests/mock/trusted-spreads.js:9 (Block) */
 ._x0 {
   background-color: #FFF;
   border-radius: 4px;
@@ -245,19 +253,19 @@ describe('cache object', function() {
     const cacheObject = {};
 
     extractStyles({
-      src: `import {Block} from 'jsxstyle'; <Block />`,
+      src: `import {Block} from "jsxstyle"; <Block />`,
       sourceFileName: pathTo('mock/cache-object.js'),
       cacheObject,
     });
 
     extractStyles({
-      src: `import {Block} from 'jsxstyle'; <Block staticThing="wow" />`,
+      src: `import {Block} from "jsxstyle"; <Block staticThing="wow" />`,
       sourceFileName: pathTo('mock/cache-object.js'),
       cacheObject,
     });
 
     extractStyles({
-      src: `import {InlineBlock} from 'jsxstyle'; <InlineBlock />`,
+      src: `import {InlineBlock} from "jsxstyle"; <InlineBlock />`,
       sourceFileName: pathTo('mock/cache-object.js'),
       cacheObject,
     });
@@ -287,7 +295,7 @@ describe('style groups', function() {
     ];
 
     const rv = extractStyles({
-      src: `import {Block, InlineBlock} from 'jsxstyle';
+      src: `import {Block, InlineBlock} from "jsxstyle";
 <Block>
   <Block thing="wow" hoverThing="ok" />
   <InlineBlock />
@@ -298,8 +306,7 @@ describe('style groups', function() {
     });
 
     expect(rv.js).toEqual(
-      `import './style-groups.jsxstyle.css';
-
+      `import "./style-groups.jsxstyle.css";
 <div className="_x0">
   <div className="_x1 _x0" />
   <div className="_x2" />
@@ -340,7 +347,7 @@ describe('style groups', function() {
     };
 
     const rv = extractStyles({
-      src: `import {Block, InlineBlock} from 'jsxstyle';
+      src: `import {Block, InlineBlock} from "jsxstyle";
 <Block>
   <Block thing="wow" hoverThing="ok" />
   <InlineBlock />
@@ -351,8 +358,7 @@ describe('style groups', function() {
     });
 
     expect(rv.js).toEqual(
-      `import './named-style-groups.jsxstyle.css';
-
+      `import "./named-style-groups.jsxstyle.css";
 <div className="_x0">
   <div className="_test1 _x0" />
   <div className="_test2" />
@@ -386,21 +392,21 @@ describe('jsxstyle-specific props', function() {
     const errorCallback = jest.fn();
 
     const rv1 = extractStyles({
-      src: `import {Block} from 'jsxstyle';
-<Block props={{staticObject: 'yep'}} />;
+      src: `import {Block} from "jsxstyle";
+<Block props={{staticObject: "yep"}} />;
 <Block props={{}} />;
 <Block props={variable} />;
 <Block props={calledFunction()} />;
 <Block props={member.expression} />;
 <Block props={{objectShorthand}} />;
-<Block props={{...one, two: {three, four: 'five', ...six}}} seven="eight" />;
-<Block props={{ 'aria-hidden': true }} />;
-<Block props={{className: 'test'}} />;
-<Block props={{style: 'test'}} />;
+<Block props={{...one, two: {three, four: "five", ...six}}} seven="eight" />;
+<Block props={{ "aria-hidden": true }} />;
+<Block props={{className: "test"}} />;
+<Block props={{style: "test"}} />;
 <Block props="invalid" />;
 <Block dynamicProp={wow} props="invalid" />;
-<Block props={{ 'aria hidden': true }} />;
-<Block props={{ '-aria-hidden': true }} />;`,
+<Block props={{ "aria hidden": true }} />;
+<Block props={{ "-aria-hidden": true }} />;`,
       sourceFileName: pathTo('mock/props-prop1.js'),
       cacheObject: {},
       whitelistedModules,
@@ -408,29 +414,40 @@ describe('jsxstyle-specific props', function() {
     });
 
     expect(rv1.js).toEqual(
-      `import './props-prop1.jsxstyle.css';
-import { Box as _Box } from 'jsxstyle';
-
+      `import "./props-prop1.jsxstyle.css";
+import { Box as _Box } from "jsxstyle";
 <div staticObject="yep" className="_x0" />;
 <div className="_x0" />;
 <div {...variable} className="_x0" />;
 <div {...calledFunction()} className="_x0" />;
 <div {...member.expression} className="_x0" />;
 <div objectShorthand={objectShorthand} className="_x0" />;
-<div {...one} two={{ three, four: 'five', ...six }} className="_x1" />;
+<div {...one} two={{
+  three,
+  four: "five",
+  ...six
+}} className="_x1" />;
 <div aria-hidden={true} className="_x0" />;
-<_Box props={{ className: 'test' }} className="_x0" />;
-<_Box props={{ style: 'test' }} className="_x0" />;
+<_Box props={{
+  className: "test"
+}} className="_x0" />;
+<_Box props={{
+  style: "test"
+}} className="_x0" />;
 <_Box props="invalid" className="_x0" />;
 <_Box dynamicProp={wow} props="invalid" className="_x0" />;
-<_Box props={{ 'aria hidden': true }} className="_x0" />;
-<_Box props={{ '-aria-hidden': true }} className="_x0" />;`
+<_Box props={{
+  "aria hidden": true
+}} className="_x0" />;
+<_Box props={{
+  "-aria-hidden": true
+}} className="_x0" />;`
     );
 
     expect(errorCallback).toHaveBeenCalledTimes(6);
 
     const rv2 = extractStyles({
-      src: `import {Block} from 'jsxstyle';
+      src: `import {Block} from "jsxstyle";
 <Block color="red" ref={r => this.testBlock = r} />`,
       sourceFileName: pathTo('mock/props-prop2.js'),
       cacheObject: {},
@@ -438,15 +455,14 @@ import { Box as _Box } from 'jsxstyle';
     });
 
     expect(rv2.js).toEqual(
-      `import './props-prop2.jsxstyle.css';
-
+      `import "./props-prop2.jsxstyle.css";
 <div ref={r => this.testBlock = r} className="_x0" />;`
     );
   });
 
   it('handles the `component` prop correctly', () => {
     const rv = extractStyles({
-      src: `import {Block} from 'jsxstyle';
+      src: `import {Block} from "jsxstyle";
 <Block component="input" />;
 <Block component={Thing} />;
 <Block component={thing.cool} />;
@@ -458,9 +474,8 @@ import { Box as _Box } from 'jsxstyle';
     });
 
     expect(rv.js).toEqual(
-      `import './component-prop1.jsxstyle.css';
-import { Box as _Box } from 'jsxstyle';
-
+      `import "./component-prop1.jsxstyle.css";
+import { Box as _Box } from "jsxstyle";
 <input className="_x0" />;
 <Thing className="_x0" />;
 <thing.cool className="_x0" />;
@@ -472,7 +487,7 @@ import { Box as _Box } from 'jsxstyle';
 
     // does not warn
     extractStyles({
-      src: `import {Block} from 'jsxstyle';
+      src: `import {Block} from "jsxstyle";
 <Block component="CapitalisedString" />`,
       sourceFileName: pathTo('mock/component-prop2.js'),
       cacheObject: {},
@@ -482,7 +497,7 @@ import { Box as _Box } from 'jsxstyle';
 
     // does not warn
     extractStyles({
-      src: `import {Block} from 'jsxstyle';
+      src: `import {Block} from "jsxstyle";
 <Block component={lowercaseIdentifier} />`,
       sourceFileName: pathTo('mock/component-prop3.js'),
       cacheObject: {},
@@ -491,7 +506,7 @@ import { Box as _Box } from 'jsxstyle';
     });
 
     extractStyles({
-      src: `import {Block} from 'jsxstyle';
+      src: `import {Block} from "jsxstyle";
 <Block component={functionCall()} />`,
       sourceFileName: pathTo('mock/component-prop4.js'),
       cacheObject: {},
@@ -500,7 +515,7 @@ import { Box as _Box } from 'jsxstyle';
     });
 
     extractStyles({
-      src: `import {Block} from 'jsxstyle';
+      src: `import {Block} from "jsxstyle";
 <Block component={member.expression()} />`,
       sourceFileName: pathTo('mock/component-prop4.js'),
       cacheObject: {},
@@ -513,7 +528,7 @@ import { Box as _Box } from 'jsxstyle';
 
   it('handles the `className` prop correctly', () => {
     const rv1 = extractStyles({
-      src: `import {Block, Row} from 'jsxstyle';
+      src: `import {Block, Row} from "jsxstyle";
 <Row className={member.expression} {...spread} />;
 <Block className="orange" />;`,
       sourceFileName: pathTo('mock/class-name1.js'),
@@ -522,9 +537,8 @@ import { Box as _Box } from 'jsxstyle';
     });
 
     expect(rv1.js).toEqual(
-      `import './class-name1.jsxstyle.css';
-import { Box as _Box } from 'jsxstyle';
-
+      `import "./class-name1.jsxstyle.css";
+import { Box as _Box } from "jsxstyle";
 <_Box display="flex" flexDirection="row" className={member.expression} {...spread} />;
 <div className="orange _x0" />;`
     );
@@ -532,9 +546,9 @@ import { Box as _Box } from 'jsxstyle';
 
   it('handles the `mediaQueries` prop correctly', () => {
     const rv = extractStyles({
-      src: `import {Block} from 'jsxstyle';
+      src: `import {Block} from "jsxstyle";
 <Block
-  mediaQueries={{ sm: 'only screen and (min-width: 640px)' }}
+  mediaQueries={{ sm: "only screen and (min-width: 640px)" }}
   width={640}
   smWidth="100%"
 />;`,
@@ -543,8 +557,7 @@ import { Box as _Box } from 'jsxstyle';
     });
 
     expect(rv.js).toEqual(
-      `import './media-queries.jsxstyle.css';
-
+      `import "./media-queries.jsxstyle.css";
 <div className="_x0" />;`
     );
     expect(rv.css).toEqual(
@@ -562,8 +575,8 @@ import { Box as _Box } from 'jsxstyle';
 
   it('evaluates the `mediaQueries` prop correctly', () => {
     const rv = extractStyles({
-      src: `import {Block} from 'jsxstyle';
-import LC from './LC';
+      src: `import {Block} from "jsxstyle";
+import LC from "./LC";
 <Block
   mediaQueries={LC.mediaQueries}
   width={640}
@@ -575,9 +588,8 @@ import LC from './LC';
     });
 
     expect(rv.js).toEqual(
-      `import './media-queries.jsxstyle.css';
-
-import LC from './LC';
+      `import "./media-queries.jsxstyle.css";
+import LC from "./LC";
 <div className="_x0" />;`
     );
     expect(rv.css).toEqual(
@@ -597,33 +609,31 @@ import LC from './LC';
 describe('ternaries', function() {
   it('extracts a ternary expression that has static consequent and alternate', () => {
     const rv = extractStyles({
-      src: `import { Block } from 'jsxstyle';
-<Block color={dynamic ? 'red' : 'blue'} />`,
+      src: `import { Block } from "jsxstyle";
+<Block color={dynamic ? "red" : "blue"} />`,
       sourceFileName: pathTo('mock/ternary.js'),
       cacheObject: {},
       whitelistedModules,
     });
 
     expect(rv.js).toEqual(
-      `import './ternary.jsxstyle.css';
-
-<div className={(dynamic ? '_x1' : '_x2') + ' _x0'} />;`
+      `import "./ternary.jsxstyle.css";
+<div className={(dynamic ? "_x1" : "_x2") + " _x0"} />;`
     );
   });
 
-  it('extracts a simple conditional expression that has static right side', () => {
+  it('extracts a conditional expression with a static right side and an AND operator', () => {
     const rv = extractStyles({
-      src: `import {Block} from 'jsxstyle';
-<Block color={dynamic && 'red'} />`,
+      src: `import {Block} from "jsxstyle";
+<Block color={dynamic && "red"} />`,
       sourceFileName: pathTo('mock/ternary.js'),
       cacheObject: {},
       whitelistedModules,
     });
 
     expect(rv.js).toEqual(
-      `import './ternary.jsxstyle.css';
-
-<div className={(dynamic ? '_x1' : '') + ' _x0'} />;`
+      `import "./ternary.jsxstyle.css";
+<div className={(dynamic ? "_x1" : "") + " _x0"} />;`
     );
 
     expect(rv.css)
@@ -638,11 +648,39 @@ describe('ternaries', function() {
 `);
   });
 
+  it.skip('extracts a conditional expression with a static right side and an OR operator', () => {
+    const rv = extractStyles({
+      src: `import {Block} from "jsxstyle";
+<Block color={dynamic || "red"} />`,
+      sourceFileName: pathTo('mock/ternary.js'),
+      cacheObject: {},
+      whitelistedModules,
+    });
+
+    expect(rv.js).toEqual(
+      `import "./ternary.jsxstyle.css";
+import { Box as _Box } from "jsxstyle";
+<_Box color={dynamic} className={(dynamic ? "" : "_x1") + " _x0"} />;`
+    );
+
+    expect(rv.css).toEqual(
+      `/* ./packages/jsxstyle-loader/tests/mock/ternary.js:2 (Block) */
+._x0 {
+  display: block;
+}
+/* ./packages/jsxstyle-loader/tests/mock/ternary.js:2 (Block) */
+._x1 {
+  color: red;
+}
+`
+    );
+  });
+
   it('extracts a ternary expression that has a whitelisted consequent and alternate', () => {
     const rv = extractStyles({
-      src: `import LC from './LC';
-import {Block} from 'jsxstyle';
-const blue = 'blueberry';
+      src: `import LC from "./LC";
+import {Block} from "jsxstyle";
+const blue = "blueberry";
 <Block color={dynamic ? LC.red : blue} />`,
       sourceFileName: pathTo('mock/ternary.js'),
       cacheObject: {},
@@ -650,11 +688,10 @@ const blue = 'blueberry';
     });
 
     expect(rv.js).toEqual(
-      `import './ternary.jsxstyle.css';
-import LC from './LC';
-
-const blue = 'blueberry';
-<div className={(dynamic ? '_x1' : '_x2') + ' _x0'} />;`
+      `import "./ternary.jsxstyle.css";
+import LC from "./LC";
+const blue = "blueberry";
+<div className={(dynamic ? "_x1" : "_x2") + " _x0"} />;`
     );
 
     expect(rv.css)
@@ -675,24 +712,23 @@ const blue = 'blueberry';
 
   it('extracts a ternary expression from a component that has a className specified', () => {
     const rv = extractStyles({
-      src: `import {Block} from 'jsxstyle';
-<Block className="cool" color={dynamic ? 'red' : 'blue'} />`,
+      src: `import {Block} from "jsxstyle";
+<Block className="cool" color={dynamic ? "red" : "blue"} />`,
       sourceFileName: pathTo('mock/ternary-with-classname.js'),
       cacheObject: {},
       whitelistedModules,
     });
 
     expect(rv.js).toEqual(
-      `import './ternary-with-classname.jsxstyle.css';
-
-<div className={'cool ' + (dynamic ? '_x1' : '_x2') + ' _x0'} />;`
+      `import "./ternary-with-classname.jsxstyle.css";
+<div className={"cool " + (dynamic ? "_x1" : "_x2") + " _x0"} />;`
     );
   });
 
-  it('extracts a ternary expression from a component that has a className and spread operator', () => {
+  it('extracts a ternary expression from a component that has a spread operator specified', () => {
     const rv = extractStyles({
-      src: `import {Block} from 'jsxstyle';
-<Block {...spread} color={dynamic ? 'red' : 'blue'} />`,
+      src: `import {Block} from "jsxstyle";
+<Block {...spread} color={dynamic ? "red" : "blue"} />`,
       sourceFileName: pathTo('mock/ternary-with-spread.js'),
       cacheObject: {},
       whitelistedModules,
@@ -711,40 +747,90 @@ const blue = 'blueberry';
     );
 
     expect(rv.js).toEqual(
-      `import './ternary-with-spread.jsxstyle.css';
-import { Box as _Box } from 'jsxstyle';
+      `import "./ternary-with-spread.jsxstyle.css";
+import { Box as _Box } from "jsxstyle";
+<_Box display="block" {...spread} color={null} className={dynamic ? "_x0" : "_x1"} />;`
+    );
+  });
 
-<_Box display="block" {...spread} color={null} className={dynamic ? '_x0' : '_x1'} />;`
+  it.skip('positivizes negated identifiers', () => {
+    const rv = extractStyles({
+      src: `import {Block} from "jsxstyle";
+<Block
+  thing1={dynamic && "one"}
+  thing2={!dynamic && "two"}
+  thing3={dynamic ? "con" : "alt"}
+  thing4={!dynamic ? "con" : "alt"}
+/>`,
+      sourceFileName: pathTo('mock/ternary-with-spread.js'),
+      cacheObject: {},
+      whitelistedModules,
+    });
+
+    expect(rv.css).toEqual(``);
+  });
+
+  it.skip('positivizes negated comparisons', () => {
+    const rv = extractStyles({
+      src: `import {Block} from "jsxstyle";
+  <Block
+    thing1={dynamic === 4 && "one"}
+    thing2={dynamic !== 4 && "two"}
+  />`,
+      sourceFileName: pathTo('mock/ternary-with-spread.js'),
+      cacheObject: {},
+      whitelistedModules,
+    });
+
+    expect(rv.css).toEqual(``);
+  });
+
+  it.skip('positivizes negated expressions', () => {
+    const rv = extractStyles({
+      src: `import {Block} from "jsxstyle";
+    <Block
+      thing1={!(dynamic % 2) && "one"}
+      thing2={dynamic % 2 && "two"}
+    />`,
+      sourceFileName: pathTo('mock/ternary-with-spread.js'),
+      cacheObject: {},
+      whitelistedModules,
+    });
+
+    expect(rv.css).toEqual(``);
+
+    expect(rv.js).toEqual(
+      `import "./ternary-with-spread.jsxstyle.css";
+import { Box as _Box } from "jsxstyle";
+<_Box display="block" {...spread} color={null} className={dynamic ? "_x0" : "_x1"} />;`
     );
   });
 
   it('ignores a ternary expression that comes before a spread operator', () => {
     const rv = extractStyles({
-      src: `import {Block} from 'jsxstyle';
-<Block color={dynamic ? 'red' : 'blue'} {...spread} className="cool" />`,
+      src: `import {Block} from "jsxstyle";
+<Block color={dynamic ? "red" : "blue"} {...spread} className="cool" />`,
       sourceFileName: pathTo('mock/ternary-with-classname.js'),
       cacheObject: {},
       whitelistedModules,
     });
 
-    expect(rv.js).toEqual(`import { Box as _Box } from 'jsxstyle';
-
-<_Box display="block" color={dynamic ? 'red' : 'blue'} {...spread} className="cool" />;`);
+    expect(rv.js).toEqual(`import { Box as _Box } from "jsxstyle";
+<_Box display="block" color={dynamic ? "red" : "blue"} {...spread} className="cool" />;`);
   });
 
   it('groups extracted ternary statements', () => {
     const rv = extractStyles({
-      src: `import {Block} from 'jsxstyle';
-<Block color={dynamic ? 'red' : 'blue'} width={dynamic ? 200 : 400} />`,
+      src: `import {Block} from "jsxstyle";
+<Block color={dynamic ? "red" : "blue"} width={dynamic ? 200 : 400} />`,
       sourceFileName: pathTo('mock/ternary-groups.js'),
       cacheObject: {},
       whitelistedModules,
     });
 
     expect(rv.js).toEqual(
-      `import './ternary-groups.jsxstyle.css';
-
-<div className={(dynamic ? '_x1' : '_x2') + ' _x0'} />;`
+      `import "./ternary-groups.jsxstyle.css";
+<div className={(dynamic ? "_x1" : "_x2") + " _x0"} />;`
     );
 
     expect(rv.css).toEqual(
@@ -768,17 +854,16 @@ import { Box as _Box } from 'jsxstyle';
 
   it('handles null values in ternaries correctly', () => {
     const rv = extractStyles({
-      src: `import {Block} from 'jsxstyle';
-<Block color={dynamic ? null : 'blue'} />`,
+      src: `import {Block} from "jsxstyle";
+<Block color={dynamic ? null : "blue"} />`,
       sourceFileName: pathTo('mock/ternary-null-values.js'),
       cacheObject: {},
       whitelistedModules,
     });
 
     expect(rv.js).toEqual(
-      `import './ternary-null-values.jsxstyle.css';
-
-<div className={(dynamic ? '' : '_x1') + ' _x0'} />;`
+      `import "./ternary-null-values.jsxstyle.css";
+<div className={(dynamic ? "" : "_x1") + " _x0"} />;`
     );
 
     expect(rv.css).toEqual(
@@ -813,7 +898,7 @@ describe('experimental: jsxstyle lite', function() {
       extremelyLiteMode: 'react',
     });
 
-    expect(rv.js).toEqual(`require('./jsxstyle-extremely-lite.jsxstyle.css');
+    expect(rv.js).toEqual(`require("./jsxstyle-extremely-lite.jsxstyle.css");
 
 <div className="_x0" />;
 <div className="_x1" />;`);
@@ -847,7 +932,7 @@ describe('experimental: jsxstyle lite', function() {
     });
 
     expect(rv.js)
-      .toEqual(`require('./jsxstyle-extremely-lite-preact.jsxstyle.css');
+      .toEqual(`require("./jsxstyle-extremely-lite-preact.jsxstyle.css");
 
 <div class="_x0" />;
 <div class="_x1" />;`);

@@ -129,11 +129,11 @@ You can see a list of all available plugins in [the `babylon` README][babylon 6 
 
 ### Can I use `jsxstyle-loader` with Flow?
 
-Yes! Add the `flow` plugin to the `parserPlugins` array.
+Yes! Flow parsing is automatically enabled for any non-Typescript files.
 
 ### Can I use `jsxstyle-loader` with Typescript?
 
-Not yet, but soon! Typescript support is blocked by the release of `babylon`/`babel-generator` 7 (currently in beta).
+Yes! Typescript parsing is automatically enabled for `.ts` and `.tsx` files, but if you’re using a different file extension, you’ll need to manually add `typescript` to the `parserPlugins` array.
 
 ### It’s not working 😩
 

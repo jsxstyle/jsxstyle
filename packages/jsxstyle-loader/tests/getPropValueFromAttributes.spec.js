@@ -1,7 +1,7 @@
 'use strict';
 
 const parse = require('../utils/ast/parse');
-const generate = require('babel-generator').default;
+const generate = require('../utils/ast/generate');
 
 const getPropValueFromAttributes = require('../utils/ast/getPropValueFromAttributes');
 

@@ -14,9 +14,9 @@ const getPropValueFromAttributes = require('./getPropValueFromAttributes');
 const getStaticBindingsForScope = require('./getStaticBindingsForScope');
 const getStylesByClassName = require('../getStylesByClassName');
 
+const generate = require('./generate');
 const parse = require('./parse');
 const traverse = require('babel-traverse').default;
-const generate = require('babel-generator').default;
 const t = require('babel-types');
 
 // these props will be passed through as-is
@@ -58,7 +58,7 @@ function extractStyles({
   sourceFileName,
   whitelistedModules,
   cacheObject,
-  parserPlugins,
+  parserPlugins: _parserPlugins,
   addCSSRequire,
   errorCallback,
   extremelyLiteMode,
@@ -96,6 +96,13 @@ function extractStyles({
     );
   }
 
+  if (typeof _parserPlugins !== 'undefined') {
+    invariant(
+      Array.isArray(_parserPlugins),
+      '`parserPlugins` must be an array of plugins to be parsed to babylon'
+    );
+  }
+
   if (typeof errorCallback !== 'undefined') {
     invariant(
       typeof errorCallback === 'function',
@@ -113,6 +120,17 @@ function extractStyles({
 
   // Using a map for (officially supported) guaranteed insertion order
   const cssMap = new Map();
+
+  const parserPlugins = _parserPlugins ? [].concat(_parserPlugins) : [];
+  // modify parserPlugins only if the user hasn't specified any plugins
+  if (!_parserPlugins) {
+    if (/\.tsx?/.test(sourceFileName)) {
+      parserPlugins.push('typescript');
+    } else {
+      // TODO: is this a bad idea
+      parserPlugins.push('flow');
+    }
+  }
 
   const ast = parse(src, parserPlugins);
 

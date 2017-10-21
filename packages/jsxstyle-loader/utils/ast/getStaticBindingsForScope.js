@@ -2,7 +2,7 @@
 
 const t = require('babel-types');
 const path = require('path');
-const generate = require('babel-generator').default;
+const generate = require('./generate');
 const vm = require('vm');
 
 const canEvaluate = require('./canEvaluate');
