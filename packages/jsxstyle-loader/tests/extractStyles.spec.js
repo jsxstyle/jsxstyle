@@ -483,7 +483,11 @@ import { Box as _Box } from "jsxstyle";
 <_Box component="h1" dynamic={wow} className="_x1" />;`
     );
 
-    const errorCallback = jest.fn();
+    const jestErrorFn = jest.fn();
+    const errorCallback = (...props) => {
+      console.warn(...props);
+      jestErrorFn();
+    };
 
     // does not warn
     extractStyles({
@@ -523,7 +527,30 @@ import { Box as _Box } from "jsxstyle";
       errorCallback,
     });
 
-    expect(errorCallback).toHaveBeenCalledTimes(2);
+    expect(jestErrorFn).toHaveBeenCalledTimes(4);
+  });
+
+  it('converts complex `component` prop values to varable declarations', () => {
+    const rv = extractStyles({
+      src: `import { Block } from "jsxstyle";
+function Test({ component, thing }) {
+  <Block component={component || 'h1'} />;
+}`,
+      sourceFileName: pathTo('mock/funky-component-prop.js'),
+      cacheObject: {},
+      whitelistedModules,
+    });
+
+    expect(rv.js).toEqual(`import "./funky-component-prop.jsxstyle.css";
+
+function Test({
+  component,
+  thing
+}) {
+  var _Component = component || 'h1';
+
+  <_Component className="_x0" />;
+}`);
   });
 
   it('handles the `className` prop correctly', () => {

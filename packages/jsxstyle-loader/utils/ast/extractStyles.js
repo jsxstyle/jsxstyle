@@ -457,34 +457,8 @@ function extractStyles({
           return true;
         }
 
-        // validate component prop
+        // component prop will be handled below
         if (name === 'component') {
-          if (t.isLiteral(value) && typeof value.value === 'string') {
-            const char1 = value.value[0];
-            // component="article"
-            if (char1 === char1.toUpperCase()) {
-              // an uppercase string with be turned into a component, which is not what we want.
-              // TODO: look into transforming to React.createElement.
-              // main downside is that further transformations that rely on JSX won't work.
-              inlinePropCount++;
-            }
-          } else if (t.isIdentifier(value)) {
-            const char1 = value.name[0];
-            // component={Avatar}
-            if (char1 === char1.toLowerCase()) {
-              // a lowercase identifier will be transformed to a DOM element. that's not good.
-              inlinePropCount++;
-            }
-          } else if (t.isMemberExpression(value)) {
-            // component={variable.prop}
-          } else {
-            // TODO: extract more complex expressions out as separate var
-            errorCallback(
-              '`component` prop value was not handled by extractStyles: %s',
-              generate(value).code
-            );
-            inlinePropCount++;
-          }
           return true;
         }
 
@@ -707,15 +681,45 @@ function extractStyles({
             ? attribute.value.expression
             : attribute.value;
 
+          let isComplex = true;
+
           if (
             t.isLiteral(componentPropValue) &&
             typeof componentPropValue.value === 'string'
           ) {
-            node.name.name = componentPropValue.value;
+            const char1 = componentPropValue.value[0];
+            // component="article"
+            if (char1 === char1.toLowerCase()) {
+              isComplex = false;
+              node.name.name = componentPropValue.value;
+            }
           } else if (t.isIdentifier(componentPropValue)) {
-            node.name.name = componentPropValue.name;
+            const char1 = componentPropValue.name[0];
+            // component={Avatar}
+            if (char1 === char1.toUpperCase()) {
+              isComplex = false;
+              node.name.name = componentPropValue.name;
+            }
           } else if (t.isMemberExpression(componentPropValue)) {
+            // component={variable.prop}
+            // TODO: user jSXMemberExpression
             node.name.name = generate(componentPropValue).code;
+            isComplex = false;
+          }
+
+          if (isComplex) {
+            // still going to warn since the user should really do this themselves
+            errorCallback(
+              'Complex `component` prop value (`%s`) will be extracted out as a separate variable declaration.',
+              generate(componentPropValue).code
+            );
+            node.name.name = path.scope.generateUid('Component');
+            path.scope.push(
+              t.variableDeclarator(
+                t.identifier(node.name.name),
+                componentPropValue
+              )
+            );
           }
 
           // remove component prop from attributes
