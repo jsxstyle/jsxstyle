@@ -329,598 +329,639 @@ function extractStyles({
   });
 
   traverse(ast, {
-    JSXElement(path) {
-      const node = path.node.openingElement;
+    JSXElement: {
+      enter(path) {
+        const node = path.node.openingElement;
 
-      if (
-        // skip non-identifier opening elements (member expressions, etc.)
-        !t.isJSXIdentifier(node.name) ||
-        // skip non-jsxstyle components
-        !validComponents.hasOwnProperty(node.name.name)
-      ) {
-        return;
-      }
+        if (
+          // skip non-identifier opening elements (member expressions, etc.)
+          !t.isJSXIdentifier(node.name) ||
+          // skip non-jsxstyle components
+          !validComponents.hasOwnProperty(node.name.name)
+        ) {
+          return;
+        }
 
-      // Remember the source component
-      const originalNodeName = node.name.name;
-      const src = validComponents[originalNodeName];
+        // Remember the source component
+        const originalNodeName = node.name.name;
+        const src = validComponents[originalNodeName];
 
-      const removeAllTrace = liteComponents.hasOwnProperty(originalNodeName);
+        const removeAllTrace = liteComponents.hasOwnProperty(originalNodeName);
 
-      if (!removeAllTrace) {
-        node.name.name = boxComponentName;
-      }
+        if (!removeAllTrace) {
+          node.name.name = boxComponentName;
+        }
 
-      // prepend initial styles
-      const initialStyles = defaultStyleAttributes[src];
-      if (initialStyles) {
-        node.attributes = [].concat(initialStyles, node.attributes);
-      }
+        // prepend initial styles
+        const initialStyles = defaultStyleAttributes[src];
+        if (initialStyles) {
+          node.attributes = [].concat(initialStyles, node.attributes);
+        }
 
-      // Generate scope object at this level
-      const staticNamespace = getStaticBindingsForScope(
-        path.scope,
-        whitelistedModules,
-        sourceFileName
-      );
-      const evalContext = vm.createContext(staticNamespace);
+        // Generate scope object at this level
+        const staticNamespace = getStaticBindingsForScope(
+          path.scope,
+          whitelistedModules,
+          sourceFileName
+        );
+        const evalContext = vm.createContext(staticNamespace);
 
-      let lastSpreadIndex = null;
-      const flattenedAttributes = [];
-      node.attributes.forEach(attr => {
-        if (t.isJSXSpreadAttribute(attr)) {
-          if (canEvaluate(staticNamespace, attr.argument)) {
-            const spreadValue = vm.runInContext(
-              generate(attr.argument).code,
-              evalContext
-            );
+        let lastSpreadIndex = null;
+        const flattenedAttributes = [];
+        node.attributes.forEach(attr => {
+          if (t.isJSXSpreadAttribute(attr)) {
+            if (canEvaluate(staticNamespace, attr.argument)) {
+              const spreadValue = vm.runInContext(
+                generate(attr.argument).code,
+                evalContext
+              );
 
-            if (typeof spreadValue !== 'object' || spreadValue === null) {
-              lastSpreadIndex = flattenedAttributes.push(attr) - 1;
-            } else {
-              for (const k in spreadValue) {
-                const value = spreadValue[k];
+              if (typeof spreadValue !== 'object' || spreadValue === null) {
+                lastSpreadIndex = flattenedAttributes.push(attr) - 1;
+              } else {
+                for (const k in spreadValue) {
+                  const value = spreadValue[k];
 
-                if (typeof value === 'number') {
-                  flattenedAttributes.push(
-                    t.jSXAttribute(
-                      t.jSXIdentifier(k),
-                      t.jSXExpressionContainer(t.numericLiteral(value))
-                    )
-                  );
-                } else if (value === null) {
-                  // why would you ever do this
-                  flattenedAttributes.push(
-                    t.jSXAttribute(
-                      t.jSXIdentifier(k),
-                      t.jSXExpressionContainer(t.nullLiteral())
-                    )
-                  );
-                } else {
-                  // toString anything else
-                  // TODO: is this a bad idea
-                  flattenedAttributes.push(
-                    t.jSXAttribute(
-                      t.jSXIdentifier(k),
-                      t.jSXExpressionContainer(t.stringLiteral('' + value))
-                    )
-                  );
+                  if (typeof value === 'number') {
+                    flattenedAttributes.push(
+                      t.jSXAttribute(
+                        t.jSXIdentifier(k),
+                        t.jSXExpressionContainer(t.numericLiteral(value))
+                      )
+                    );
+                  } else if (value === null) {
+                    // why would you ever do this
+                    flattenedAttributes.push(
+                      t.jSXAttribute(
+                        t.jSXIdentifier(k),
+                        t.jSXExpressionContainer(t.nullLiteral())
+                      )
+                    );
+                  } else {
+                    // toString anything else
+                    // TODO: is this a bad idea
+                    flattenedAttributes.push(
+                      t.jSXAttribute(
+                        t.jSXIdentifier(k),
+                        t.jSXExpressionContainer(t.stringLiteral('' + value))
+                      )
+                    );
+                  }
                 }
               }
+            } else {
+              lastSpreadIndex = flattenedAttributes.push(attr) - 1;
             }
           } else {
-            lastSpreadIndex = flattenedAttributes.push(attr) - 1;
+            flattenedAttributes.push(attr);
           }
-        } else {
-          flattenedAttributes.push(attr);
-        }
-      });
+        });
 
-      node.attributes = flattenedAttributes;
+        node.attributes = flattenedAttributes;
 
-      let propsAttributes;
-      const staticAttributes = {};
-      let inlinePropCount = 0;
+        let propsAttributes;
+        const staticAttributes = {};
+        let inlinePropCount = 0;
 
-      const staticTernaries = [];
+        const staticTernaries = [];
 
-      node.attributes = node.attributes.filter((attribute, idx) => {
-        if (
-          // keep the weirdos
-          !attribute.name ||
-          !attribute.name.name ||
-          // haven't hit the last spread operator
-          idx < lastSpreadIndex
-        ) {
-          inlinePropCount++;
-          return true;
-        }
-
-        const name = attribute.name.name;
-        const value = t.isJSXExpressionContainer(attribute.value)
-          ? attribute.value.expression
-          : attribute.value;
-
-        // if one or more spread operators are present and we haven't hit the last one yet, the prop stays inline
-        if (lastSpreadIndex !== null && idx <= lastSpreadIndex) {
-          inlinePropCount++;
-          return true;
-        }
-
-        // pass ref, key, and style props through untouched
-        if (UNTOUCHED_PROPS.hasOwnProperty(name)) {
-          return true;
-        }
-
-        // className prop will be handled below
-        if (name === classPropName) {
-          return true;
-        }
-
-        // component prop will be handled below
-        if (name === 'component') {
-          return true;
-        }
-
-        // pass key and style props through untouched
-        if (UNTOUCHED_PROPS.hasOwnProperty(name)) {
-          return true;
-        }
-
-        if (name === 'props') {
-          if (!value) {
-            errorCallback('`props` prop does not have a value');
+        node.attributes = node.attributes.filter((attribute, idx) => {
+          if (
+            // keep the weirdos
+            !attribute.name ||
+            !attribute.name.name ||
+            // haven't hit the last spread operator
+            idx < lastSpreadIndex
+          ) {
             inlinePropCount++;
             return true;
           }
 
-          if (t.isObjectExpression(value)) {
-            let errorCount = 0;
-            const attributes = [];
+          const name = attribute.name.name;
+          const value = t.isJSXExpressionContainer(attribute.value)
+            ? attribute.value.expression
+            : attribute.value;
 
-            for (const k in value.properties) {
-              const propObj = value.properties[k];
+          // if one or more spread operators are present and we haven't hit the last one yet, the prop stays inline
+          if (lastSpreadIndex !== null && idx <= lastSpreadIndex) {
+            inlinePropCount++;
+            return true;
+          }
 
-              if (t.isObjectProperty(propObj)) {
-                let key;
+          // pass ref, key, and style props through untouched
+          if (UNTOUCHED_PROPS.hasOwnProperty(name)) {
+            return true;
+          }
 
-                if (t.isIdentifier(propObj.key)) {
-                  key = propObj.key.name;
-                } else if (t.isStringLiteral(propObj.key)) {
-                  // starts with a-z or _ followed by a-z, -, or _
-                  if (/^\w[\w-]+$/.test(propObj.key.value)) {
-                    key = propObj.key.value;
+          // className prop will be handled below
+          if (name === classPropName) {
+            return true;
+          }
+
+          // component prop will be handled below
+          if (name === 'component') {
+            return true;
+          }
+
+          // pass key and style props through untouched
+          if (UNTOUCHED_PROPS.hasOwnProperty(name)) {
+            return true;
+          }
+
+          if (name === 'props') {
+            if (!value) {
+              errorCallback('`props` prop does not have a value');
+              inlinePropCount++;
+              return true;
+            }
+
+            if (t.isObjectExpression(value)) {
+              let errorCount = 0;
+              const attributes = [];
+
+              for (const k in value.properties) {
+                const propObj = value.properties[k];
+
+                if (t.isObjectProperty(propObj)) {
+                  let key;
+
+                  if (t.isIdentifier(propObj.key)) {
+                    key = propObj.key.name;
+                  } else if (t.isStringLiteral(propObj.key)) {
+                    // starts with a-z or _ followed by a-z, -, or _
+                    if (/^\w[\w-]+$/.test(propObj.key.value)) {
+                      key = propObj.key.value;
+                    } else {
+                      errorCallback(
+                        '`props` prop contains an invalid key: `%s`',
+                        propObj.key.value
+                      );
+                      errorCount++;
+                      continue;
+                    }
                   } else {
                     errorCallback(
-                      '`props` prop contains an invalid key: `%s`',
-                      propObj.key.value
+                      'unhandled object property key type: `%s`',
+                      propObj.type
+                    );
+                    errorCount++;
+                  }
+
+                  if (ALL_SPECIAL_PROPS.hasOwnProperty(key)) {
+                    errorCallback(
+                      '`props` prop cannot contain `%s` as it is used by jsxstyle and will be overwritten.',
+                      key
                     );
                     errorCount++;
                     continue;
                   }
+
+                  if (t.isStringLiteral(propObj.value)) {
+                    // convert literal value back to literal to ensure it has double quotes (siiiigh)
+                    attributes.push(
+                      t.jSXAttribute(
+                        t.jSXIdentifier(key),
+                        t.stringLiteral(propObj.value.value)
+                      )
+                    );
+                  } else {
+                    // wrap everything else in a JSXExpressionContainer
+                    attributes.push(
+                      t.jSXAttribute(
+                        t.jSXIdentifier(key),
+                        t.jSXExpressionContainer(propObj.value)
+                      )
+                    );
+                  }
+                } else if (t.isSpreadProperty(propObj)) {
+                  attributes.push(t.jSXSpreadAttribute(propObj.argument));
                 } else {
                   errorCallback(
-                    'unhandled object property key type: `%s`',
+                    'unhandled object property value type: `%s`',
                     propObj.type
                   );
                   errorCount++;
                 }
-
-                if (ALL_SPECIAL_PROPS.hasOwnProperty(key)) {
-                  errorCallback(
-                    '`props` prop cannot contain `%s` as it is used by jsxstyle and will be overwritten.',
-                    key
-                  );
-                  errorCount++;
-                  continue;
-                }
-
-                if (t.isStringLiteral(propObj.value)) {
-                  // convert literal value back to literal to ensure it has double quotes (siiiigh)
-                  attributes.push(
-                    t.jSXAttribute(
-                      t.jSXIdentifier(key),
-                      t.stringLiteral(propObj.value.value)
-                    )
-                  );
-                } else {
-                  // wrap everything else in a JSXExpressionContainer
-                  attributes.push(
-                    t.jSXAttribute(
-                      t.jSXIdentifier(key),
-                      t.jSXExpressionContainer(propObj.value)
-                    )
-                  );
-                }
-              } else if (t.isSpreadProperty(propObj)) {
-                attributes.push(t.jSXSpreadAttribute(propObj.argument));
-              } else {
-                errorCallback(
-                  'unhandled object property value type: `%s`',
-                  propObj.type
-                );
-                errorCount++;
               }
+
+              if (errorCount > 0) {
+                inlinePropCount++;
+              } else {
+                propsAttributes = attributes;
+              }
+
+              return true;
             }
 
-            if (errorCount > 0) {
-              inlinePropCount++;
+            if (
+              // if it's not an object, spread it
+              // props={wow()}
+              t.isCallExpression(value) ||
+              // props={wow.cool}
+              t.isMemberExpression(value) ||
+              // props={wow}
+              t.isIdentifier(value)
+            ) {
+              propsAttributes = [t.jSXSpreadAttribute(value)];
+              return true;
+            }
+
+            // if props prop is weird-looking, leave it and warn
+            errorCallback('props prop is an unhandled type: `%s`', value.type);
+            inlinePropCount++;
+            return true;
+          }
+
+          if (name === 'mediaQueries') {
+            if (canEvaluateObject(staticNamespace, value)) {
+              staticAttributes[name] = vm.runInContext(
+                // parens so V8 doesn't parse the object like a block
+                '(' + generate(value).code + ')',
+                evalContext
+              );
+            } else if (canEvaluate(staticNamespace, value)) {
+              staticAttributes[name] = vm.runInContext(
+                generate(value).code,
+                evalContext
+              );
             } else {
-              propsAttributes = attributes;
+              inlinePropCount++;
+              return true;
             }
-
-            return true;
+            return false;
           }
 
-          if (
-            // if it's not an object, spread it
-            // props={wow()}
-            t.isCallExpression(value) ||
-            // props={wow.cool}
-            t.isMemberExpression(value) ||
-            // props={wow}
-            t.isIdentifier(value)
-          ) {
-            propsAttributes = [t.jSXSpreadAttribute(value)];
-            return true;
-          }
-
-          // if props prop is weird-looking, leave it and warn
-          errorCallback('props prop is an unhandled type: `%s`', value.type);
-          inlinePropCount++;
-          return true;
-        }
-
-        if (name === 'mediaQueries') {
-          if (canEvaluateObject(staticNamespace, value)) {
-            staticAttributes[name] = vm.runInContext(
-              // parens so V8 doesn't parse the object like a block
-              '(' + generate(value).code + ')',
-              evalContext
-            );
-          } else if (canEvaluate(staticNamespace, value)) {
+          // if value can be evaluated, extract it and filter it out
+          if (canEvaluate(staticNamespace, value)) {
             staticAttributes[name] = vm.runInContext(
               generate(value).code,
               evalContext
             );
-          } else {
-            inlinePropCount++;
-            return true;
-          }
-          return false;
-        }
-
-        // if value can be evaluated, extract it and filter it out
-        if (canEvaluate(staticNamespace, value)) {
-          staticAttributes[name] = vm.runInContext(
-            generate(value).code,
-            evalContext
-          );
-          return false;
-        }
-
-        if (t.isConditionalExpression(value)) {
-          // if both sides of the ternary can be evaluated, extract them
-          if (
-            canEvaluate(staticNamespace, value.consequent) &&
-            canEvaluate(staticNamespace, value.alternate)
-          ) {
-            staticTernaries.push({ name, ternary: value });
-            // mark the prop as extracted
-            staticAttributes[name] = null;
             return false;
           }
-        } else if (t.isLogicalExpression(value)) {
-          // convert a simple logical expression to a ternary with a null alternate
-          if (
-            value.operator === '&&' &&
-            canEvaluate(staticNamespace, value.right)
-          ) {
-            staticTernaries.push({
-              name,
-              ternary: {
-                test: value.left,
-                consequent: value.right,
-                alternate: t.nullLiteral(),
-              },
-            });
-            staticAttributes[name] = null;
-            return false;
-          }
-        }
 
-        if (removeAllTrace) {
-          errorCallback(
-            'jsxstyle-loader encountered a dynamic prop (`%s`) on a lite ' +
-              'jsxstyle component (`%s`). If you would like to pass dynamic ' +
-              'styles to this component, specify them in the `style` prop.',
-            generate(attribute).code,
-            originalNodeName
-          );
-          return false;
-        }
-
-        // if we've made it this far, the prop stays inline
-        inlinePropCount++;
-        return true;
-      });
-
-      let classNamePropValue;
-      const classNamePropIndex = node.attributes.findIndex(
-        attr => attr.name && attr.name.name === classPropName
-      );
-      if (classNamePropIndex > -1 && Object.keys(staticAttributes).length > 0) {
-        classNamePropValue = getPropValueFromAttributes(
-          classPropName,
-          node.attributes
-        );
-        node.attributes.splice(classNamePropIndex, 1);
-      }
-
-      // if all style props have been extracted, jsxstyle component can be
-      // converted to a div or the specified component
-      if (inlinePropCount === 0) {
-        const propsPropIndex = node.attributes.findIndex(
-          attr => attr.name && attr.name.name === 'props'
-        );
-        // deal with props prop
-        if (propsPropIndex > -1) {
-          if (propsAttributes) {
-            propsAttributes.forEach(a => node.attributes.push(a));
-          }
-          // delete props prop
-          node.attributes.splice(propsPropIndex, 1);
-        }
-
-        const componentPropIndex = node.attributes.findIndex(
-          attr => attr.name && attr.name.name === 'component'
-        );
-        if (componentPropIndex > -1) {
-          const attribute = node.attributes[componentPropIndex];
-          const componentPropValue = t.isJSXExpressionContainer(attribute.value)
-            ? attribute.value.expression
-            : attribute.value;
-
-          let isComplex = true;
-
-          if (
-            t.isLiteral(componentPropValue) &&
-            typeof componentPropValue.value === 'string'
-          ) {
-            const char1 = componentPropValue.value[0];
-            // component="article"
-            if (char1 === char1.toLowerCase()) {
-              isComplex = false;
-              node.name.name = componentPropValue.value;
+          if (t.isConditionalExpression(value)) {
+            // if both sides of the ternary can be evaluated, extract them
+            if (
+              canEvaluate(staticNamespace, value.consequent) &&
+              canEvaluate(staticNamespace, value.alternate)
+            ) {
+              staticTernaries.push({ name, ternary: value });
+              // mark the prop as extracted
+              staticAttributes[name] = null;
+              return false;
             }
-          } else if (t.isIdentifier(componentPropValue)) {
-            const char1 = componentPropValue.name[0];
-            // component={Avatar}
-            if (char1 === char1.toUpperCase()) {
-              isComplex = false;
-              node.name.name = componentPropValue.name;
+          } else if (t.isLogicalExpression(value)) {
+            // convert a simple logical expression to a ternary with a null alternate
+            if (
+              value.operator === '&&' &&
+              canEvaluate(staticNamespace, value.right)
+            ) {
+              staticTernaries.push({
+                name,
+                ternary: {
+                  test: value.left,
+                  consequent: value.right,
+                  alternate: t.nullLiteral(),
+                },
+              });
+              staticAttributes[name] = null;
+              return false;
             }
-          } else if (t.isMemberExpression(componentPropValue)) {
-            // component={variable.prop}
-            // TODO: user jSXMemberExpression
-            node.name.name = generate(componentPropValue).code;
-            isComplex = false;
           }
 
-          if (isComplex) {
-            // still going to warn since the user should really do this themselves
+          if (removeAllTrace) {
             errorCallback(
-              'Complex `component` prop value (`%s`) will be extracted out as a separate variable declaration.',
-              generate(componentPropValue).code
+              'jsxstyle-loader encountered a dynamic prop (`%s`) on a lite ' +
+                'jsxstyle component (`%s`). If you would like to pass dynamic ' +
+                'styles to this component, specify them in the `style` prop.',
+              generate(attribute).code,
+              originalNodeName
             );
-            node.name.name = path.scope.generateUid('Component');
-            path.scope.push(
-              t.variableDeclarator(
+            return false;
+          }
+
+          // if we've made it this far, the prop stays inline
+          inlinePropCount++;
+          return true;
+        });
+
+        let classNamePropValue;
+        const classNamePropIndex = node.attributes.findIndex(
+          attr => attr.name && attr.name.name === classPropName
+        );
+        if (
+          classNamePropIndex > -1 &&
+          Object.keys(staticAttributes).length > 0
+        ) {
+          classNamePropValue = getPropValueFromAttributes(
+            classPropName,
+            node.attributes
+          );
+          node.attributes.splice(classNamePropIndex, 1);
+        }
+
+        // if all style props have been extracted, jsxstyle component can be
+        // converted to a div or the specified component
+        if (inlinePropCount === 0) {
+          const propsPropIndex = node.attributes.findIndex(
+            attr => attr.name && attr.name.name === 'props'
+          );
+          // deal with props prop
+          if (propsPropIndex > -1) {
+            if (propsAttributes) {
+              propsAttributes.forEach(a => node.attributes.push(a));
+            }
+            // delete props prop
+            node.attributes.splice(propsPropIndex, 1);
+          }
+
+          const componentPropIndex = node.attributes.findIndex(
+            attr => attr.name && attr.name.name === 'component'
+          );
+          if (componentPropIndex > -1) {
+            const attribute = node.attributes[componentPropIndex];
+            const componentPropValue = t.isJSXExpressionContainer(
+              attribute.value
+            )
+              ? attribute.value.expression
+              : attribute.value;
+
+            let isComplex = true;
+
+            if (
+              t.isLiteral(componentPropValue) &&
+              typeof componentPropValue.value === 'string'
+            ) {
+              const char1 = componentPropValue.value[0];
+              // component="article"
+              if (char1 === char1.toLowerCase()) {
+                isComplex = false;
+                node.name.name = componentPropValue.value;
+              }
+            } else if (t.isIdentifier(componentPropValue)) {
+              const char1 = componentPropValue.name[0];
+              // component={Avatar}
+              if (char1 === char1.toUpperCase()) {
+                isComplex = false;
+                node.name.name = componentPropValue.name;
+              }
+            } else if (t.isMemberExpression(componentPropValue)) {
+              // component={variable.prop}
+              // TODO: user jSXMemberExpression
+              node.name.name = generate(componentPropValue).code;
+              isComplex = false;
+            }
+
+            if (isComplex) {
+              // still going to warn since the user should really do this themselves
+              errorCallback(
+                'Complex `component` prop value (`%s`) will be extracted out as a separate variable declaration.',
+                generate(componentPropValue).code
+              );
+              node.name.name = path.scope.generateUid('Component');
+              path._complexComponentProp = t.variableDeclarator(
                 t.identifier(node.name.name),
                 componentPropValue
-              )
-            );
+              );
+            }
+
+            // remove component prop from attributes
+            node.attributes.splice(componentPropIndex, 1);
+          } else {
+            node.name.name = 'div';
           }
-
-          // remove component prop from attributes
-          node.attributes.splice(componentPropIndex, 1);
         } else {
-          node.name.name = 'div';
+          needsRuntimeJsxstyle = true;
+          if (lastSpreadIndex !== null) {
+            // if only some style props were extracted AND additional props are spread onto the component,
+            // add the props back with null values to prevent spread props from incorrectly overwriting the extracted prop value
+            Object.keys(staticAttributes).forEach(attr => {
+              node.attributes.push(
+                t.jSXAttribute(
+                  t.jSXIdentifier(attr),
+                  t.jSXExpressionContainer(t.nullLiteral())
+                )
+              );
+            });
+          }
         }
-      } else {
-        needsRuntimeJsxstyle = true;
-        if (lastSpreadIndex !== null) {
-          // if only some style props were extracted AND additional props are spread onto the component,
-          // add the props back with null values to prevent spread props from incorrectly overwriting the extracted prop value
-          Object.keys(staticAttributes).forEach(attr => {
-            node.attributes.push(
-              t.jSXAttribute(
-                t.jSXIdentifier(attr),
-                t.jSXExpressionContainer(t.nullLiteral())
-              )
-            );
-          });
+
+        if (path.node.closingElement) {
+          path.node.closingElement.name.name = node.name.name;
         }
-      }
 
-      if (path.node.closingElement) {
-        path.node.closingElement.name.name = node.name.name;
-      }
-
-      const stylesByClassName = getStylesByClassName(
-        styleGroups,
-        namedStyleGroups,
-        staticAttributes,
-        cacheObject
-      );
-
-      const extractedStyleClassNames = Object.keys(stylesByClassName).join(' ');
-
-      const classNameObjects = [];
-
-      if (classNamePropValue) {
-        if (canEvaluate(null, classNamePropValue)) {
-          // TODO: don't use canEvaluate here, need to be more specific
-          classNameObjects.push(
-            t.stringLiteral(
-              vm.runInNewContext(generate(classNamePropValue).code)
-            )
-          );
-        } else {
-          classNameObjects.push(classNamePropValue);
-        }
-      }
-
-      if (staticTernaries.length > 0) {
-        const ternaryObj = extractStaticTernaries(
-          staticTernaries,
-          evalContext,
+        const stylesByClassName = getStylesByClassName(
+          styleGroups,
+          namedStyleGroups,
+          staticAttributes,
           cacheObject
         );
 
-        // ternaryObj is null if all of the extracted ternaries have falsey consequents and alternates
-        if (ternaryObj !== null) {
-          // add extracted styles by className to existing object
-          Object.assign(stylesByClassName, ternaryObj.stylesByClassName);
-          classNameObjects.push(ternaryObj.ternaryExpression);
-        }
-      }
+        const extractedStyleClassNames = Object.keys(stylesByClassName).join(
+          ' '
+        );
 
-      if (extractedStyleClassNames) {
-        classNameObjects.push(t.stringLiteral(extractedStyleClassNames));
-      }
+        const classNameObjects = [];
 
-      const classNamePropValueForReals = classNameObjects.reduce((acc, val) => {
-        if (!acc) {
-          if (
-            // pass conditional expressions through
-            t.isConditionalExpression(val) ||
-            // pass non-null literals through
-            (t.isLiteral(val) && val.value !== null)
-          ) {
-            return val;
-          }
-          return t.logicalExpression('||', val, t.stringLiteral(''));
-        }
-
-        const accIsString = t.isLiteral(acc) && typeof acc.value === 'string';
-
-        let inner;
-        if (t.isLiteral(val)) {
-          if (typeof val.value === 'string') {
-            if (accIsString) {
-              // join adjacent string literals
-              return t.stringLiteral(`${acc.value} ${val.value}`);
-            }
-            inner = t.stringLiteral(` ${val.value}`);
+        if (classNamePropValue) {
+          if (canEvaluate(null, classNamePropValue)) {
+            // TODO: don't use canEvaluate here, need to be more specific
+            classNameObjects.push(
+              t.stringLiteral(
+                vm.runInNewContext(generate(classNamePropValue).code)
+              )
+            );
           } else {
-            inner = t.binaryExpression('+', t.stringLiteral(' '), val);
+            classNameObjects.push(classNamePropValue);
           }
-        } else if (
-          t.isConditionalExpression(val) ||
-          t.isBinaryExpression(val)
-        ) {
-          if (accIsString) {
-            return t.binaryExpression(
-              '+',
-              t.stringLiteral(`${acc.value} `),
-              val
-            );
-          }
-          inner = t.binaryExpression('+', t.stringLiteral(' '), val);
-        } else if (t.isIdentifier(val) || t.isMemberExpression(val)) {
-          // identifiers and member expressions make for reasonable ternaries
-          inner = t.conditionalExpression(
-            val,
-            t.binaryExpression('+', t.stringLiteral(' '), val),
-            t.stringLiteral('')
-          );
-        } else {
-          if (accIsString) {
-            return t.binaryExpression(
-              '+',
-              t.stringLiteral(`${acc.value} `),
-              t.logicalExpression('||', val, t.stringLiteral(''))
-            );
-          }
-          // use a logical expression for more complex prop values
-          inner = t.binaryExpression(
-            '+',
-            t.stringLiteral(' '),
-            t.logicalExpression('||', val, t.stringLiteral(''))
-          );
         }
-        return t.binaryExpression('+', acc, inner);
-      }, null);
 
-      if (classNamePropValueForReals) {
-        if (
-          t.isLiteral(classNamePropValueForReals) &&
-          typeof classNamePropValueForReals.value === 'string'
-        ) {
-          node.attributes.push(
-            t.jSXAttribute(
-              t.jSXIdentifier(classPropName),
-              t.stringLiteral(classNamePropValueForReals.value)
-            )
+        if (staticTernaries.length > 0) {
+          const ternaryObj = extractStaticTernaries(
+            staticTernaries,
+            evalContext,
+            cacheObject
           );
-        } else {
-          node.attributes.push(
-            t.jSXAttribute(
-              t.jSXIdentifier(classPropName),
-              t.jSXExpressionContainer(classNamePropValueForReals)
-            )
-          );
-        }
-      }
 
-      const lineNumbers =
-        node.loc.start.line +
-        (node.loc.start.line !== node.loc.end.line
-          ? `-${node.loc.end.line}`
-          : '');
-
-      const comment = util.format(
-        '/* %s:%s (%s) */',
-        sourceFileName.replace(process.cwd(), '.'),
-        lineNumbers,
-        originalNodeName
-      );
-
-      for (const className in stylesByClassName) {
-        if (cssMap.has(className)) {
-          if (comment) {
-            const val = cssMap.get(className);
-            val.commentTexts.push(comment);
-            cssMap.set(className, val);
+          // ternaryObj is null if all of the extracted ternaries have falsey consequents and alternates
+          if (ternaryObj !== null) {
+            // add extracted styles by className to existing object
+            Object.assign(stylesByClassName, ternaryObj.stylesByClassName);
+            classNameObjects.push(ternaryObj.ternaryExpression);
           }
-        } else {
-          let css = '';
-          const styleProps = stylesByClassName[className];
+        }
 
-          // get object of style objects
-          const styleObjects = getStyleKeysForProps(styleProps, true);
-          delete styleObjects.classNameKey;
-          const styleObjectKeys = Object.keys(styleObjects).sort();
+        if (extractedStyleClassNames) {
+          classNameObjects.push(t.stringLiteral(extractedStyleClassNames));
+        }
 
-          for (let idx = -1, len = styleObjectKeys.length; ++idx < len; ) {
-            const k = styleObjectKeys[idx];
-            const item = styleObjects[k];
-            let itemCSS =
-              `.${className}` +
-              (item.pseudoclass ? ':' + item.pseudoclass : '') +
-              (item.pseudoelement ? '::' + item.pseudoelement : '') +
-              ` {${item.styles}}`;
-
-            if (item.mediaQuery) {
-              itemCSS = `@media ${item.mediaQuery} { ${itemCSS} }`;
+        const classNamePropValueForReals = classNameObjects.reduce(
+          (acc, val) => {
+            if (!acc) {
+              if (
+                // pass conditional expressions through
+                t.isConditionalExpression(val) ||
+                // pass non-null literals through
+                (t.isLiteral(val) && val.value !== null)
+              ) {
+                return val;
+              }
+              return t.logicalExpression('||', val, t.stringLiteral(''));
             }
-            css += itemCSS + '\n';
-          }
 
-          cssMap.set(className, { css, commentTexts: [comment] });
+            const accIsString =
+              t.isLiteral(acc) && typeof acc.value === 'string';
+
+            let inner;
+            if (t.isLiteral(val)) {
+              if (typeof val.value === 'string') {
+                if (accIsString) {
+                  // join adjacent string literals
+                  return t.stringLiteral(`${acc.value} ${val.value}`);
+                }
+                inner = t.stringLiteral(` ${val.value}`);
+              } else {
+                inner = t.binaryExpression('+', t.stringLiteral(' '), val);
+              }
+            } else if (
+              t.isConditionalExpression(val) ||
+              t.isBinaryExpression(val)
+            ) {
+              if (accIsString) {
+                return t.binaryExpression(
+                  '+',
+                  t.stringLiteral(`${acc.value} `),
+                  val
+                );
+              }
+              inner = t.binaryExpression('+', t.stringLiteral(' '), val);
+            } else if (t.isIdentifier(val) || t.isMemberExpression(val)) {
+              // identifiers and member expressions make for reasonable ternaries
+              inner = t.conditionalExpression(
+                val,
+                t.binaryExpression('+', t.stringLiteral(' '), val),
+                t.stringLiteral('')
+              );
+            } else {
+              if (accIsString) {
+                return t.binaryExpression(
+                  '+',
+                  t.stringLiteral(`${acc.value} `),
+                  t.logicalExpression('||', val, t.stringLiteral(''))
+                );
+              }
+              // use a logical expression for more complex prop values
+              inner = t.binaryExpression(
+                '+',
+                t.stringLiteral(' '),
+                t.logicalExpression('||', val, t.stringLiteral(''))
+              );
+            }
+            return t.binaryExpression('+', acc, inner);
+          },
+          null
+        );
+
+        if (classNamePropValueForReals) {
+          if (
+            t.isLiteral(classNamePropValueForReals) &&
+            typeof classNamePropValueForReals.value === 'string'
+          ) {
+            node.attributes.push(
+              t.jSXAttribute(
+                t.jSXIdentifier(classPropName),
+                t.stringLiteral(classNamePropValueForReals.value)
+              )
+            );
+          } else {
+            node.attributes.push(
+              t.jSXAttribute(
+                t.jSXIdentifier(classPropName),
+                t.jSXExpressionContainer(classNamePropValueForReals)
+              )
+            );
+          }
         }
-      }
+
+        const lineNumbers =
+          node.loc.start.line +
+          (node.loc.start.line !== node.loc.end.line
+            ? `-${node.loc.end.line}`
+            : '');
+
+        const comment = util.format(
+          '/* %s:%s (%s) */',
+          sourceFileName.replace(process.cwd(), '.'),
+          lineNumbers,
+          originalNodeName
+        );
+
+        for (const className in stylesByClassName) {
+          if (cssMap.has(className)) {
+            if (comment) {
+              const val = cssMap.get(className);
+              val.commentTexts.push(comment);
+              cssMap.set(className, val);
+            }
+          } else {
+            let css = '';
+            const styleProps = stylesByClassName[className];
+
+            // get object of style objects
+            const styleObjects = getStyleKeysForProps(styleProps, true);
+            delete styleObjects.classNameKey;
+            const styleObjectKeys = Object.keys(styleObjects).sort();
+
+            for (let idx = -1, len = styleObjectKeys.length; ++idx < len; ) {
+              const k = styleObjectKeys[idx];
+              const item = styleObjects[k];
+              let itemCSS =
+                `.${className}` +
+                (item.pseudoclass ? ':' + item.pseudoclass : '') +
+                (item.pseudoelement ? '::' + item.pseudoelement : '') +
+                ` {${item.styles}}`;
+
+              if (item.mediaQuery) {
+                itemCSS = `@media ${item.mediaQuery} { ${itemCSS} }`;
+              }
+              css += itemCSS + '\n';
+            }
+
+            cssMap.set(className, { css, commentTexts: [comment] });
+          }
+        }
+      },
+      exit(path) {
+        if (path._complexComponentProp) {
+          if (t.isJSXElement(path.parentPath)) {
+            // bump
+            path.parentPath._complexComponentProp = [].concat(
+              path.parentPath._complexComponentProp || [],
+              path._complexComponentProp
+            );
+          } else {
+            // find nearest Statement
+            let statementPath = path;
+            do {
+              statementPath = statementPath.parentPath;
+            } while (!t.isStatement(statementPath));
+
+            invariant(
+              t.isStatement(statementPath),
+              'Could not find a statement'
+            );
+
+            const decs = t.variableDeclaration(
+              'var',
+              [].concat(path._complexComponentProp)
+            );
+
+            statementPath.insertBefore(decs);
+          }
+          path._complexComponentProp = null;
+        }
+      },
     },
   });
 

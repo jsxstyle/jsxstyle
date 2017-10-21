@@ -534,7 +534,14 @@ import { Box as _Box } from "jsxstyle";
     const rv = extractStyles({
       src: `import { Block } from "jsxstyle";
 function Test({ component, thing }) {
-  <Block component={component || 'h1'} />;
+  const Compy = component;
+  <Block component={Compy || 'h1'}>
+    <Block component={complex}>
+      <Block component="Complex" />
+    </Block>
+  </Block>;
+
+  <Block component={complex} />;
 }`,
       sourceFileName: pathTo('mock/funky-component-prop.js'),
       cacheObject: {},
@@ -547,9 +554,19 @@ function Test({
   component,
   thing
 }) {
-  var _Component = component || 'h1';
+  const Compy = component;
 
-  <_Component className="_x0" />;
+  var _Component = Compy || 'h1',
+      _Component2 = complex,
+      _Component3 = "Complex";
+
+  <_Component className="_x0">
+    <_Component2 className="_x0">
+      <_Component3 className="_x0" />
+    </_Component2>
+  </_Component>;
+  var _Component4 = complex;
+  <_Component4 className="_x0" />;
 }`);
   });
 
