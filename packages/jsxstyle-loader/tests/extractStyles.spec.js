@@ -953,3 +953,30 @@ describe('experimental: jsxstyle lite', function() {
     expect(errorCallback).toHaveBeenCalledWith(msg, 'dynamic={value}', 'block');
   });
 });
+
+describe('edge cases', () => {
+  it('only removes component imports', () => {
+    const rv = extractStyles({
+      src: `import 'jsxstyle';
+import { cache, InvalidComponent, Row as RenamedRow } from 'jsxstyle';
+import { Grid } from 'jsxstyle';
+// should probably remove this as well
+require('jsxstyle');
+const { Box } = require('jsxstyle');
+const { Block, Col: RenamedCol } = require('jsxstyle');
+const { invalid, AlsoInvalid, InlineBlock } = require('jsxstyle');`,
+      sourceFileName: pathTo('mock/edge-case1.js'),
+      cacheObject: {},
+    });
+
+    expect(rv.js).toEqual(`import { cache, InvalidComponent } from 'jsxstyle';
+
+// should probably remove this as well
+require('jsxstyle');
+
+const {
+  invalid,
+  AlsoInvalid
+} = require('jsxstyle');`);
+  });
+});

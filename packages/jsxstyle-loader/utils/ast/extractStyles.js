@@ -152,9 +152,7 @@ function extractStyles({
   // Find jsxstyle require in program root
   ast.program.body = ast.program.body.filter(item => {
     if (t.isVariableDeclaration(item)) {
-      for (let idx = -1, len = item.declarations.length; ++idx < len; ) {
-        const dec = item.declarations[idx];
-
+      item.declarations = item.declarations.filter(dec => {
         if (
           // var ...
           !t.isVariableDeclarator(dec) ||
@@ -168,12 +166,12 @@ function extractStyles({
           dec.init.arguments.length !== 1 ||
           !t.isStringLiteral(dec.init.arguments[0])
         ) {
-          continue;
+          return true;
         }
 
         // var {x} = require('jsxstyle')
         if (!JSXSTYLE_SOURCES.hasOwnProperty(dec.init.arguments[0].value)) {
-          continue;
+          return true;
         }
 
         if (jsxstyleSrc) {
@@ -185,35 +183,39 @@ function extractStyles({
           );
         }
 
-        for (let idx = -1, len = dec.id.properties.length; ++idx < len; ) {
-          const prop = dec.id.properties[idx];
+        dec.id.properties = dec.id.properties.filter(prop => {
+          // if it's funky, keep it
           if (
             !t.isObjectProperty(prop) ||
             !t.isIdentifier(prop.key) ||
             !t.isIdentifier(prop.value)
           ) {
-            continue;
+            return true;
           }
 
           // only add uppercase identifiers to validComponents
           if (
-            prop.key.name[0] !== prop.key.name[0].toUpperCase() ||
+            !componentStyles.hasOwnProperty(prop.key.name) ||
             prop.value.name[0] !== prop.value.name[0].toUpperCase()
           ) {
-            continue;
+            return true;
           }
 
           // map imported name to source component name
           validComponents[prop.value.name] = prop.key.name;
           hasValidComponents = true;
-        }
 
-        jsxstyleSrc = dec.init.arguments[0].value;
+          jsxstyleSrc = dec.init.arguments[0].value;
+          return false;
+        });
 
-        // if this is the only variable declaration, remove it
-        // TODO: handle weird const a = 1, b = 2; maybe
-        if (len === 1) return false;
-      }
+        if (dec.id.properties.length > 0) return true;
+
+        // if all props on the variable declaration have been handled, filter it out
+        return false;
+      });
+
+      if (item.declarations.length === 0) return false;
     } else if (t.isImportDeclaration(item)) {
       // omfg everyone please just use import syntax
 
@@ -237,31 +239,32 @@ function extractStyles({
       jsxstyleSrc = item.source.value;
       useImportSyntax = true;
 
-      for (let idx = -1, len = item.specifiers.length; ++idx < len; ) {
-        const specifier = item.specifiers[idx];
+      item.specifiers = item.specifiers.filter(specifier => {
+        // keep the weird stuff
         if (
           !t.isImportSpecifier(specifier) ||
           !t.isIdentifier(specifier.imported) ||
           !t.isIdentifier(specifier.local)
         ) {
-          continue;
+          return true;
         }
 
         if (
-          specifier.imported.name[0] !==
-            specifier.imported.name[0].toUpperCase() ||
+          !componentStyles.hasOwnProperty(specifier.imported.name) ||
           specifier.local.name[0] !== specifier.local.name[0].toUpperCase()
         ) {
-          continue;
+          return true;
         }
 
         validComponents[specifier.local.name] = specifier.imported.name;
         hasValidComponents = true;
-      }
+        return false;
+      });
 
       // remove import
-      return false;
+      if (item.specifiers.length === 0) return false;
     }
+
     return true;
   });
 
