@@ -44,11 +44,15 @@ const babelConfig = {
   ],
 };
 
-export default ['jsxstyle-utils', 'jsxstyle', 'jsxstyle-preact'].map(pkg => ({
-  input: `packages/${pkg}/src/index.js`,
+export default [
+  'jsxstyle-utils/jsxstyle-utils',
+  'jsxstyle/jsxstyle',
+  'jsxstyle/preact/jsxstyle-preact',
+].map(pkg => ({
+  input: `packages/${pkg}.js`,
   output: [
-    { format: 'cjs', file: `packages/${pkg}/lib/${pkg}.cjs.js` },
-    { format: 'es', file: `packages/${pkg}/lib/${pkg}.es.js` },
+    { format: 'cjs', file: `packages/${pkg}.cjs.js` },
+    { format: 'es', file: `packages/${pkg}.es.js` },
   ],
   plugins: [babel(babelConfig)],
   external,

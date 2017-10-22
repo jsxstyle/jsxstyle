@@ -1,5 +1,0 @@
-.*
-*.*
-!*.es.js
-!*.cjs.js
-**/node_modules

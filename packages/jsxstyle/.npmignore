@@ -1,5 +1,6 @@
 .*
 *.*
+!package.json
 !*.es.js
 !*.cjs.js
 **/node_modules

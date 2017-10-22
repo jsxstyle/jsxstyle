@@ -1,15 +1,11 @@
+/** @jsx h */
 import invariant from 'invariant';
-import PropTypes from 'prop-types';
-import { getStyleCache } from 'jsxstyle-utils';
+import { getStyleCache, componentStyles } from 'jsxstyle-utils';
 import { h, Component } from 'preact';
 
 export const cache = getStyleCache();
 
-export default function makePreactStyleComponentClass(
-  displayName,
-  defaultProps,
-  tagName
-) {
+function factory(displayName, defaultProps, tagName) {
   tagName = tagName || 'div';
   invariant(
     typeof displayName === 'string' && displayName !== '',
@@ -23,18 +19,6 @@ export default function makePreactStyleComponentClass(
       this.className = cache.getClassName(props, props.class);
     }
 
-    static propTypes = {
-      class: PropTypes.string,
-      component: PropTypes.oneOfType([
-        PropTypes.string,
-        PropTypes.object,
-        PropTypes.func,
-      ]),
-      mediaQueries: PropTypes.object,
-      props: PropTypes.object,
-      style: PropTypes.object,
-    };
-
     static defaultProps = defaultProps;
     static displayName = displayName;
 
@@ -44,14 +28,19 @@ export default function makePreactStyleComponentClass(
     }
 
     render({ style, props, children }) {
-      return h(
-        this.component,
-        Object.assign({}, props, {
-          class: this.className,
-          style,
-        }),
-        children
+      return (
+        <this.component {...props} class={this.className} style={style}>
+          {children}
+        </this.component>
       );
     }
   };
 }
+
+export const Box = factory('Box');
+export const Block = factory('Block', componentStyles.Block);
+export const Inline = factory('Inline', componentStyles.Inline);
+export const InlineBlock = factory('InlineBlock', componentStyles.InlineBlock);
+export const Row = factory('Row', componentStyles.Row);
+export const Col = factory('Col', componentStyles.Col);
+export const Grid = factory('Grid', componentStyles.Grid);

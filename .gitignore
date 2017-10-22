@@ -3,3 +3,6 @@ lib/
 .vscode
 .env
 *.log
+*.es.js
+*.cjs.js
+stats.json

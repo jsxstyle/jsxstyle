@@ -4,9 +4,9 @@
   "description": "Utilities used by jsxstyle and tooling built for jsxstyle",
   "author": "Pete Hunt",
   "license": "Apache-2.0",
-  "main": "lib/jsxstyle-utils.cjs.js",
-  "module": "lib/jsxstyle-utils.es.js",
-  "jsnext:main": "lib/jsxstyle-utils.es.js",
+  "main": "jsxstyle-utils.cjs.js",
+  "module": "jsxstyle-utils.es.js",
+  "jsnext:main": "jsxstyle-utils.es.js",
   "dependencies": {
     "invariant": "^2.2.1"
   },

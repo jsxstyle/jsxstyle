@@ -1,5 +1,0 @@
-.*
-lib/
-node_modules
-stats.json
-tests/webpack/build

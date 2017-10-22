@@ -5,20 +5,17 @@
   "repository": "git@github.com:smyte/jsxstyle.git",
   "author": "Pete Hunt",
   "license": "Apache-2.0",
-  "main": "lib/jsxstyle.cjs.js",
-  "module": "lib/jsxstyle.es.js",
-  "jsnext:main": "lib/jsxstyle.es.js",
+  "main": "jsxstyle.cjs.js",
+  "module": "jsxstyle.es.js",
+  "jsnext:main": "jsxstyle.es.js",
   "dependencies": {
     "invariant": "^2.2.1",
-    "jsxstyle-utils": "^2.0.0-rc.1",
-    "prop-types": ">=15"
-  },
-  "peerDependencies": {
-    "react": "*"
+    "jsxstyle-utils": "^2.0.0-rc.1"
   },
   "keywords": [
     "jsxstyle",
     "react",
+    "preact",
     "css-in-js"
   ]
 }
