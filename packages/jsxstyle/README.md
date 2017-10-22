@@ -1,10 +1,10 @@
 # jsxstyle
 
-jsxstyle is intended to be the best way to style JSX components. It provides a best-in-class developer experience without sacrificing performance, and has little regard for [existing CSS orthodoxy](#why-use-jsxstyle-instead-of-bemsmacssoocssetc).
+jsxstyle is an inline style system for React and Preact. It provides a best-in-class developer experience without sacrificing performance, and has little regard for [existing CSS orthodoxy](#why-use-jsxstyle-instead-of-bemsmacssoocssetc).
 
-Styles are written _inline_ on a special set of components exported by jsxstyle. When the component is rendered, these inline styles are converted to CSS rules and added to the document.
+Styles are written _inline_ on a special set of components exported by jsxstyle. Inline styles on these components are converted to CSS rules and added to the document right as they’re needed.
 
-With jsxstyle, your component code looks like this:
+With `jsxstyle`, your component code looks like this:
 
 ```jsx
 <Row alignItems="center" padding={15}>
@@ -16,7 +16,7 @@ With jsxstyle, your component code looks like this:
     width={64}
     marginRight={15}
     backgroundSize="contain"
-    backgroundImage="url('http://graph.facebook.com/justinbieber/picture?type=large')"
+    backgroundImage="url(http://graph.facebook.com/justinbieber/picture?type=large)"
   />
   <Col fontFamily="sans-serif" fontSize={16} lineHeight="24px">
     <Block fontWeight={600}>Justin Bieber</Block>
@@ -25,45 +25,42 @@ With jsxstyle, your component code looks like this:
 </Row>
 ```
 
-With jsxstyle, bouncing between JS and CSS in your editor is no longer necessary.
-jsxstyle is built for teams. Problems stemming from multiple frontend contributors writing styles in a shared codebase are completely avoided, because styles are tied to _component instances_ instead of abstract reusable _CSS classes_. Onboarding new frontend contributors takes seconds, not hours, because jsxstyle’s mental model is easy to teach and easy to learn. Thanks to the declarative nature of inline styles, frontend contributors can see at a glance exactly how an element is styled.
+<!-- yeah we’ve got mf emoji -->
 
-Carry on to read a brief overview, or [skip to the FAQs](#faqs).
+## ⚡️ Style as fast as you can think.
 
-## Hello world 👋
+Jumping between JS and CSS in your editor is no longer necessary. Since style are inline, you can determine at a glance exactly how an element is styled. jsxstyle frees you up to do what you do best—write styles.
 
-Here’s an example of a stylable input with a few initial styles set:
+## ✅ Inline styles done right.
+
+Just because styles are _written_ inline doesn’t mean they _stay_ inline. jsxstyle’s approach to inline styles ensures that a best-in-class developer experience comes with no performance cost.
+
+## 😪 No more naming fatigue.
+
+Naming components is hard enough, and there are only so many synonyms for “wrapper”. jsxstyle provides a set of stylable components, each with a few default styles set. These primitive stylable components form a set of _building blocks_ that you can reuse throughout your application. You can still create named stylable components if you wish, by utilizing a paradigm you’re already familiar with: composition. No funky syntax necessary:
 
 ```jsx
-import { Block } from 'jsxstyle';
-import React from 'react';
-
-export default function FancyInput({type, placeholder, ...props}) {
-  return (
-    <Block
-      fontSize={16}
-      lineHeight="20px"
-      fontWeight={400}
-      color="#444"
-      placeholderColor="#999"
-      padding="4px 6px"
-      marginBottom={10}
-      borderRadius={3}
-      borderWidth="1px"
-      borderColor="#BBB"
-      activeBorderColor="#999"
-      borderStyle="solid"
-      {...props}
-      component="input"
-      props={{ type, placeholder }}
-    />
-  );
-}
+const RedBlock = props => <Block {...props} color="red" />;
 ```
 
-When jsxstyle components are rendered, inline styles are converted to a single CSS rule with a hashed, content-based class name. The generated CSS rule is added to the document and a `div` (or specified `component`) is output with the hashed class name.
+## 🍱 Scoped styles right out the box.
 
-jsxstyle provides a set of components with default styles based on a few commonly used style properties:
+Styles written on jsxstyle components are scoped to _component instances_ instead of abstract reusable class names. That’s not to say we’ve abandoned class names, though; styles on jsxstyle components are extracted into CSS rules and assigned a _hashed, content-based class name_ that is intentionally unlike a human-written name.
+
+## 👯 Team friendly by design.
+
+jsxstyle’s mental model is easy to teach and easy to learn, which means onboarding new frontend contributors takes _seconds_, not hours. Since styles applied by jsxstyle are scoped to component instances, frontend contributors don’t need a complete knowledge of the system in order to be 100% productive right from the start.
+
+## 🛠 Powerful build-time optimizations.
+
+Styles written inline on a set of components from a known source can very easily be statically analyzed, which opens up new possibilities for tooling and optimization. One such optimization is [`jsxstyle-loader`][jsxstyle-loader], a webpack loader that extracts static styles from jsxstyle components _at build time_. `jsxstyle-loader` reduces and in some cases _entirely removes_ the need for runtime jsxstyle.
+
+
+# Getting started
+
+Install the `jsxstyle` package with your preferred node package manager. Components for React can be imported from `jsxstyle`, and components for Preact can be imported from `jsxstyle/preact`.
+
+jsxstyle provides the following seven components:
 
 | Component | Default styles |
 |:---|:---|
@@ -95,6 +92,8 @@ There are six exceptions to this rule:
 To specify a pseudoelement or pseudoclass on a style property, prefix the prop with the name of the applicable pseudoelement or pseudoclass. If you’d like to specify a pseudoelement _and_ a pseudoclass for a style prop, start with the pseudoclass—i.e., `hoverPlaceholderColor`, not `placeholderHoverColor`.
 
 ```jsx
+import { Block } from 'jsxstyle/preact';
+
 <Block
   component="input"
   color="#888"
@@ -136,25 +135,25 @@ Define a `mediaQueries` property with an object of media queries keyed by whatev
 
 1. ### Naming things is hard.
 
-    Naming components is hard enough, and there are only so many synonyms for “wrapper”. Since jsxstyle manages CSS and corresponding generated class names, what the actual class names _are_ becomes unimportant. jsxstyle can generate short, production-optimized class names and retain a mapping of those class names to corresponding style objects.
+    jsxstyle manages CSS and corresponding generated class names, which means that _what those class names actually are becomes unimportant_. jsxstyle can generate short, production-optimized class names and retain a mapping of those class names to corresponding style objects. All you have to do is worry about actual style properties.
 
 2. ### Jumping between JS and CSS in your editor wastes time.
 
-    With inline styles, styles live _alongside_ the components they style. CSS has always been a language that describes what HTML elements look like. With jsxstyle, those descriptions are right where you need them.
+    There’s no need to constantly jump between components and the CSS file(s) that define how those components are styled because styles are defined right at the component level. CSS has always been a language that describes what HTML elements look like. With jsxstyle, those descriptions are right where you need them.
 
 3. ### Styles are… _inline_.
 
-    When styles are written inline, any frontend contributor can look at an element and know in a matter of seconds _exactly_ how it’s styled. Inline styles describe an element’s appearance better than CSS classes ever could, and because you don’t have to worry about the class abstraction, there’s no fear of you or another frontend contributor taking a pure CSS class (like `.red { color: tomato }`) and corrupting it by modifying its styles.
+    With inline styles, any frontend contributor can look at an element and know in a matter of seconds _exactly_ how it’s styled. Inline styles describe an element’s appearance better than CSS classes ever could, and because you don’t have to worry about the class abstraction, there’s no fear of you or another frontend contributor taking a pure CSS class (like `.red { color: tomato }`) and corrupting it by modifying its styles.
 
     Also, because styles are inline, when you delete a component, you delete its style properties along with it. Dead CSS is no longer a concern.
 
 4. ### Styles written inline don’t _remain_ inline.
 
-    jsxstyle is first and foremost _syntax_ for styling components. The styles you specify on jsxstyle components are added to the document and a `div` or component you specify is output with a class name that points to the added styles.
+    jsxstyle is first and foremost _syntax_ for styling components at a particular scope. The styles you specify on jsxstyle components are added to the document and a `div` or component you specify is output with a class name that points to the added styles.
 
 5. ### Building tooling around inline styles is simple and straightforward.
 
-    Statically analyzing inline styles on known components is trivial. Most of the styles you’ll end up writing on jsxstyle primitive components are static. Once you’re done perusing this README, check out [`jsxstyle-loader`][loader]. It’s a webpack loader that, at build time, extracts static styles defined on jsxstyle components into separate CSS files. `jsxstyle-loader` reduces and in some cases _entirely removes_ the need for runtime jsxstyle. jsxstyle becomes nothing more than syntactic sugar for styling components, much like how JSX itself is syntactic sugar for nested function calls. Dude, that’s next level!
+    Statically analyzing inline styles on known components is trivial. Most of the styles you’ll end up writing on jsxstyle primitive components are static. Once you’re done perusing this README, check out [`jsxstyle-loader`][jsxstyle-loader]. It’s a webpack loader that, at build time, extracts static styles defined on jsxstyle components into separate CSS files. `jsxstyle-loader` reduces and in some cases _entirely removes_ the need for runtime jsxstyle. jsxstyle becomes nothing more than syntactic sugar for styling components, much like how JSX itself is syntactic sugar for nested function calls. Dude, that’s next level!
 
 </details>
 
@@ -227,6 +226,10 @@ app.use(async ctx => {
 
 </details>
 
+## Does jsxstyle support autoprefixing?
+
+Runtime jsxstyle does not bundle an autoprefixer, but autoprefixing is easily doable if you use webpack. We recommend combining [`jsxstyle-loader`][jsxstyle-loader] with a CSS loader that handles provides autoprefixing. At Smyte, we use `postcss-loader` with `postcss-cssnext`. Not using `webpack` and you’d like to see runtime autoprefixing supported? [Open an issue][new issue] and let us know!
+
 ## What about global styles?
 
 jsxstyle only manages styles written on jsxstyle components. Where you put global styles is entirely up to you. At Smyte, we use a separate shared style sheet that contains a few reset styles.
@@ -245,31 +248,25 @@ Got an idea for jsxstyle? Did you encounter a bug? [Open an issue][new issue] an
 
 # Alternatives
 
-So you don’t think jsxstyle is the thing for you? That’s quite alright. It’s a good time to be picky about exactly how and where your styles are written. We’re in the golden age of component-based web frameworks, and a lot of ancient “best practices” that were set in place by the old guard are being rethought, to everyones benefit. It’s a weird and exciting time to be making stuff for the web.
+So you don’t think jsxstyle is the thing for you? That’s quite alright. It’s a good time to be picky about exactly how and where your styles are written. We’re in the golden age of component-based web frameworks, and a lot of ancient “best practices” that were set in place by the old guard are being rethought, to everyone’s benefit. It’s a weird and exciting time to be making stuff for the web.
 
-- [Tachyons][] by [Adam Morse][mrmrs] enables a lot of the the same benefits as jsxstyle but allows you to still write CSS classes. I love the “no new CSS” concept behind Tachyons. Tachyons elegantly solves the issues that Adam covers in [his excellent blog post on scalable CSS][scalable css].
+Sorting through the myriad CSS-in-JS solutions out there can get tiring, but there are a few projects out there that have stuck out to me:
 
-- [Rebass][] by [jxnblk][] is “A functional React UI component library, built with `styled-components”`. Rebass has similar API to jsxstyle. Syntactically it’s more compact, and it has a few more tricks. We don’t like tricks over here at jsxstyle dot com but we do give Rebass two meaty thumbs up.
+- [Tachyons][tachyons] by [Adam Morse][mrmrs] enables a lot of the the same benefits as jsxstyle but allows you to still use CSS classes. I love the “no new CSS” concept behind Tachyons. Tachyons elegantly solves the issues that Adam covers in [his excellent blog post on scalable CSS][scalable css].
+
+- [Rebass][rebass] by [Brent Jackson][jxnblk] is “a functional React UI component library, built with `styled-components”`. Rebass has similar API to jsxstyle, but is a bit more opinionated when it comes to separation of presentation and logic. Syntactically it’s more compact, and it has a few more tricks. We don’t like tricks over here at jsxstyle dot com but we do give Rebass two meaty thumbs up.
 
 [`styled-components`][styled-components] and (more recently) [`emotion`][emotion] have both gained serious traction in the frontend JS community. I can’t do either system justice in a single sentence and I’ve never used either system, but they both seem like reasonable jsxstyle alternatives that embrace the funky things you can do with tagged template literals.
 
-[pr]: https://github.com/smyte/jsxstyle/pulls
-[new issue]: https://github.com/smyte/jsxstyle/issues/new
-[new framework]: https://github.com/smyte/jsxstyle/issues/67
-
-[react]: https://github.com/smyte/jsxstyle/packages/jsxstyle-preact
-[preact]: https://github.com/smyte/jsxstyle/packages/jsxstyle-preact
-[loader]: https://github.com/smyte/jsxstyle/packages/jsxstyle-loader
-
-[rebass]: https://github.com/jxnblk/rebass
+[emotion]: https://github.com/emotion-js/emotion
+[jsxstyle-loader]: https://github.com/smyte/jsxstyle/tree/master/packages/jsxstyle-loader
 [jxnblk]: https://github.com/jxnblk
 [mrmrs]: https://github.com/mrmrs
-[scalable css]: http://mrmrs.github.io/writing/2016/03/24/scalable-css/
-[tachyons]: http://tachyons.io
-
-[styled-components]: https://www.styled-components.com
-[emotion]: https://github.com/emotion-js/emotion
-
-[travis]: https://travis-ci.org/smyte/jsxstyle
+[new issue]: https://github.com/smyte/jsxstyle/issues/new
+[pr]: https://github.com/smyte/jsxstyle/pulls
+[rebass]: https://github.com/jxnblk/rebass
 [sauce]: https://saucelabs.com/u/jsxstyle
-
+[scalable css]: http://mrmrs.github.io/writing/2016/03/24/scalable-css/
+[styled-components]: https://www.styled-components.com
+[tachyons]: http://tachyons.io
+[travis]: https://travis-ci.org/smyte/jsxstyle
