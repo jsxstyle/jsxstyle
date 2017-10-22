@@ -35,7 +35,7 @@ class JsxstyleWebpackPlugin {
       {
         // if the loader encounters a dash-cased element matching a default,
         // treat it like a lite component instead of an element.
-        __experimental__extremelyLiteMode: false,
+        __experimental__liteMode: false,
       },
       options
     );
@@ -50,7 +50,7 @@ class JsxstyleWebpackPlugin {
       memoryFS: this.memoryFS,
       fileList: new Set(),
       compileCallback: null,
-      extremelyLiteMode: options.__experimental__extremelyLiteMode,
+      liteMode: options.__experimental__liteMode,
     };
   }
 
@@ -64,7 +64,7 @@ class JsxstyleWebpackPlugin {
 
           if (handledMethods.hasOwnProperty(key)) {
             return function(filePath, ...args) {
-              if (filePath.endsWith('.jsxstyle.css')) {
+              if (filePath.endsWith('__jsxstyle.css')) {
                 return memoryFS[key](filePath, ...args);
               }
               return value.call(this, filePath, ...args);

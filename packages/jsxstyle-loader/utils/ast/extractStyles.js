@@ -37,7 +37,7 @@ const ALL_SPECIAL_PROPS = Object.assign(
 
 const JSXSTYLE_SOURCES = {
   jsxstyle: true,
-  'jsxstyle-preact': true,
+  'jsxstyle/preact': true,
 };
 
 // InlineBlock --> inline-block
@@ -98,7 +98,7 @@ function extractStyles({
   parserPlugins: _parserPlugins,
   addCSSRequire,
   errorCallback,
-  extremelyLiteMode,
+  liteMode,
 }) {
   invariant(typeof src === 'string', '`src` must be a string of javascript');
 
@@ -173,15 +173,17 @@ function extractStyles({
 
   let jsxstyleSrc;
   const validComponents = {};
+  // default to using require syntax
   let useImportSyntax = false;
   let hasValidComponents = false;
   let needsRuntimeJsxstyle = false;
 
-  if (typeof extremelyLiteMode === 'string') {
-    jsxstyleSrc =
-      extremelyLiteMode === 'react'
-        ? 'jsxstyle'
-        : `jsxstyle-${extremelyLiteMode}`;
+  if (typeof liteMode === 'string' || liteMode === true) {
+    if (liteMode === true) {
+      jsxstyleSrc = 'jsxstyle';
+    } else {
+      jsxstyleSrc = liteMode === 'react' ? 'jsxstyle' : `jsxstyle/${liteMode}`;
+    }
     Object.assign(validComponents, liteComponents);
     hasValidComponents = true;
   }
@@ -318,7 +320,7 @@ function extractStyles({
 
   // class or className?
   const classPropName =
-    jsxstyleSrc === 'jsxstyle-preact' ? 'class' : 'className';
+    jsxstyleSrc === 'jsxstyle/preact' ? 'class' : 'className';
 
   // Generate a UID that's unique in the program scope
   let boxComponentName;
@@ -346,11 +348,7 @@ function extractStyles({
         const originalNodeName = node.name.name;
         const src = validComponents[originalNodeName];
 
-        const removeAllTrace = liteComponents.hasOwnProperty(originalNodeName);
-
-        if (!removeAllTrace) {
-          node.name.name = boxComponentName;
-        }
+        node.name.name = boxComponentName;
 
         // prepend initial styles
         const initialStyles = defaultStyleAttributes[src];
@@ -628,17 +626,6 @@ function extractStyles({
               staticAttributes[name] = null;
               return false;
             }
-          }
-
-          if (removeAllTrace) {
-            errorCallback(
-              'jsxstyle-loader encountered a dynamic prop (`%s`) on a lite ' +
-                'jsxstyle component (`%s`). If you would like to pass dynamic ' +
-                'styles to this component, specify them in the `style` prop.',
-              generate(attribute).code,
-              originalNodeName
-            );
-            return false;
           }
 
           // if we've made it this far, the prop stays inline
@@ -970,7 +957,7 @@ function extractStyles({
     .join('');
   // path.parse doesn't exist in the webpack'd bundle but path.dirname and path.basename do.
   const baseName = path.basename(sourceFileName, '.js');
-  const cssRelativeFileName = `./${baseName}.jsxstyle.css`;
+  const cssRelativeFileName = `./${baseName}__jsxstyle.css`;
   const cssFileName = path.join(sourceDir, cssRelativeFileName);
 
   // Conditionally add Box import/require to the top of the document

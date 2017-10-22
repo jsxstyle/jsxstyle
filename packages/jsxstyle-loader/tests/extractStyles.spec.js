@@ -25,7 +25,7 @@ const {Col: TestCol, Row} = require("jsxstyle");
     });
 
     expect(rv1.js).toEqual(
-      `import "./validate.jsxstyle.css";
+      `import "./validate__jsxstyle.css";
 <Block extract="nope" />;
 <div className="_x0" />;
 <div className="_x1" />;
@@ -44,7 +44,7 @@ const {Col: TestCol, Row} = require("jsxstyle");
     });
 
     expect(rv.js).toEqual(
-      `import "./classname-spaces.jsxstyle.css";
+      `import "./classname-spaces__jsxstyle.css";
 <div className={"orange " + ((thing1 ? "_x1" : "_x2") + (" " + (thing2 ? "_x3" : "_x4"))) + " _x0"} />;`
     );
   });
@@ -70,7 +70,7 @@ const val = "thing";
     });
 
     expect(rv.js).toEqual(
-      `import "./extract-static1.jsxstyle.css";
+      `import "./extract-static1__jsxstyle.css";
 import LC from "./LC";
 const val = "thing";
 <div className="_x0" />;`
@@ -102,7 +102,7 @@ import LC from "./LC";
     });
 
     expect(rv.js).toEqual(
-      `import "./extract-static2.jsxstyle.css";
+      `import "./extract-static2__jsxstyle.css";
 import { Box as _Box } from "jsxstyle";
 const val = "thing";
 import LC from "./LC";
@@ -133,7 +133,7 @@ const DynamicBlock = ({wow, ...props}) => <Block dynamicProp={wow} {...props} />
     });
 
     expect(rv.js).toEqual(
-      `import "./rest-spread.jsxstyle.css";
+      `import "./rest-spread__jsxstyle.css";
 import { Box as _Box } from "jsxstyle";
 
 const BlueBlock = ({
@@ -157,7 +157,7 @@ const DynamicBlock = ({
     });
 
     expect(rv.js).toEqual(
-      `import "./spread.jsxstyle.css";
+      `import "./spread__jsxstyle.css";
 import { Box as _Box } from "jsxstyle";
 <_Box display="block" doNotExtract="no" {...spread} extract={null} className="_x0" />;`
     );
@@ -188,7 +188,7 @@ import { Box as _Box } from "jsxstyle";
     });
 
     expect(rv.js).toEqual(
-      `import "./spread.jsxstyle.css";
+      `import "./spread__jsxstyle.css";
 import { Box as _Box } from "jsxstyle";
 <_Box display="block" component="wow" props={{
   test: 4
@@ -222,7 +222,7 @@ function Thing(props) {
     });
 
     expect(rv.js).toEqual(
-      `import "./trusted-spreads.jsxstyle.css";
+      `import "./trusted-spreads__jsxstyle.css";
 import LC from "./LC";
 const staticSpread = {
   color: "#444",
@@ -306,7 +306,7 @@ describe('style groups', function() {
     });
 
     expect(rv.js).toEqual(
-      `import "./style-groups.jsxstyle.css";
+      `import "./style-groups__jsxstyle.css";
 <div className="_x0">
   <div className="_x1 _x0" />
   <div className="_x2" />
@@ -358,7 +358,7 @@ describe('style groups', function() {
     });
 
     expect(rv.js).toEqual(
-      `import "./named-style-groups.jsxstyle.css";
+      `import "./named-style-groups__jsxstyle.css";
 <div className="_x0">
   <div className="_test1 _x0" />
   <div className="_test2" />
@@ -414,7 +414,7 @@ describe('jsxstyle-specific props', function() {
     });
 
     expect(rv1.js).toEqual(
-      `import "./props-prop1.jsxstyle.css";
+      `import "./props-prop1__jsxstyle.css";
 import { Box as _Box } from "jsxstyle";
 <div staticObject="yep" className="_x0" />;
 <div className="_x0" />;
@@ -455,7 +455,7 @@ import { Box as _Box } from "jsxstyle";
     });
 
     expect(rv2.js).toEqual(
-      `import "./props-prop2.jsxstyle.css";
+      `import "./props-prop2__jsxstyle.css";
 <div ref={r => this.testBlock = r} className="_x0" />;`
     );
   });
@@ -474,7 +474,7 @@ import { Box as _Box } from "jsxstyle";
     });
 
     expect(rv.js).toEqual(
-      `import "./component-prop1.jsxstyle.css";
+      `import "./component-prop1__jsxstyle.css";
 import { Box as _Box } from "jsxstyle";
 <input className="_x0" />;
 <Thing className="_x0" />;
@@ -548,7 +548,7 @@ function Test({ component, thing }) {
       whitelistedModules,
     });
 
-    expect(rv.js).toEqual(`import "./funky-component-prop.jsxstyle.css";
+    expect(rv.js).toEqual(`import "./funky-component-prop__jsxstyle.css";
 
 function Test({
   component,
@@ -581,7 +581,7 @@ function Test({
     });
 
     expect(rv1.js).toEqual(
-      `import "./class-name1.jsxstyle.css";
+      `import "./class-name1__jsxstyle.css";
 import { Box as _Box } from "jsxstyle";
 <_Box display="flex" flexDirection="row" className={member.expression} {...spread} />;
 <div className="orange _x0" />;`
@@ -601,7 +601,7 @@ import { Box as _Box } from "jsxstyle";
     });
 
     expect(rv.js).toEqual(
-      `import "./media-queries.jsxstyle.css";
+      `import "./media-queries__jsxstyle.css";
 <div className="_x0" />;`
     );
     expect(rv.css).toEqual(
@@ -632,7 +632,7 @@ import LC from "./LC";
     });
 
     expect(rv.js).toEqual(
-      `import "./media-queries.jsxstyle.css";
+      `import "./media-queries__jsxstyle.css";
 import LC from "./LC";
 <div className="_x0" />;`
     );
@@ -661,7 +661,7 @@ describe('ternaries', function() {
     });
 
     expect(rv.js).toEqual(
-      `import "./ternary.jsxstyle.css";
+      `import "./ternary__jsxstyle.css";
 <div className={(dynamic ? "_x1" : "_x2") + " _x0"} />;`
     );
   });
@@ -676,7 +676,7 @@ describe('ternaries', function() {
     });
 
     expect(rv.js).toEqual(
-      `import "./ternary.jsxstyle.css";
+      `import "./ternary__jsxstyle.css";
 <div className={(dynamic ? "_x1" : "") + " _x0"} />;`
     );
 
@@ -702,7 +702,7 @@ describe('ternaries', function() {
     });
 
     expect(rv.js).toEqual(
-      `import "./ternary.jsxstyle.css";
+      `import "./ternary__jsxstyle.css";
 import { Box as _Box } from "jsxstyle";
 <_Box color={dynamic} className={(dynamic ? "" : "_x1") + " _x0"} />;`
     );
@@ -732,7 +732,7 @@ const blue = "blueberry";
     });
 
     expect(rv.js).toEqual(
-      `import "./ternary.jsxstyle.css";
+      `import "./ternary__jsxstyle.css";
 import LC from "./LC";
 const blue = "blueberry";
 <div className={(dynamic ? "_x1" : "_x2") + " _x0"} />;`
@@ -764,7 +764,7 @@ const blue = "blueberry";
     });
 
     expect(rv.js).toEqual(
-      `import "./ternary-with-classname.jsxstyle.css";
+      `import "./ternary-with-classname__jsxstyle.css";
 <div className={"cool " + (dynamic ? "_x1" : "_x2") + " _x0"} />;`
     );
   });
@@ -791,7 +791,7 @@ const blue = "blueberry";
     );
 
     expect(rv.js).toEqual(
-      `import "./ternary-with-spread.jsxstyle.css";
+      `import "./ternary-with-spread__jsxstyle.css";
 import { Box as _Box } from "jsxstyle";
 <_Box display="block" {...spread} color={null} className={dynamic ? "_x0" : "_x1"} />;`
     );
@@ -824,10 +824,10 @@ import { Box as _Box } from "jsxstyle";
       whitelistedModules,
     });
 
-    expect(rv1.js).toEqual(`import "./binary-expressions.jsxstyle.css";
+    expect(rv1.js).toEqual(`import "./binary-expressions__jsxstyle.css";
 <div className={(dynamic === 4 ? "_x1" : "_x2") + " _x0"} />;`);
 
-    expect(rv2.js).toEqual(`import "./binary-expressions.jsxstyle.css";
+    expect(rv2.js).toEqual(`import "./binary-expressions__jsxstyle.css";
 <div className={(dynamic == 4 ? "_x1" : "_x2") + " _x0"} />;`);
 
     const resultCSS = `/* ./packages/jsxstyle-loader/tests/mock/binary-expressions.js:2-7 (Block) */
@@ -866,7 +866,7 @@ import { Box as _Box } from "jsxstyle";
       whitelistedModules,
     });
 
-    expect(rv.js).toEqual(`import "./unary-expressions.jsxstyle.css";
+    expect(rv.js).toEqual(`import "./unary-expressions__jsxstyle.css";
 <div className={(dynamic % 2 ? "_x1" : "_x2") + " _x0"} />;`);
 
     expect(rv.css)
@@ -912,7 +912,7 @@ import { Box as _Box } from "jsxstyle";
     });
 
     expect(rv.js).toEqual(
-      `import "./ternary-groups.jsxstyle.css";
+      `import "./ternary-groups__jsxstyle.css";
 <div className={(dynamic ? "_x1" : "_x2") + " _x0"} />;`
     );
 
@@ -945,7 +945,7 @@ import { Box as _Box } from "jsxstyle";
     });
 
     expect(rv.js).toEqual(
-      `import "./ternary-null-values.jsxstyle.css";
+      `import "./ternary-null-values__jsxstyle.css";
 <div className={(dynamic ? "" : "_x1") + " _x0"} />;`
     );
 
@@ -964,33 +964,28 @@ import { Box as _Box } from "jsxstyle";
 });
 
 describe('experimental: jsxstyle lite', function() {
-  const msg =
-    'jsxstyle-loader encountered a dynamic prop (`%s`) on a lite ' +
-    'jsxstyle component (`%s`). If you would like to pass dynamic ' +
-    'styles to this component, specify them in the `style` prop.';
-
   const srcJS = `<block static="value" dynamic={value} />;
 <inline-block color="blue" />;
 <box />;
 <row />;
 <col flexGrow={1} />;`;
 
-  const expectedCSS = `/* ./packages/jsxstyle-loader/tests/mock/extremely-lite.js:1 (block) */
+  const expectedCSS = `/* ./packages/jsxstyle-loader/tests/mock/lite-mode.js:1 (block) */
 ._x0 {
   display: block;
   static: value;
 }
-/* ./packages/jsxstyle-loader/tests/mock/extremely-lite.js:2 (inline-block) */
+/* ./packages/jsxstyle-loader/tests/mock/lite-mode.js:2 (inline-block) */
 ._x1 {
   color: blue;
   display: inline-block;
 }
-/* ./packages/jsxstyle-loader/tests/mock/extremely-lite.js:4 (row) */
+/* ./packages/jsxstyle-loader/tests/mock/lite-mode.js:4 (row) */
 ._x2 {
   display: flex;
   flex-direction: row;
 }
-/* ./packages/jsxstyle-loader/tests/mock/extremely-lite.js:5 (col) */
+/* ./packages/jsxstyle-loader/tests/mock/lite-mode.js:5 (col) */
 ._x3 {
   display: flex;
   flex-direction: column;
@@ -998,52 +993,46 @@ describe('experimental: jsxstyle lite', function() {
 }
 `;
 
-  it('is extremely lite (React)', () => {
-    const errorCallback = jest.fn();
-
+  it('converts lite mode elements to jsxstyle components (React)', () => {
     const rv = extractStyles({
       src: srcJS,
-      sourceFileName: pathTo('mock/extremely-lite.js'),
+      sourceFileName: pathTo('mock/lite-mode.js'),
       cacheObject: {},
-      errorCallback,
-      extremelyLiteMode: 'react',
+      liteMode: 'react',
     });
 
-    expect(rv.js).toEqual(`require("./extremely-lite.jsxstyle.css");
+    expect(rv.js).toEqual(`require("./lite-mode__jsxstyle.css");
 
-<div className="_x0" />;
+var _Box = require("jsxstyle").Box;
+
+<_Box dynamic={value} className="_x0" />;
 <div className="_x1" />;
 <div />;
 <div className="_x2" />;
 <div className="_x3" />;`);
 
     expect(rv.css).toEqual(expectedCSS);
-    expect(errorCallback).toHaveBeenCalledTimes(1);
-    expect(errorCallback).toHaveBeenCalledWith(msg, 'dynamic={value}', 'block');
   });
 
-  it('is extremely lite (Preact)', () => {
-    const errorCallback = jest.fn();
-
+  it('converts lite mode elements to jsxstyle components (Preact)', () => {
     const rv = extractStyles({
       src: srcJS,
-      sourceFileName: pathTo('mock/extremely-lite.js'),
+      sourceFileName: pathTo('mock/lite-mode.js'),
       cacheObject: {},
-      errorCallback,
-      extremelyLiteMode: 'preact',
+      liteMode: 'preact',
     });
 
-    expect(rv.js).toEqual(`require("./extremely-lite.jsxstyle.css");
+    expect(rv.js).toEqual(`require("./lite-mode__jsxstyle.css");
 
-<div class="_x0" />;
+var _Box = require("jsxstyle/preact").Box;
+
+<_Box dynamic={value} class="_x0" />;
 <div class="_x1" />;
 <div />;
 <div class="_x2" />;
 <div class="_x3" />;`);
 
     expect(rv.css).toEqual(expectedCSS);
-    expect(errorCallback).toHaveBeenCalledTimes(1);
-    expect(errorCallback).toHaveBeenCalledWith(msg, 'dynamic={value}', 'block');
   });
 });
 

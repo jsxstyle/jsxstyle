@@ -17,7 +17,7 @@ function jsxstyleLoader(content) {
     'jsxstyle-loader cannot be used without the corresponding plugin'
   );
 
-  const { memoryFS, cacheObject, extremelyLiteMode } = this[jsxstyleKey];
+  const { memoryFS, cacheObject, liteMode } = this[jsxstyleKey];
 
   const options = loaderUtils.getOptions(this) || {};
 
@@ -35,7 +35,7 @@ function jsxstyleLoader(content) {
     namedStyleGroups: options.namedStyleGroups,
     parserPlugins: (options.parserPlugins || []).slice(0),
     cacheObject,
-    extremelyLiteMode,
+    liteMode,
     errorCallback: (...args) =>
       this.emitWarning(new Error(util.format(...args))),
   });

@@ -2,9 +2,9 @@
 
 `jsxstyle-loader` is a webpack loader that extracts [**static style props**](#what-are-static-style-props) from jsxstyle components into a separate CSS file.
 
-## Getting Started
+Don’t know what jsxstyle is? Check out the [jsxstyle README][] for more information.
 
-Just three easy steps™:
+## Getting Started
 
 1. Add a new rule object for `jsxstyle-loader` to your webpack config.
 
@@ -48,7 +48,6 @@ By default, `jsxstyle-loader` will extract all static style props on a jsxstyle 
 For example, with the following loader config:
 
 ```js
-// ...
 {
   loader: 'jsxstyle-loader',
   options: {
@@ -63,7 +62,6 @@ For example, with the following loader config:
     ],
   },
 }
-// ...
 ```
 
 ...and a jsxstyle component that looks like this:
@@ -95,7 +93,7 @@ import { Block } from 'jsxstyle';
 }
 ```
 
-Without the `styleGroups` parameter, all five extracted style props would be in one class.
+Without the `styleGroups` parameter, all five style props would be extracted into one class.
 
 ### `namedStyleGroups`
 
@@ -106,7 +104,6 @@ The `namedStyleGroups` config option is just like the `styleGroups` config optio
 The `whitelistedModules` config option allows you to add modules to the evaluation context. For example, with the following loader config, any prop on a jsxstyle component that references a value from `./LayoutConstants.js` will be assumed to be evaluatable:
 
 ```js
-// ...
 {
   loader: 'jsxstyle-loader',
   options: {
@@ -115,17 +112,29 @@ The `whitelistedModules` config option allows you to add modules to the evaluati
     ],
   },
 }
-// ...
 ```
 
 ### `parserPlugins`
 
 `jsxstyle-loader` uses `babylon` to parse javascript into an AST. By default, `jsxstyle-loader` is preconfigured with most of `babylon`’s plugins enabled, but if you need to enable additional plugins, you can specify an array of plugins with the `parserPlugins` option.
 
-You can see a list of all available plugins in [the `babylon` README][babylon 6 plugins].
+You can see a list of all available plugins in [the `babylon` README][babylon plugins].
+
+### `__experimental__liteMode`
+
+**:warning: Experimental :warning:**
+
+```jsx
+// look ma, no jsxstyle import
+<block color="red">This text will be red</block>
+```
+
+Instead of importing components from jsxstyle or `jsxstyle/preact`, don’t import _anything_ and just use the dash-case version of the component name as if it’s a valid DOM element. When `jsxstyle-loader` encounters one of these dash-case elements, it’ll treat it like the PascalCased equivalent component imported from `jsxstyle` or `jsxstyle/preact`.
+
+To enable this feature, pass an options object to `JsxstyleLoaderPlugin` with the `__experimental__liteMode` key set to either `"react"` or `"preact"`.
 
 
-## FAQs probably
+## FAQs
 
 ### Can I use `jsxstyle-loader` with Flow?
 
@@ -175,7 +184,7 @@ If the value of a prop is a simple logical expression with the `&&` operator, it
 
 ### Inline styles… _are bad_.
 
-See [the jsxstyle README](https://github.com/smyte/jsxstyle#faq).
+See [the jsxstyle FAQs][jsxstyle faqs].
 
 ### Does it work with hot reloading?
 
@@ -183,46 +192,14 @@ It sure does, but using it in development will only cause confusion, since what 
 
 ### Any caveats?
 
-One big one for now: CSS class names are not de-duplicated. It’s a feature I’d like to add before 1.0, but for now, I recommend using `postcss-loader` with the [`postcss-discard-duplicates`][discard dupes] plugin.
+One big one: CSS class names are not de-duplicated across components. Any CSS minifier that combines identical class names will handle deduplication.
 
----
+## Contributing
 
-## :warning: Experimental :warning:
+Got an idea for `jsxstyle-loader`? Did you encounter a bug? [Open an issue][new issue] and let’s talk it through. [PRs welcome too][pr]!
 
-### jsxstyle lite
-
-This is a smokey the bear “leave no trace” type of deal right here. In your components, require from `jsxstyle/lite` instead of jsxstyle or `jsxstyle/lite/preact` instead of `jsxstyle/preact`. `jsxstyle-loader` will still extract every style it can, but dynamic styles will be ignored (with a warning) and all traces of runtime jsxstyle will be removed. WhoOOOoAoOA thAT’s CRAzyy.
-
-### jsxstyle even lite-r
-
-Close your eyes for a second and imagine with me… imagine if you didn’t even have to require jsxstyle to use it. Just think… all those dozens of characters you don’t have to type anymore.
-
-Ok, now open your eyes and then lay them upon this piece of JSX:
-
-```jsx
-// look ma, no jsxstyle import
-<block color="red">This text will be red</block>
-```
-
-Instead of importing components from jsxstyle or `jsxstyle/preact`, don’t import _anything_ and just use the dash-case version of the component name as if it’s a valid DOM element. When `jsxstyle-loader` encounters one of these dash-case elements, it’ll treat it like the PascalCased equivalent component imported from `jsxstyle/lite`.
-
-To enable this feature, pass an options object to `JsxstyleLoaderPlugin` with the `__experimental__extremelyLiteMode` key set to either `"react"` or `"preact"`.
-
-### Stylesheet aggregation
-
-By default, `jsxstyle-loader` adds one stylesheet for each component that uses jsxstyle. It’s nice for debugging and tends to work well for small to medium projects (i.e. < 100 components that use jsxstyle). However, if you’ve got hundreds of components that use jsxstyle and you use `css-loader` on all those extracted stylesheets, you’ll end up with hundreds of elements added to your document head on page load. Maybe that’s not your [style][pun-ishment]. Pass an object to `JsxstyleLoaderPlugin` with the `__experimental__combineCSS` set to `true` and `jsxstyle-loader` smash all those MF stylesheets into one megastylesheet.
-
-Shhhh don’t tell anyone but it’ll also rewrite relative `url()` paths to point to the right thing. “But why would I want to use relative paths?”, you say. Well, combine an extracted stylesheet with `css-loader` and you’ve got the full power of webpack `require()` in any CSS prop that uses a URL:
-
-```jsx
-<Block backgroundImage="url(!!cool-base64-loader!./path/to/an.svg)" />
-```
-
-Ideally this would only be a feature in `jsxstyle/lite` since the runtime version of jsxstyle (obviously) doesn’t support this feature. That’s why it’s experimental.
-
-[jsxstyle]: https://github.com/smyte/jsxstyle#readme
-[discard dupes]: https://github.com/ben-eb/postcss-discard-duplicates
-[babylon 6 plugins]: https://github.com/babel/babylon/tree/6.x#plugins
-[babylon 7 plugins]: https://github.com/babel/babylon#plugins
-[pun-ishment]: https://www.youtube.com/watch?v=2Tt04ZSlbZ0
-[css-loader]: https://github.com/webpack-contrib/css-loader#usage
+[jsxstyle readme]: https://github.com/smyte/jsxstyle/tree/master/packages/jsxstyle#readme
+[jsxstyle faqs]: https://github.com/smyte/jsxstyle/tree/master/packages/jsxstyle#faqs
+[babylon plugins]: https://github.com/babel/babylon#plugins
+[new issue]: https://github.com/smyte/jsxstyle/issues/new
+[pr]: https://github.com/smyte/jsxstyle/pulls
