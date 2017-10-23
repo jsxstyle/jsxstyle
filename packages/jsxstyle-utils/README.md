@@ -16,9 +16,10 @@ If you’re interested in digging around in the internals of jsxstyle, you’ve 
 
   - `cache.reset()`: sets the internal style cache object to a new object.
 
-  - `cache.injectAddRule(injection: function)`: allows the user to inject a function that is called each time a string of styles is added to the document. If provided, this function will be called once for each unique string of styles.
-
-  - `cache.injectClassNameStrategy(injection: function)`: allows the user to inject a function to customise the output CSS class name.
+  - `cache.injectOptions(options: object)`: allows the user to inject config options into the style cache. Available options:
+    - `onInsertRule(rule: string, props: object)`: function called each time a string of styles is added to the document. If provided, this function will be called once for each unique string of styles. Return `false` from `onInsertRule` to prevent the CSS rule from being added to the document head.
+    - `getClassName(styleKey: string, props: object)`: function that should return a CSS class name unique to the `styleKey`.
+    - `pretty: boolean`: whether or not CSS output should contain non-essential whitespace.
 
 Each component returned by a jsxstyle component factory calls `cache.getClassName` with the component’s props whenever the component receives props. The `class`/`className` prop of the returned element is set to the return value of `getClassName`.
 

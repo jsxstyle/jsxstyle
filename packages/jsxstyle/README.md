@@ -205,8 +205,10 @@ import App from './App';
 
 // aggregate styles as they’re added to the document
 let styles = '';
-cache.injectAddRule(css => {
-  styles += css;
+cache.injectOptions({
+  onInsertRule(css) {
+    styles += css;
+  }
 });
 
 const app = new Koa();

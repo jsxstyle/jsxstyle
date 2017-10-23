@@ -39,7 +39,7 @@ describe('styleCache', () => {
   it('converts a style object to a sorted object of objects', () => {
     const styleCache = getStyleCache();
     const styles = [];
-    styleCache.injectAddRule(css => styles.push(css));
+    styleCache.injectOptions({ onInsertRule: css => styles.push(css) });
     const className = styleCache.getClassName(kitchenSink);
 
     expect(styles).toEqual([
@@ -59,7 +59,7 @@ describe('styleCache', () => {
   it('respects media query order', () => {
     let allCSS = '\n';
     const styleCache = getStyleCache();
-    styleCache.injectAddRule(css => (allCSS += css + '\n'));
+    styleCache.injectOptions({ onInsertRule: css => (allCSS += css + '\n') });
 
     const className = styleCache.getClassName({
       mediaQueries: {
@@ -81,7 +81,7 @@ describe('styleCache', () => {
   it('works with addRule injection', () => {
     let allCSS = '\n';
     const styleCache = getStyleCache();
-    styleCache.injectAddRule(css => (allCSS += css + '\n'));
+    styleCache.injectOptions({ onInsertRule: css => (allCSS += css + '\n') });
 
     const className = styleCache.getClassName(kitchenSink);
 
@@ -104,7 +104,7 @@ describe('styleCache', () => {
   it('works with classname strategy injection', () => {
     const styleCache = getStyleCache();
     let idx = -1;
-    styleCache.injectClassNameStrategy(() => 'jsxstyle' + ++idx);
+    styleCache.injectOptions({ getClassName: () => 'jsxstyle' + ++idx });
 
     const classNames = [
       styleCache.getClassName({ a: 1 }),
@@ -124,7 +124,7 @@ describe('styleCache', () => {
   it('resets', () => {
     const styleCache = getStyleCache();
     let idx = -1;
-    styleCache.injectClassNameStrategy(() => 'jsxstyle' + ++idx);
+    styleCache.injectOptions({ getClassName: () => 'jsxstyle' + ++idx });
 
     expect(styleCache.getClassName({ a: 1 })).toEqual('jsxstyle0');
     expect(styleCache.getClassName({ a: 1 })).toEqual('jsxstyle0');
@@ -136,20 +136,17 @@ describe('styleCache', () => {
   it('throws an errors when injections are added incorrectly', () => {
     const styleCache = getStyleCache();
 
-    const alreadyInjectedMsg = 'jsxstyle error: injection functions should be called once and only once.';
-    const cannotInjectMsg = 'jsxstyle error: injection functions must be called before any jsxstyle components mount.';
+    const alreadyInjectedMsg = 'jsxstyle error: `injectOptions` should be called once and only once.';
+    const cannotInjectMsg = 'jsxstyle error: `injectOptions` must be called before any jsxstyle components mount.';
 
-    expect(() => styleCache.injectAddRule(() => {})).not.toThrow();
-    expect(() => styleCache.injectClassNameStrategy(() => {})).not.toThrow();
+    expect(() => styleCache.injectOptions()).not.toThrow();
 
     // no repeated injections
-    expect(() => styleCache.injectAddRule(() => {})).toThrowError(alreadyInjectedMsg);
-    expect(() => styleCache.injectClassNameStrategy(() => {})).toThrowError(alreadyInjectedMsg);
+    expect(() => styleCache.injectOptions()).toThrowError(alreadyInjectedMsg);
 
     styleCache.getClassName({ a: 1 });
 
     // no injections after getClassName is called
-    expect(() => styleCache.injectAddRule(() => {})).toThrowError(cannotInjectMsg);
-    expect(() => styleCache.injectClassNameStrategy(() => {})).toThrowError(cannotInjectMsg);
+    expect(() => styleCache.injectOptions()).toThrowError(cannotInjectMsg);
   });
 });

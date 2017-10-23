@@ -4,13 +4,13 @@ import stringHash from './stringHash';
 
 function cannotInject() {
   throw new Error(
-    'jsxstyle error: injection functions must be called before any jsxstyle components mount.'
+    'jsxstyle error: `injectOptions` must be called before any jsxstyle components mount.'
   );
 }
 
 function alreadyInjected() {
   throw new Error(
-    'jsxstyle error: injection functions should be called once and only once.'
+    'jsxstyle error: `injectOptions` should be called once and only once.'
   );
 }
 
@@ -20,8 +20,9 @@ function getStringHash(key) {
 
 export default function getStyleCache() {
   let _classNameCache = {};
-  let insertRule = null;
   let getClassNameForKey = getStringHash;
+  let onInsertRule = null;
+  let pretty = false;
 
   const styleCache = {};
 
@@ -29,21 +30,19 @@ export default function getStyleCache() {
     _classNameCache = {};
   };
 
-  styleCache.injectAddRule = customAddFunction => {
-    insertRule = customAddFunction;
-    styleCache.injectAddRule = alreadyInjected;
-  };
-
-  styleCache.injectClassNameStrategy = customClassNameFunction => {
-    getClassNameForKey = customClassNameFunction;
-    styleCache.injectClassNameStrategy = alreadyInjected;
+  styleCache.injectOptions = options => {
+    if (options) {
+      if (options.getClassName) getClassNameForKey = options.getClassName;
+      if (options.onInsertRule) onInsertRule = options.onInsertRule;
+      if (options.pretty) pretty = options.pretty;
+    }
+    styleCache.injectOptions = alreadyInjected;
   };
 
   styleCache.getClassName = (props, classNameProp) => {
-    styleCache.injectAddRule = cannotInject;
-    styleCache.injectClassNameStrategy = cannotInject;
+    styleCache.injectOptions = cannotInject;
 
-    const styleObj = getStyleKeysForProps(props);
+    const styleObj = getStyleKeysForProps(props, pretty);
     if (typeof styleObj !== 'object' || styleObj === null) {
       return classNameProp || null;
     }
@@ -70,9 +69,9 @@ export default function getStyleCache() {
           }
 
           if (
-            typeof insertRule === 'function' &&
-            // if the function returns nothing, bail.
-            typeof insertRule(rule) === 'undefined'
+            onInsertRule &&
+            // if the function returns false, bail.
+            onInsertRule(rule, props) === false
           ) {
             return;
           }
