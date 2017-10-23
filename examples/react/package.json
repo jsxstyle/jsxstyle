@@ -18,9 +18,9 @@
     "webpack": "^3.6.0"
   },
   "dependencies": {
-    "jsxstyle": "^2.0.0-rc.2",
+    "jsxstyle": "^2.0.0",
     "react": "^16.0.0",
     "react-dom": "^16.0.0"
   },
-  "version": "0.0.2"
+  "version": "0.0.3"
 }
