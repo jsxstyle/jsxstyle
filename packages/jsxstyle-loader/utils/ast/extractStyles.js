@@ -13,6 +13,7 @@ const extractStaticTernaries = require('./extractStaticTernaries');
 const getPropValueFromAttributes = require('./getPropValueFromAttributes');
 const getStaticBindingsForScope = require('./getStaticBindingsForScope');
 const getStylesByClassName = require('../getStylesByClassName');
+const simpleEvaluate = require('./simpleEvaluate');
 
 const generate = require('./generate');
 const parse = require('./parse');
@@ -752,14 +753,10 @@ function extractStyles({
         const classNameObjects = [];
 
         if (classNamePropValue) {
-          if (canEvaluate(null, classNamePropValue)) {
-            // TODO: don't use canEvaluate here, need to be more specific
-            classNameObjects.push(
-              t.stringLiteral(
-                vm.runInNewContext(generate(classNamePropValue).code)
-              )
-            );
-          } else {
+          try {
+            const evaluatedValue = simpleEvaluate(classNamePropValue);
+            classNameObjects.push(t.stringLiteral(evaluatedValue));
+          } catch (e) {
             classNameObjects.push(classNamePropValue);
           }
         }
@@ -797,20 +794,17 @@ function extractStyles({
               return t.logicalExpression('||', val, t.stringLiteral(''));
             }
 
-            const accIsString =
-              t.isLiteral(acc) && typeof acc.value === 'string';
+            const accIsString = t.isStringLiteral(acc);
 
             let inner;
-            if (t.isLiteral(val)) {
-              if (typeof val.value === 'string') {
-                if (accIsString) {
-                  // join adjacent string literals
-                  return t.stringLiteral(`${acc.value} ${val.value}`);
-                }
-                inner = t.stringLiteral(` ${val.value}`);
-              } else {
-                inner = t.binaryExpression('+', t.stringLiteral(' '), val);
+            if (t.isStringLiteral(val)) {
+              if (accIsString) {
+                // join adjacent string literals
+                return t.stringLiteral(`${acc.value} ${val.value}`);
               }
+              inner = t.stringLiteral(` ${val.value}`);
+            } else if (t.isLiteral(val)) {
+              inner = t.binaryExpression('+', t.stringLiteral(' '), val);
             } else if (
               t.isConditionalExpression(val) ||
               t.isBinaryExpression(val)

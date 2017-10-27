@@ -2,12 +2,10 @@
 
 const t = require('babel-types');
 const path = require('path');
-const generate = require('./generate');
-const vm = require('vm');
 
-const canEvaluate = require('./canEvaluate');
-const canEvaluateObject = require('./canEvaluateObject');
 const getSourceModule = require('./getSourceModule');
+const simpleEvaluate = require('./simpleEvaluate');
+const simpleEvaluateObject = require('./simpleEvaluateObject');
 
 function getStaticBindingsForScope(scope, whitelist = [], sourceFileName) {
   const bindings = scope.getAllBindings();
@@ -62,15 +60,24 @@ function getStaticBindingsForScope(scope, whitelist = [], sourceFileName) {
       // TODO: handle spread syntax
       if (!dec) continue;
 
-      if (
-        canEvaluate(null, dec.init) ||
-        // if dec.init is an object defined in the program root, evaluate it
-        // NOTE: this assumes that objects defined in the program root are not mutated!
-        // TODO: make this behaviour opt-in (?)
-        (binding.path.parentPath.parentPath.type === 'Program' &&
-          canEvaluateObject(null, dec.init))
-      ) {
-        ret[k] = vm.runInNewContext('(' + generate(dec.init).code + ')');
+      if (t.isObjectExpression(dec.init)) {
+        if (binding.path.parentPath.parentPath.type === 'Program') {
+          try {
+            ret[k] = simpleEvaluateObject(dec.init);
+          } catch (e) {
+            // console.error('simpleEvaluateObject error:', e);
+          }
+        } else {
+          // console.error('ObjectExpressions are only evaled at root.');
+        }
+        continue;
+      }
+
+      try {
+        ret[k] = simpleEvaluate(dec.init);
+        continue;
+      } catch (e) {
+        // console.error('simpleEvaluate could not eval dec.init:', e);
       }
     }
   }

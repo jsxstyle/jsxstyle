@@ -209,7 +209,7 @@ import { Box as _Box } from "jsxstyle";
 import LC from "./LC";
 const staticSpread = {
   color: "#444",
-  width: 420
+  "width": 420
 };
 
 function Thing(props) {
@@ -226,7 +226,7 @@ function Thing(props) {
 import LC from "./LC";
 const staticSpread = {
   color: "#444",
-  width: 420
+  "width": 420
 };
 
 function Thing(props) {
