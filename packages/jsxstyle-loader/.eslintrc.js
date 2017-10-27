@@ -1,10 +1,12 @@
 'use strict';
 module.exports = {
   env: { es6: true },
-  parserOptions: { ecmaVersion: 2017 },
+  parserOptions: {
+    sourceType: 'script',
+    ecmaVersion: 2017,
+  },
   plugins: ['node'],
   extends: ['eslint:recommended', 'plugin:node/recommended'],
-  root: true,
   rules: {
     strict: [2, 'global'],
     'no-console': [

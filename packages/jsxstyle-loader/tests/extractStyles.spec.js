@@ -8,7 +8,7 @@ const whitelistedModules = [require.resolve('./mock/LC')];
 
 const pathTo = thing => path.resolve(__dirname, thing);
 
-describe('the basics', function() {
+describe('the basics', () => {
   it('only extracts styles from valid jsxstyle components', () => {
     const rv1 = extractStyles({
       src: `import {Block as TestBlock} from "jsxstyle";
@@ -50,7 +50,7 @@ const {Col: TestCol, Row} = require("jsxstyle");
   });
 });
 
-describe('element conversion', function() {
+describe('element conversion', () => {
   it('converts jsxstyle elements to plain elements when all props are static', () => {
     const rv = extractStyles({
       src: `import {Block} from "jsxstyle";
@@ -122,7 +122,7 @@ import LC from "./LC";
   });
 });
 
-describe('spread operators', function() {
+describe('spread operators', () => {
   it("doesn't explode if you use the spread operator", () => {
     const rv = extractStyles({
       src: `import {Block} from "jsxstyle";
@@ -248,7 +248,7 @@ function Thing(props) {
   });
 });
 
-describe('cache object', function() {
+describe('cache object', () => {
   it('updates `cacheObject` counter and key object', () => {
     const cacheObject = {};
 
@@ -281,7 +281,7 @@ describe('cache object', function() {
   });
 });
 
-describe('style groups', function() {
+describe('style groups', () => {
   it('groups styles when a `styleGroups` array is provided', () => {
     const cacheObject = {};
     const styleGroups = [
@@ -387,7 +387,7 @@ describe('style groups', function() {
   });
 });
 
-describe('jsxstyle-specific props', function() {
+describe('jsxstyle-specific props', () => {
   it('handles the `props` prop correctly', () => {
     const errorCallback = jest.fn();
 
@@ -650,7 +650,7 @@ import LC from "./LC";
   });
 });
 
-describe('ternaries', function() {
+describe('ternaries', () => {
   it('extracts a ternary expression that has static consequent and alternate', () => {
     const rv = extractStyles({
       src: `import { Block } from "jsxstyle";
@@ -692,33 +692,33 @@ describe('ternaries', function() {
 `);
   });
 
-  it.skip('extracts a conditional expression with a static right side and an OR operator', () => {
-    const rv = extractStyles({
-      src: `import {Block} from "jsxstyle";
-<Block color={dynamic || "red"} />`,
-      sourceFileName: pathTo('mock/ternary.js'),
-      cacheObject: {},
-      whitelistedModules,
-    });
+  //   it('extracts a conditional expression with a static right side and an OR operator', () => {
+  //     const rv = extractStyles({
+  //       src: `import {Block} from "jsxstyle";
+  // <Block color={dynamic || "red"} />`,
+  //       sourceFileName: pathTo('mock/ternary.js'),
+  //       cacheObject: {},
+  //       whitelistedModules,
+  //     });
 
-    expect(rv.js).toEqual(
-      `import "./ternary__jsxstyle.css";
-import { Box as _Box } from "jsxstyle";
-<_Box color={dynamic} className={(dynamic ? "" : "_x1") + " _x0"} />;`
-    );
+  //     expect(rv.js).toEqual(
+  //       `import "./ternary__jsxstyle.css";
+  // import { Box as _Box } from "jsxstyle";
+  // <_Box color={dynamic} className={(dynamic ? "" : "_x1") + " _x0"} />;`
+  //     );
 
-    expect(rv.css).toEqual(
-      `/* ./packages/jsxstyle-loader/tests/mock/ternary.js:2 (Block) */
-._x0 {
-  display: block;
-}
-/* ./packages/jsxstyle-loader/tests/mock/ternary.js:2 (Block) */
-._x1 {
-  color: red;
-}
-`
-    );
-  });
+  //     expect(rv.css).toEqual(
+  //       `/* ./packages/jsxstyle-loader/tests/mock/ternary.js:2 (Block) */
+  // ._x0 {
+  //   display: block;
+  // }
+  // /* ./packages/jsxstyle-loader/tests/mock/ternary.js:2 (Block) */
+  // ._x1 {
+  //   color: red;
+  // }
+  // `
+  //     );
+  //   });
 
   it('extracts a ternary expression that has a whitelisted consequent and alternate', () => {
     const rv = extractStyles({
@@ -963,7 +963,7 @@ import { Box as _Box } from "jsxstyle";
   });
 });
 
-describe('experimental: jsxstyle lite', function() {
+describe('experimental: jsxstyle lite', () => {
   const srcJS = `<block static="value" dynamic={value} />;
 <inline-block color="blue" />;
 <box />;

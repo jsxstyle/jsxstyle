@@ -8,7 +8,7 @@ const webpack = require('webpack');
 jest.setTimeout(60000);
 
 // TODO: evaluate webpack bundle
-it('builds without issue', function() {
+it('builds without issue', () => {
   const config = webpackConfig({ multipleEntrypoints: true });
   const compiler = webpack(config);
   const fs = new webpack.MemoryOutputFileSystem();

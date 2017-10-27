@@ -8,13 +8,13 @@ const path = require('path');
 
 const whitelistedModules = [require.resolve('./mock/LC')];
 
-describe('getStaticBindingsForScope', function() {
+describe('getStaticBindingsForScope', () => {
   const ast = parse(`
 const outerLiteral = 42;
 const outerObject = {};
 import LC from './LC';
-import {blue} from './LC';
-import {Block} from 'jsxstyle';
+import { blue } from './LC';
+import { Block } from 'jsxstyle';
 
 function outerFunction(innerParam1, innerParam2) {
   const innerLiteral = 'wow';
@@ -44,7 +44,7 @@ function outerFunction(innerParam1, innerParam2) {
     },
   });
 
-  it('traverses the source correctly', function() {
+  it('traverses the source correctly', () => {
     expect(Object.keys(testItems)).toEqual(['Block']);
     expect(Object.keys(testItems.Block.attrs)).toEqual([
       'prop1',
@@ -53,7 +53,7 @@ function outerFunction(innerParam1, innerParam2) {
     ]);
   });
 
-  it('extracts static bindings', function() {
+  it('extracts static bindings', () => {
     const bindings = getStaticBindingsForScope(
       testItems.Block.scope,
       whitelistedModules,

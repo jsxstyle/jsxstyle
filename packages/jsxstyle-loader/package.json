@@ -8,13 +8,6 @@
   "engines": {
     "node": ">=6.0.0"
   },
-  "scripts": {
-    "build": "rimraf tests/webpack/build/*; webpack --config tests/webpack/webpack.config.js",
-    "build_stats": "npm run build -s -- --json > stats.json",
-    "build_exp": "npm run build -- --env.experimental",
-    "example": "webpack-dev-server --hot --hotOnly --config tests/webpack/webpack.config.js",
-    "example_exp": "npm run example -- --env.experimental"
-  },
   "dependencies": {
     "babel-generator": "^7.0.0-beta.3",
     "babel-traverse": "^7.0.0-beta.3",

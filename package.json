@@ -6,7 +6,7 @@
   "homepage": "https://github.com/smyte/jsxstyle#readme",
   "scripts": {
     "ci": "lerna bootstrap && npm run reset && npm run rollup && npm run jest && npm run karma",
-    "eslint": "eslint {packages,examples}/{src,tests}/*.js",
+    "eslint": "eslint {packages/*/{*,*/*},examples/{*,*/*}}.js",
     "jest": "jest --verbose",
     "karma": "karma start",
     "karma_local": "KARMA_LOCAL=yep karma start",
@@ -68,5 +68,10 @@
     "testMatch": [
       "<rootDir>/packages/*/tests/*.spec.js"
     ]
-  }
+  },
+  "eslintIgnore": [
+    "*.cjs.js",
+    "*.es.js",
+    "node_modules"
+  ]
 }

@@ -5,7 +5,7 @@ const getSourceModuleForItem = require('../utils/ast/getSourceModuleForItem');
 const traverse = require('babel-traverse').default;
 const parse = require('../utils/ast/parse');
 
-describe('getSourceModuleForItem', function() {
+describe('getSourceModuleForItem', () => {
   const ast = parse(`
 const Thing1 = require('thing');
 const {Destructured1} = require('destructured');

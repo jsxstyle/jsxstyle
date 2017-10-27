@@ -47,7 +47,7 @@ describe('getStyleKeysForProps', () => {
     });
   });
 
-  it('splits out pseudoelements and pseudoclasses', function() {
+  it('splits out pseudoelements and pseudoclasses', () => {
     const keyObj = getStyleKeysForProps(
       {
         selectionBackgroundColor: 'red',

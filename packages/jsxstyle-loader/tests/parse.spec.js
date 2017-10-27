@@ -8,7 +8,7 @@ const p = (code, plugins) => generate(parse(code, plugins || [])).code;
 
 // TODO: better examples for Typescript/Flow
 
-it('can parse Typescript', function() {
+it('can parse Typescript', () => {
   const code = `import * as React from 'react';
 import { Block } from 'jsxstyle';
 export interface ThingProps {
@@ -20,7 +20,7 @@ export const Thing: React.SFC<ThingProps> = props => <Block />;`;
   expect(p(code, ['typescript'])).toEqual(code);
 });
 
-it('can parse Flow', function() {
+it('can parse Flow', () => {
   const code = `import * as React from 'react';
 import { Block } from 'jsxstyle';
 type Props = {
@@ -39,7 +39,7 @@ class MyComponent extends React.Component<Props> {
   expect(p(code, ['flow'])).toEqual(code);
 });
 
-it('can parse class properties', function() {
+it('can parse class properties', () => {
   const code = `class Thing {
   state = {};
   wow = p => {};
