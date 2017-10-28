@@ -8,6 +8,13 @@
   "commands": {
     "boostrap": {
       "hoist": true
+    },
+    "publish": {
+      "ignore": [
+        "**/*.spec.js",
+        "**/.eslintrc.js",
+        "**/package.json"
+      ]
     }
   }
 }
