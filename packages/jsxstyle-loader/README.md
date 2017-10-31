@@ -120,18 +120,16 @@ The `whitelistedModules` config option allows you to add modules to the evaluati
 
 You can see a list of all available plugins in [the `babylon` README][babylon plugins].
 
-### `__experimental__liteMode`
-
-**:warning: Experimental :warning:**
+### `liteMode`
 
 ```jsx
 // look ma, no jsxstyle import
 <block color="red">This text will be red</block>
 ```
 
-Instead of importing components from jsxstyle or `jsxstyle/preact`, don’t import _anything_ and just use the dash-case version of the component name as if it’s a valid DOM element. When `jsxstyle-loader` encounters one of these dash-case elements, it’ll treat it like the PascalCased equivalent component imported from `jsxstyle` or `jsxstyle/preact`.
+Instead of importing components from `jsxstyle` or `jsxstyle/preact`, don’t import _anything_ and just use the dash-case version of the component name as if it’s a valid DOM element. When `jsxstyle-loader` encounters one of these dash-case elements, it’ll treat it like the PascalCased equivalent component imported from `jsxstyle` or `jsxstyle/preact`.
 
-To enable this feature, pass an options object to `JsxstyleLoaderPlugin` with the `__experimental__liteMode` key set to either `"react"` or `"preact"`.
+To enable this feature, set `liteMode` in your loader options to either `'react'` or `'preact'`.
 
 
 ## FAQs

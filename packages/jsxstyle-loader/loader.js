@@ -1,13 +1,14 @@
 'use strict';
 
 const extractStyles = require('./utils/ast/extractStyles');
-const jsxstyleKey = require('./utils/getKey')();
 
 const invariant = require('invariant');
 const loaderUtils = require('loader-utils');
 const path = require('path');
 const util = require('util');
 const validateOptions = require('schema-utils');
+
+const jsxstyleKey = Symbol.for('jsxstyle-loader');
 
 function jsxstyleLoader(content) {
   this.cacheable && this.cacheable();
@@ -19,7 +20,13 @@ function jsxstyleLoader(content) {
 
   const { memoryFS, cacheObject, liteMode } = this[jsxstyleKey];
 
-  const options = loaderUtils.getOptions(this) || {};
+  const options = Object.assign(
+    {
+      whitelistedModules: [],
+      parserPlugins: [],
+    },
+    loaderUtils.getOptions(this)
+  );
 
   validateOptions(
     path.resolve(__dirname, './schema/loader.json'),
@@ -30,12 +37,12 @@ function jsxstyleLoader(content) {
   const rv = extractStyles({
     src: content,
     sourceFileName: this.resourcePath,
-    whitelistedModules: (options.whitelistedModules || []).slice(0),
+    whitelistedModules: options.whitelistedModules,
     styleGroups: options.styleGroups,
     namedStyleGroups: options.namedStyleGroups,
-    parserPlugins: (options.parserPlugins || []).slice(0),
+    parserPlugins: options.parserPlugins,
     cacheObject,
-    liteMode,
+    liteMode: options.liteMode == null ? liteMode : options.liteMode,
     errorCallback: (...args) =>
       this.emitWarning(new Error(util.format(...args))),
   });

@@ -1,10 +1,9 @@
 'use strict';
 
 const webpack = require('webpack');
-
 const NodeWatchFileSystem = require('webpack/lib/node/NodeWatchFileSystem');
 
-const jsxstyleKey = require('./utils/getKey')();
+const jsxstyleKey = Symbol.for('jsxstyle-loader');
 
 const handledMethods = {
   // exists: true,
@@ -31,6 +30,17 @@ const handledMethods = {
 
 class JsxstyleWebpackPlugin {
   constructor(options) {
+    if (options && options.hasOwnProperty('__experimental__liteMode')) {
+      this.emitWarning(
+        new Error(
+          'The `__experimental__liteMode` config option has renamed to ' +
+            '`liteMode` and moved to the loader config. ' +
+            'Enabling lite mode in the plugin config is no longer supported ' +
+            'and will be removed in the near future.'
+        )
+      );
+    }
+
     options = Object.assign(
       {
         // if the loader encounters a dash-cased element matching a default,
@@ -44,7 +54,7 @@ class JsxstyleWebpackPlugin {
     this.cacheObject = {};
 
     // context object that gets passed to each loader.
-    // available in each loader as this[require('./getKey')()]
+    // available in each loader as this[Symbol.for('jsxstyle-loader')]
     this.ctx = {
       cacheObject: this.cacheObject,
       memoryFS: this.memoryFS,

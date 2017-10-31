@@ -16,8 +16,18 @@ it('builds without issue', () => {
 
   expect.assertions(4);
   return new Promise((resolve, reject) => {
-    compiler.run(err => {
-      if (err) reject(err);
+    compiler.run((err, stats) => {
+      if (err) {
+        console.error(err.stack || err);
+        if (err.details) {
+          console.error(err.details);
+        }
+        return reject(err);
+      }
+
+      const info = stats.toJson();
+      if (stats.hasErrors()) return reject(info.errors);
+      if (stats.hasWarnings()) console.warn(info.warnings);
 
       const redCSS = fs.readFileSync(
         path.join(config.output.path, 'bundle-red.css'),
