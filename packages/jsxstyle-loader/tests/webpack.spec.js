@@ -14,7 +14,7 @@ it('builds without issue', () => {
   const fs = new webpack.MemoryOutputFileSystem();
   compiler.outputFileSystem = fs;
 
-  expect.assertions(4);
+  expect.assertions(2);
   return new Promise((resolve, reject) => {
     compiler.run((err, stats) => {
       if (err) {
@@ -38,11 +38,34 @@ it('builds without issue', () => {
         'utf8'
       );
 
-      expect(redCSS).toMatch(/Shared\.js:8 \(Block\)/);
-      expect(redCSS).toMatch(/color: red;/);
-
-      expect(blueCSS).toMatch(/Shared\.js:8 \(Block\)/);
-      expect(blueCSS).toMatch(/color: blue;/);
+      expect(redCSS)
+        .toEqual(`/* ./packages/jsxstyle-loader/tests/webpack/test-app/RedApp.js:8 (Inline) */
+._xai8dmlm {
+  color: red;
+  display: inline;
+}
+/* ./packages/jsxstyle-loader/tests/webpack/test-app/Shared.js:8 (Block) */
+._xc52hamm {
+  display: block;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 18px;
+  line-height: 22px;
+}
+`);
+      expect(blueCSS)
+        .toEqual(`/* ./packages/jsxstyle-loader/tests/webpack/test-app/Shared.js:8 (Block) */
+._xc52hamm {
+  display: block;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 18px;
+  line-height: 22px;
+}
+/* ./packages/jsxstyle-loader/tests/webpack/test-app/BlueApp.js:8 (Inline) */
+._xc797n97 {
+  color: blue;
+  display: inline;
+}
+`);
 
       resolve();
     });

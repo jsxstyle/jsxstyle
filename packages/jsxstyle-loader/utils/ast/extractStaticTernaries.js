@@ -7,7 +7,12 @@ const invariant = require('invariant');
 const generate = require('./generate');
 const getClassNameFromCache = require('../getClassNameFromCache');
 
-function extractStaticTernaries(ternaries, evalContext, cacheObject) {
+function extractStaticTernaries(
+  ternaries,
+  evalContext,
+  cacheObject,
+  deterministic
+) {
   invariant(
     Array.isArray(ternaries),
     'extractStaticTernaries expects param 1 to be an array of ternaries'
@@ -80,9 +85,11 @@ function extractStaticTernaries(ternaries, evalContext, cacheObject) {
     .map((key, idx) => {
       const { test, consequentStyles, alternateStyles } = ternariesByKey[key];
       const consequentClassName =
-        getClassNameFromCache(consequentStyles, cacheObject) || '';
+        getClassNameFromCache(consequentStyles, cacheObject, deterministic) ||
+        '';
       const alternateClassName =
-        getClassNameFromCache(alternateStyles, cacheObject) || '';
+        getClassNameFromCache(alternateStyles, cacheObject, deterministic) ||
+        '';
 
       if (!consequentClassName && !alternateClassName) {
         return null;

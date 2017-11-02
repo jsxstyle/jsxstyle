@@ -41,6 +41,7 @@ function jsxstyleLoader(content) {
     styleGroups: options.styleGroups,
     namedStyleGroups: options.namedStyleGroups,
     parserPlugins: options.parserPlugins,
+    deterministic: options.deterministic,
     cacheObject,
     liteMode: options.liteMode == null ? liteMode : options.liteMode,
     errorCallback: (...args) =>

@@ -17,7 +17,8 @@ function getStylesByClassName(
   styleGroups,
   namedStyleGroups,
   staticAttributes,
-  cacheObject
+  cacheObject,
+  deterministic
 ) {
   if (typeof staticAttributes !== 'undefined') {
     invariant(
@@ -93,7 +94,11 @@ function getStylesByClassName(
         }
       }
 
-      const className = getClassNameFromCache(styleObject, cacheObject);
+      const className = getClassNameFromCache(
+        styleObject,
+        cacheObject,
+        deterministic
+      );
       if (!className) {
         continue arrayLoop;
       }
@@ -114,7 +119,11 @@ function getStylesByClassName(
   }
 
   if (Object.keys(styleProps).length > 0) {
-    const className = getClassNameFromCache(styleProps, cacheObject);
+    const className = getClassNameFromCache(
+      styleProps,
+      cacheObject,
+      deterministic
+    );
     if (className) {
       stylesByClassName[className] = styleProps;
       if (staticAttributes.mediaQueries) {

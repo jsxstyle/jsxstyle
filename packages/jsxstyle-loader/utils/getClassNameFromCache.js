@@ -1,13 +1,9 @@
 'use strict';
 
 const invariant = require('invariant');
-const { getStyleKeysForProps } = require('jsxstyle-utils');
+const { getStyleKeysForProps, stringHash } = require('jsxstyle-utils');
 
-function getClassNameFromCache(
-  styleObject,
-  cacheObject,
-  classNamePrefix = '_x'
-) {
+function getClassNameFromCache(styleObject, cacheObject, deterministic) {
   invariant(
     typeof cacheObject === 'object' && cacheObject !== null,
     'getClassNameFromCache expects an object as its second parameter'
@@ -29,16 +25,21 @@ function getClassNameFromCache(
     return null;
   }
 
-  const styleKey = styleObjects.classNameKey;
-  const counterKey = classNamePrefix + '~counter';
+  const classNameKey = styleObjects.classNameKey;
+  const counterKey = Symbol.for('counter');
   cacheObject[counterKey] = cacheObject[counterKey] || 0;
-  cacheObject.keys = cacheObject.keys || {};
 
-  const classNameKey = classNamePrefix + '~' + styleKey;
-  cacheObject.keys[classNameKey] =
-    cacheObject.keys[classNameKey] || (cacheObject[counterKey]++).toString(36);
+  if (!cacheObject[classNameKey]) {
+    if (deterministic) {
+      // content hash
+      cacheObject[classNameKey] = stringHash(classNameKey).toString(26);
+    } else {
+      // incrementing integer
+      cacheObject[classNameKey] = (cacheObject[counterKey]++).toString(36);
+    }
+  }
 
-  return classNamePrefix + cacheObject.keys[classNameKey];
+  return '_x' + cacheObject[classNameKey];
 }
 
 module.exports = getClassNameFromCache;

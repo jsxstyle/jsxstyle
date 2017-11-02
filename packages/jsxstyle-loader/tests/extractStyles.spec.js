@@ -271,12 +271,10 @@ describe('cache object', () => {
     });
 
     expect(cacheObject).toEqual({
-      '_x~counter': 3,
-      keys: {
-        '_x~display:block;': '0',
-        '_x~display:block;staticThing:wow;': '1',
-        '_x~display:inline-block;': '2',
-      },
+      [Symbol.for('counter')]: 3,
+      'display:block;': '0',
+      'display:block;staticThing:wow;': '1',
+      'display:inline-block;': '2',
     });
   });
 });
@@ -1033,6 +1031,21 @@ var _Box = require("jsxstyle/preact").Box;
 <div class="_x3" />;`);
 
     expect(rv.css).toEqual(expectedCSS);
+  });
+});
+
+describe('deterministic rendering', () => {
+  it('supports generating deterministic class names', () => {
+    const rv = extractStyles({
+      src: `import { Block } from "jsxstyle";
+<Block ternary={condition ? 123 : 456} />`,
+      sourceFileName: pathTo('mock/deteministic-classes.js'),
+      cacheObject: {},
+      whitelistedModules,
+      deterministic: true,
+    });
+    expect(rv.js).toEqual(`import "./deteministic-classes__jsxstyle.css";
+<div className={(condition ? "_x4f401i3" : "_x9ec9c1a") + " _x5eha247"} />;`);
   });
 });
 

@@ -100,6 +100,7 @@ function extractStyles({
   addCSSRequire,
   errorCallback,
   liteMode,
+  deterministic,
 }) {
   invariant(typeof src === 'string', '`src` must be a string of javascript');
 
@@ -743,7 +744,8 @@ function extractStyles({
           styleGroups,
           namedStyleGroups,
           staticAttributes,
-          cacheObject
+          cacheObject,
+          deterministic
         );
 
         const extractedStyleClassNames = Object.keys(stylesByClassName).join(
@@ -765,7 +767,8 @@ function extractStyles({
           const ternaryObj = extractStaticTernaries(
             staticTernaries,
             evalContext,
-            cacheObject
+            cacheObject,
+            deterministic
           );
 
           // ternaryObj is null if all of the extracted ternaries have falsey consequents and alternates
@@ -950,7 +953,8 @@ function extractStyles({
     .map(n => n.commentTexts.map(t => `${t}\n`).join('') + n.css)
     .join('');
   // path.parse doesn't exist in the webpack'd bundle but path.dirname and path.basename do.
-  const baseName = path.basename(sourceFileName, '.js');
+  const extName = path.extname(sourceFileName);
+  const baseName = path.basename(sourceFileName, extName);
   const cssRelativeFileName = `./${baseName}__jsxstyle.css`;
   const cssFileName = path.join(sourceDir, cssRelativeFileName);
 

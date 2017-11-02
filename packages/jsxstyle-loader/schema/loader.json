@@ -37,6 +37,10 @@
         "react",
         "preact"
       ]
+    },
+    "deterministic": {
+      "description": "whether or not generated class names will be short and non-deterministic or long and deterministic (content-based)",
+      "type": "boolean"
     }
   }
 }

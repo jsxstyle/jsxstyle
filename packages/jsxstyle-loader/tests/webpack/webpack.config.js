@@ -58,6 +58,7 @@ module.exports = function(env = {}, options = {}) {
               loader: require.resolve('../../'),
               options: {
                 liteMode: 'react',
+                deterministic: true,
               },
             },
           ],
