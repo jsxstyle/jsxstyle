@@ -9,7 +9,6 @@
   "module": "jsxstyle.es.js",
   "jsnext:main": "jsxstyle.es.js",
   "dependencies": {
-    "invariant": "^2.2.1",
     "jsxstyle-utils": "^2.0.0"
   },
   "keywords": [

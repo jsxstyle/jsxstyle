@@ -1,15 +1,15 @@
-import invariant from 'invariant';
-import React from 'react';
+import * as React from 'react';
 import { componentStyles, getStyleCache } from 'jsxstyle-utils';
 
 export const cache = getStyleCache();
 
 function factory(displayName, defaultProps, tagName) {
   tagName = tagName || 'div';
-  invariant(
-    typeof displayName === 'string' && displayName !== '',
-    'makeReactStyleComponentClass expects param 1 to be a valid displayName'
-  );
+  if (typeof displayName !== 'string' || !displayName) {
+    throw new Error(
+      'makeReactStyleComponentClass expects param 1 to be a valid displayName'
+    );
+  }
 
   return class extends React.Component {
     constructor(props) {

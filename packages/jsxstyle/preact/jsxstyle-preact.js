@@ -1,5 +1,4 @@
 /** @jsx h */
-import invariant from 'invariant';
 import { getStyleCache, componentStyles } from 'jsxstyle-utils';
 import { h, Component } from 'preact';
 
@@ -7,10 +6,11 @@ export const cache = getStyleCache();
 
 function factory(displayName, defaultProps, tagName) {
   tagName = tagName || 'div';
-  invariant(
-    typeof displayName === 'string' && displayName !== '',
-    'makePreactStyleComponentClass expects param 1 to be a valid displayName'
-  );
+  if (typeof displayName !== 'string' || !displayName) {
+    throw new Error(
+      'makePreactStyleComponentClass expects param 1 to be a valid displayName'
+    );
+  }
 
   return class extends Component {
     constructor(props) {
