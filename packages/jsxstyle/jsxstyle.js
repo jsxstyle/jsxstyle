@@ -27,7 +27,16 @@ function factory(displayName, defaultProps, tagName) {
     }
 
     render() {
-      const { props, style, children } = this.props;
+      const { props = {}, style, children, domRef } = this.props;
+
+      if (domRef) {
+        if (typeof this.component === 'string') {
+          props.ref = domRef;
+        } else {
+          props.domRef = domRef;
+        }
+      }
+
       return (
         <this.component {...props} className={this.className} style={style}>
           {children}
