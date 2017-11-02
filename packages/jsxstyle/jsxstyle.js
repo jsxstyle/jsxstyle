@@ -1,5 +1,5 @@
-import invariant from 'invariant';
-import React from 'react';
+import * as invariant from 'invariant';
+import * as React from 'react';
 import { componentStyles, getStyleCache } from 'jsxstyle-utils';
 
 export const cache = getStyleCache();

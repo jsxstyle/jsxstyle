@@ -1,5 +1,5 @@
 /** @jsx h */
-import invariant from 'invariant';
+import * as invariant from 'invariant';
 import { getStyleCache, componentStyles } from 'jsxstyle-utils';
 import { h, Component } from 'preact';
 

@@ -197,8 +197,8 @@ Here’s a minimal (untested!) example of jsxstyle server rendering with Koa:
 
 ```jsx
 import { cache } from 'jsxstyle';
-import Koa from 'koa';
-import React from 'react';
+import * as Koa from 'koa';
+import * as React from 'react';
 import { renderToString } from 'react-dom';
 
 import App from './App';
