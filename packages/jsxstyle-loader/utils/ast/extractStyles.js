@@ -163,7 +163,7 @@ function extractStyles({
   const parserPlugins = _parserPlugins ? [].concat(_parserPlugins) : [];
   // modify parserPlugins only if the user hasn't specified any plugins
   if (!_parserPlugins) {
-    if (/\.tsx?/.test(sourceFileName)) {
+    if (/\.tsx?$/.test(sourceFileName)) {
       parserPlugins.push('typescript');
     } else {
       // TODO: is this a bad idea

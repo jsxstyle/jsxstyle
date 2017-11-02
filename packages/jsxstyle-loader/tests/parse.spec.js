@@ -15,7 +15,8 @@ export interface ThingProps {
   thing1: string;
   thing2?: boolean;
 }
-export const Thing: React.SFC<ThingProps> = props => <Block />;`;
+export const Thing: React.SFC<ThingProps> = props => <Block />;
+ReactDOM.render(<Thing />, (document.getElementById('root') as HTMLElement));`;
 
   expect(p(code, ['typescript'])).toEqual(code);
 });

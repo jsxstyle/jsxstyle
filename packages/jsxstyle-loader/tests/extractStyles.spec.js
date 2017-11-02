@@ -1049,6 +1049,43 @@ describe('deterministic rendering', () => {
   });
 });
 
+describe('Typescript support', () => {
+  it('enables the `typescript` parser plugin for ts/tsx files', () => {
+    const src = `import * as React from 'react';
+    import { Block } from 'jsxstyle';
+    export interface ThingProps {
+      thing1: string;
+      thing2?: boolean;
+    }
+    export const Thing: React.SFC<ThingProps> = props => <Block />;
+    ReactDOM.render(<Thing />, (document.getElementById('root') as HTMLElement));`;
+
+    const expectedJS = `import "./typescript__jsxstyle.css";
+import * as React from 'react';
+export interface ThingProps {
+  thing1: string;
+  thing2?: boolean;
+}
+export const Thing: React.SFC<ThingProps> = props => <div className="_x0" />;
+ReactDOM.render(<Thing />, (document.getElementById('root') as HTMLElement));`;
+
+    const rv_ts = extractStyles({
+      src,
+      sourceFileName: pathTo('mock/typescript.ts'),
+      cacheObject: {},
+    });
+
+    const rv_tsx = extractStyles({
+      src,
+      sourceFileName: pathTo('mock/typescript.tsx'),
+      cacheObject: {},
+    });
+
+    expect(rv_ts.js).toEqual(expectedJS);
+    expect(rv_tsx.js).toEqual(expectedJS);
+  });
+});
+
 describe('edge cases', () => {
   it('only removes component imports', () => {
     const rv = extractStyles({

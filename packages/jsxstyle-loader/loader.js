@@ -20,13 +20,7 @@ function jsxstyleLoader(content) {
 
   const { memoryFS, cacheObject, liteMode } = this[jsxstyleKey];
 
-  const options = Object.assign(
-    {
-      whitelistedModules: [],
-      parserPlugins: [],
-    },
-    loaderUtils.getOptions(this)
-  );
+  const options = loaderUtils.getOptions(this) || {};
 
   validateOptions(
     path.resolve(__dirname, './schema/loader.json'),
