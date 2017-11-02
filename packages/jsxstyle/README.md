@@ -73,16 +73,18 @@ jsxstyle provides the following seven components:
 | `Box` | _No default styles_ |
 
 All props passed to these components are assumed to be CSS properties.
-There are six exceptions to this rule:
+There are eight exceptions to this rule:
 
 | Property | Type | Description |
 |:---|:--|:---|
-| `component`| `string`,&nbsp;`function`,&nbsp;or&nbsp;`object` | the underlying HTML tag or component to render. Defaults&nbsp;to&nbsp;`'div'` |
-| `props`| `object` | additional props to pass directly to the underlying tag&nbsp;or&nbsp;component. |
-| `mediaQueries` | `object` | an object of media query strings keyed by prefix. More&nbsp;on&nbsp;that&nbsp;[below](#media-queries). |
+| `component`| `string`,&nbsp;`function`,&nbsp;or&nbsp;`object` | The underlying HTML tag or component to render. Defaults&nbsp;to&nbsp;`'div'` |
+| `props`| `object` | Additional props to pass directly to the underlying tag&nbsp;or&nbsp;component. |
+| `mediaQueries` | `object` | An object of media query strings keyed by prefix. More&nbsp;on&nbsp;that&nbsp;[below](#media-queries). |
 | `className` | `string` | Class name to be passed through to the underlying tag&nbsp;or&nbsp;component. |
-| `style` | `any` | _Passed through untouched_ |
-| `ref` | `any` | _Passed through untouched_ |
+| `style` | `any` | _Passed through untouched._ |
+| `key` | `string` | _Handled internally by React._  |
+| `ref` | `function (componentInstance|null)` | _Handled internally by React._  |
+| `domRef` | `function (domElement|null)` | Passed as `ref` to the underlying DOM element.  See [the React ref docs](https://reactjs.org/docs/refs-and-the-dom.html#exposing-dom-refs-to-parent-components) for context. |
 
 
 ## Features
