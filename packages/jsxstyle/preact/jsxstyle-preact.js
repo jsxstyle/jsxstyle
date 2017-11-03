@@ -27,7 +27,15 @@ function factory(displayName, defaultProps, tagName) {
       this.className = cache.getClassName(props, props.class);
     }
 
-    render({ style, props, children }) {
+    render({ style, props = {}, children, domRef }) {
+      if (domRef) {
+        if (typeof this.component === 'string') {
+          props.ref = domRef;
+        } else {
+          props.domRef = domRef;
+        }
+      }
+
       return (
         <this.component {...props} class={this.className} style={style}>
           {children}
