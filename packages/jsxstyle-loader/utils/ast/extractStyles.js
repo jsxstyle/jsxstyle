@@ -20,14 +20,13 @@ const parse = require('./parse');
 const traverse = require('babel-traverse').default;
 const t = require('babel-types');
 
-// these props will be passed through as-is
+// props that will be passed through as-is
 const UNTOUCHED_PROPS = {
-  ref: true,
   key: true,
   style: true,
 };
 
-// these props cannot appear in the props prop (so meta)
+// props that cannot appear in the props prop (so meta)
 const ALL_SPECIAL_PROPS = Object.assign(
   {
     component: true,
@@ -460,6 +459,16 @@ function extractStyles({
 
           // component prop will be handled below
           if (name === 'component') {
+            return true;
+          }
+
+          if (name === 'ref') {
+            errorCallback(
+              'The `ref` prop cannot be extracted from a jsxstyle component. ' +
+                'If you want to attach a ref to the underlying component ' +
+                'or element, specify a `ref` property in the `props` object.'
+            );
+            inlinePropCount++;
             return true;
           }
 

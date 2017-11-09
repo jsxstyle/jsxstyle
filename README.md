@@ -90,7 +90,7 @@ jsxstyle provides the following seven components:
 | `Box` | _No default styles_ |
 
 All props passed to these components are assumed to be CSS properties.
-There are six exceptions to this rule:
+There are five exceptions to this rule:
 
 | Property | Type | Description |
 |:---|:--|:---|
@@ -99,7 +99,6 @@ There are six exceptions to this rule:
 | `mediaQueries` | `object` | an object of media query strings keyed by prefix. More&nbsp;on&nbsp;that&nbsp;[below](#media-queries). |
 | `className` | `string` | Class name to be passed through to the underlying tag&nbsp;or&nbsp;component. |
 | `style` | `any` | _Passed through untouched_ |
-| `ref` | `any` | _Passed through untouched_ |
 
 
 ## Features
@@ -273,7 +272,7 @@ Sorting through the myriad CSS-in-JS solutions out there can get tiring, but the
 
 - [Tachyons][tachyons] by [Adam Morse][mrmrs] enables a lot of the the same benefits as jsxstyle but allows you to still use CSS classes. I love the “no new CSS” concept behind Tachyons. Tachyons elegantly solves the issues that Adam covers in [his excellent blog post on scalable CSS][scalable css].
 
-- [Rebass][rebass] by [Brent Jackson][jxnblk] is “a functional React UI component library, built with `styled-components”`. Rebass has similar API to jsxstyle, but is a bit more opinionated when it comes to separation of presentation and logic. Syntactically it’s more compact, and it has a few more tricks. We don’t like tricks over here at jsxstyle dot com but we do give Rebass two meaty thumbs up.
+- [Rebass][rebass] by [Brent Jackson][jxnblk] is “a functional React UI component library, built with `styled-components`”. Rebass has similar API to jsxstyle, but is a bit more opinionated when it comes to separation of presentation and logic. Syntactically it’s more compact, and it has a few more tricks. We don’t like tricks over here at jsxstyle dot com but we do give Rebass two meaty thumbs up.
 
 [`styled-components`][styled-components] and (more recently) [`emotion`][emotion] have both gained serious traction in the frontend JS community. I can’t do either system justice in a single sentence and I’ve never used either system, but they both seem like reasonable jsxstyle alternatives that embrace the funky things you can do with tagged template literals.
 

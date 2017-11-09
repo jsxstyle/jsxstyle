@@ -446,7 +446,7 @@ import { Box as _Box } from "jsxstyle";
 
     const rv2 = extractStyles({
       src: `import {Block} from "jsxstyle";
-<Block color="red" ref={r => this.testBlock = r} />`,
+<Block color="red" ref={this.cannotBeExtracted} />`,
       sourceFileName: pathTo('mock/props-prop2.js'),
       cacheObject: {},
       whitelistedModules,
@@ -454,7 +454,8 @@ import { Box as _Box } from "jsxstyle";
 
     expect(rv2.js).toEqual(
       `import "./props-prop2__jsxstyle.css";
-<div ref={r => this.testBlock = r} className="_x0" />;`
+import { Box as _Box } from "jsxstyle";
+<_Box ref={this.cannotBeExtracted} className="_x0" />;`
     );
   });
 
