@@ -272,9 +272,9 @@ describe('cache object', () => {
 
     expect(cacheObject).toEqual({
       [Symbol.for('counter')]: 3,
-      'display:block;': '0',
-      'display:block;staticThing:wow;': '1',
-      'display:inline-block;': '2',
+      'display:block;': '_x0',
+      'display:block;staticThing:wow;': '_x1',
+      'display:inline-block;': '_x2',
     });
   });
 });
@@ -1036,30 +1036,63 @@ var _Box = require("jsxstyle/preact").Box;
 });
 
 describe('deterministic rendering', () => {
-  it('supports generating deterministic class names', () => {
+  it('generates deterministic class names when classNameFormat is set to `hash`', () => {
     const rv = extractStyles({
       src: `import { Block } from "jsxstyle";
 <Block ternary={condition ? 123 : 456} />`,
       sourceFileName: pathTo('mock/deteministic-classes.js'),
       cacheObject: {},
       whitelistedModules,
-      deterministic: true,
+      classNameFormat: 'hash',
     });
     expect(rv.js).toEqual(`import "./deteministic-classes__jsxstyle.css";
-<div className={(condition ? "_x4f401i3" : "_x9ec9c1a") + " _x5eha247"} />;`);
+<div className={(condition ? "_4f401i3" : "_9ec9c1a") + " _5eha247"} />;`);
+  });
+
+  it('generates a classname hash of `_1imx76p` for the specified style object', () => {
+    const rv = extractStyles({
+      src: `import { Block } from "jsxstyle";
+<Block
+  color="red"
+  hoverColor="green"
+  testActiveColor="blue"
+  mediaQueries={{
+    'test': 'example media query',
+  }}
+/>`,
+      sourceFileName: pathTo('mock/consistent-hashes.js'),
+      cacheObject: {},
+      whitelistedModules,
+      classNameFormat: 'hash',
+    });
+    expect(rv.js).toEqual(`import "./consistent-hashes__jsxstyle.css";
+<div className="_1imx76p" />;`);
+    expect(rv.css)
+      .toEqual(`/* ./packages/jsxstyle-loader/tests/mock/consistent-hashes.js:2-9 (Block) */
+._1imx76p {
+  color: red;
+  display: block;
+}
+._1imx76p:hover {
+  color: green;
+}
+@media example media query { ._1imx76p:active {
+  color: blue;
+} }
+`);
   });
 });
 
 describe('Typescript support', () => {
   it('enables the `typescript` parser plugin for ts/tsx files', () => {
     const src = `import * as React from 'react';
-    import { Block } from 'jsxstyle';
-    export interface ThingProps {
-      thing1: string;
-      thing2?: boolean;
-    }
-    export const Thing: React.SFC<ThingProps> = props => <Block />;
-    ReactDOM.render(<Thing />, (document.getElementById('root') as HTMLElement));`;
+import { Block } from 'jsxstyle';
+export interface ThingProps {
+  thing1: string;
+  thing2?: boolean;
+}
+export const Thing: React.SFC<ThingProps> = props => <Block />;
+ReactDOM.render(<Thing />, (document.getElementById('root') as HTMLElement));`;
 
     const expectedJS = `import "./typescript__jsxstyle.css";
 import * as React from 'react';

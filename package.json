@@ -14,6 +14,7 @@
     "prettier": "prettier --write {packages/*/{*,*/*},examples/{*,*/*}}.js",
     "reset": "rimraf packages/{*,*/*}/jsxstyle*.{es,cjs}.js",
     "rollup": "npm run reset; rollup -c; prettier --write packages/{*,*/*}/jsxstyle*.{es,cjs}.js",
+    "rollup_watch": "npm run reset; rollup -c -w;",
     "start": "webpack-dev-server --hot --hotOnly --inline --historyApiFallback --config=example/webpack.config.js",
     "update_readme": "echo \"$(<./misc/monorepo-preamble.md)\\n\\n---\\n\\n$(<./packages/jsxstyle/README.md)\" > README.md"
   },

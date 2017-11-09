@@ -38,9 +38,12 @@
         "preact"
       ]
     },
-    "deterministic": {
-      "description": "whether or not generated class names will be short and non-deterministic or long and deterministic (content-based)",
-      "type": "boolean"
+    "classNameFormat": {
+      "description": "format of generated class names. `hash` is deterministic, `base36` is not.",
+      "enum": [
+        "hash",
+        "base36"
+      ]
     }
   }
 }

@@ -30,6 +30,20 @@ describe('styleCache', () => {
     expect(className).toBe('_1lqd3t0');
   });
 
+  it('generates a classname hash of `_1imx76p` for the specified style object', () => {
+    const styleCache = getStyleCache();
+    const className = styleCache.getClassName({
+      display: 'block',
+      color: 'red',
+      hoverColor: 'green',
+      testActiveColor: 'blue',
+      mediaQueries: {
+        test: 'example media query',
+      },
+    });
+    expect(className).toEqual('_1imx76p');
+  });
+
   it('returns null when given an empty style object', () => {
     const styleCache = getStyleCache();
     const className = styleCache.getClassName({});

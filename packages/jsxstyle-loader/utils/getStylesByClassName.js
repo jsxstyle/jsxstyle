@@ -18,7 +18,7 @@ function getStylesByClassName(
   namedStyleGroups,
   staticAttributes,
   cacheObject,
-  deterministic
+  classNameFormat
 ) {
   if (typeof staticAttributes !== 'undefined') {
     invariant(
@@ -97,7 +97,7 @@ function getStylesByClassName(
       const className = getClassNameFromCache(
         styleObject,
         cacheObject,
-        deterministic
+        classNameFormat
       );
       if (!className) {
         continue arrayLoop;
@@ -122,7 +122,7 @@ function getStylesByClassName(
     const className = getClassNameFromCache(
       styleProps,
       cacheObject,
-      deterministic
+      classNameFormat
     );
     if (className) {
       stylesByClassName[className] = styleProps;

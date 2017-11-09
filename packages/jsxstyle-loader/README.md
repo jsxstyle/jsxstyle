@@ -120,6 +120,10 @@ The `whitelistedModules` config option allows you to add modules to the evaluati
 
 You can see a list of all available plugins in [the `babylon` README][babylon plugins].
 
+### `classNameFormat`
+
+Out of the box, `jsxstyle-loader` will use a _non-deterministic_ class naming scheme. Because webpack’s module iteration order is not guaranteed, class names will differ slightly between builds of the same code. If you need class names to remain the same each time the same code is bundled, set the `classNameFormat` option to `hash` in your loader config. Class names will be generated using a content-based hash.
+
 ### `liteMode`
 
 ```jsx

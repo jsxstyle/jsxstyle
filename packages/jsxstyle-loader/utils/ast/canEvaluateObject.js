@@ -18,8 +18,7 @@ function canEvaluateObject(staticNamespace, exprNode) {
       continue;
     }
 
-    // TODO: allow other types of key types (literal?)
-    if (!t.isIdentifier(value.key)) {
+    if (!t.isIdentifier(value.key) && !t.isLiteral(value.key)) {
       return false;
     }
 

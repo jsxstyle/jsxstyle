@@ -4,7 +4,7 @@ const parse = require('../utils/ast/parse');
 const generate = require('../utils/ast/generate');
 
 // parse helper
-const p = (code, plugins) => generate(parse(code, plugins || [])).code;
+const p = (code, ...plugins) => generate(parse(code, plugins)).code;
 
 // TODO: better examples for Typescript/Flow
 
@@ -18,7 +18,7 @@ export interface ThingProps {
 export const Thing: React.SFC<ThingProps> = props => <Block />;
 ReactDOM.render(<Thing />, (document.getElementById('root') as HTMLElement));`;
 
-  expect(p(code, ['typescript'])).toEqual(code);
+  expect(p(code, 'typescript')).toEqual(code);
 });
 
 it('can parse Flow', () => {
@@ -37,7 +37,7 @@ class MyComponent extends React.Component<Props> {
 
 }`;
 
-  expect(p(code, ['flow'])).toEqual(code);
+  expect(p(code, 'flow')).toEqual(code);
 });
 
 it('can parse class properties', () => {

@@ -11,7 +11,7 @@ function extractStaticTernaries(
   ternaries,
   evalContext,
   cacheObject,
-  deterministic
+  classNameFormat
 ) {
   invariant(
     Array.isArray(ternaries),
@@ -85,10 +85,10 @@ function extractStaticTernaries(
     .map((key, idx) => {
       const { test, consequentStyles, alternateStyles } = ternariesByKey[key];
       const consequentClassName =
-        getClassNameFromCache(consequentStyles, cacheObject, deterministic) ||
+        getClassNameFromCache(consequentStyles, cacheObject, classNameFormat) ||
         '';
       const alternateClassName =
-        getClassNameFromCache(alternateStyles, cacheObject, deterministic) ||
+        getClassNameFromCache(alternateStyles, cacheObject, classNameFormat) ||
         '';
 
       if (!consequentClassName && !alternateClassName) {

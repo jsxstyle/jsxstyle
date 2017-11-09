@@ -99,7 +99,7 @@ function extractStyles({
   addCSSRequire,
   errorCallback,
   liteMode,
-  deterministic,
+  classNameFormat,
 }) {
   invariant(typeof src === 'string', '`src` must be a string of javascript');
 
@@ -594,6 +594,10 @@ function extractStyles({
                 evalContext
               );
             } else {
+              errorCallback(
+                'cannot evaluate media query prop: `%s`',
+                generate(value).code
+              );
               inlinePropCount++;
               return true;
             }
@@ -754,7 +758,7 @@ function extractStyles({
           namedStyleGroups,
           staticAttributes,
           cacheObject,
-          deterministic
+          classNameFormat
         );
 
         const extractedStyleClassNames = Object.keys(stylesByClassName).join(
@@ -777,7 +781,7 @@ function extractStyles({
             staticTernaries,
             evalContext,
             cacheObject,
-            deterministic
+            classNameFormat
           );
 
           // ternaryObj is null if all of the extracted ternaries have falsey consequents and alternates

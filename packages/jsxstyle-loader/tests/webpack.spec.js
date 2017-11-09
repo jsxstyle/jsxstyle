@@ -40,12 +40,12 @@ it('builds without issue', () => {
 
       expect(redCSS)
         .toEqual(`/* ./packages/jsxstyle-loader/tests/webpack/test-app/RedApp.js:8 (Inline) */
-._xai8dmlm {
+._1ioutjs {
   color: red;
   display: inline;
 }
 /* ./packages/jsxstyle-loader/tests/webpack/test-app/Shared.js:8 (Block) */
-._xc52hamm {
+._1qb53c2 {
   display: block;
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 18px;
@@ -54,14 +54,14 @@ it('builds without issue', () => {
 `);
       expect(blueCSS)
         .toEqual(`/* ./packages/jsxstyle-loader/tests/webpack/test-app/Shared.js:8 (Block) */
-._xc52hamm {
+._1qb53c2 {
   display: block;
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 18px;
   line-height: 22px;
 }
 /* ./packages/jsxstyle-loader/tests/webpack/test-app/BlueApp.js:8 (Inline) */
-._xc797n97 {
+._1qr3dx1 {
   color: blue;
   display: inline;
 }

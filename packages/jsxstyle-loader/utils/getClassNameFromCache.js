@@ -3,7 +3,7 @@
 const invariant = require('invariant');
 const { getStyleKeysForProps, stringHash } = require('jsxstyle-utils');
 
-function getClassNameFromCache(styleObject, cacheObject, deterministic) {
+function getClassNameFromCache(styleObject, cacheObject, classNameFormat) {
   invariant(
     typeof cacheObject === 'object' && cacheObject !== null,
     'getClassNameFromCache expects an object as its second parameter'
@@ -30,16 +30,17 @@ function getClassNameFromCache(styleObject, cacheObject, deterministic) {
   cacheObject[counterKey] = cacheObject[counterKey] || 0;
 
   if (!cacheObject[classNameKey]) {
-    if (deterministic) {
+    if (classNameFormat === 'hash') {
       // content hash
-      cacheObject[classNameKey] = stringHash(classNameKey).toString(26);
+      cacheObject[classNameKey] = '_' + stringHash(classNameKey).toString(36);
     } else {
       // incrementing integer
-      cacheObject[classNameKey] = (cacheObject[counterKey]++).toString(36);
+      cacheObject[classNameKey] =
+        '_x' + (cacheObject[counterKey]++).toString(36);
     }
   }
 
-  return '_x' + cacheObject[classNameKey];
+  return cacheObject[classNameKey];
 }
 
 module.exports = getClassNameFromCache;
