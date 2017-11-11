@@ -144,7 +144,7 @@ Yes! Flow parsing is automatically enabled for any non-Typescript files.
 
 ### Can I use `jsxstyle-loader` with Typescript?
 
-Yes! Typescript parsing is automatically enabled for `.ts` and `.tsx` files, but if you’re using a different file extension, you’ll need to manually add `typescript` to the `parserPlugins` array.
+Not yet, but soon! Typescript support is a work in progress.
 
 ### It’s not working 😩
 
