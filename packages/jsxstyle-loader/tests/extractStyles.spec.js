@@ -103,10 +103,10 @@ import LC from "./LC";
 
     expect(rv.js).toEqual(
       `import "./extract-static2__jsxstyle.css";
-import { Box as _Box } from "jsxstyle";
+import { Box } from "jsxstyle";
 const val = "thing";
 import LC from "./LC";
-<_Box dynamicValue={notStatic} className="_x0" />;`
+<Box dynamicValue={notStatic} className="_x0" />;`
     );
     expect(rv.css).toEqual(
       `/* ./packages/jsxstyle-loader/tests/mock/extract-static2.js:4 (Block) */
@@ -134,17 +134,17 @@ const DynamicBlock = ({wow, ...props}) => <Block dynamicProp={wow} {...props} />
 
     expect(rv.js).toEqual(
       `import "./rest-spread__jsxstyle.css";
-import { Box as _Box } from "jsxstyle";
+import { Box } from "jsxstyle";
 
 const BlueBlock = ({
   wow,
   ...props
-}) => <_Box display="block" color="blue" {...props} test={null} className="_x0" />;
+}) => <Box display="block" color="blue" {...props} test={null} className="_x0" />;
 
 const DynamicBlock = ({
   wow,
   ...props
-}) => <_Box display="block" dynamicProp={wow} {...props} />;`
+}) => <Box display="block" dynamicProp={wow} {...props} />;`
     );
   });
 
@@ -158,8 +158,8 @@ const DynamicBlock = ({
 
     expect(rv.js).toEqual(
       `import "./spread__jsxstyle.css";
-import { Box as _Box } from "jsxstyle";
-<_Box display="block" doNotExtract="no" {...spread} extract={null} className="_x0" />;`
+import { Box } from "jsxstyle";
+<Box display="block" doNotExtract="no" {...spread} extract={null} className="_x0" />;`
     );
     expect(rv.css).toEqual(
       `/* ./packages/jsxstyle-loader/tests/mock/spread.js:2 (Block) */
@@ -189,8 +189,8 @@ import { Box as _Box } from "jsxstyle";
 
     expect(rv.js).toEqual(
       `import "./spread__jsxstyle.css";
-import { Box as _Box } from "jsxstyle";
-<_Box display="block" component="wow" props={{
+import { Box } from "jsxstyle";
+<Box display="block" component="wow" props={{
   test: 4
 }} key={test} ref={test} style={{}} {...spread} color={null} className={(typeof spread === "object" && spread !== null && spread.className || wow || "") + " _x0"} />;`
     );
@@ -413,7 +413,7 @@ describe('jsxstyle-specific props', () => {
 
     expect(rv1.js).toEqual(
       `import "./props-prop1__jsxstyle.css";
-import { Box as _Box } from "jsxstyle";
+import { Box } from "jsxstyle";
 <div staticObject="yep" className="_x0" />;
 <div className="_x0" />;
 <div {...variable} className="_x0" />;
@@ -426,18 +426,18 @@ import { Box as _Box } from "jsxstyle";
   ...six
 }} className="_x1" />;
 <div aria-hidden={true} className="_x0" />;
-<_Box props={{
+<Box props={{
   className: "test"
 }} className="_x0" />;
-<_Box props={{
+<Box props={{
   style: "test"
 }} className="_x0" />;
-<_Box props="invalid" className="_x0" />;
-<_Box dynamicProp={wow} props="invalid" className="_x0" />;
-<_Box props={{
+<Box props="invalid" className="_x0" />;
+<Box dynamicProp={wow} props="invalid" className="_x0" />;
+<Box props={{
   "aria hidden": true
 }} className="_x0" />;
-<_Box props={{
+<Box props={{
   "-aria-hidden": true
 }} className="_x0" />;`
     );
@@ -454,8 +454,8 @@ import { Box as _Box } from "jsxstyle";
 
     expect(rv2.js).toEqual(
       `import "./props-prop2__jsxstyle.css";
-import { Box as _Box } from "jsxstyle";
-<_Box ref={this.cannotBeExtracted} className="_x0" />;`
+import { Box } from "jsxstyle";
+<Box ref={this.cannotBeExtracted} className="_x0" />;`
     );
   });
 
@@ -474,12 +474,12 @@ import { Box as _Box } from "jsxstyle";
 
     expect(rv.js).toEqual(
       `import "./component-prop1__jsxstyle.css";
-import { Box as _Box } from "jsxstyle";
+import { Box } from "jsxstyle";
 <input className="_x0" />;
 <Thing className="_x0" />;
 <thing.cool className="_x0" />;
-<_Box display="block" component="h1" {...spread} />;
-<_Box component="h1" dynamic={wow} className="_x1" />;`
+<Box display="block" component="h1" {...spread} />;
+<Box component="h1" dynamic={wow} className="_x1" />;`
     );
 
     const jestErrorFn = jest.fn();
@@ -534,6 +534,7 @@ import { Box as _Box } from "jsxstyle";
       src: `import { Block } from "jsxstyle";
 function Test({ component, thing }) {
   const Compy = component;
+
   <Block component={Compy || 'h1'}>
     <Block component={complex}>
       <Block component="Complex" />
@@ -554,18 +555,16 @@ function Test({
   thing
 }) {
   const Compy = component;
-
-  var _Component = Compy || 'h1',
-      _Component2 = complex,
-      _Component3 = "Complex";
-
-  <_Component className="_x0">
-    <_Component2 className="_x0">
-      <_Component3 className="_x0" />
-    </_Component2>
-  </_Component>;
-  var _Component4 = complex;
-  <_Component4 className="_x0" />;
+  var Component = Compy || 'h1',
+      Component2 = complex,
+      Component3 = "Complex";
+  <Component className="_x0">
+    <Component2 className="_x0">
+      <Component3 className="_x0" />
+    </Component2>
+  </Component>;
+  var Component4 = complex;
+  <Component4 className="_x0" />;
 }`);
   });
 
@@ -581,8 +580,8 @@ function Test({
 
     expect(rv1.js).toEqual(
       `import "./class-name1__jsxstyle.css";
-import { Box as _Box } from "jsxstyle";
-<_Box display="flex" flexDirection="row" className={member.expression} {...spread} />;
+import { Box } from "jsxstyle";
+<Box display="flex" flexDirection="row" className={member.expression} {...spread} />;
 <div className="orange _x0" />;`
     );
   });
@@ -702,8 +701,8 @@ describe('ternaries', () => {
 
   //     expect(rv.js).toEqual(
   //       `import "./ternary__jsxstyle.css";
-  // import { Box as _Box } from "jsxstyle";
-  // <_Box color={dynamic} className={(dynamic ? "" : "_x1") + " _x0"} />;`
+  // import { Box } from "jsxstyle";
+  // <Box color={dynamic} className={(dynamic ? "" : "_x1") + " _x0"} />;`
   //     );
 
   //     expect(rv.css).toEqual(
@@ -791,8 +790,8 @@ const blue = "blueberry";
 
     expect(rv.js).toEqual(
       `import "./ternary-with-spread__jsxstyle.css";
-import { Box as _Box } from "jsxstyle";
-<_Box display="block" {...spread} color={null} className={dynamic ? "_x0" : "_x1"} />;`
+import { Box } from "jsxstyle";
+<Box display="block" {...spread} color={null} className={dynamic ? "_x0" : "_x1"} />;`
     );
   });
 
@@ -897,8 +896,8 @@ import { Box as _Box } from "jsxstyle";
       whitelistedModules,
     });
 
-    expect(rv.js).toEqual(`import { Box as _Box } from "jsxstyle";
-<_Box display="block" color={dynamic ? "red" : "blue"} {...spread} className="cool" />;`);
+    expect(rv.js).toEqual(`import { Box } from "jsxstyle";
+<Box display="block" color={dynamic ? "red" : "blue"} {...spread} className="cool" />;`);
   });
 
   it('groups extracted ternary statements', () => {
@@ -1002,9 +1001,9 @@ describe('experimental: jsxstyle lite', () => {
 
     expect(rv.js).toEqual(`require("./lite-mode__jsxstyle.css");
 
-var _Box = require("jsxstyle").Box;
+var Box = require("jsxstyle").Box;
 
-<_Box dynamic={value} className="_x0" />;
+<Box dynamic={value} className="_x0" />;
 <div className="_x1" />;
 <div />;
 <div className="_x2" />;
@@ -1023,9 +1022,9 @@ var _Box = require("jsxstyle").Box;
 
     expect(rv.js).toEqual(`require("./lite-mode__jsxstyle.css");
 
-var _Box = require("jsxstyle/preact").Box;
+var Box = require("jsxstyle/preact").Box;
 
-<_Box dynamic={value} class="_x0" />;
+<Box dynamic={value} class="_x0" />;
 <div class="_x1" />;
 <div />;
 <div class="_x2" />;
@@ -1046,7 +1045,7 @@ describe('deterministic rendering', () => {
       classNameFormat: 'hash',
     });
     expect(rv.js).toEqual(`import "./deteministic-classes__jsxstyle.css";
-<div className={(condition ? "_4f401i3" : "_9ec9c1a") + " _5eha247"} />;`);
+<div className={(condition ? "_nevmzf" : "_1ctok8s") + " _sfd7x3"} />;`);
   });
 
   it('generates a classname hash of `_1imx76p` for the specified style object', () => {

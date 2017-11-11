@@ -10,6 +10,7 @@ const { getStyleKeysForProps, componentStyles } = require('jsxstyle-utils');
 const canEvaluate = require('./canEvaluate');
 const canEvaluateObject = require('./canEvaluateObject');
 const extractStaticTernaries = require('./extractStaticTernaries');
+const generateUid = require('./generatedUid');
 const getPropValueFromAttributes = require('./getPropValueFromAttributes');
 const getStaticBindingsForScope = require('./getStaticBindingsForScope');
 const getStylesByClassName = require('../getStylesByClassName');
@@ -327,7 +328,7 @@ function extractStyles({
   let boxComponentName;
   traverse(ast, {
     Program(path) {
-      boxComponentName = path.scope.generateUid('Box');
+      boxComponentName = generateUid(path.scope, 'Box');
     },
   });
 
@@ -721,7 +722,7 @@ function extractStyles({
                 'Complex `component` prop value (`%s`) will be extracted out as a separate variable declaration.',
                 generate(componentPropValue).code
               );
-              node.name.name = path.scope.generateUid('Component');
+              node.name.name = generateUid(path.scope, 'Component');
               path._complexComponentProp = t.variableDeclarator(
                 t.identifier(node.name.name),
                 componentPropValue
