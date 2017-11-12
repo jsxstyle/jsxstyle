@@ -15,16 +15,19 @@ module.exports = function(config) {
     });
   } else {
     const customLaunchers = {};
+
     // Mobile devices
     [
-      ['iOS', '8.4', 'Safari', 'iPhone 6 Simulator'],
+      ['iOS', '11.0', 'Safari', 'iPhone 8 Simulator'],
+      ['iOS', '10.3', 'Safari', 'iPhone 7 Simulator'],
       ['iOS', '9.3', 'Safari', 'iPhone 6s Simulator'],
-      ['iOS', '10.3', 'Safari', 'iPhone 6s Simulator'],
-      ['Android', '4.4', 'Browser', 'Android Emulator'],
-      ['Android', '5.0', 'Browser', 'Android Emulator'],
+      ['iOS', '8.4', 'Safari', 'iPhone 6 Simulator', '1.6.5'],
+      ['Android', '7.1', 'Chrome', 'Android GoogleAPI Emulator'],
+      ['Android', '6.0', 'Chrome', 'Android GoogleAPI Emulator'],
       ['Android', '5.1', 'Browser', 'Android Emulator'],
-      ['Android', '6.0', 'Chrome', 'Android Emulator'],
-    ].forEach(([p, v, b, d]) => {
+      ['Android', '5.0', 'Browser', 'Android Emulator'],
+      ['Android', '4.4', 'Browser', 'Android Emulator'],
+    ].forEach(([p, v, b, d, a]) => {
       // prettier-ignore
       const k = `sl_${p}_${b}_${v}`.replace(/[^a-z0-9]/gi, '_').toLowerCase();
       customLaunchers[k] = {
@@ -33,45 +36,30 @@ module.exports = function(config) {
         platformVersion: v,
         browserName: b,
         deviceName: d,
-        deviceOrientation: 'portrait',
-        appiumVersion: '1.6.4',
+        appiumVersion: a || '1.7.1',
       };
     });
 
-    // IE and Safari
-    [
-      ['Windows 8.1', 'Internet Explorer', '11.0'],
-      ['Windows 8', 'Internet Explorer', '10.0'],
-      ['Windows 7', 'Internet Explorer', '9.0'],
-      ['macOS 10.12', 'Safari', '10.0'],
-      ['OS X 10.11', 'Safari', '9.0'],
-      ['OS X 10.10', 'Safari', '8.0'],
-      ['OS X 10.9', 'Safari', '7.0'],
-    ].forEach(([p, b, v]) => {
-      // prettier-ignore
-      const k = `sl_${p}_${b}_${v}`.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-      customLaunchers[k] = {
-        name: `${b} ${v}, ${p}`,
-        browserName: b,
+    [11, 10, 9].forEach(v => {
+      customLaunchers[`sl_ie_${v}`] = {
+        name: `Internet Explorer ${v}`,
+        browserName: 'Internet Explorer',
         version: v,
-        platform: p,
       };
     });
 
-    // Chrome, Firefox, and Edge latest
-    ['Chrome', 'Firefox', 'MicrosoftEdge'].forEach(b => {
-      const total = b === 'MicrosoftEdge' ? 3 : 4;
+    // browsers that support the `latest` field
+    ['MicrosoftEdge', 'Safari', 'Firefox', 'Chrome'].forEach(b => {
+      const total = b === 'MicrosoftEdge' ? 3 : 5;
       const niceName = b === 'MicrosoftEdge' ? 'Edge' : b;
       for (let idx = -1; ++idx < total; ) {
-        const k = `sl_win10_${b}_latest${idx > 0
-          ? `_${idx}`
-          : ''}`.toLowerCase();
+        const k = `sl_${b}_latest${idx > 0 ? `-${idx}` : ''}`.toLowerCase();
         const version = `latest${idx > 0 ? `-${idx}` : ''}`;
+
         customLaunchers[k] = {
-          name: `${niceName} ${version}, Windows 10`,
+          name: `${niceName} ${version}`,
           browserName: b,
           version,
-          platform: 'Windows 10',
         };
       }
     });
