@@ -7,7 +7,7 @@
   "scripts": {
     "ci": "lerna bootstrap && npm run reset && npm run rollup && npm run jest && npm run karma",
     "eslint": "eslint {packages/*/{*,*/*},examples/{*,*/*}}.js",
-    "jest": "jest --verbose",
+    "jest": "jest --verbose --runInBand",
     "karma": "karma start",
     "karma_local": "KARMA_LOCAL=yep karma start",
     "prepublishOnly": "npm run rollup",
@@ -53,6 +53,9 @@
     "rimraf": "^2.6.2",
     "rollup": "^0.51.5",
     "rollup-plugin-babel": "^3.0.2",
+    "rollup-plugin-node-resolve": "^3.0.0",
+    "rollup-plugin-replace": "^2.0.0",
+    "rollup-plugin-uglify": "^2.0.1",
     "style-loader": "^0.19.0",
     "webpack": "^3.6.0",
     "webpack-dev-server": "^2.9.1"

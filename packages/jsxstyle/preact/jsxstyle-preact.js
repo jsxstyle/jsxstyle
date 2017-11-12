@@ -6,7 +6,10 @@ export const cache = getStyleCache();
 
 function factory(displayName, defaultProps, tagName) {
   tagName = tagName || 'div';
-  if (typeof displayName !== 'string' || !displayName) {
+  if (
+    process.env.NODE_ENV === 'development' &&
+    (typeof displayName !== 'string' || !displayName)
+  ) {
     throw new Error(
       'makePreactStyleComponentClass expects param 1 to be a valid displayName'
     );
