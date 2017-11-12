@@ -1,6 +1,6 @@
 {
   "name": "jsxstyle-loader",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A webpack loader that extracts out static styles defined on jsxstyle components",
   "author": "Mike Meyer",
   "license": "Apache-2.0",
@@ -14,7 +14,7 @@
     "babel-types": "^7.0.0-beta.3",
     "babylon": "^7.0.0-beta.29",
     "invariant": "^2.2.1",
-    "jsxstyle": "^2.0.0",
+    "jsxstyle": "^2.0.1",
     "jsxstyle-utils": "^2.0.0",
     "loader-utils": "^1.1.0",
     "postcss": "^6.0.10",
