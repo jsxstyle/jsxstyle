@@ -79,4 +79,51 @@ describe('getStyleKeysForProps', () => {
         'activeColor:purple;hoverColor:orange;placeholderColor:blue;selectionBackgroundColor:red;',
     });
   });
+
+  it('generates identical classNameKeys for identical styles objects', () => {
+    const keyObj1 = getStyleKeysForProps(
+      { color: 'red', fooColor: 'blue', mediaQueries: { foo: 'test mq' } },
+      false
+    );
+
+    const keyObj2 = getStyleKeysForProps(
+      { color: 'red', barColor: 'blue', mediaQueries: { bar: 'test mq' } },
+      false
+    );
+
+    expect(keyObj1.classNameKey).toEqual('color:red;@test mq~color:blue;');
+    expect(keyObj1.classNameKey).toEqual(keyObj2.classNameKey);
+  });
+
+  it('generates different classNameKeys for styles objects with different content', () => {
+    const keyObj1 = getStyleKeysForProps(
+      { color: 'red', fooColor: 'blue', mediaQueries: { foo: 'test mq1' } },
+      false
+    );
+
+    const keyObj2 = getStyleKeysForProps(
+      { color: 'red', fooColor: 'blue', mediaQueries: { foo: 'test mq2' } },
+      false
+    );
+
+    expect(keyObj1.classNameKey).toEqual('color:red;@test mq1~color:blue;');
+    expect(keyObj2.classNameKey).toEqual('color:red;@test mq2~color:blue;');
+  });
+
+  it.skip('generates identical classNameKeys for style objects with duplicate media queries', () => {
+    const mediaQueries = { foo: 'test mq', bar: 'test mq' };
+
+    const keyObj1 = getStyleKeysForProps(
+      { fooProp1: 'blue', barProp2: 'red', mediaQueries },
+      false
+    );
+
+    const keyObj2 = getStyleKeysForProps(
+      { barProp1: 'blue', fooProp2: 'red', mediaQueries },
+      false
+    );
+
+    expect(keyObj1.classNameKey).toEqual('@test mq~prop2:red;prop1:blue;');
+    expect(keyObj1.classNameKey).toEqual(keyObj2.classNameKey);
+  });
 });

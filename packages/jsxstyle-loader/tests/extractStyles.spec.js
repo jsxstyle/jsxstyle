@@ -1048,7 +1048,7 @@ describe('deterministic rendering', () => {
 <div className={(condition ? "_nevmzf" : "_1ctok8s") + " _sfd7x3"} />;`);
   });
 
-  it('generates a classname hash of `_1imx76p` for the specified style object', () => {
+  it('generates a classname hash of `_d3bqdr` for the specified style object', () => {
     const rv = extractStyles({
       src: `import { Block } from "jsxstyle";
 <Block
@@ -1064,18 +1064,19 @@ describe('deterministic rendering', () => {
       whitelistedModules,
       classNameFormat: 'hash',
     });
+
     expect(rv.js).toEqual(`import "./consistent-hashes__jsxstyle.css";
-<div className="_1imx76p" />;`);
+<div className="_d3bqdr" />;`);
     expect(rv.css)
       .toEqual(`/* ./packages/jsxstyle-loader/tests/mock/consistent-hashes.js:2-9 (Block) */
-._1imx76p {
+._d3bqdr {
   color: red;
   display: block;
 }
-._1imx76p:hover {
+._d3bqdr:hover {
   color: green;
 }
-@media example media query { ._1imx76p:active {
+@media example media query { ._d3bqdr:active {
   color: blue;
 } }
 `);

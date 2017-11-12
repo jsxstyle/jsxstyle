@@ -49,16 +49,19 @@ export default function getStyleKeysForProps(props, pretty = false) {
 
   const mediaQueries = props.mediaQueries;
   const hasMediaQueries = typeof mediaQueries === 'object';
+  let usesMediaQueries = false;
 
   // return value
   const styleKeyObj = {};
+
   let classNameKey = '';
+  const seenMQs = {};
 
   const mqSortKeys = {};
   if (hasMediaQueries) {
     let idx = -1;
     for (const k in mediaQueries) {
-      mqSortKeys[k] = 1000 + ++idx;
+      mqSortKeys[k] = `@${1000 + ++idx}`;
     }
   }
 
@@ -73,10 +76,10 @@ export default function getStyleKeysForProps(props, pretty = false) {
     }
 
     let propName = originalPropName;
+    let propSansMQ;
     let pseudoelement;
     let pseudoclass;
-    let mediaQuery;
-    let mqSortKey;
+    let mqKey;
 
     capRegex.lastIndex = 0;
     let splitIndex = 0;
@@ -88,13 +91,17 @@ export default function getStyleKeysForProps(props, pretty = false) {
 
     // check for media query prefix
     if (prefix && hasMediaQueries && mediaQueries.hasOwnProperty(prefix)) {
-      mediaQuery = mediaQueries[prefix];
-      mqSortKey = mqSortKeys[prefix];
+      usesMediaQueries = true;
+      mqKey = prefix;
       splitIndex = capRegex.lastIndex - 1;
+
+      propSansMQ =
+        originalPropName[splitIndex].toLowerCase() +
+        originalPropName.slice(splitIndex + 1);
+
       prefix =
         capRegex.test(originalPropName) &&
-        originalPropName[splitIndex].toLowerCase() +
-          originalPropName.slice(splitIndex + 1, capRegex.lastIndex - 1);
+        propSansMQ.slice(0, capRegex.lastIndex - splitIndex - 1);
     }
 
     // check for pseudoelement prefix
@@ -125,9 +132,12 @@ export default function getStyleKeysForProps(props, pretty = false) {
       continue;
     }
 
+    const mediaQuery = mqKey && mediaQueries[mqKey];
+    const mqSortKey = mqKey && mqSortKeys[mqKey];
+
     const key =
       '.' +
-      (mediaQuery ? '@' + mqSortKey : '') +
+      (mqSortKey || '') +
       (pseudoclass ? ':' + pseudoclass : '') +
       (pseudoelement ? '::' + pseudoelement : '');
 
@@ -138,13 +148,28 @@ export default function getStyleKeysForProps(props, pretty = false) {
       if (pseudoelement) styleKeyObj[key].pseudoelement = pseudoelement;
     }
 
-    classNameKey += originalPropName + ':' + styleValue + ';';
+    if (propSansMQ) {
+      seenMQs[mediaQuery] = seenMQs[mediaQuery] || '';
+      seenMQs[mediaQuery] += propSansMQ + ':' + styleValue + ';';
+    } else {
+      classNameKey += originalPropName + ':' + styleValue + ';';
+    }
+
     styleKeyObj[key].styles +=
       (pretty ? '  ' : '') +
       hyphenateStyleName(propName) +
       (pretty ? ': ' : ':') +
       styleValue +
       (pretty ? ';\n' : ';');
+  }
+
+  // append media query key
+  if (usesMediaQueries) {
+    const mqKeys = Object.keys(seenMQs).sort();
+    for (let idx = -1, len = mqKeys.length; ++idx < len; ) {
+      const mediaQuery = mqKeys[idx];
+      classNameKey += `@${mediaQuery}~${seenMQs[mediaQuery]}`;
+    }
   }
 
   if (classNameKey === '') {

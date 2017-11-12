@@ -10,7 +10,6 @@ const nonStyleProps = {
   component: true,
   props: true,
   style: true,
-  mediaQueries: true,
 };
 
 function getStylesByClassName(
