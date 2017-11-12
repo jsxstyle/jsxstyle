@@ -19,7 +19,7 @@
     "loader-utils": "^1.1.0",
     "postcss": "^6.0.10",
     "postcss-value-parser": "^3.3.0",
-    "schema-utils": "^0.3.0",
+    "schema-utils": "^0.4.2",
     "webpack": "^3.6.0"
   }
 }

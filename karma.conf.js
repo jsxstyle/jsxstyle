@@ -141,7 +141,8 @@ module.exports = function(config) {
         alias: {
           jsxstyle: pkgPath('jsxstyle'),
           'jsxstyle-utils': pkgPath('jsxstyle-utils'),
-          'jsxstyle-preact': pkgPath('jsxstyle-preact'),
+          react: require.resolve('react'),
+          'react-dom': require.resolve('react-dom'),
         },
       },
       module: {
