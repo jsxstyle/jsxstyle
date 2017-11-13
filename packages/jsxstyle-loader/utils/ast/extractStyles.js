@@ -2,9 +2,9 @@
 
 const invariant = require('invariant');
 const path = require('path');
-const vm = require('vm');
 const util = require('util');
-
+const validateOptions = require('schema-utils');
+const vm = require('vm');
 const { getStyleKeysForProps, componentStyles } = require('jsxstyle-utils');
 
 const canEvaluate = require('./canEvaluate');
@@ -89,19 +89,13 @@ for (const componentName in componentStyles) {
   defaultStyleAttributes[componentName] = styleProps;
 }
 
-function extractStyles({
+function extractStyles(
   src,
-  styleGroups,
-  namedStyleGroups,
   sourceFileName,
-  whitelistedModules,
-  cacheObject,
-  parserPlugins: _parserPlugins,
-  addCSSRequire,
-  errorCallback,
-  liteMode,
-  classNameFormat,
-}) {
+  // non-user-configurable options
+  { cacheObject, errorCallback },
+  options = {}
+) {
   invariant(typeof src === 'string', '`src` must be a string of javascript');
 
   invariant(
@@ -114,34 +108,6 @@ function extractStyles({
     '`cacheObject` must be an object'
   );
 
-  if (typeof styleGroups !== 'undefined') {
-    invariant(
-      Array.isArray(styleGroups),
-      '`styleGroups` must be an array of style prop objects'
-    );
-  }
-
-  if (typeof namedStyleGroups !== 'undefined') {
-    invariant(
-      typeof namedStyleGroups === 'object' && namedStyleGroups !== null,
-      '`namedStyleGroups` must be an object of style prop objects keyed by className'
-    );
-  }
-
-  if (typeof whitelistedModules !== 'undefined') {
-    invariant(
-      Array.isArray(whitelistedModules),
-      '`whitelistedModules` must be an array of paths to modules that are OK to require'
-    );
-  }
-
-  if (typeof _parserPlugins !== 'undefined') {
-    invariant(
-      Array.isArray(_parserPlugins),
-      '`parserPlugins` must be an array of plugins to be parsed to babylon'
-    );
-  }
-
   if (typeof errorCallback !== 'undefined') {
     invariant(
       typeof errorCallback === 'function',
@@ -151,9 +117,20 @@ function extractStyles({
     errorCallback = console.warn;
   }
 
-  if (typeof addCSSRequire === 'undefined') {
-    addCSSRequire = true;
-  }
+  validateOptions(
+    path.resolve(__dirname, '../../schema/loader.json'),
+    options,
+    'jsxstyle-loader'
+  );
+
+  const {
+    classNameFormat,
+    liteMode,
+    namedStyleGroups,
+    parserPlugins: _parserPlugins,
+    styleGroups,
+    whitelistedModules,
+  } = options;
 
   const sourceDir = path.dirname(sourceFileName);
 

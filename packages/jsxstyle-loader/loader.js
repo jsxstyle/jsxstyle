@@ -6,7 +6,6 @@ const invariant = require('invariant');
 const loaderUtils = require('loader-utils');
 const path = require('path');
 const util = require('util');
-const validateOptions = require('schema-utils');
 
 const jsxstyleKey = Symbol.for('jsxstyle-loader');
 
@@ -22,25 +21,16 @@ function jsxstyleLoader(content) {
 
   const options = loaderUtils.getOptions(this) || {};
 
-  validateOptions(
-    path.resolve(__dirname, './schema/loader.json'),
-    options,
-    'jsxstyle-loader'
+  const rv = extractStyles(
+    content,
+    this.resourcePath,
+    {
+      cacheObject,
+      errorCallback: (...args) =>
+        this.emitWarning(new Error(util.format(...args))),
+    },
+    Object.assign({ liteMode }, options)
   );
-
-  const rv = extractStyles({
-    src: content,
-    sourceFileName: this.resourcePath,
-    whitelistedModules: options.whitelistedModules,
-    styleGroups: options.styleGroups,
-    namedStyleGroups: options.namedStyleGroups,
-    parserPlugins: options.parserPlugins,
-    classNameFormat: options.classNameFormat,
-    cacheObject,
-    liteMode: options.liteMode == null ? liteMode : options.liteMode,
-    errorCallback: (...args) =>
-      this.emitWarning(new Error(util.format(...args))),
-  });
 
   if (rv.css.length === 0) {
     return content;
