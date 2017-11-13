@@ -1,9 +1,10 @@
 'use strict';
 
+const Ajv = require('ajv');
+const ajvKeywords = require('ajv-keywords');
 const invariant = require('invariant');
 const path = require('path');
 const util = require('util');
-const validateOptions = require('schema-utils');
 const vm = require('vm');
 const { getStyleKeysForProps, componentStyles } = require('jsxstyle-utils');
 
@@ -93,7 +94,7 @@ function extractStyles(
   src,
   sourceFileName,
   // non-user-configurable options
-  { cacheObject, errorCallback },
+  { cacheObject, warnCallback, errorCallback },
   options = {}
 ) {
   invariant(typeof src === 'string', '`src` must be a string of javascript');
@@ -108,20 +109,43 @@ function extractStyles(
     '`cacheObject` must be an object'
   );
 
+  if (typeof warnCallback !== 'undefined') {
+    invariant(
+      typeof warnCallback === 'function',
+      '`warnCallback` is expected to be a function'
+    );
+  } else {
+    warnCallback = console.warn;
+  }
+
   if (typeof errorCallback !== 'undefined') {
     invariant(
       typeof errorCallback === 'function',
       '`errorCallback` is expected to be a function'
     );
   } else {
-    errorCallback = console.warn;
+    errorCallback = console.error;
   }
 
-  validateOptions(
-    path.resolve(__dirname, '../../schema/loader.json'),
-    options,
-    'jsxstyle-loader'
-  );
+  const ajv = new Ajv({
+    allErrors: true,
+    useDefaults: true,
+    errorDataPath: 'property',
+  });
+
+  ajvKeywords(ajv, ['instanceof', 'typeof']);
+
+  const loaderSchema = require('../../schema/loader.json');
+
+  if (!ajv.validate(loaderSchema, options)) {
+    const msg =
+      'jsxstyle-loader is incorrectly configured:\n' +
+      ajv.errors
+        .map(err => util.format(' - options%s %s', err.dataPath, err.message))
+        .join('\n');
+    errorCallback(msg);
+    throw new Error(msg);
+  }
 
   const {
     classNameFormat,
@@ -441,7 +465,7 @@ function extractStyles(
           }
 
           if (name === 'ref') {
-            errorCallback(
+            warnCallback(
               'The `ref` prop cannot be extracted from a jsxstyle component. ' +
                 'If you want to attach a ref to the underlying component ' +
                 'or element, specify a `ref` property in the `props` object.'
@@ -457,7 +481,7 @@ function extractStyles(
 
           if (name === 'props') {
             if (!value) {
-              errorCallback('`props` prop does not have a value');
+              warnCallback('`props` prop does not have a value');
               inlinePropCount++;
               return true;
             }
@@ -479,7 +503,7 @@ function extractStyles(
                     if (/^\w[\w-]+$/.test(propObj.key.value)) {
                       key = propObj.key.value;
                     } else {
-                      errorCallback(
+                      warnCallback(
                         '`props` prop contains an invalid key: `%s`',
                         propObj.key.value
                       );
@@ -487,7 +511,7 @@ function extractStyles(
                       continue;
                     }
                   } else {
-                    errorCallback(
+                    warnCallback(
                       'unhandled object property key type: `%s`',
                       propObj.type
                     );
@@ -495,7 +519,7 @@ function extractStyles(
                   }
 
                   if (ALL_SPECIAL_PROPS.hasOwnProperty(key)) {
-                    errorCallback(
+                    warnCallback(
                       '`props` prop cannot contain `%s` as it is used by jsxstyle and will be overwritten.',
                       key
                     );
@@ -523,7 +547,7 @@ function extractStyles(
                 } else if (t.isSpreadProperty(propObj)) {
                   attributes.push(t.jSXSpreadAttribute(propObj.argument));
                 } else {
-                  errorCallback(
+                  warnCallback(
                     'unhandled object property value type: `%s`',
                     propObj.type
                   );
@@ -554,7 +578,7 @@ function extractStyles(
             }
 
             // if props prop is weird-looking, leave it and warn
-            errorCallback('props prop is an unhandled type: `%s`', value.type);
+            warnCallback('props prop is an unhandled type: `%s`', value.type);
             inlinePropCount++;
             return true;
           }
@@ -572,7 +596,7 @@ function extractStyles(
                 evalContext
               );
             } else {
-              errorCallback(
+              warnCallback(
                 'cannot evaluate media query prop: `%s`',
                 generate(value).code
               );
@@ -695,7 +719,7 @@ function extractStyles(
 
             if (isComplex) {
               // still going to warn since the user should really do this themselves
-              errorCallback(
+              warnCallback(
                 'Complex `component` prop value (`%s`) will be extracted out as a separate variable declaration.',
                 generate(componentPropValue).code
               );

@@ -26,8 +26,10 @@ function jsxstyleLoader(content) {
     this.resourcePath,
     {
       cacheObject,
-      errorCallback: (...args) =>
+      warnCallback: (...args) =>
         this.emitWarning(new Error(util.format(...args))),
+      errorCallback: (...args) =>
+        this.emitError(new Error(util.format(...args))),
     },
     Object.assign({ liteMode }, options)
   );

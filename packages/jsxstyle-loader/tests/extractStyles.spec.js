@@ -384,7 +384,7 @@ describe('style groups', () => {
 
 describe('jsxstyle-specific props', () => {
   it('handles the `props` prop correctly', () => {
-    const errorCallback = jest.fn();
+    const warnCallback = jest.fn();
 
     const rv1 = extractStyles(
       `import {Block} from "jsxstyle";
@@ -403,7 +403,7 @@ describe('jsxstyle-specific props', () => {
 <Block props={{ "aria hidden": true }} />;
 <Block props={{ "-aria-hidden": true }} />;`,
       pathTo('mock/props-prop1.js'),
-      { cacheObject: {}, errorCallback }
+      { cacheObject: {}, warnCallback }
     );
 
     expect(rv1.js).toEqual(
@@ -437,7 +437,7 @@ import { Box } from "jsxstyle";
 }} className="_x0" />;`
     );
 
-    expect(errorCallback).toHaveBeenCalledTimes(6);
+    expect(warnCallback).toHaveBeenCalledTimes(6);
 
     const rv2 = extractStyles(
       `import {Block} from "jsxstyle";
@@ -476,7 +476,7 @@ import { Box } from "jsxstyle";
     );
 
     const jestErrorFn = jest.fn();
-    const errorCallback = (...props) => {
+    const warnCallback = (...props) => {
       console.warn(...props);
       jestErrorFn();
     };
@@ -486,7 +486,7 @@ import { Box } from "jsxstyle";
       `import {Block} from "jsxstyle";
 <Block component="CapitalisedString" />`,
       pathTo('mock/component-prop2.js'),
-      { cacheObject: {}, errorCallback }
+      { cacheObject: {}, warnCallback }
     );
 
     // does not warn
@@ -494,21 +494,21 @@ import { Box } from "jsxstyle";
       `import {Block} from "jsxstyle";
 <Block component={lowercaseIdentifier} />`,
       pathTo('mock/component-prop3.js'),
-      { cacheObject: {}, errorCallback }
+      { cacheObject: {}, warnCallback }
     );
 
     extractStyles(
       `import {Block} from "jsxstyle";
     <Block component={functionCall()} />`,
       pathTo('mock/component-prop4.js'),
-      { cacheObject: {}, errorCallback }
+      { cacheObject: {}, warnCallback }
     );
 
     extractStyles(
       `import {Block} from "jsxstyle";
     <Block component={member.expression()} />`,
       pathTo('mock/component-prop4.js'),
-      { cacheObject: {}, errorCallback }
+      { cacheObject: {}, warnCallback }
     );
 
     expect(jestErrorFn).toHaveBeenCalledTimes(4);

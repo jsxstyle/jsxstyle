@@ -2,13 +2,13 @@
 
 const getSourceModule = require('./getSourceModule');
 
-function getSourceModuleForItem(itemName, scope, errorCallback) {
+function getSourceModuleForItem(itemName, scope, warnCallback) {
   let itemBinding = null;
 
   if (scope.hasBinding(itemName)) {
     itemBinding = scope.getBinding(itemName);
   } else {
-    errorCallback('Item `%s` is not in scope', itemName);
+    warnCallback('Item `%s` is not in scope', itemName);
     return null;
   }
 
