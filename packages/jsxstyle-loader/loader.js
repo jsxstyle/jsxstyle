@@ -7,17 +7,17 @@ const loaderUtils = require('loader-utils');
 const path = require('path');
 const util = require('util');
 
-const jsxstyleKey = Symbol.for('jsxstyle-loader');
-
 function jsxstyleLoader(content) {
   this.cacheable && this.cacheable();
 
+  const pluginContext = this[Symbol.for('jsxstyle-loader')];
+
   invariant(
-    this[jsxstyleKey],
+    pluginContext,
     'jsxstyle-loader cannot be used without the corresponding plugin'
   );
 
-  const { memoryFS, cacheObject, liteMode } = this[jsxstyleKey];
+  const { memoryFS, cacheObject } = pluginContext;
 
   const options = loaderUtils.getOptions(this) || {};
 
@@ -31,7 +31,7 @@ function jsxstyleLoader(content) {
       errorCallback: (...args) =>
         this.emitError(new Error(util.format(...args))),
     },
-    Object.assign({ liteMode }, options)
+    options
   );
 
   if (rv.css.length === 0) {

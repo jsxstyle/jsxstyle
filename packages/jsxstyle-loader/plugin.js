@@ -3,8 +3,6 @@
 const webpack = require('webpack');
 const NodeWatchFileSystem = require('webpack/lib/node/NodeWatchFileSystem');
 
-const jsxstyleKey = Symbol.for('jsxstyle-loader');
-
 const handledMethods = {
   // exists: true,
   // existsSync: true,
@@ -29,27 +27,7 @@ const handledMethods = {
 };
 
 class JsxstyleWebpackPlugin {
-  constructor(options) {
-    if (options && options.hasOwnProperty('__experimental__liteMode')) {
-      this.emitWarning(
-        new Error(
-          'The `__experimental__liteMode` config option has renamed to ' +
-            '`liteMode` and moved to the loader config. ' +
-            'Enabling lite mode in the plugin config is no longer supported ' +
-            'and will be removed in the near future.'
-        )
-      );
-    }
-
-    options = Object.assign(
-      {
-        // if the loader encounters a dash-cased element matching a default,
-        // treat it like a lite component instead of an element.
-        __experimental__liteMode: false,
-      },
-      options
-    );
-
+  constructor() {
     this.memoryFS = new webpack.MemoryOutputFileSystem();
     this.cacheObject = {};
 
@@ -60,7 +38,6 @@ class JsxstyleWebpackPlugin {
       memoryFS: this.memoryFS,
       fileList: new Set(),
       compileCallback: null,
-      liteMode: options.__experimental__liteMode,
     };
   }
 
@@ -92,7 +69,7 @@ class JsxstyleWebpackPlugin {
 
     compiler.plugin('compilation', compilation => {
       compilation.plugin('normal-module-loader', loaderContext => {
-        loaderContext[jsxstyleKey] = this.ctx;
+        loaderContext[Symbol.for('jsxstyle-loader')] = this.ctx;
       });
     });
   }
