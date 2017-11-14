@@ -1086,6 +1086,39 @@ ReactDOM.render(<Thing />, (document.getElementById('root') as HTMLElement));`;
   });
 });
 
+describe('evaluateVars config option', () => {
+  it('does not evaluate vars if evaluateVars is set to false', () => {
+    const js = `import { Block } from 'jsxstyle';
+const staticProp = 'static';
+<Block thing1={staticProp} thing2={69} />`;
+
+    const evalVars = extractStyles(
+      js,
+      pathTo('mock/evaluateVars.js'),
+      { cacheObject: {} },
+      { evaluateVars: true }
+    );
+
+    const noEvalVars = extractStyles(
+      js,
+      pathTo('mock/evaluateVars.js'),
+      { cacheObject: {} },
+      { evaluateVars: false }
+    );
+
+    expect(evalVars.js).not.toEqual(noEvalVars.js);
+
+    expect(evalVars.js).toEqual(`import "./evaluateVars__jsxstyle.css";
+const staticProp = 'static';
+<div className="_x0" />;`);
+
+    expect(noEvalVars.js).toEqual(`import "./evaluateVars__jsxstyle.css";
+import { Box } from "jsxstyle";
+const staticProp = 'static';
+<Box thing1={staticProp} className="_x0" />;`);
+  });
+});
+
 describe('edge cases', () => {
   it('only removes component imports', () => {
     const rv = extractStyles(

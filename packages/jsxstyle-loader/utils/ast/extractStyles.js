@@ -8,14 +8,12 @@ const util = require('util');
 const vm = require('vm');
 const { getStyleKeysForProps, componentStyles } = require('jsxstyle-utils');
 
-const canEvaluate = require('./canEvaluate');
-const canEvaluateObject = require('./canEvaluateObject');
+const evaluateAstNode = require('./evaluateAstNode');
 const extractStaticTernaries = require('./extractStaticTernaries');
 const generateUid = require('./generatedUid');
 const getPropValueFromAttributes = require('./getPropValueFromAttributes');
 const getStaticBindingsForScope = require('./getStaticBindingsForScope');
 const getStylesByClassName = require('../getStylesByClassName');
-const simpleEvaluate = require('./simpleEvaluate');
 
 const generate = require('./generate');
 const parse = require('./parse');
@@ -154,6 +152,7 @@ function extractStyles(
     parserPlugins: _parserPlugins,
     styleGroups,
     whitelistedModules,
+    evaluateVars = true,
   } = options;
 
   const sourceDir = path.dirname(sourceFileName);
@@ -359,23 +358,39 @@ function extractStyles(
           node.attributes = [].concat(initialStyles, node.attributes);
         }
 
-        // Generate scope object at this level
-        const staticNamespace = getStaticBindingsForScope(
-          path.scope,
-          whitelistedModules,
-          sourceFileName
-        );
-        const evalContext = vm.createContext(staticNamespace);
+        const attemptEval = !evaluateVars
+          ? evaluateAstNode
+          : (function() {
+              // Generate scope object at this level
+              const staticNamespace = getStaticBindingsForScope(
+                path.scope,
+                whitelistedModules,
+                sourceFileName
+              );
+
+              const evalContext = vm.createContext(staticNamespace);
+              // called when evaluateAstNode encounters a dynamic-looking prop
+              const evalFn = n => {
+                // variable
+                if (t.isIdentifier(n)) {
+                  invariant(
+                    staticNamespace.hasOwnProperty(n.name),
+                    'identifier not in staticNamespace'
+                  );
+                  return staticNamespace[n.name];
+                }
+                return vm.runInContext(`(${generate(n).code})`, evalContext);
+              };
+
+              return n => evaluateAstNode(n, evalFn);
+            })();
 
         let lastSpreadIndex = null;
         const flattenedAttributes = [];
         node.attributes.forEach(attr => {
           if (t.isJSXSpreadAttribute(attr)) {
-            if (canEvaluate(staticNamespace, attr.argument)) {
-              const spreadValue = vm.runInContext(
-                generate(attr.argument).code,
-                evalContext
-              );
+            try {
+              const spreadValue = attemptEval(attr.argument);
 
               if (typeof spreadValue !== 'object' || spreadValue === null) {
                 lastSpreadIndex = flattenedAttributes.push(attr) - 1;
@@ -410,7 +425,7 @@ function extractStyles(
                   }
                 }
               }
-            } else {
+            } catch (e) {
               lastSpreadIndex = flattenedAttributes.push(attr) - 1;
             }
           } else {
@@ -584,18 +599,10 @@ function extractStyles(
           }
 
           if (name === 'mediaQueries') {
-            if (canEvaluateObject(staticNamespace, value)) {
-              staticAttributes[name] = vm.runInContext(
-                // parens so V8 doesn't parse the object like a block
-                '(' + generate(value).code + ')',
-                evalContext
-              );
-            } else if (canEvaluate(staticNamespace, value)) {
-              staticAttributes[name] = vm.runInContext(
-                generate(value).code,
-                evalContext
-              );
-            } else {
+            try {
+              staticAttributes[name] = attemptEval(value);
+              return false;
+            } catch (e) {
               warnCallback(
                 'cannot evaluate media query prop: `%s`',
                 generate(value).code
@@ -603,45 +610,50 @@ function extractStyles(
               inlinePropCount++;
               return true;
             }
-            return false;
           }
 
           // if value can be evaluated, extract it and filter it out
-          if (canEvaluate(staticNamespace, value)) {
-            staticAttributes[name] = vm.runInContext(
-              generate(value).code,
-              evalContext
-            );
+          try {
+            staticAttributes[name] = attemptEval(value);
             return false;
+          } catch (e) {
+            //
           }
 
           if (t.isConditionalExpression(value)) {
             // if both sides of the ternary can be evaluated, extract them
-            if (
-              canEvaluate(staticNamespace, value.consequent) &&
-              canEvaluate(staticNamespace, value.alternate)
-            ) {
-              staticTernaries.push({ name, ternary: value });
+            try {
+              const consequent = attemptEval(value.consequent);
+              const alternate = attemptEval(value.alternate);
+
+              staticTernaries.push({
+                name,
+                test: value.test,
+                consequent,
+                alternate,
+              });
               // mark the prop as extracted
               staticAttributes[name] = null;
               return false;
+            } catch (e) {
+              //
             }
           } else if (t.isLogicalExpression(value)) {
             // convert a simple logical expression to a ternary with a null alternate
-            if (
-              value.operator === '&&' &&
-              canEvaluate(staticNamespace, value.right)
-            ) {
-              staticTernaries.push({
-                name,
-                ternary: {
+            if (value.operator === '&&') {
+              try {
+                const consequent = attemptEval(value.right);
+                staticTernaries.push({
+                  name,
                   test: value.left,
-                  consequent: value.right,
-                  alternate: t.nullLiteral(),
-                },
-              });
-              staticAttributes[name] = null;
-              return false;
+                  consequent,
+                  alternate: null,
+                });
+                staticAttributes[name] = null;
+                return false;
+              } catch (e) {
+                //
+              }
             }
           }
 
@@ -771,7 +783,7 @@ function extractStyles(
 
         if (classNamePropValue) {
           try {
-            const evaluatedValue = simpleEvaluate(classNamePropValue);
+            const evaluatedValue = attemptEval(classNamePropValue);
             classNameObjects.push(t.stringLiteral(evaluatedValue));
           } catch (e) {
             classNameObjects.push(classNamePropValue);
@@ -781,7 +793,6 @@ function extractStyles(
         if (staticTernaries.length > 0) {
           const ternaryObj = extractStaticTernaries(
             staticTernaries,
-            evalContext,
             cacheObject,
             classNameFormat
           );

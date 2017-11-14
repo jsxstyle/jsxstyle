@@ -1,25 +1,15 @@
 'use strict';
 
 const t = require('babel-types');
-const vm = require('vm');
 const invariant = require('invariant');
 
 const generate = require('./generate');
 const getClassNameFromCache = require('../getClassNameFromCache');
 
-function extractStaticTernaries(
-  ternaries,
-  evalContext,
-  cacheObject,
-  classNameFormat
-) {
+function extractStaticTernaries(ternaries, cacheObject, classNameFormat) {
   invariant(
     Array.isArray(ternaries),
     'extractStaticTernaries expects param 1 to be an array of ternaries'
-  );
-  invariant(
-    typeof evalContext === 'object' && evalContext !== null,
-    'extractStaticTernaries expects param 2 to be an object'
   );
   invariant(
     typeof cacheObject === 'object' && cacheObject !== null,
@@ -32,51 +22,42 @@ function extractStaticTernaries(
 
   const ternariesByKey = {};
   for (let idx = -1, len = ternaries.length; ++idx < len; ) {
-    const { name, ternary } = ternaries[idx];
-    let { test, consequent, alternate } = ternary;
+    const { name, test, consequent, alternate } = ternaries[idx];
+
+    let ternaryTest = test;
 
     // strip parens
     if (t.isExpressionStatement(test)) {
-      test = test.expression;
+      ternaryTest = test.expression;
     }
 
     // convert `!thing` to `thing` with swapped consequent and alternate
     let shouldSwap = false;
     if (t.isUnaryExpression(test) && test.operator === '!') {
-      test = test.argument;
+      ternaryTest = test.argument;
       shouldSwap = true;
     } else if (t.isBinaryExpression(test)) {
       if (test.operator === '!==') {
-        test = t.binaryExpression('===', test.left, test.right);
+        ternaryTest = t.binaryExpression('===', test.left, test.right);
         shouldSwap = true;
       } else if (test.operator === '!=') {
-        test = t.binaryExpression('==', test.left, test.right);
+        ternaryTest = t.binaryExpression('==', test.left, test.right);
         shouldSwap = true;
       }
     }
 
-    if (shouldSwap) {
-      consequent = ternary.alternate;
-      alternate = ternary.consequent;
-    }
-
-    const consequentValue = vm.runInContext(
-      generate(consequent).code,
-      evalContext
-    );
-    const alternateValue = vm.runInContext(
-      generate(alternate).code,
-      evalContext
-    );
-
-    const key = generate(test).code;
+    const key = generate(ternaryTest).code;
     ternariesByKey[key] = ternariesByKey[key] || {
-      test,
+      test: ternaryTest,
       consequentStyles: {},
       alternateStyles: {},
     };
-    ternariesByKey[key].consequentStyles[name] = consequentValue;
-    ternariesByKey[key].alternateStyles[name] = alternateValue;
+    ternariesByKey[key].consequentStyles[name] = shouldSwap
+      ? alternate
+      : consequent;
+    ternariesByKey[key].alternateStyles[name] = shouldSwap
+      ? consequent
+      : alternate;
   }
 
   const stylesByClassName = {};

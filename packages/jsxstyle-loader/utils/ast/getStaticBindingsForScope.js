@@ -4,8 +4,7 @@ const t = require('babel-types');
 const path = require('path');
 
 const getSourceModule = require('./getSourceModule');
-const simpleEvaluate = require('./simpleEvaluate');
-const simpleEvaluateObject = require('./simpleEvaluateObject');
+const evaluateAstNode = require('./evaluateAstNode');
 
 function getStaticBindingsForScope(scope, whitelist = [], sourceFileName) {
   const bindings = scope.getAllBindings();
@@ -63,9 +62,9 @@ function getStaticBindingsForScope(scope, whitelist = [], sourceFileName) {
       if (t.isObjectExpression(dec.init)) {
         if (binding.path.parentPath.parentPath.type === 'Program') {
           try {
-            ret[k] = simpleEvaluateObject(dec.init);
+            ret[k] = evaluateAstNode(dec.init);
           } catch (e) {
-            // console.error('simpleEvaluateObject error:', e);
+            // console.error('evaluateAstNode error:', e);
           }
         } else {
           // console.error('ObjectExpressions are only evaled at root.');
@@ -74,10 +73,10 @@ function getStaticBindingsForScope(scope, whitelist = [], sourceFileName) {
       }
 
       try {
-        ret[k] = simpleEvaluate(dec.init);
+        ret[k] = evaluateAstNode(dec.init);
         continue;
       } catch (e) {
-        // console.error('simpleEvaluate could not eval dec.init:', e);
+        // console.error('evaluateAstNode could not eval dec.init:', e);
       }
     }
   }

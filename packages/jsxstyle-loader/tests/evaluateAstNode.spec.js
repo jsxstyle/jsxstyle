@@ -1,7 +1,9 @@
 'use strict';
 
-const canEvaluate = require('../utils/ast/canEvaluate');
+const evaluateAstNode = require('../utils/ast/evaluateAstNode');
 const parse = require('../utils/ast/parse');
+const vm = require('vm');
+const generate = require('babel-generator').default;
 
 const staticNamespace = {
   LC: {
@@ -18,7 +20,10 @@ const staticNamespace = {
   staticKey: 'thing3',
 };
 
-describe('canEvaluate', () => {
+const ctx = vm.createContext(staticNamespace);
+const evalFn = n => vm.runInContext('(' + generate(n).code + ')', ctx);
+
+describe('evaluateAstNode', () => {
   it('does not evaluate dynamic props', () => {
     const ast = parse(
       `<Block
@@ -32,8 +37,11 @@ describe('canEvaluate', () => {
 
     const errors = [];
     ast.program.body[0].expression.openingElement.attributes.forEach(attr => {
-      if (canEvaluate(staticNamespace, attr.value)) {
+      try {
+        evaluateAstNode(attr.value, evalFn);
         errors.push(`'${attr.name.name}' should not be evaluated`);
+      } catch (e) {
+        //
       }
     });
     expect(errors).toEqual([]);
@@ -55,7 +63,41 @@ describe('canEvaluate', () => {
 
     const errors = [];
     ast.program.body[0].expression.openingElement.attributes.forEach(attr => {
-      if (!canEvaluate(staticNamespace, attr.value.expression)) {
+      try {
+        evaluateAstNode(attr.value.expression, evalFn);
+      } catch (e) {
+        errors.push(`'${attr.name.name}' should be evaluated`);
+      }
+    });
+
+    expect(errors).toEqual([]);
+  });
+
+  it('only evaluates the weird shit', () => {
+    const ast = parse(
+      `<Block
+  staticValue={staticValue}
+  memberExpression={LC.thing1}
+  computedProperty1={LC['thing2']}
+  computedProperty2={LC[staticKey]}
+  computedProperty3={LC['thing' + 1]}
+  computedProperty4={LC[\`thing\${2}\`]}
+  binaryExpression={staticValue + 420 + 'wow'}
+  kitchenSink={nestedThing.level1['level2'][staticValue]}
+/>`
+    );
+
+    const jestFn = jest.fn();
+    const cb = n => {
+      jestFn(n);
+      return n;
+    };
+
+    const errors = [];
+    ast.program.body[0].expression.openingElement.attributes.forEach(attr => {
+      try {
+        evaluateAstNode(attr.value.expression, cb);
+      } catch (e) {
         errors.push(`'${attr.name.name}' should be evaluated`);
       }
     });

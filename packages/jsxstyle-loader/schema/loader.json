@@ -44,6 +44,10 @@
         "hash",
         "base36"
       ]
+    },
+    "evaluateVars": {
+      "description": "whether or not to evaluate style props that contain variables",
+      "type": "boolean"
     }
   }
 }
