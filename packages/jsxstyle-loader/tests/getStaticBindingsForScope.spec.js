@@ -11,15 +11,20 @@ const whitelistedModules = [require.resolve('./mock/LC')];
 describe('getStaticBindingsForScope', () => {
   const ast = parse(`
 const outerLiteral = 42;
-const outerObject = {};
+const outerObject = {
+  value: 69 * 420,
+};
+
 import LC from './LC';
 import { blue } from './LC';
-import { Block } from 'jsxstyle';
+import { Inline, Block } from 'jsxstyle';
 
 function outerFunction(innerParam1, innerParam2) {
   const innerLiteral = 'wow';
   const innerObject = {};
   const nullLiteral = null;
+
+  <Inline />;
 
   return <Block
     prop1={innerLiteral}
@@ -45,7 +50,7 @@ function outerFunction(innerParam1, innerParam2) {
   });
 
   it('traverses the source correctly', () => {
-    expect(Object.keys(testItems)).toEqual(['Block']);
+    expect(Object.keys(testItems)).toEqual(['Inline', 'Block']);
     expect(Object.keys(testItems.Block.attrs)).toEqual([
       'prop1',
       'prop2',
@@ -53,20 +58,47 @@ function outerFunction(innerParam1, innerParam2) {
     ]);
   });
 
-  it('extracts static bindings', () => {
-    const bindings = getStaticBindingsForScope(
+  it('extracts static bindings and utilises the cache', () => {
+    const bindingCache = {};
+    const setFn = jest.fn();
+    const getFn = jest.fn();
+    const proxiedCache = new Proxy(bindingCache, {
+      set(target, name, value) {
+        setFn();
+        target[name] = value;
+      },
+      get(target, name) {
+        getFn();
+        return target[name];
+      },
+    });
+
+    const blockBindings = getStaticBindingsForScope(
       testItems.Block.scope,
       whitelistedModules,
-      path.resolve(__dirname, 'mock', 'demo.js')
+      path.resolve(__dirname, 'mock', 'demo.js'),
+      proxiedCache
     );
 
-    expect(bindings).toEqual({
+    expect(blockBindings).toEqual({
       LC: require('./mock/LC'),
       blue: 'blueberry',
       nullLiteral: null,
       outerLiteral: 42,
-      outerObject: {},
+      outerObject: {
+        value: 28980,
+      },
       innerLiteral: 'wow',
     });
+
+    expect(bindingCache).toEqual({
+      'innerLiteral_240-245': 'wow',
+      'nullLiteral_295-299': null,
+      'outerLiteral_22-24': 42,
+      'outerObject_46-68': { value: 28980 },
+    });
+
+    expect(setFn).toHaveBeenCalledTimes(4);
+    expect(getFn).toHaveBeenCalledTimes(4);
   });
 });

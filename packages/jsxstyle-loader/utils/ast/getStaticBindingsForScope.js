@@ -1,16 +1,24 @@
 'use strict';
 
-const t = require('babel-types');
+const invariant = require('invariant');
 const path = require('path');
+const t = require('babel-types');
 
 const getSourceModule = require('./getSourceModule');
 const evaluateAstNode = require('./evaluateAstNode');
 
-function getStaticBindingsForScope(scope, whitelist = [], sourceFileName) {
+function getStaticBindingsForScope(
+  scope,
+  whitelist = [],
+  sourceFileName,
+  bindingCache
+) {
   const bindings = scope.getAllBindings();
   const ret = {};
 
   const sourceDir = path.dirname(sourceFileName);
+
+  invariant(bindingCache, 'bindingCache is a required param');
 
   for (const k in bindings) {
     const binding = bindings[k];
@@ -59,10 +67,19 @@ function getStaticBindingsForScope(scope, whitelist = [], sourceFileName) {
       // TODO: handle spread syntax
       if (!dec) continue;
 
+      const cacheKey = `${dec.id.name}_${dec.init.start}-${dec.init.end}`;
+
       if (t.isObjectExpression(dec.init)) {
         if (binding.path.parentPath.parentPath.type === 'Program') {
+          // retrieve value from cache
+          if (bindingCache.hasOwnProperty(cacheKey)) {
+            ret[k] = bindingCache[cacheKey];
+            continue;
+          }
+          // evaluate
           try {
             ret[k] = evaluateAstNode(dec.init);
+            bindingCache[cacheKey] = ret[k];
           } catch (e) {
             // console.error('evaluateAstNode error:', e);
           }
@@ -72,8 +89,15 @@ function getStaticBindingsForScope(scope, whitelist = [], sourceFileName) {
         continue;
       }
 
+      // retrieve value from cache
+      if (bindingCache.hasOwnProperty(cacheKey)) {
+        ret[k] = bindingCache[cacheKey];
+        continue;
+      }
+      // evaluate
       try {
         ret[k] = evaluateAstNode(dec.init);
+        bindingCache[cacheKey] = ret[k];
         continue;
       } catch (e) {
         // console.error('evaluateAstNode could not eval dec.init:', e);

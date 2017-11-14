@@ -332,6 +332,9 @@ function extractStyles(
     },
   });
 
+  // per-file cache of evaluated bindings
+  const bindingCache = {};
+
   traverse(ast, {
     JSXElement: {
       enter(path) {
@@ -365,7 +368,8 @@ function extractStyles(
               const staticNamespace = getStaticBindingsForScope(
                 path.scope,
                 whitelistedModules,
-                sourceFileName
+                sourceFileName,
+                bindingCache
               );
 
               const evalContext = vm.createContext(staticNamespace);

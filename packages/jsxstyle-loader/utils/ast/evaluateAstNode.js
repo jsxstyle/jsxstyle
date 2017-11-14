@@ -60,8 +60,31 @@ function evaluateAstNode(exprNode, evalFn) {
     return t.isNullLiteral(exprNode) ? null : exprNode.value;
   }
 
+  if (t.isBinaryExpression(exprNode)) {
+    if (exprNode.operator === '+') {
+      return (
+        evaluateAstNode(exprNode.left, evalFn) +
+        evaluateAstNode(exprNode.right, evalFn)
+      );
+    } else if (exprNode.operator === '-') {
+      return (
+        evaluateAstNode(exprNode.left, evalFn) -
+        evaluateAstNode(exprNode.right, evalFn)
+      );
+    } else if (exprNode.operator === '*') {
+      return (
+        evaluateAstNode(exprNode.left, evalFn) *
+        evaluateAstNode(exprNode.right, evalFn)
+      );
+    } else if (exprNode.operator === '/') {
+      return (
+        evaluateAstNode(exprNode.left, evalFn) /
+        evaluateAstNode(exprNode.right, evalFn)
+      );
+    }
+  }
+
   // TODO: member expression?
-  // TODO: binary expression?
 
   // if we've made it this far, the value has to be evaluated
   invariant(
