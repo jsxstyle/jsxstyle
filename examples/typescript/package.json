@@ -1,6 +1,7 @@
 {
   "name": "jsxstyle-typescript-demo",
   "private": true,
+  "version": "0.0.0",
   "scripts": {
     "start": "webpack-dev-server --hot --hotOnly --inline"
   },
