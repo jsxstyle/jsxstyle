@@ -1,6 +1,6 @@
 {
   "name": "jsxstyle",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Inline style system for React and Preact",
   "repository": "git@github.com:smyte/jsxstyle.git",
   "author": "Pete Hunt",
@@ -9,7 +9,7 @@
   "module": "jsxstyle.es.js",
   "jsnext:main": "jsxstyle.es.js",
   "dependencies": {
-    "jsxstyle-utils": "^2.0.0"
+    "jsxstyle-utils": "^2.0.1"
   },
   "keywords": [
     "jsxstyle",
