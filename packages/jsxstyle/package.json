@@ -7,6 +7,7 @@
   "license": "Apache-2.0",
   "main": "jsxstyle.cjs.js",
   "module": "jsxstyle.es.js",
+  "types": "jsxstyle.d.ts",
   "jsnext:main": "jsxstyle.es.js",
   "dependencies": {
     "jsxstyle-utils": "^2.0.1"
