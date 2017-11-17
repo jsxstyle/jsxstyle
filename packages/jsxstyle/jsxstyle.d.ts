@@ -1,5 +1,5 @@
 type AnyComponent = 'p' | 'img';
-type HTMLAttributes<El> = {src?: string; alt?: string};
+type HTMLAttributes<El> = { src?: string; alt?: string };
 
 type CommonProps = {
   component?: AnyComponent;
@@ -40,12 +40,25 @@ type CSSProperties = {
   /**
    * Sets the default alignment in the cross axis for all of the flex container's items, including anonymous flex items, similarly to how justify-content aligns items along the main axis.
    */
-  alignItems?: React.CSSWideKeyword | 'flex-start' | 'flex-end' | 'center' | 'baseline' | 'stretch';
+  alignItems?:
+    | React.CSSWideKeyword
+    | 'flex-start'
+    | 'flex-end'
+    | 'center'
+    | 'baseline'
+    | 'stretch';
 
   /**
    * Allows the default alignment to be overridden for individual flex items.
    */
-  alignSelf?: React.CSSWideKeyword | 'auto' | 'flex-start' | 'flex-end' | 'center' | 'baseline' | 'stretch';
+  alignSelf?:
+    | React.CSSWideKeyword
+    | 'auto'
+    | 'flex-start'
+    | 'flex-end'
+    | 'center'
+    | 'baseline'
+    | 'stretch';
 
   /**
    * This property allows precise alignment of elements, such as graphics, that do not have a baseline-table or lack the desired baseline in their baseline-table. With the alignment-adjust property, the position of the baseline identified by the alignment-baseline can be explicitly determined. It also determines precisely the alignment point for each glyph within a textual element.
@@ -520,7 +533,12 @@ type CSSProperties = {
   /**
    * The flex-direction CSS property describes how flex items are placed in the flex container, by setting the direction of the flex container's main axis.
    */
-  flexDirection?: React.CSSWideKeyword | 'row' | 'row-reverse' | 'column' | 'column-reverse';
+  flexDirection?:
+    | React.CSSWideKeyword
+    | 'row'
+    | 'row-reverse'
+    | 'column'
+    | 'column-reverse';
 
   /**
    * The flex-flow CSS property defines the flex container's main and cross axis. It is a shorthand property for the flex-direction and flex-wrap properties.
@@ -793,7 +811,12 @@ type CSSProperties = {
    * Specifies the height of an inline block level element.
    * See CSS 2.1 line-height property https://www.w3.org/TR/CSS21/visudet.html#propdef-line-height
    */
-  lineHeight?: React.CSSWideKeyword | 'normal' | number | React.CSSLength | React.CSSPercentage;
+  lineHeight?:
+    | React.CSSWideKeyword
+    | 'normal'
+    | number
+    | React.CSSLength
+    | React.CSSPercentage;
 
   /**
    * Shorthand property that sets the list-style-type, list-style-position and list-style-image properties in one declaration.
@@ -1052,7 +1075,13 @@ type CSSProperties = {
   /**
    * The position property controls the type of positioning used by an element within its parent elements. The effect of the position property depends on a lot of factors, for example the position property of parent elements.
    */
-  position?: React.CSSWideKeyword | 'static' | 'relative' | 'absolute' | 'fixed' | 'sticky';
+  position?:
+    | React.CSSWideKeyword
+    | 'static'
+    | 'relative'
+    | 'absolute'
+    | 'fixed'
+    | 'sticky';
 
   /**
    * Obsolete: unsupported.
