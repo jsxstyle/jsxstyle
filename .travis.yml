@@ -9,10 +9,7 @@ branches:
 before_install:
   - export TZ=America/Los_Angeles
 install:
-  - npm install -g lerna
   - npm install
-  - lerna bootstrap
-  - npm run rollup
 script:
   - npm run jest
   - travis_retry npm run karma

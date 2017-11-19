@@ -1,21 +1,35 @@
 import * as React from 'react';
-import { componentStyles, getStyleCache } from 'jsxstyle-utils';
+import { Dict, componentStyles, getStyleCache } from 'jsxstyle-utils';
+
+import CSSProperties from './CSSProperties';
 
 export const cache = getStyleCache();
 
-function factory(displayName, defaultProps, tagName) {
-  tagName = tagName || 'div';
-  if (
-    process.env.NODE_ENV === 'development' &&
-    (typeof displayName !== 'string' || !displayName)
-  ) {
-    throw new Error(
-      'makeReactStyleComponentClass expects param 1 to be a valid displayName'
-    );
-  }
+export interface StyleProps {
+  className?: string;
+  style?: React.CSSProperties;
+}
 
-  return class extends React.Component {
-    constructor(props) {
+export type AnyComponent<Props extends StyleProps> =
+  | keyof JSX.IntrinsicElements
+  | React.ComponentClass<Props>
+  | React.SFC<Props>;
+
+export type JsxstyleProps<ComponentProps> = {
+  component?: AnyComponent<ComponentProps>;
+  mediaQueries?: Dict<string>;
+  props?: ComponentProps;
+} & StyleProps &
+  CSSProperties;
+
+function factory(displayName: string, defaultProps?: Dict<React.ReactText>) {
+  const tagName = 'div';
+
+  return class JsxstyleComponent<P> extends React.Component<JsxstyleProps<P>> {
+    className: string | null;
+    component: AnyComponent<JsxstyleProps<P>>;
+
+    constructor(props: JsxstyleProps<P>) {
       super(props);
       this.component = props.component || tagName;
       this.className = cache.getClassName(props, props.className);
@@ -24,7 +38,7 @@ function factory(displayName, defaultProps, tagName) {
     static defaultProps = defaultProps;
     static displayName = displayName;
 
-    componentWillReceiveProps(props) {
+    componentWillReceiveProps(props: JsxstyleProps<P>) {
       this.component = props.component || tagName;
       this.className = cache.getClassName(props, props.className);
     }
@@ -54,9 +68,9 @@ export function install() {
   );
 }
 
-function depFactory(displayName, defaultProps) {
+function depFactory(displayName: string, defaultProps: {}) {
   let hasWarned = false;
-  return class extends React.Component {
+  return class DeprecatedJsxstyleComponent extends React.Component {
     static displayName = displayName;
     static defaultProps = defaultProps;
 

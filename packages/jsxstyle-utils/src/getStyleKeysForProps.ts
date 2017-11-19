@@ -1,17 +1,18 @@
 import hyphenateStyleName from './hyphenateStyleName';
 import dangerousStyleValue from './dangerousStyleValue';
+import { Dict } from '../jsxstyle-utils';
 
 // global flag makes subsequent calls of capRegex.test advance to the next match
 const capRegex = /[A-Z]/g;
 
-const pseudoelements = {
+export const pseudoelements = {
   after: true,
   before: true,
   placeholder: true,
   selection: true,
 };
 
-const pseudoclasses = {
+export const pseudoclasses = {
   active: true,
   checked: true,
   disabled: true,
@@ -35,7 +36,17 @@ const specialCaseProps = {
   mediaQueries: true,
 };
 
-export default function getStyleKeysForProps(props, pretty = false) {
+export type StyleKeyObj = Dict<{
+  styles: string;
+  mediaQuery?: string;
+  pseudoclass?: string;
+  pseudoelement?: string;
+}> & { classNameKey: string };
+
+export default function getStyleKeysForProps(
+  props: any,
+  pretty = false
+): StyleKeyObj | null {
   if (typeof props !== 'object' || props === null) {
     return null;
   }
@@ -51,8 +62,7 @@ export default function getStyleKeysForProps(props, pretty = false) {
   const hasMediaQueries = typeof mediaQueries === 'object';
   let usesMediaQueries = false;
 
-  // return value
-  const styleKeyObj = {};
+  const styleKeyObj = {} as StyleKeyObj;
 
   let classNameKey = '';
   const seenMQs = {};
@@ -148,7 +158,7 @@ export default function getStyleKeysForProps(props, pretty = false) {
       if (pseudoelement) styleKeyObj[key].pseudoelement = pseudoelement;
     }
 
-    if (propSansMQ) {
+    if (mediaQuery) {
       seenMQs[mediaQuery] = seenMQs[mediaQuery] || '';
       seenMQs[mediaQuery] += propSansMQ + ':' + styleValue + ';';
     } else {

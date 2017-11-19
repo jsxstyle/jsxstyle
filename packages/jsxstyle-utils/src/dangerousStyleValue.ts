@@ -58,19 +58,19 @@ const isUnitlessNumber = {
   strokeWidth: true,
 };
 
-function prefixKey(prefix, key) {
+function prefixKey(prefix: string, key: string): string {
   return prefix + key.charAt(0).toUpperCase() + key.substring(1);
 }
 
 const prefixes = ['Webkit', 'ms', 'Moz', 'O'];
 
-Object.keys(isUnitlessNumber).forEach(function(prop) {
+Object.keys(isUnitlessNumber).forEach(prop => {
   prefixes.forEach(function(prefix) {
     isUnitlessNumber[prefixKey(prefix, prop)] = isUnitlessNumber[prop];
   });
 });
 
-export default function dangerousStyleValue(name, value) {
+export default function dangerousStyleValue(name: any, value: any): string {
   const isEmpty = value == null || typeof value === 'boolean' || value === '';
   if (isEmpty) {
     return '';

@@ -4,7 +4,7 @@ const canUseDOM = !!(
   window.document.createElement
 );
 
-let styleElement;
+let styleElement: HTMLStyleElement | undefined;
 
 if (module.hot) {
   if (typeof module.hot.data === 'object') {
@@ -23,10 +23,11 @@ if (canUseDOM && !styleElement) {
   document.head.appendChild(styleElement);
 }
 
-export default function addStyleToHead(rule) {
-  if (canUseDOM) {
+export default function addStyleToHead(rule: string): void {
+  if (styleElement) {
+    const sheet = styleElement.sheet as CSSStyleSheet;
     try {
-      styleElement.sheet.insertRule(rule, styleElement.sheet.cssRules.length);
+      sheet.insertRule(rule, sheet.cssRules.length);
     } catch (insertError) {
       // insertRule will fail for rules with pseudoelements the browser doesn't support.
       // see: https://github.com/smyte/jsxstyle/issues/75
@@ -34,7 +35,7 @@ export default function addStyleToHead(rule) {
         // eslint-disable-next-line no-console
         console.error(
           '[jsxstyle] Could not insert rule at position ' +
-            styleElement.sheet.cssRules.length +
+            sheet.cssRules.length +
             ': `' +
             rule +
             '`'

@@ -5,17 +5,18 @@
   "private": true,
   "homepage": "https://github.com/smyte/jsxstyle#readme",
   "scripts": {
-    "ci": "lerna bootstrap && npm run reset && npm run rollup && npm run jest && npm run karma",
+    "clean": "lerna clean",
     "eslint": "eslint {packages/*/{*,*/*},examples/{*,*/*}}.js",
-    "jest": "jest --verbose --runInBand",
+    "jest": "npm run rollup && jest --verbose --runInBand",
     "karma": "karma start",
     "karma_local": "KARMA_LOCAL=yep karma start",
-    "prepublishOnly": "npm run rollup",
+    "mktypes": "./misc/mktypes.js > ./packages/jsxstyle/CSSProperties.d.ts",
+    "postinstall": "lerna bootstrap",
     "prettier": "prettier --write {packages/*/{*,*/*},examples/{*,*/*}}.js",
-    "reset": "rimraf packages/{*,*/*}/jsxstyle*.{es,cjs}.js",
-    "release": "lerna publish",
-    "rollup": "npm run reset; rollup -c; prettier --write packages/{*,*/*}/jsxstyle*.{es,cjs}.js",
-    "rollup_watch": "npm run reset; rollup -c -w;",
+    "reset": "rimraf packages/{*,*/*}/{jsxstyle*.{es,cjs}.js,**/*.d.ts}",
+    "release": "npm run rollup && lerna publish",
+    "rollup": "npm run reset && npm run mktypes && rollup -c && prettier --write packages/{*,*/*}/jsxstyle*.{es,cjs}.js",
+    "rollup_watch": "npm run reset && npm run mktypes && rollup -c -w;",
     "start": "webpack-dev-server --hot --hotOnly --inline --historyApiFallback --config=example/webpack.config.js",
     "update_readme": "echo \"$(<./misc/monorepo-preamble.md)\\n\\n---\\n\\n$(<./packages/jsxstyle/README.md)\" > README.md"
   },
@@ -48,6 +49,7 @@
     "karma-sourcemap-loader": "^0.3.7",
     "karma-webpack": "^2.0.4",
     "lerna": "^2.5.1",
+    "preact": "^8.2.6",
     "prettier": "^1.7.3",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
@@ -56,8 +58,10 @@
     "rollup-plugin-babel": "^3.0.2",
     "rollup-plugin-node-resolve": "^3.0.0",
     "rollup-plugin-replace": "^2.0.0",
+    "rollup-plugin-typescript2": "^0.8.1",
     "rollup-plugin-uglify": "^2.0.1",
     "style-loader": "^0.19.0",
+    "typescript": "^2.6.1",
     "webpack": "^3.6.0",
     "webpack-dev-server": "^2.9.1"
   },
@@ -78,5 +82,10 @@
     "*.cjs.js",
     "*.es.js",
     "node_modules"
-  ]
+  ],
+  "devDependencies": {
+    "@types/node": "^8.0.53",
+    "@types/react": "^16.0.25",
+    "@types/webpack-env": "^1.13.2"
+  }
 }

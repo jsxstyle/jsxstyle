@@ -7,6 +7,7 @@
   "main": "jsxstyle-utils.cjs.js",
   "module": "jsxstyle-utils.es.js",
   "jsnext:main": "jsxstyle-utils.es.js",
+  "types": "jsxstyle-utils.d.ts",
   "dependencies": {
     "invariant": "^2.2.1"
   },
