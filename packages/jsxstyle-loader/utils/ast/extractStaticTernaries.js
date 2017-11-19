@@ -1,6 +1,6 @@
 'use strict';
 
-const t = require('babel-types');
+const t = require('@babel/types');
 const invariant = require('invariant');
 
 const generate = require('./generate');

@@ -1,3 +1,3 @@
 'use strict';
 
-module.exports = require('babel-generator').default;
+module.exports = require('@babel/generator').default;

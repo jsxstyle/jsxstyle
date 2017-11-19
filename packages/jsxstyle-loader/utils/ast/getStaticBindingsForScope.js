@@ -2,7 +2,7 @@
 
 const invariant = require('invariant');
 const path = require('path');
-const t = require('babel-types');
+const t = require('@babel/types');
 
 const getSourceModule = require('./getSourceModule');
 const evaluateAstNode = require('./evaluateAstNode');

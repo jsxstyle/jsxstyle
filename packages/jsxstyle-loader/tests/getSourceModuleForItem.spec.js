@@ -2,7 +2,7 @@
 
 const getSourceModuleForItem = require('../utils/ast/getSourceModuleForItem');
 
-const traverse = require('babel-traverse').default;
+const traverse = require('@babel/traverse').default;
 const parse = require('../utils/ast/parse');
 
 describe('getSourceModuleForItem', () => {

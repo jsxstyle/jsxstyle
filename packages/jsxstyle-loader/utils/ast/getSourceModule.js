@@ -1,6 +1,6 @@
 'use strict';
 
-const t = require('babel-types');
+const t = require('@babel/types');
 
 function getSourceModule(itemName, itemBinding) {
   // TODO: deal with reassignment
