@@ -4,7 +4,7 @@ import { StyleCache } from 'jsxstyle-utils/src/getStyleCache';
 export declare const cache: StyleCache;
 export interface JsxstyleProps {
     className?: string;
-    component?: string | React.ComponentClass | React.SFC;
+    component?: keyof JSX.IntrinsicElements | React.ComponentClass | React.SFC;
     mediaQueries?: {
         [key: string]: string;
     };

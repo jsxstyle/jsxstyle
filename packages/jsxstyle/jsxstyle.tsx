@@ -6,7 +6,7 @@ export const cache: StyleCache = getStyleCache();
 
 export interface JsxstyleProps {
   className?: string;
-  component?: string | React.ComponentClass | React.SFC;
+  component?: keyof JSX.IntrinsicElements | React.ComponentClass | React.SFC;
   mediaQueries?: { [key: string]: string };
   props?: { [key: string]: any };
   style?: React.CSSProperties;

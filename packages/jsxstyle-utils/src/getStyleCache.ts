@@ -7,19 +7,13 @@ export interface InsertRuleCallback {
 }
 
 export interface StyleCache {
-  reset: { (): void };
-  getClassName: {
-    (props: { [key: string]: any }, classNameProp?: string): string;
-  };
-  injectOptions: {
-    (
-      options: {
-        getClassName(key: string, props?: {}): string;
-        onInsertRule: InsertRuleCallback;
-        pretty: boolean;
-      }
-    ): void;
-  };
+  reset(): void;
+  getClassName(props: { [key: string]: any }, classNameProp?: string): string;
+  injectOptions(options: {
+    getClassName(key: string, props?: {}): string;
+    onInsertRule: InsertRuleCallback;
+    pretty: boolean;
+  }): void;
 }
 
 function cannotInject() {
@@ -34,7 +28,7 @@ function alreadyInjected() {
   );
 }
 
-function getStringHash(key: string, _: {}) {
+function getStringHash(key: string, props: {}) {
   return '_' + stringHash(key).toString(36);
 }
 
