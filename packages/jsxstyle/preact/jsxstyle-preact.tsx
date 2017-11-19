@@ -1,22 +1,39 @@
-/** @jsx h */
+import * as preact from 'preact';
 import { getStyleCache, componentStyles } from 'jsxstyle-utils';
-import { h, Component } from 'preact';
+import { StyleCache } from 'jsxstyle-utils/src/getStyleCache';
 
-export const cache = getStyleCache();
+import { CSSProperties } from '../cssproperties';
 
-function factory(displayName, defaultProps, tagName) {
-  tagName = tagName || 'div';
-  if (
-    process.env.NODE_ENV === 'development' &&
-    (typeof displayName !== 'string' || !displayName)
-  ) {
-    throw new Error(
-      'makePreactStyleComponentClass expects param 1 to be a valid displayName'
-    );
-  }
+export const cache: StyleCache = getStyleCache();
 
-  return class extends Component {
-    constructor(props) {
+export interface ComponentPropProps {
+  className?: any;
+  style?: any;
+  [key: string]: any;
+}
+
+export type ComponentProp =
+  | keyof JSX.IntrinsicElements
+  | preact.AnyComponent<any, any>
+  | any;
+
+export interface JsxstyleProps extends CSSProperties {
+  className?: string;
+  component?: keyof JSX.IntrinsicElements | React.ComponentClass | React.SFC;
+  mediaQueries?: { [key: string]: string };
+  props?: { [key: string]: any };
+  style?: string;
+  children: (JSX.Element | JSX.Element[] | string)[];
+}
+
+function factory(displayName: string, defaultProps?: {}) {
+  const tagName = 'div';
+
+  return class JsxstyleComponent extends preact.Component<JsxstyleProps, {}> {
+    className: string | { [key: string]: boolean };
+    component: ComponentProp;
+
+    constructor(props: JsxstyleProps) {
       super(props);
       this.component = props.component || tagName;
       this.className = cache.getClassName(props, props.class);
@@ -25,14 +42,15 @@ function factory(displayName, defaultProps, tagName) {
     static defaultProps = defaultProps;
     static displayName = displayName;
 
-    componentWillReceiveProps(props) {
+    componentWillReceiveProps(props: JsxstyleProps) {
       this.component = props.component || tagName;
       this.className = cache.getClassName(props, props.class);
     }
 
-    render({ style, props, children }) {
+    render(props: JsxstyleProps) {
+      const { style, props: _props, children } = props;
       return (
-        <this.component {...props} class={this.className} style={style}>
+        <this.component {..._props} class={this.className} style={style}>
           {children}
         </this.component>
       );

@@ -2,14 +2,27 @@ import * as React from 'react';
 import { componentStyles, getStyleCache } from 'jsxstyle-utils';
 import { StyleCache } from 'jsxstyle-utils/src/getStyleCache';
 
+import { CSSProperties } from './cssproperties';
+
 export const cache: StyleCache = getStyleCache();
 
-export interface JsxstyleProps {
+export interface ComponentPropProps {
+  className?: any;
+  style?: CSSProperties;
+  [key: string]: any;
+}
+
+export type ComponentProp =
+  | keyof JSX.IntrinsicElements
+  | React.ComponentClass<ComponentPropProps>
+  | React.SFC<ComponentPropProps>;
+
+export interface JsxstyleProps extends CSSProperties {
   className?: string;
-  component?: keyof JSX.IntrinsicElements | React.ComponentClass | React.SFC;
+  component?: ComponentProp;
   mediaQueries?: { [key: string]: string };
   props?: { [key: string]: any };
-  style?: React.CSSProperties;
+  style?: CSSProperties;
 }
 
 function factory(
@@ -18,11 +31,9 @@ function factory(
 ) {
   const tagName = 'div';
 
-  return class JsxstyleComponent extends React.Component<
-    JsxstyleProps & { [key: string]: any }
-  > {
-    component: string | React.ComponentClass | React.SFC;
+  return class JsxstyleComponent extends React.Component<JsxstyleProps> {
     className: string;
+    component: ComponentProp;
 
     constructor(props: JsxstyleProps) {
       super(props);
