@@ -1,21 +1,30 @@
 import * as React from 'react';
 import { componentStyles, getStyleCache } from 'jsxstyle-utils';
+import { StyleCache } from 'jsxstyle-utils/src/getStyleCache';
 
-export const cache = getStyleCache();
+export const cache: StyleCache = getStyleCache();
 
-function factory(displayName, defaultProps, tagName) {
-  tagName = tagName || 'div';
-  if (
-    process.env.NODE_ENV === 'development' &&
-    (typeof displayName !== 'string' || !displayName)
-  ) {
-    throw new Error(
-      'makeReactStyleComponentClass expects param 1 to be a valid displayName'
-    );
-  }
+export interface JsxstyleProps {
+  className?: string;
+  component?: string | React.ComponentClass | React.SFC;
+  mediaQueries?: { [key: string]: string };
+  props?: { [key: string]: any };
+  style?: React.CSSProperties;
+}
 
-  return class extends React.Component {
-    constructor(props) {
+function factory(
+  displayName: string,
+  defaultProps?: { [key: string]: React.ReactText } | null
+) {
+  const tagName = 'div';
+
+  return class JsxstyleComponent extends React.Component<
+    JsxstyleProps & { [key: string]: any }
+  > {
+    component: string | React.ComponentClass | React.SFC;
+    className: string;
+
+    constructor(props: JsxstyleProps) {
       super(props);
       this.component = props.component || tagName;
       this.className = cache.getClassName(props, props.className);
@@ -24,7 +33,7 @@ function factory(displayName, defaultProps, tagName) {
     static defaultProps = defaultProps;
     static displayName = displayName;
 
-    componentWillReceiveProps(props) {
+    componentWillReceiveProps(props: JsxstyleProps) {
       this.component = props.component || tagName;
       this.className = cache.getClassName(props, props.className);
     }
@@ -54,9 +63,9 @@ export function install() {
   );
 }
 
-function depFactory(displayName, defaultProps) {
+function depFactory(displayName: string, defaultProps: {}) {
   let hasWarned = false;
-  return class extends React.Component {
+  return class DeprecatedJsxstyleComponent extends React.Component {
     static displayName = displayName;
     static defaultProps = defaultProps;
 

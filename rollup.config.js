@@ -1,4 +1,5 @@
 import babel from 'rollup-plugin-babel';
+import typescript from 'rollup-plugin-typescript2';
 
 const external = [
   'invariant',
@@ -45,16 +46,25 @@ const babelConfig = {
 };
 
 export default [
-  'jsxstyle-utils/jsxstyle-utils',
-  'jsxstyle/jsxstyle',
-  'jsxstyle/preact/jsxstyle-preact',
-].map(pkg => ({
-  input: `packages/${pkg}.js`,
-  output: [
-    { format: 'cjs', file: `packages/${pkg}.cjs.js` },
-    { format: 'es', file: `packages/${pkg}.es.js` },
-  ],
-  plugins: [babel(babelConfig)],
-  external,
-  watch,
-}));
+  ['jsxstyle-utils', 'ts'],
+  ['jsxstyle', 'tsx'],
+  // 'jsxstyle/preact'
+].map(([pkg, ext]) => {
+  const filename = pkg.replace(/[^a-z-]/g, '-');
+  return {
+    input: `packages/${pkg}/${filename}.${ext}`,
+    output: [
+      { format: 'cjs', file: `packages/${pkg}/${filename}.cjs.js` },
+      { format: 'es', file: `packages/${pkg}/${filename}.es.js` },
+    ],
+    plugins: [
+      typescript({
+        tsconfig: `packages/${pkg}/tsconfig.json`,
+        useTsconfigDeclarationDir: true,
+      }),
+      babel(babelConfig),
+    ],
+    external,
+    watch,
+  };
+});

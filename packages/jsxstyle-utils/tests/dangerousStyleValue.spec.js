@@ -1,4 +1,4 @@
-import dangerousStyleValue from '../src/dangerousStyleValue';
+import { dangerousStyleValue } from '..';
 
 describe('dangerousStyleValue', () => {
   it('adds a px prefix to whitelisted unitless values', () => {

@@ -7,10 +7,10 @@
   "scripts": {
     "ci": "lerna bootstrap && npm run reset && npm run rollup && npm run jest && npm run karma",
     "eslint": "eslint {packages/*/{*,*/*},examples/{*,*/*}}.js",
-    "jest": "jest --verbose --runInBand",
+    "jest": "npm run rollup; jest --verbose --runInBand",
     "karma": "karma start",
     "karma_local": "KARMA_LOCAL=yep karma start",
-    "prepublishOnly": "npm run rollup",
+    "prepublish": "npm run rollup",
     "prettier": "prettier --write {packages/*/{*,*/*},examples/{*,*/*}}.js",
     "reset": "rimraf packages/{*,*/*}/jsxstyle*.{es,cjs}.js",
     "rollup": "npm run reset; rollup -c; prettier --write packages/{*,*/*}/jsxstyle*.{es,cjs}.js",
@@ -55,8 +55,10 @@
     "rollup-plugin-babel": "^3.0.2",
     "rollup-plugin-node-resolve": "^3.0.0",
     "rollup-plugin-replace": "^2.0.0",
+    "rollup-plugin-typescript2": "^0.8.1",
     "rollup-plugin-uglify": "^2.0.1",
     "style-loader": "^0.19.0",
+    "typescript": "^2.6.1",
     "webpack": "^3.6.0",
     "webpack-dev-server": "^2.9.1"
   },
@@ -77,5 +79,10 @@
     "*.cjs.js",
     "*.es.js",
     "node_modules"
-  ]
+  ],
+  "devDependencies": {
+    "@types/node": "^8.0.53",
+    "@types/react": "^16.0.25",
+    "@types/webpack-env": "^1.13.2"
+  }
 }

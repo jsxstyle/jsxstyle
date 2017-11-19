@@ -2,6 +2,26 @@ import getStyleKeysForProps from './getStyleKeysForProps';
 import addStyleToHead from './addStyleToHead';
 import stringHash from './stringHash';
 
+export interface InsertRuleCallback {
+  (rule: string, props?: {}): boolean | void;
+}
+
+export interface StyleCache {
+  reset: { (): void };
+  getClassName: {
+    (props: { [key: string]: any }, classNameProp?: string): string;
+  };
+  injectOptions: {
+    (
+      options: {
+        getClassName(key: string, props?: {}): string;
+        onInsertRule: InsertRuleCallback;
+        pretty: boolean;
+      }
+    ): void;
+  };
+}
+
 function cannotInject() {
   throw new Error(
     'jsxstyle error: `injectOptions` must be called before any jsxstyle components mount.'
@@ -14,17 +34,17 @@ function alreadyInjected() {
   );
 }
 
-function getStringHash(key) {
+function getStringHash(key: string, _: {}) {
   return '_' + stringHash(key).toString(36);
 }
 
 export default function getStyleCache() {
   let _classNameCache = {};
   let getClassNameForKey = getStringHash;
-  let onInsertRule = null;
+  let onInsertRule: InsertRuleCallback;
   let pretty = false;
 
-  const styleCache = {};
+  const styleCache: StyleCache = <any>{};
 
   styleCache.reset = () => {
     _classNameCache = {};
@@ -48,7 +68,7 @@ export default function getStyleCache() {
     }
 
     const key = styleObj.classNameKey;
-    if (!_classNameCache.hasOwnProperty(key)) {
+    if (key && !_classNameCache.hasOwnProperty(key)) {
       _classNameCache[key] = getClassNameForKey(key, props);
       delete styleObj.classNameKey;
       Object.keys(styleObj)
