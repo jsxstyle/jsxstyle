@@ -8,7 +8,7 @@
     "bootstrap": "lerna bootstrap",
     "ci": "lerna bootstrap && npm run reset && npm run rollup && npm run jest && npm run karma",
     "eslint": "eslint {packages/*/{*,*/*},examples/{*,*/*}}.js",
-    "jest": "npm run rollup; jest --verbose --runInBand",
+    "jest": "npm run mktypes; npm run rollup; jest --verbose --runInBand",
     "karma": "karma start",
     "karma_local": "KARMA_LOCAL=yep karma start",
     "mktypes": "./misc/mktypes.js > ./packages/jsxstyle/cssproperties.d.ts",

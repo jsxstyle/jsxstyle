@@ -4,14 +4,14 @@ import dangerousStyleValue from './dangerousStyleValue';
 // global flag makes subsequent calls of capRegex.test advance to the next match
 const capRegex = /[A-Z]/g;
 
-const pseudoelements = {
+export const pseudoelements = {
   after: true,
   before: true,
   placeholder: true,
   selection: true,
 };
 
-const pseudoclasses = {
+export const pseudoclasses = {
   active: true,
   checked: true,
   disabled: true,
