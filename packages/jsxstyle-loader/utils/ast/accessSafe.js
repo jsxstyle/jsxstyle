@@ -1,6 +1,6 @@
 'use strict';
 
-const t = require('babel-types');
+const t = require('@babel/types');
 
 // accessSafe wraps memberExpressions in object/null checks
 // TODO: inject this as a function? this gets pretty repetitive

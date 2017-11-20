@@ -1,7 +1,7 @@
 'use strict';
 
 const invariant = require('invariant');
-const t = require('babel-types');
+const t = require('@babel/types');
 
 // A clone of path.scope.generateUid that doesn't prepend underscores
 function generateUid(scope, name) {

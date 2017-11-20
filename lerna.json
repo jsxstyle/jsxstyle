@@ -14,7 +14,8 @@
         "**/*.spec.js",
         "**/.eslintrc.js",
         "**/package.json"
-      ]
+      ],
+      "allowBranch": "master"
     }
   }
 }

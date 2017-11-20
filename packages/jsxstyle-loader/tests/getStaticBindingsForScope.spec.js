@@ -2,7 +2,7 @@
 
 const getStaticBindingsForScope = require('../utils/ast/getStaticBindingsForScope');
 
-const traverse = require('babel-traverse').default;
+const traverse = require('@babel/traverse').default;
 const parse = require('../utils/ast/parse');
 const path = require('path');
 

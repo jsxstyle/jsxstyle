@@ -3,7 +3,7 @@
 const evaluateAstNode = require('../utils/ast/evaluateAstNode');
 const parse = require('../utils/ast/parse');
 const vm = require('vm');
-const generate = require('babel-generator').default;
+const generate = require('@babel/generator').default;
 
 const staticNamespace = {
   LC: {

@@ -17,8 +17,8 @@ const getStylesByClassName = require('../getStylesByClassName');
 
 const generate = require('./generate');
 const parse = require('./parse');
-const traverse = require('babel-traverse').default;
-const t = require('babel-types');
+const traverse = require('@babel/traverse').default;
+const t = require('@babel/types');
 
 // props that will be passed through as-is
 const UNTOUCHED_PROPS = {
