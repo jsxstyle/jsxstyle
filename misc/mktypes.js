@@ -52,6 +52,16 @@ traverse(ast, {
       invariant(t.isTSPropertySignature(item), 'Unhandled type: %s', item.type);
 
       interfaceBody.push(item);
+      const leadingComments = item.leadingComments;
+      t.removeComments(item);
+      if (leadingComments) {
+        t.addComments(
+          item,
+          'leading',
+          leadingComments.map(c => ({ type: 'CommentBlock', value: c.value }))
+        );
+      }
+
       prefixes.forEach(prefix => {
         const prefixedItem = t.tSPropertySignature(
           t.identifier(
@@ -62,7 +72,13 @@ traverse(ast, {
         prefixedItem.computed = item.computed;
         prefixedItem.optional = item.optional;
         prefixedItem.readonly = item.readonly;
-        prefixedItem.leadingComments = item.leadingComments;
+        if (leadingComments) {
+          t.addComments(
+            prefixedItem,
+            'leading',
+            leadingComments.map(c => ({ type: 'CommentBlock', value: c.value }))
+          );
+        }
         interfaceBody.push(prefixedItem);
       });
     });
