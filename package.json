@@ -8,7 +8,7 @@
     "bootstrap": "lerna bootstrap",
     "ci": "lerna bootstrap && npm run reset && npm run rollup && npm run jest && npm run karma",
     "eslint": "eslint {packages/*/{*,*/*},examples/{*,*/*}}.js",
-    "jest": "npm run mktypes; npm run rollup; jest --verbose --runInBand",
+    "jest": "npm run rollup && jest --verbose --runInBand",
     "karma": "karma start",
     "karma_local": "KARMA_LOCAL=yep karma start",
     "mktypes": "./misc/mktypes.js > ./packages/jsxstyle/cssproperties.d.ts",
@@ -16,8 +16,8 @@
     "prettier": "prettier --write {packages/*/{*,*/*},examples/{*,*/*}}.js",
     "reset": "rimraf packages/{*,*/*}/jsxstyle*.{es,cjs}.js",
     "release": "lerna publish",
-    "rollup": "npm run reset; rollup -c; prettier --write packages/{*,*/*}/jsxstyle*.{es,cjs}.js",
-    "rollup_watch": "npm run reset; rollup -c -w;",
+    "rollup": "npm run reset && npm run mktypes && rollup -c && prettier --write packages/{*,*/*}/jsxstyle*.{es,cjs}.js",
+    "rollup_watch": "npm run reset && npm run mktypes && rollup -c -w;",
     "start": "webpack-dev-server --hot --hotOnly --inline --historyApiFallback --config=example/webpack.config.js",
     "update_readme": "echo \"$(<./misc/monorepo-preamble.md)\\n\\n---\\n\\n$(<./packages/jsxstyle/README.md)\" > README.md"
   },
@@ -62,6 +62,7 @@
     "rollup-plugin-typescript2": "^0.8.1",
     "rollup-plugin-uglify": "^2.0.1",
     "style-loader": "^0.19.0",
+    "tslint": "^5.8.0",
     "typescript": "^2.6.1",
     "webpack": "^3.6.0",
     "webpack-dev-server": "^2.9.1"

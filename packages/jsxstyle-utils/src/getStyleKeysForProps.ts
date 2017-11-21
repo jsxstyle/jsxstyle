@@ -35,7 +35,19 @@ const specialCaseProps = {
   mediaQueries: true,
 };
 
-export default function getStyleKeysForProps(props: any, pretty = false) {
+export type StyleKeyObj = {
+  [key: string]: {
+    styles: string;
+    mediaQuery?: string;
+    pseudoclass?: string;
+    pseudoelement?: string;
+  };
+} & { classNameKey: string };
+
+export default function getStyleKeysForProps(
+  props: any,
+  pretty = false
+): StyleKeyObj | null {
   if (typeof props !== 'object' || props === null) {
     return null;
   }
@@ -52,14 +64,7 @@ export default function getStyleKeysForProps(props: any, pretty = false) {
   let usesMediaQueries = false;
 
   // return value
-  const styleKeyObj: {
-    [key: string]: {
-      styles: string;
-      mediaQuery?: string;
-      pseudoclass?: string;
-      pseudoelement?: string;
-    };
-  } & { classNameKey: string } = <any>{};
+  const styleKeyObj: StyleKeyObj = <any>{};
 
   let classNameKey = '';
   const seenMQs = {};

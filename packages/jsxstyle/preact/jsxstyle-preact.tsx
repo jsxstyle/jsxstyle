@@ -1,39 +1,39 @@
 import * as preact from 'preact';
-import { getStyleCache, componentStyles } from 'jsxstyle-utils';
-import { StyleCache } from 'jsxstyle-utils/src/getStyleCache';
+import { Dict, getStyleCache, componentStyles } from 'jsxstyle-utils';
 
-import { CSSProperties } from '../cssproperties';
+import CSSProperties from '../cssproperties';
 
-export const cache: StyleCache = getStyleCache();
+export const cache = getStyleCache();
 
-export interface ComponentPropProps {
-  className?: any;
+export interface StyleProps {
+  class?: string;
   style?: any;
-  [key: string]: any;
 }
 
-export type ComponentProp =
+export type AnyComponent<Props extends StyleProps> =
   | keyof JSX.IntrinsicElements
-  | preact.AnyComponent<any, any>
-  | any;
+  | preact.AnyComponent<Props, any>
+  | any; // TODO: figure out why TS complains about a missing "refs" prop
 
-export interface JsxstyleProps extends CSSProperties {
-  className?: string;
-  component?: keyof JSX.IntrinsicElements | React.ComponentClass | React.SFC;
-  mediaQueries?: { [key: string]: string };
-  props?: { [key: string]: any };
-  style?: string;
-  children: (JSX.Element | JSX.Element[] | string)[];
-}
+export type JsxstyleProps<ComponentProps> = {
+  component?: AnyComponent<ComponentProps>;
+  mediaQueries?: Dict<string>;
+  props?: ComponentProps;
+} & StyleProps &
+  CSSProperties;
 
-function factory(displayName: string, defaultProps?: {}) {
+// TODO: add decent return type
+function factory(displayName: string, defaultProps?: {}): any {
   const tagName = 'div';
 
-  return class JsxstyleComponent extends preact.Component<JsxstyleProps, {}> {
-    className: string | { [key: string]: boolean };
-    component: ComponentProp;
+  return class JsxstyleComponent<P> extends preact.Component<
+    JsxstyleProps<P>,
+    any
+  > {
+    className: string | Dict<boolean>;
+    component: AnyComponent<JsxstyleProps<P>>;
 
-    constructor(props: JsxstyleProps) {
+    constructor(props: JsxstyleProps<P>) {
       super(props);
       this.component = props.component || tagName;
       this.className = cache.getClassName(props, props.class);
@@ -42,15 +42,14 @@ function factory(displayName: string, defaultProps?: {}) {
     static defaultProps = defaultProps;
     static displayName = displayName;
 
-    componentWillReceiveProps(props: JsxstyleProps) {
+    componentWillReceiveProps(props: JsxstyleProps<P>) {
       this.component = props.component || tagName;
       this.className = cache.getClassName(props, props.class);
     }
 
-    render(props: JsxstyleProps) {
-      const { style, props: _props, children } = props;
+    render({ style, props, children }: JsxstyleProps<P>) {
       return (
-        <this.component {..._props} class={this.className} style={style}>
+        <this.component {...props} class={this.className} style={style}>
           {children}
         </this.component>
       );

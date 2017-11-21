@@ -1,40 +1,35 @@
 import * as React from 'react';
-import { componentStyles, getStyleCache } from 'jsxstyle-utils';
+import { Dict, componentStyles, getStyleCache } from 'jsxstyle-utils';
 
 import CSSProperties from './cssproperties';
 
 export const cache = getStyleCache();
 
-export interface ComponentPropProps {
-  className?: any;
-  style?: CSSProperties;
-  [key: string]: any;
-}
-
-export type ComponentProp =
-  | keyof JSX.IntrinsicElements
-  | React.ComponentClass<ComponentPropProps>
-  | React.SFC<ComponentPropProps>;
-
-export interface JsxstyleProps extends CSSProperties {
+export interface StyleProps {
   className?: string;
-  component?: ComponentProp;
-  mediaQueries?: { [key: string]: string };
-  props?: { [key: string]: any };
-  style?: CSSProperties;
+  style?: React.CSSProperties;
 }
 
-function factory(
-  displayName: string,
-  defaultProps?: { [key: string]: React.ReactText } | null
-) {
+export type AnyComponent<Props extends StyleProps> =
+  | keyof JSX.IntrinsicElements
+  | React.ComponentClass<Props>
+  | React.SFC<Props>;
+
+export type JsxstyleProps<ComponentProps> = {
+  component?: AnyComponent<ComponentProps>;
+  mediaQueries?: Dict<string>;
+  props?: ComponentProps;
+} & StyleProps &
+  CSSProperties;
+
+function factory(displayName: string, defaultProps?: Dict<React.ReactText>) {
   const tagName = 'div';
 
-  return class JsxstyleComponent extends React.Component<JsxstyleProps> {
+  return class JsxstyleComponent<P> extends React.Component<JsxstyleProps<P>> {
     className: string;
-    component: ComponentProp;
+    component: AnyComponent<JsxstyleProps<P>>;
 
-    constructor(props: JsxstyleProps) {
+    constructor(props: JsxstyleProps<P>) {
       super(props);
       this.component = props.component || tagName;
       this.className = cache.getClassName(props, props.className);
@@ -43,7 +38,7 @@ function factory(
     static defaultProps = defaultProps;
     static displayName = displayName;
 
-    componentWillReceiveProps(props: JsxstyleProps) {
+    componentWillReceiveProps(props: JsxstyleProps<P>) {
       this.component = props.component || tagName;
       this.className = cache.getClassName(props, props.className);
     }

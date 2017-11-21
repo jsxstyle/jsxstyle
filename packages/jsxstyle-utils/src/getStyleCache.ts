@@ -1,6 +1,7 @@
 import getStyleKeysForProps from './getStyleKeysForProps';
 import addStyleToHead from './addStyleToHead';
 import stringHash from './stringHash';
+import { Dict } from '../jsxstyle-utils';
 
 type InsertRuleCallback = (rule: string, props?: {}) => boolean | void;
 
@@ -16,7 +17,8 @@ function alreadyInjected() {
   );
 }
 
-function getStringHash(key: string, props: {}) {
+function getStringHash(key: string, props: {}): string;
+function getStringHash(key: string) {
   return '_' + stringHash(key).toString(36);
 }
 
@@ -44,7 +46,7 @@ export default function getStyleCache() {
       styleCache.injectOptions = alreadyInjected;
     },
 
-    getClassName(props: { [key: string]: any }, classNameProp?: string) {
+    getClassName(props: Dict<any>, classNameProp?: string) {
       styleCache.injectOptions = cannotInject;
 
       const styleObj = getStyleKeysForProps(props, pretty);

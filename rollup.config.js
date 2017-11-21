@@ -1,20 +1,9 @@
 import typescript from 'rollup-plugin-typescript2';
 
-const external = [
-  'invariant',
-  'jsxstyle',
-  'jsxstyle-utils',
-  'preact',
-  'prop-types',
-  'react',
-];
-
-const watch = { exclude: ['node_modules/**'] };
-
 export default [
   ['jsxstyle-utils', 'ts'],
   ['jsxstyle', 'tsx'],
-  // 'jsxstyle/preact'
+  ['jsxstyle/preact', 'tsx'],
 ].map(([pkg, ext]) => {
   const filename = pkg.replace(/[^a-z-]/g, '-');
   return {
@@ -29,7 +18,14 @@ export default [
         useTsconfigDeclarationDir: true,
       }),
     ],
-    external,
-    watch,
+    external: [
+      'invariant',
+      'jsxstyle',
+      'jsxstyle-utils',
+      'preact',
+      'prop-types',
+      'react',
+    ],
+    watch: { exclude: ['node_modules/**'] },
   };
 });
