@@ -8,7 +8,6 @@ const invariant = require('invariant');
 const parse = require('../packages/jsxstyle-loader/utils/ast/parse');
 const generate = require('../packages/jsxstyle-loader/utils/ast/generate');
 const traverse = require('@babel/traverse').default;
-const { pseudoelements, pseudoclasses } = require('../packages/jsxstyle-utils');
 const t = require('@babel/types');
 
 const reactTypeFile = require.resolve('@types/react/index.d.ts');
@@ -18,26 +17,22 @@ const ast = parse(fileContents, 'typescript');
 const typeAliases = [];
 const interfaceBody = [];
 
-const prefixes = new Set();
-for (const pc in pseudoclasses) {
-  prefixes.add(pc);
-  for (const pe in pseudoelements) {
-    prefixes.add(pe);
-    prefixes.add(pc + pe[0].toUpperCase() + pe.slice(1));
+function reformatComments(node, comments) {
+  const leadingComments = comments || node.leadingComments;
+  t.removeComments(node);
+  if (leadingComments) {
+    t.addComments(
+      node,
+      'leading',
+      leadingComments.map(c => ({ type: 'CommentBlock', value: c.value }))
+    );
   }
-}
-
-// Wrap node in an export and move leading comments from the node to the export
-function getWrappedExport(node) {
-  const leadingComments = node.leadingComments;
-  const wrappedExport = t.ExportNamedDeclaration(t.removeComments(node), []);
-  wrappedExport.leadingComments = leadingComments;
-  return wrappedExport;
 }
 
 traverse(ast, {
   TSTypeAliasDeclaration(path) {
     if (!path.node.id.name.startsWith('CSS')) return;
+    reformatComments(path.node);
     typeAliases.push(path.node);
   },
 
@@ -45,55 +40,35 @@ traverse(ast, {
     if (path.node.id.name !== 'CSSProperties') return;
 
     path.node.body.body.forEach(item => {
-      if (t.isTSIndexSignature(item)) {
-        interfaceBody.push(item);
-        return;
-      }
-      invariant(t.isTSPropertySignature(item), 'Unhandled type: %s', item.type);
+      invariant(
+        t.isTSIndexSignature(item) || t.isTSPropertySignature(item),
+        'Unhandled type: %s',
+        item.type
+      );
 
+      reformatComments(item);
       interfaceBody.push(item);
-      const leadingComments = item.leadingComments;
-      t.removeComments(item);
-      if (leadingComments) {
-        t.addComments(
-          item,
-          'leading',
-          leadingComments.map(c => ({ type: 'CommentBlock', value: c.value }))
-        );
-      }
-
-      prefixes.forEach(prefix => {
-        const prefixedItem = t.tSPropertySignature(
-          t.identifier(
-            prefix + item.key.name[0].toUpperCase() + item.key.name.slice(1)
-          ),
-          item.typeAnnotation
-        );
-        prefixedItem.computed = item.computed;
-        prefixedItem.optional = item.optional;
-        prefixedItem.readonly = item.readonly;
-        if (leadingComments) {
-          t.addComments(
-            prefixedItem,
-            'leading',
-            leadingComments.map(c => ({ type: 'CommentBlock', value: c.value }))
-          );
-        }
-        interfaceBody.push(prefixedItem);
-      });
     });
   },
 });
 
+const interfaceId = t.identifier('CSSProperties');
+
 const dec = t.tSInterfaceDeclaration(
-  t.identifier('CSSProperties'),
+  interfaceId,
   null,
   null,
   t.TSInterfaceBody(interfaceBody)
 );
 
+t.addComment(dec, 'leading', ' CSSProperties extracted from @types/react ');
+
 console.log(
   prettier.format(
-    generate(t.program([].concat(typeAliases, dec).map(getWrappedExport))).code
+    generate(
+      t.program(
+        [].concat(typeAliases, dec, t.ExportDefaultDeclaration(interfaceId))
+      )
+    ).code
   )
 );
