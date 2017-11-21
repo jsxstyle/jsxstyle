@@ -1,10 +1,9 @@
 import * as React from 'react';
 import { componentStyles, getStyleCache } from 'jsxstyle-utils';
-import { StyleCache } from 'jsxstyle-utils/src/getStyleCache';
 
 import { CSSProperties } from './cssproperties';
 
-export const cache: StyleCache = getStyleCache();
+export const cache = getStyleCache();
 
 export interface ComponentPropProps {
   className?: any;

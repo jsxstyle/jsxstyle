@@ -2,19 +2,7 @@ import getStyleKeysForProps from './getStyleKeysForProps';
 import addStyleToHead from './addStyleToHead';
 import stringHash from './stringHash';
 
-export interface InsertRuleCallback {
-  (rule: string, props?: {}): boolean | void;
-}
-
-export interface StyleCache {
-  reset(): void;
-  getClassName(props: { [key: string]: any }, classNameProp?: string): string;
-  injectOptions(options: {
-    getClassName(key: string, props?: {}): string;
-    onInsertRule: InsertRuleCallback;
-    pretty: boolean;
-  }): void;
-}
+type InsertRuleCallback = (rule: string, props?: {}) => boolean | void;
 
 function cannotInject() {
   throw new Error(
@@ -38,64 +26,68 @@ export default function getStyleCache() {
   let onInsertRule: InsertRuleCallback;
   let pretty = false;
 
-  const styleCache: StyleCache = <any>{};
+  const styleCache = {
+    reset() {
+      _classNameCache = {};
+    },
 
-  styleCache.reset = () => {
-    _classNameCache = {};
-  };
+    injectOptions(options: {
+      getClassName(key: string, props?: {}): string;
+      onInsertRule: InsertRuleCallback;
+      pretty: boolean;
+    }) {
+      if (options) {
+        if (options.getClassName) getClassNameForKey = options.getClassName;
+        if (options.onInsertRule) onInsertRule = options.onInsertRule;
+        if (options.pretty) pretty = options.pretty;
+      }
+      styleCache.injectOptions = alreadyInjected;
+    },
 
-  styleCache.injectOptions = options => {
-    if (options) {
-      if (options.getClassName) getClassNameForKey = options.getClassName;
-      if (options.onInsertRule) onInsertRule = options.onInsertRule;
-      if (options.pretty) pretty = options.pretty;
-    }
-    styleCache.injectOptions = alreadyInjected;
-  };
+    getClassName(props: { [key: string]: any }, classNameProp?: string) {
+      styleCache.injectOptions = cannotInject;
 
-  styleCache.getClassName = (props, classNameProp) => {
-    styleCache.injectOptions = cannotInject;
+      const styleObj = getStyleKeysForProps(props, pretty);
+      if (typeof styleObj !== 'object' || styleObj === null) {
+        return classNameProp || null;
+      }
 
-    const styleObj = getStyleKeysForProps(props, pretty);
-    if (typeof styleObj !== 'object' || styleObj === null) {
-      return classNameProp || null;
-    }
+      const key = styleObj.classNameKey;
+      if (key && !_classNameCache.hasOwnProperty(key)) {
+        _classNameCache[key] = getClassNameForKey(key, props);
+        delete styleObj.classNameKey;
+        Object.keys(styleObj)
+          .sort()
+          .forEach(k => {
+            const selector = '.' + _classNameCache[key];
+            // prettier-ignore
+            const { pseudoclass, pseudoelement, mediaQuery, styles } = styleObj[k];
 
-    const key = styleObj.classNameKey;
-    if (key && !_classNameCache.hasOwnProperty(key)) {
-      _classNameCache[key] = getClassNameForKey(key, props);
-      delete styleObj.classNameKey;
-      Object.keys(styleObj)
-        .sort()
-        .forEach(k => {
-          const selector = '.' + _classNameCache[key];
-          // prettier-ignore
-          const { pseudoclass, pseudoelement, mediaQuery, styles } = styleObj[k];
+            let rule =
+              selector +
+              (pseudoclass ? ':' + pseudoclass : '') +
+              (pseudoelement ? '::' + pseudoelement : '') +
+              ` {${styles}}`;
 
-          let rule =
-            selector +
-            (pseudoclass ? ':' + pseudoclass : '') +
-            (pseudoelement ? '::' + pseudoelement : '') +
-            ` {${styles}}`;
+            if (mediaQuery) {
+              rule = `@media ${mediaQuery} { ${rule} }`;
+            }
 
-          if (mediaQuery) {
-            rule = `@media ${mediaQuery} { ${rule} }`;
-          }
+            if (
+              onInsertRule &&
+              // if the function returns false, bail.
+              onInsertRule(rule, props) === false
+            ) {
+              return;
+            }
+            addStyleToHead(rule);
+          });
+      }
 
-          if (
-            onInsertRule &&
-            // if the function returns false, bail.
-            onInsertRule(rule, props) === false
-          ) {
-            return;
-          }
-          addStyleToHead(rule);
-        });
-    }
-
-    return _classNameCache[key] && classNameProp
-      ? classNameProp + ' ' + _classNameCache[key]
-      : _classNameCache[key] || classNameProp || null;
+      return _classNameCache[key] && classNameProp
+        ? classNameProp + ' ' + _classNameCache[key]
+        : _classNameCache[key] || classNameProp || null;
+    },
   };
 
   return styleCache;
