@@ -1,7 +1,7 @@
 import * as preact from 'preact';
 import { Dict, getStyleCache, componentStyles } from 'jsxstyle-utils';
 
-import CSSProperties from '../cssproperties';
+import CSSProperties from '../CSSProperties';
 
 export const cache = getStyleCache();
 
@@ -30,7 +30,7 @@ function factory(displayName: string, defaultProps?: {}): any {
     JsxstyleProps<P>,
     any
   > {
-    className: string | Dict<boolean>;
+    className: string | null;
     component: AnyComponent<JsxstyleProps<P>>;
 
     constructor(props: JsxstyleProps<P>) {

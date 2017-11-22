@@ -1,5 +1,6 @@
 import hyphenateStyleName from './hyphenateStyleName';
 import dangerousStyleValue from './dangerousStyleValue';
+import { Dict } from '../jsxstyle-utils';
 
 // global flag makes subsequent calls of capRegex.test advance to the next match
 const capRegex = /[A-Z]/g;
@@ -35,14 +36,12 @@ const specialCaseProps = {
   mediaQueries: true,
 };
 
-export type StyleKeyObj = {
-  [key: string]: {
-    styles: string;
-    mediaQuery?: string;
-    pseudoclass?: string;
-    pseudoelement?: string;
-  };
-} & { classNameKey: string };
+export type StyleKeyObj = Dict<{
+  styles: string;
+  mediaQuery?: string;
+  pseudoclass?: string;
+  pseudoelement?: string;
+}> & { classNameKey: string };
 
 export default function getStyleKeysForProps(
   props: any,
@@ -63,8 +62,7 @@ export default function getStyleKeysForProps(
   const hasMediaQueries = typeof mediaQueries === 'object';
   let usesMediaQueries = false;
 
-  // return value
-  const styleKeyObj: StyleKeyObj = <any>{};
+  const styleKeyObj = {} as StyleKeyObj;
 
   let classNameKey = '';
   const seenMQs = {};

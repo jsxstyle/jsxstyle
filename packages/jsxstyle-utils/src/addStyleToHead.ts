@@ -23,7 +23,7 @@ if (canUseDOM && !styleElement) {
   document.head.appendChild(styleElement);
 }
 
-export default function addStyleToHead(rule: string) {
+export default function addStyleToHead(rule: string): void {
   if (styleElement) {
     const sheet = styleElement.sheet as CSSStyleSheet;
     try {

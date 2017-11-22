@@ -1,5 +1,5 @@
 // thx darksky: https://git.io/v9kWO
-export default function stringHash(str: string) {
+export default function stringHash(str: string): number {
   let hash = 5381,
     i = str.length;
 

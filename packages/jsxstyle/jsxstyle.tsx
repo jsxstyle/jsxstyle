@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Dict, componentStyles, getStyleCache } from 'jsxstyle-utils';
 
-import CSSProperties from './cssproperties';
+import CSSProperties from './CSSProperties';
 
 export const cache = getStyleCache();
 
@@ -26,7 +26,7 @@ function factory(displayName: string, defaultProps?: Dict<React.ReactText>) {
   const tagName = 'div';
 
   return class JsxstyleComponent<P> extends React.Component<JsxstyleProps<P>> {
-    className: string;
+    className: string | null;
     component: AnyComponent<JsxstyleProps<P>>;
 
     constructor(props: JsxstyleProps<P>) {

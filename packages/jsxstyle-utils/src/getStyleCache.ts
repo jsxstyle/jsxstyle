@@ -18,7 +18,7 @@ function alreadyInjected() {
 }
 
 function getStringHash(key: string, props: {}): string;
-function getStringHash(key: string) {
+function getStringHash(key: string): string {
   return '_' + stringHash(key).toString(36);
 }
 
@@ -46,7 +46,7 @@ export default function getStyleCache() {
       styleCache.injectOptions = alreadyInjected;
     },
 
-    getClassName(props: Dict<any>, classNameProp?: string) {
+    getClassName(props: Dict<any>, classNameProp?: string): string | null {
       styleCache.injectOptions = cannotInject;
 
       const styleObj = getStyleKeysForProps(props, pretty);
