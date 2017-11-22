@@ -1,4 +1,4 @@
-import getStyleKeysForProps from '../src/getStyleKeysForProps';
+import { getStyleKeysForProps } from '..';
 
 describe('getStyleKeysForProps', () => {
   it('returns null when given an empty style object', () => {
