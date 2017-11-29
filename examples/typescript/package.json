@@ -1,7 +1,7 @@
 {
   "name": "jsxstyle-typescript-demo",
   "private": true,
-  "version": "0.0.4",
+  "version": "0.0.5",
   "scripts": {
     "start": "webpack-dev-server --hot --hotOnly --inline"
   },
@@ -10,8 +10,8 @@
     "extract-text-webpack-plugin": "^3.0.2",
     "file-loader": "^1.1.5",
     "html-webpack-plugin": "^2.30.1",
-    "jsxstyle": "^2.0.5",
-    "jsxstyle-loader": "^1.0.8",
+    "jsxstyle": "^2.0.6",
+    "jsxstyle-loader": "^1.0.9",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
     "source-map-loader": "^0.2.1",
