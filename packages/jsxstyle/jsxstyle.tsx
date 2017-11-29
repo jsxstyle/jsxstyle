@@ -12,8 +12,7 @@ export interface StyleProps {
 
 export type AnyComponent<Props extends StyleProps> =
   | keyof JSX.IntrinsicElements
-  | React.ComponentClass<Props>
-  | React.SFC<Props>;
+  | React.ComponentType<Props>;
 
 export type JsxstyleProps<ComponentProps> = {
   component?: AnyComponent<ComponentProps>;

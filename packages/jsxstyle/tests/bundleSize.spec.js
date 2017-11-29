@@ -56,7 +56,7 @@ it('has a runtime size of ~3KB', () => {
               expect(code).not.toMatch(/require\(['"]jsxstyle['"]\)/);
               expect(code).not.toMatch(/require\(['"]jsxstyle-utils['"]\)/);
               // check file size
-              expect(gzipLen).toBeLessThanOrEqual(2918);
+              expect(gzipLen).toEqual(2918);
               resolve();
             });
           })

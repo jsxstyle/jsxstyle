@@ -12,8 +12,7 @@ export interface StyleProps {
 
 export type AnyComponent<Props extends StyleProps> =
   | keyof JSX.IntrinsicElements
-  | preact.AnyComponent<Props, any>
-  | any; // TODO: figure out why TS complains about a missing "refs" prop
+  | preact.AnyComponent<Props, {}>;
 
 export type JsxstyleProps<ComponentProps> = {
   component?: AnyComponent<ComponentProps>;
@@ -26,13 +25,20 @@ export type JsxstyleProps<ComponentProps> = {
 } & StyleProps &
   CSSProperties;
 
-// TODO: add decent return type
-function factory(displayName: string, defaultProps?: {}): any {
+type JsxstyleComponent = preact.ComponentConstructor<
+  JsxstyleProps<Dict<any>>,
+  {}
+>;
+
+function factory(
+  displayName: string,
+  defaultProps?: Dict<string | number>
+): JsxstyleComponent {
   const tagName = 'div';
 
   return class JsxstyleComponent<P> extends preact.Component<
     JsxstyleProps<P>,
-    any
+    {}
   > {
     className: string | null;
     component: AnyComponent<JsxstyleProps<P>>;
@@ -51,10 +57,14 @@ function factory(displayName: string, defaultProps?: {}): any {
       this.className = cache.getClassName(props, props.class);
     }
 
-    render({ style, props, children }: JsxstyleProps<P>) {
+    render(props: JsxstyleProps<P>) {
       return (
-        <this.component {...props} class={this.className} style={style}>
-          {children}
+        <this.component
+          {...props.props}
+          class={this.className}
+          style={props.style}
+        >
+          {props.children}
         </this.component>
       );
     }

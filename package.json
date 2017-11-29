@@ -5,11 +5,11 @@
   "private": true,
   "homepage": "https://github.com/smyte/jsxstyle#readme",
   "scripts": {
-    "clean": "lerna clean",
     "eslint": "eslint {packages/*/{*,*/*},examples/{*,*/*}}.js",
     "jest": "npm run rollup && jest --verbose --runInBand",
     "karma": "karma start",
     "karma_local": "KARMA_LOCAL=yep karma start",
+    "lerna": "lerna",
     "mktypes": "./misc/mktypes.js > ./packages/jsxstyle/CSSProperties.d.ts",
     "postinstall": "lerna bootstrap",
     "prettier": "prettier --write {packages/*/{*,*/*},examples/{*,*/*}}.js",
