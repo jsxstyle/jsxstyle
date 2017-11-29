@@ -62,14 +62,18 @@ function outerFunction(innerParam1, innerParam2) {
     const bindingCache = {};
     const setFn = jest.fn();
     const getFn = jest.fn();
+    const thingsToSet = [];
+    const thingsToGet = [];
     const proxiedCache = new Proxy(bindingCache, {
       set(target, name, value) {
         setFn();
+        thingsToSet.push(name);
         target[name] = value;
       },
-      get(target, name) {
+      getOwnPropertyDescriptor(target, name) {
         getFn();
-        return target[name];
+        thingsToGet.push(name);
+        return Object.getOwnPropertyDescriptor(target, name);
       },
     });
 
@@ -91,14 +95,23 @@ function outerFunction(innerParam1, innerParam2) {
       innerLiteral: 'wow',
     });
 
-    expect(bindingCache).toEqual({
-      'innerLiteral_240-245': 'wow',
-      'nullLiteral_295-299': null,
-      'outerLiteral_22-24': 42,
-      'outerObject_46-68': { value: 28980 },
-    });
+    const results = {
+      'innerLiteral_225-237': 'wow',
+      'nullLiteral_281-292': null,
+      'outerLiteral_7-19': 42,
+      'outerObject_32-43': { value: 28980 },
+    };
 
+    expect(bindingCache).toEqual(results);
     expect(setFn).toHaveBeenCalledTimes(4);
-    expect(getFn).toHaveBeenCalledTimes(4);
+    expect(getFn).toHaveBeenCalledTimes(5);
+    expect(thingsToSet).toEqual(Object.keys(results));
+    expect(thingsToGet).toEqual([
+      'innerLiteral_225-237',
+      'innerObject_255-266',
+      'nullLiteral_281-292',
+      'outerLiteral_7-19',
+      'outerObject_32-43',
+    ]);
   });
 });

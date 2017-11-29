@@ -1144,4 +1144,22 @@ const {
   AlsoInvalid
 } = require('jsxstyle');`);
   });
+
+  it('handles consts with no inits', () => {
+    const fileContent = `
+import { Block } from 'jsxstyle';
+for (const thing in things) {
+  <Block />;
+}
+`;
+    const rv = extractStyles(fileContent, pathTo('mock/const-sans-init.js'), {
+      cacheObject: {},
+    });
+
+    expect(rv.js).toEqual(`import "./const-sans-init__jsxstyle.css";
+
+for (const thing in things) {
+  <div className="_x0" />;
+}`);
+  });
 });

@@ -64,36 +64,33 @@ function getStaticBindingsForScope(
       const dec = binding.path.parent.declarations.find(
         d => t.isIdentifier(d.id) && d.id.name === k
       );
+
+      // if init is not set, there's nothing to evaluate
       // TODO: handle spread syntax
-      if (!dec) continue;
+      if (!dec.init) continue;
 
-      const cacheKey = `${dec.id.name}_${dec.init.start}-${dec.init.end}`;
-
-      if (t.isObjectExpression(dec.init)) {
-        if (binding.path.parentPath.parentPath.type === 'Program') {
-          // retrieve value from cache
-          if (bindingCache.hasOwnProperty(cacheKey)) {
-            ret[k] = bindingCache[cacheKey];
-            continue;
-          }
-          // evaluate
-          try {
-            ret[k] = evaluateAstNode(dec.init);
-            bindingCache[cacheKey] = ret[k];
-          } catch (e) {
-            // console.error('evaluateAstNode error:', e);
-          }
-        } else {
-          // console.error('ObjectExpressions are only evaled at root.');
-        }
+      // missing start/end will break caching
+      if (typeof dec.id.start !== 'number' || typeof dec.id.end !== 'number') {
+        console.error('dec.id.start/end is not a number');
         continue;
       }
+
+      const cacheKey = `${dec.id.name}_${dec.id.start}-${dec.id.end}`;
 
       // retrieve value from cache
       if (bindingCache.hasOwnProperty(cacheKey)) {
         ret[k] = bindingCache[cacheKey];
         continue;
       }
+
+      // skip ObjectExpressions not defined in the root
+      if (
+        t.isObjectExpression(dec.init) &&
+        binding.path.parentPath.parentPath.type !== 'Program'
+      ) {
+        continue;
+      }
+
       // evaluate
       try {
         ret[k] = evaluateAstNode(dec.init);
