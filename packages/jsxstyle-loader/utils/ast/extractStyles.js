@@ -563,7 +563,7 @@ function extractStyles(
                       )
                     );
                   }
-                } else if (t.isSpreadProperty(propObj)) {
+                } else if (t.isSpreadElement(propObj)) {
                   attributes.push(t.jSXSpreadAttribute(propObj.argument));
                 } else {
                   warnCallback(
