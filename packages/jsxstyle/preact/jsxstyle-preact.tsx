@@ -17,11 +17,7 @@ export type AnyComponent<Props extends StyleProps> =
 export type JsxstyleProps<ComponentProps> = {
   component?: AnyComponent<ComponentProps>;
   mediaQueries?: Dict<string>;
-  props?: ComponentProps & {
-    // class and style props cannot be set via the props prop
-    class?: undefined;
-    style?: undefined;
-  };
+  props?: ComponentProps;
 } & StyleProps &
   CSSProperties;
 

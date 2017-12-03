@@ -7,11 +7,13 @@ const rollupReplace = require('rollup-plugin-replace');
 const rollupUglify = require('rollup-plugin-uglify');
 const zlib = require('zlib');
 
+const entry = 'bundleSize entrypoint';
+
 it('has a runtime size of ~3KB', () => {
   expect.assertions(3);
 
   const inputOptions = {
-    input: require.resolve('./rollup-entrypoint.js'),
+    input: entry,
     external: ['react', 'preact'],
     plugins: [
       rollupNodeResolve({
@@ -24,6 +26,14 @@ it('has a runtime size of ~3KB', () => {
       rollupReplace({
         'process.env.NODE_ENV': JSON.stringify('production'),
       }),
+      {
+        resolveId(id) {
+          if (id === entry) return entry;
+        },
+        load(id) {
+          if (id === entry) return "export * from 'jsxstyle';\n";
+        },
+      },
     ],
   };
 

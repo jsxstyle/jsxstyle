@@ -1,23 +1,23 @@
 {
   "compilerOptions": {
-    "declaration": true,
-    "module": "esnext",
-    "target": "es5",
-    "lib": ["es6", "dom"],
-    "sourceMap": true,
     "allowJs": false,
-    "jsx": "react",
-    "moduleResolution": "node",
-    "rootDir": "../../",
+    "declaration": true,
     "forceConsistentCasingInFileNames": true,
+    "jsx": "react",
+    "lib": ["es6", "dom"],
+    "module": "esnext",
+    "moduleResolution": "node",
+    "noImplicitAny": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
-    "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "rootDir": "../../",
+    "sourceMap": true,
     "strictNullChecks": true,
     "suppressImplicitAnyIndexErrors": true,
-    "noUnusedLocals": true,
+    "target": "es5",
     "types": ["node", "react"]
   },
-  "include": ["*.ts", "*.tsx"],
-  "exclude": ["node_modules", "preact/*"]
+  "exclude": ["node_modules", "preact/*"],
+  "include": ["*.ts", "*.tsx"]
 }
