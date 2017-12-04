@@ -49,6 +49,7 @@
     "karma-sourcemap-loader": "^0.3.7",
     "karma-webpack": "^2.0.4",
     "lerna": "^2.5.1",
+    "mdn-data": "^1.0.0",
     "preact": "^8.2.6",
     "prettier": "^1.7.3",
     "react": "^16.0.0",
