@@ -9,6 +9,11 @@ export default [
   return {
     input: `packages/${pkg}/${filename}.${ext}`,
     output: [
+      {
+        format: 'amd',
+        file: `packages/${pkg}/${filename}.amd.js`,
+        amd: { id: pkg },
+      },
       { format: 'cjs', file: `packages/${pkg}/${filename}.cjs.js` },
       { format: 'es', file: `packages/${pkg}/${filename}.es.js` },
     ],

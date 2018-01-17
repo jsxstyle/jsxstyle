@@ -59,7 +59,7 @@ module.exports = {
       },
     },
     {
-      files: ['*.cjs.js', '*.es.js'],
+      files: ['*.amd.js', '*.cjs.js', '*.es.js'],
       rules: {
         'no-var': 0,
         'prefer-const': 0,
@@ -67,7 +67,7 @@ module.exports = {
       },
     },
     {
-      files: ['*.cjs.js'],
+      files: ['*.amd.js', '*.cjs.js'],
       parserOptions: {
         sourceType: 'script',
       },
