@@ -9,6 +9,7 @@
   "jsnext:main": "jsxstyle-utils.es.js",
   "types": "jsxstyle-utils.d.ts",
   "dependencies": {
+    "@types/webpack": "^3.8.2",
     "invariant": "^2.2.1"
   },
   "keywords": [
