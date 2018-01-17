@@ -15,8 +15,8 @@
     "postinstall": "lerna bootstrap",
     "prettier": "prettier --write {packages/*/{*,*/*},examples/{*,*/*}}.js",
     "release": "npm run eslint && npm run jest && lerna publish",
-    "reset": "rimraf packages/{*,*/*}/{jsxstyle*.{es,cjs}.js,**/*.d.ts}",
-    "rollup": "npm run reset && npm run mktypes && rollup -c && prettier --write packages/{*,*/*}/jsxstyle*.{es,cjs}.js",
+    "reset": "rimraf packages/{*,*/*}/{jsxstyle*.{es,cjs,amd}.js,**/*.d.ts}",
+    "rollup": "npm run reset && npm run mktypes && rollup -c && prettier --write packages/{*,*/*}/jsxstyle*.{es,cjs,amd}.js",
     "rollup_watch": "npm run reset && npm run mktypes && rollup -c -w;",
     "start": "webpack-dev-server --hot --hotOnly --inline --historyApiFallback --config=example/webpack.config.js",
     "update_readme": "echo \"$(<./misc/monorepo-preamble.md)\\n\\n---\\n\\n$(<./packages/jsxstyle/README.md)\" > README.md"

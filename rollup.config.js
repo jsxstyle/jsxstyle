@@ -11,6 +11,7 @@ export default [
     output: [
       { format: 'cjs', file: `packages/${pkg}/${filename}.cjs.js` },
       { format: 'es', file: `packages/${pkg}/${filename}.es.js` },
+      { format: 'amd', file: `packages/${pkg}/${filename}.amd.js`, amd: { id: pkg }},
     ],
     plugins: [
       typescript({
