@@ -152,6 +152,7 @@ function extractStyles(
     parserPlugins: _parserPlugins,
     styleGroups,
     whitelistedModules,
+    cssModules,
     evaluateVars = true,
   } = options;
 
@@ -931,6 +932,7 @@ function extractStyles(
               const k = styleObjectKeys[idx];
               const item = styleObjects[k];
               let itemCSS =
+                (cssModules ? ':global ' : '') +
                 `.${className}` +
                 (item.pseudoclass ? ':' + item.pseudoclass : '') +
                 (item.pseudoelement ? '::' + item.pseudoelement : '') +

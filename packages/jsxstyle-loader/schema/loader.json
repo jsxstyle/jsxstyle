@@ -48,6 +48,10 @@
     "evaluateVars": {
       "description": "whether or not to evaluate style props that contain variables",
       "type": "boolean"
+    },
+    "cssModules": {
+      "description": "if set to true, output CSS classes will be prefixed with `:global` in order to avoid being hashed by css-loader",
+      "type": "boolean"
     }
   }
 }
