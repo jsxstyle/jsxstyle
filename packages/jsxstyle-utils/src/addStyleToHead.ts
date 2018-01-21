@@ -1,3 +1,5 @@
+/// <reference types = "@types/webpack-env" />
+
 const canUseDOM = !!(
   typeof window !== 'undefined' &&
   window.document &&
@@ -6,7 +8,7 @@ const canUseDOM = !!(
 
 let styleElement: HTMLStyleElement | undefined;
 
-if (module.hot) {
+if (typeof module !== 'undefined' && module.hot) {
   if (typeof module.hot.data === 'object') {
     styleElement = module.hot.data.styleElement;
   }

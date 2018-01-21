@@ -5,6 +5,7 @@ lib/
 *.log
 *.es.js
 *.cjs.js
+*.amd.js
 *.d.ts
 stats.json
 .*
