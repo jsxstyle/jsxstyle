@@ -19,9 +19,7 @@ const JsxstyleLoaderPlugin = require('jsxstyle-loader/plugin');
 
 module.exports = {
   // ...
-  plugins: [
-    new JsxstyleLoaderPlugin(),
-  ],
+  plugins: [new JsxstyleLoaderPlugin()],
   // ...
   module: {
     rules: [
@@ -43,6 +41,7 @@ module.exports = {
 ## Loader Options
 
 ### `styleGroups`
+
 By default, `jsxstyle-loader` will extract all static style props on a jsxstyle component into one class. This can lead to CSS classes that contain a lot of common style declarations. A good CSS minifier should help with this, but if you want a bit more control over how styles are grouped into CSS classes, you can provide an _array_ of CSS style objects. When `jsxstyle-loader` encounters a component that contains all styles in a style object, those styles will be extracted into a separate class name.
 
 For example, with the following loader config:
@@ -66,15 +65,10 @@ For example, with the following loader config:
 
 ...and a jsxstyle component that looks like this:
 
-```js
+```jsx
 import { Block } from 'jsxstyle';
 
-<Block
-  backgroundColor="blue"
-  marginLeft={15}
-  marginRight={15}
-  padding={20}
-/>;
+<Block backgroundColor="blue" marginLeft={15} marginRight={15} padding={20} />;
 ```
 
 ...the styles on this component will be extracted into three separate classes:
@@ -135,7 +129,6 @@ Instead of importing components from `jsxstyle` or `jsxstyle/preact`, don’t im
 
 To enable this feature, set `liteMode` in your loader options to either `'react'` or `'preact'`.
 
-
 ## FAQs
 
 ### Can I use `jsxstyle-loader` with Flow?
@@ -144,26 +137,31 @@ Yes! Flow parsing is automatically enabled for any non-Typescript files.
 
 ### Can I use `jsxstyle-loader` with Typescript?
 
-Not yet, but soon! Typescript support is a work in progress.
+Yes! Take a look at [examples/typescript][ts example] and [issue #82][issue 82] for some context. You’ll need to make a few configuration changes:
+
+1. Set `jsx` to `preserve` in the `compilerOptions` section of your `tsconfig.json` file.
+2. Ensure `jsxstyle-loader` runs _after_ `ts-loader`. Webpack loaders run from bottom to top, to `jsxstyle-loader` needs to be placed _before_ `ts-loader` in your webpack config.
+3. Add a loader that transpiles JSX, since `ts-loader` is now set to preserve JSX.
 
 ### It’s not working 😩
 
 1. Make sure the loader object `test` regex matches JS files that use jsxstyle.
-2. `jsxstyle-loader` relies on JSX still being around, so make sure it runs *before* `babel-loader` does its thing.
+2. `jsxstyle-loader` relies on JSX still being around, so make sure it runs _before_ `babel-loader` does its thing.
 3. `jsxstyle-loader` only supports destructured `require`/`import` syntax:
-    ```jsx
-    // Cool!
-    import { Block } from 'jsxstyle';
-    <Block />;
 
-    // Neat!
-    const { Block } = require('jsxstyle');
-    <Block />;
+   ```jsx
+   // Cool!
+   import { Block } from 'jsxstyle';
+   <Block />;
 
-    // Nope :(
-    const Block = require('jsxstyle').Block;
-    <Block />;
-    ```
+   // Neat!
+   const { Block } = require('jsxstyle');
+   <Block />;
+
+   // Nope :(
+   const Block = require('jsxstyle').Block;
+   <Block />;
+   ```
 
 ### What are “static style props”?
 
@@ -205,3 +203,5 @@ Got an idea for `jsxstyle-loader`? Did you encounter a bug? [Open an issue][new 
 [babylon plugins]: https://github.com/babel/babylon#plugins
 [new issue]: https://github.com/smyte/jsxstyle/issues/new
 [pr]: https://github.com/smyte/jsxstyle/pulls
+[ts example]: https://github.com/smyte/jsxstyle/tree/master/examples/typescript
+[issue 82]: https://github.com/smyte/jsxstyle/issues/82#issuecomment-355141948

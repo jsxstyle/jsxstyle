@@ -49,16 +49,26 @@ module.exports = {
     strictExportPresence: true,
     rules: [
       {
-        test: /\.(ts|tsx)$/,
-        loader: require.resolve('tslint-loader'),
-        enforce: 'pre',
-        include: appSrc,
-      },
-      {
         test: /\.js$/,
         loader: require.resolve('source-map-loader'),
         enforce: 'pre',
         include: appSrc,
+      },
+      {
+        test: /\.(?:js|tsx?)/,
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: require.resolve('babel-loader'),
+            options: {
+              babelrc: false,
+              presets: [
+                [require.resolve('babel-preset-env'), { modules: false }],
+                require.resolve('babel-preset-react'),
+              ],
+            },
+          },
+        ],
       },
       {
         oneOf: [
@@ -71,11 +81,12 @@ module.exports = {
             },
           },
           {
-            test: /\.(ts|tsx)$/,
+            test: /\.tsx?$/,
             include: appSrc,
+            // loaders run from bottom to top!
             use: [
-              require.resolve('ts-loader'),
               require.resolve('jsxstyle-loader'),
+              require.resolve('ts-loader'),
             ],
           },
           {

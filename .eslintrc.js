@@ -35,6 +35,30 @@ module.exports = {
 
   overrides: [
     {
+      files: ['**/*.ts', '**/*/tsx'],
+      parser: 'typescript-eslint-parser',
+      plugins: ['react', 'typescript'],
+      // https://github.com/eslint/typescript-eslint-parser#known-issues
+      rules: {
+        'no-undef': 0,
+        'no-unused-vars': 0,
+        'no-useless-constructor': 0,
+      },
+    },
+    {
+      files: ['examples/preact-cli/src/**/*.js'],
+      settings: {
+        react: {
+          pragma: 'h',
+        },
+      },
+      globals: {
+        // preact-cli uses a babel plugin that auto-prepends the `h` import
+        // https://github.com/smyte/jsxstyle/issues/98#issuecomment-359232836
+        h: true,
+      },
+    },
+    {
       files: ['*.cjs.js', '*.es.js'],
       rules: {
         'no-var': 0,

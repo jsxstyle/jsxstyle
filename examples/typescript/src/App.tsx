@@ -6,11 +6,12 @@ const logo = require('./logo.svg');
 const width = '100%';
 const height = () => 150;
 
-// Without these lines, we get 'width/height is declared but never used'
-width;
-height;
+interface LogoProps {
+  width: number;
+  height: number;
+}
 
-const Logo = (props: { width: number; height: number }) => (
+const Logo: React.SFC<LogoProps> = props => (
   <InlineBlock
     component="img"
     props={{ src: logo, alt: 'logo' }}
