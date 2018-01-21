@@ -11,6 +11,7 @@
     },
     "publish": {
       "ignore": [
+        "**/*.md",
         "**/*.spec.js",
         "**/.eslintrc.js",
         "**/package.json"
