@@ -13,7 +13,7 @@
     "lerna_updated": "lerna updated",
     "mktypes": "./misc/mktypes.js > ./packages/jsxstyle/CSSProperties.d.ts",
     "postinstall": "lerna bootstrap",
-    "prettier": "prettier --write '{packages/**/*,examples/**/*}.{js,ts,css,tsx}'",
+    "prettier": "prettier --write '{packages/**/*,examples/**/*}.{js,ts,tsx,css,md}'",
     "release": "npm run eslint && npm run jest && lerna publish",
     "reset": "rimraf packages/{*,*/*}/{jsxstyle*.{es,cjs}.js,**/*.d.ts}",
     "rollup": "npm run reset && npm run mktypes && rollup -c && prettier --write packages/{*,*/*}/jsxstyle*.{es,cjs}.js",
