@@ -1,7 +1,7 @@
 .*
 *.*
-!package.json
 !*.es.js
 !*.cjs.js
+!*.amd.js
 !*.d.ts
 **/node_modules
