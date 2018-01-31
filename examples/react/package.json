@@ -1,7 +1,7 @@
 {
   "name": "jsxstyle-with-react-example",
   "private": true,
-  "version": "0.0.12",
+  "version": "0.0.13",
   "scripts": {
     "build": "rimraf build/*; webpack -p"
   },
@@ -19,7 +19,7 @@
     "webpack": "^3.6.0"
   },
   "dependencies": {
-    "jsxstyle": "^2.0.8",
+    "jsxstyle": "^2.0.9",
     "react": "^16.0.0",
     "react-dom": "^16.0.0"
   }
