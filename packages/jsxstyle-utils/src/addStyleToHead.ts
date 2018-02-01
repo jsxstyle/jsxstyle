@@ -17,8 +17,13 @@ interface ModuleHot<T = HotData> {
   };
 }
 
-if (typeof module !== 'undefined' && (module as ModuleHot).hot) {
-  const { hot } = module as ModuleHot;
+if (
+  typeof module !== 'undefined' &&
+  (module as any).hot &&
+  typeof (module as any).hot.addDisposeHandler === 'function'
+) {
+  // gross
+  const { hot } = (module as any) as ModuleHot;
   if (typeof hot.data === 'object') {
     styleElement = hot.data.styleElement;
   }

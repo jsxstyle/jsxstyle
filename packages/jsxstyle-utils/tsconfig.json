@@ -3,10 +3,7 @@
     "declaration": true,
     "module": "esnext",
     "target": "es5",
-    "lib": [
-      "es6",
-      "dom"
-    ],
+    "lib": ["es6", "dom"],
     "sourceMap": true,
     "allowJs": false,
     "jsx": "react",
@@ -18,9 +15,8 @@
     "noImplicitAny": true,
     "strictNullChecks": true,
     "suppressImplicitAnyIndexErrors": true,
-    "noUnusedLocals": true
+    "noUnusedLocals": true,
+    "types": ["node"]
   },
-  "include": [
-    "*.ts"
-  ]
+  "include": ["*.ts"]
 }
