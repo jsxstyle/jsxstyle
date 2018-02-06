@@ -85,7 +85,10 @@ module.exports = {
             include: appSrc,
             // loaders run from bottom to top!
             use: [
-              require.resolve('jsxstyle-loader'),
+              {
+                loader: require.resolve('jsxstyle-loader'),
+                options: { cacheFile: __dirname + '/jsxstyle-cache' },
+              },
               require.resolve('ts-loader'),
             ],
           },

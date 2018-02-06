@@ -52,6 +52,11 @@
     "cssModules": {
       "description": "if set to true, output CSS classes will be prefixed with `:global` in order to avoid being hashed by css-loader",
       "type": "boolean"
+    },
+    "cacheFile": {
+      "description": "absolute path to a file that contains a list of CSS strings. If cacheFile is set, the file will be created if it does not exist will be overwritten every time jsxstyle-loader runs.",
+      "type": "string",
+      "pattern": "^/"
     }
   }
 }

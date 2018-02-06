@@ -1,6 +1,7 @@
 'use strict';
 
 const webpack = require('webpack');
+const fs = require('fs');
 const NodeWatchFileSystem = require('webpack/lib/node/NodeWatchFileSystem');
 
 const handledMethods = {
@@ -29,12 +30,15 @@ const handledMethods = {
 class JsxstyleWebpackPlugin {
   constructor() {
     this.memoryFS = new webpack.MemoryOutputFileSystem();
+
+    // the default cache object. can be overridden on a per-loader instance basis with the `cacheFile` option.
     this.cacheObject = {};
 
     // context object that gets passed to each loader.
     // available in each loader as this[Symbol.for('jsxstyle-loader')]
     this.ctx = {
       cacheObject: this.cacheObject,
+      cacheFile: null,
       memoryFS: this.memoryFS,
       fileList: new Set(),
       compileCallback: null,
@@ -71,6 +75,14 @@ class JsxstyleWebpackPlugin {
       compilation.plugin('normal-module-loader', loaderContext => {
         loaderContext[Symbol.for('jsxstyle-loader')] = this.ctx;
       });
+    });
+
+    compiler.plugin('done', () => {
+      if (this.ctx.cacheFile) {
+        // write contents of cache object as a newline-separated list of CSS strings
+        const cacheString = Object.keys(this.ctx.cacheObject).join('\n') + '\n';
+        fs.writeFileSync(this.ctx.cacheFile, cacheString, 'utf8');
+      }
     });
   }
 }
