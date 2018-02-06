@@ -9,7 +9,7 @@ const zlib = require('zlib');
 
 const entry = 'bundleSize entrypoint';
 
-it('has a runtime size of ~3KB', () => {
+it('has a runtime size of less than 3KB', () => {
   expect.assertions(3);
 
   const inputOptions = {
@@ -66,7 +66,7 @@ it('has a runtime size of ~3KB', () => {
               expect(code).not.toMatch(/require\(['"]jsxstyle['"]\)/);
               expect(code).not.toMatch(/require\(['"]jsxstyle-utils['"]\)/);
               // check file size
-              expect(gzipLen).toEqual(2952);
+              expect(gzipLen).toBeLessThan(1024 * 3);
               resolve();
             });
           })
