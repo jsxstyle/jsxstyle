@@ -1,7 +1,7 @@
 'use strict';
 
-const evaluateAstNode = require('../utils/ast/evaluateAstNode');
-const parse = require('../utils/ast/parse');
+const evaluateAstNode = require('jsxstyle-loader/utils/ast/evaluateAstNode');
+const parse = require('jsxstyle-loader/utils/ast/parse');
 const vm = require('vm');
 const generate = require('@babel/generator').default;
 

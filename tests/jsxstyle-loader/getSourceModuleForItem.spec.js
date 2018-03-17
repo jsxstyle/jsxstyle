@@ -1,9 +1,9 @@
 'use strict';
 
-const getSourceModuleForItem = require('../utils/ast/getSourceModuleForItem');
+const getSourceModuleForItem = require('jsxstyle-loader/utils/ast/getSourceModuleForItem');
+const parse = require('jsxstyle-loader/utils/ast/parse');
 
 const traverse = require('@babel/traverse').default;
-const parse = require('../utils/ast/parse');
 
 describe('getSourceModuleForItem', () => {
   const ast = parse(`

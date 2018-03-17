@@ -1,4 +1,4 @@
-import { Block } from '../../';
+import { Block } from '../../../packages/jsxstyle';
 import * as React from 'react';
 
 const Div: React.SFC = props => <div {...props} />;

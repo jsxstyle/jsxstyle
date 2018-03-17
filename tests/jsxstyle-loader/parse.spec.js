@@ -1,7 +1,7 @@
 'use strict';
 
-const parse = require('../utils/ast/parse');
-const generate = require('../utils/ast/generate');
+const parse = require('jsxstyle-loader/utils/ast/parse');
+const generate = require('jsxstyle-loader/utils/ast/generate');
 
 // parse helper
 const p = (code, ...plugins) => generate(parse(code, plugins)).code;

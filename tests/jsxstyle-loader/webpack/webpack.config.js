@@ -2,7 +2,7 @@
 
 const webpack = require('webpack');
 const path = require('path');
-const JsxstyleWebpackPlugin = require('../../plugin');
+const JsxstyleWebpackPlugin = require('jsxstyle-loader/plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const ReactIndexPlugin = require('./ReactIndexPlugin');
 
@@ -55,7 +55,7 @@ module.exports = function(env = {}, options = {}) {
               },
             },
             {
-              loader: require.resolve('../../'),
+              loader: require.resolve('jsxstyle-loader'),
               options: {
                 liteMode: 'react',
                 classNameFormat: 'hash',

@@ -2,7 +2,7 @@
 
 const path = require('path');
 
-const extractStyles = require('../utils/ast/extractStyles');
+const extractStyles = require('jsxstyle-loader/utils/ast/extractStyles');
 
 const whitelistedModules = [require.resolve('./mock/LC')];
 
@@ -75,7 +75,7 @@ const val = "thing";
 <div className="_x0" />;`
     );
     expect(rv.css).toEqual(
-      `/* ./packages/jsxstyle-loader/tests/mock/extract-static1.js:4-11 (Block) */
+      `/* ./tests/jsxstyle-loader/mock/extract-static1.js:4-11 (Block) */
 ._x0 {
   display: block;
   static-float: 6.9px;
@@ -108,7 +108,7 @@ import LC from "./LC";
 <Box dynamicValue={notStatic} className="_x0" />;`
     );
     expect(rv.css).toEqual(
-      `/* ./packages/jsxstyle-loader/tests/mock/extract-static2.js:4 (Block) */
+      `/* ./tests/jsxstyle-loader/mock/extract-static2.js:4 (Block) */
 ._x0 {
   display: block;
   static-int: 69px;
@@ -161,7 +161,7 @@ import { Box } from "jsxstyle";
 <Box display="block" doNotExtract="no" {...spread} extract={null} className="_x0" />;`
     );
     expect(rv.css).toEqual(
-      `/* ./packages/jsxstyle-loader/tests/mock/spread.js:2 (Block) */
+      `/* ./tests/jsxstyle-loader/mock/spread.js:2 (Block) */
 ._x0 {
   extract: yep;
 }
@@ -194,7 +194,7 @@ import { Box } from "jsxstyle";
 }} key={test} ref={test} style={{}} {...spread} color={null} className={(typeof spread === "object" && spread !== null && spread.className || wow || "") + " _x0"} />;`
     );
     expect(rv.css).toEqual(
-      `/* ./packages/jsxstyle-loader/tests/mock/spread.js:2-11 (Block) */
+      `/* ./tests/jsxstyle-loader/mock/spread.js:2-11 (Block) */
 ._x0 {
   color: red;
 }
@@ -234,7 +234,7 @@ function Thing(props) {
     );
 
     expect(rv.css)
-      .toEqual(`/* ./packages/jsxstyle-loader/tests/mock/trusted-spreads.js:9 (Block) */
+      .toEqual(`/* ./tests/jsxstyle-loader/mock/trusted-spreads.js:9 (Block) */
 ._x0 {
   background-color: #FFF;
   border-radius: 4px;
@@ -310,19 +310,19 @@ describe('style groups', () => {
     );
 
     expect(rv.css).toEqual(
-      `/* ./packages/jsxstyle-loader/tests/mock/style-groups.js:2 (Block) */
-/* ./packages/jsxstyle-loader/tests/mock/style-groups.js:3 (Block) */
+      `/* ./tests/jsxstyle-loader/mock/style-groups.js:2 (Block) */
+/* ./tests/jsxstyle-loader/mock/style-groups.js:3 (Block) */
 ._x0 {
   display: block;
 }
-/* ./packages/jsxstyle-loader/tests/mock/style-groups.js:3 (Block) */
+/* ./tests/jsxstyle-loader/mock/style-groups.js:3 (Block) */
 ._x1 {
   thing: wow;
 }
 ._x1:hover {
   thing: ok;
 }
-/* ./packages/jsxstyle-loader/tests/mock/style-groups.js:4 (InlineBlock) */
+/* ./tests/jsxstyle-loader/mock/style-groups.js:4 (InlineBlock) */
 ._x2 {
   display: inline-block;
 }
@@ -361,19 +361,19 @@ describe('style groups', () => {
     );
 
     expect(rv.css).toEqual(
-      `/* ./packages/jsxstyle-loader/tests/mock/named-style-groups.js:2 (Block) */
-/* ./packages/jsxstyle-loader/tests/mock/named-style-groups.js:3 (Block) */
+      `/* ./tests/jsxstyle-loader/mock/named-style-groups.js:2 (Block) */
+/* ./tests/jsxstyle-loader/mock/named-style-groups.js:3 (Block) */
 ._x0 {
   display: block;
 }
-/* ./packages/jsxstyle-loader/tests/mock/named-style-groups.js:3 (Block) */
+/* ./tests/jsxstyle-loader/mock/named-style-groups.js:3 (Block) */
 ._test1 {
   thing: wow;
 }
 ._test1:hover {
   thing: ok;
 }
-/* ./packages/jsxstyle-loader/tests/mock/named-style-groups.js:4 (InlineBlock) */
+/* ./tests/jsxstyle-loader/mock/named-style-groups.js:4 (InlineBlock) */
 ._test2 {
   display: inline-block;
 }
@@ -586,7 +586,7 @@ import { Box } from "jsxstyle";
 <div className="_x0" />;`
     );
     expect(rv.css).toEqual(
-      `/* ./packages/jsxstyle-loader/tests/mock/media-queries.js:2-6 (Block) */
+      `/* ./tests/jsxstyle-loader/mock/media-queries.js:2-6 (Block) */
 ._x0 {
   display: block;
   width: 640px;
@@ -618,7 +618,7 @@ import LC from "./LC";
 <div className="_x0" />;`
     );
     expect(rv.css).toEqual(
-      `/* ./packages/jsxstyle-loader/tests/mock/media-queries.js:3-7 (Block) */
+      `/* ./tests/jsxstyle-loader/mock/media-queries.js:3-7 (Block) */
 ._x0 {
   display: block;
   width: 640px;
@@ -660,11 +660,11 @@ describe('ternaries', () => {
     );
 
     expect(rv.css)
-      .toEqual(`/* ./packages/jsxstyle-loader/tests/mock/ternary.js:2 (Block) */
+      .toEqual(`/* ./tests/jsxstyle-loader/mock/ternary.js:2 (Block) */
 ._x0 {
   display: block;
 }
-/* ./packages/jsxstyle-loader/tests/mock/ternary.js:2 (Block) */
+/* ./tests/jsxstyle-loader/mock/ternary.js:2 (Block) */
 ._x1 {
   color: red;
 }
@@ -686,11 +686,11 @@ import { Box } from "jsxstyle";
     );
 
     expect(rv.css).toEqual(
-      `/* ./packages/jsxstyle-loader/tests/mock/ternary.js:2 (Block) */
+      `/* ./tests/jsxstyle-loader/mock/ternary.js:2 (Block) */
 ._x0 {
   display: block;
 }
-/* ./packages/jsxstyle-loader/tests/mock/ternary.js:2 (Block) */
+/* ./tests/jsxstyle-loader/mock/ternary.js:2 (Block) */
 ._x1 {
   color: red;
 }
@@ -717,15 +717,15 @@ const blue = "blueberry";
     );
 
     expect(rv.css)
-      .toEqual(`/* ./packages/jsxstyle-loader/tests/mock/ternary.js:4 (Block) */
+      .toEqual(`/* ./tests/jsxstyle-loader/mock/ternary.js:4 (Block) */
 ._x0 {
   display: block;
 }
-/* ./packages/jsxstyle-loader/tests/mock/ternary.js:4 (Block) */
+/* ./tests/jsxstyle-loader/mock/ternary.js:4 (Block) */
 ._x1 {
   color: strawberry;
 }
-/* ./packages/jsxstyle-loader/tests/mock/ternary.js:4 (Block) */
+/* ./tests/jsxstyle-loader/mock/ternary.js:4 (Block) */
 ._x2 {
   color: blueberry;
 }
@@ -755,11 +755,11 @@ const blue = "blueberry";
     );
 
     expect(rv.css).toEqual(
-      `/* ./packages/jsxstyle-loader/tests/mock/ternary-with-spread.js:2 (Block) */
+      `/* ./tests/jsxstyle-loader/mock/ternary-with-spread.js:2 (Block) */
 ._x0 {
   color: red;
 }
-/* ./packages/jsxstyle-loader/tests/mock/ternary-with-spread.js:2 (Block) */
+/* ./tests/jsxstyle-loader/mock/ternary-with-spread.js:2 (Block) */
 ._x1 {
   color: blue;
 }
@@ -804,17 +804,17 @@ import { Box } from "jsxstyle";
     expect(rv2.js).toEqual(`import "./binary-expressions__jsxstyle.css";
 <div className={(dynamic == 4 ? "_x1" : "_x2") + " _x0"} />;`);
 
-    const resultCSS = `/* ./packages/jsxstyle-loader/tests/mock/binary-expressions.js:2-7 (Block) */
+    const resultCSS = `/* ./tests/jsxstyle-loader/mock/binary-expressions.js:2-7 (Block) */
 ._x0 {
   display: block;
 }
-/* ./packages/jsxstyle-loader/tests/mock/binary-expressions.js:2-7 (Block) */
+/* ./tests/jsxstyle-loader/mock/binary-expressions.js:2-7 (Block) */
 ._x1 {
   thing1: four;
   thing3: four;
   thing4: four;
 }
-/* ./packages/jsxstyle-loader/tests/mock/binary-expressions.js:2-7 (Block) */
+/* ./tests/jsxstyle-loader/mock/binary-expressions.js:2-7 (Block) */
 ._x2 {
   thing2: not four;
   thing3: not four;
@@ -843,17 +843,17 @@ import { Box } from "jsxstyle";
 <div className={(dynamic % 2 ? "_x1" : "_x2") + " _x0"} />;`);
 
     expect(rv.css)
-      .toEqual(`/* ./packages/jsxstyle-loader/tests/mock/unary-expressions.js:2-7 (Block) */
+      .toEqual(`/* ./tests/jsxstyle-loader/mock/unary-expressions.js:2-7 (Block) */
 ._x0 {
   display: block;
 }
-/* ./packages/jsxstyle-loader/tests/mock/unary-expressions.js:2-7 (Block) */
+/* ./tests/jsxstyle-loader/mock/unary-expressions.js:2-7 (Block) */
 ._x1 {
   thing1: mod 2;
   thing3: mod 2;
   thing4: mod 2;
 }
-/* ./packages/jsxstyle-loader/tests/mock/unary-expressions.js:2-7 (Block) */
+/* ./tests/jsxstyle-loader/mock/unary-expressions.js:2-7 (Block) */
 ._x2 {
   thing2: not mod 2;
   thing3: not mod 2;
@@ -888,16 +888,16 @@ import { Box } from "jsxstyle";
     );
 
     expect(rv.css).toEqual(
-      `/* ./packages/jsxstyle-loader/tests/mock/ternary-groups.js:2 (Block) */
+      `/* ./tests/jsxstyle-loader/mock/ternary-groups.js:2 (Block) */
 ._x0 {
   display: block;
 }
-/* ./packages/jsxstyle-loader/tests/mock/ternary-groups.js:2 (Block) */
+/* ./tests/jsxstyle-loader/mock/ternary-groups.js:2 (Block) */
 ._x1 {
   color: red;
   width: 200px;
 }
-/* ./packages/jsxstyle-loader/tests/mock/ternary-groups.js:2 (Block) */
+/* ./tests/jsxstyle-loader/mock/ternary-groups.js:2 (Block) */
 ._x2 {
   color: blue;
   width: 400px;
@@ -920,11 +920,11 @@ import { Box } from "jsxstyle";
     );
 
     expect(rv.css).toEqual(
-      `/* ./packages/jsxstyle-loader/tests/mock/ternary-null-values.js:2 (Block) */
+      `/* ./tests/jsxstyle-loader/mock/ternary-null-values.js:2 (Block) */
 ._x0 {
   display: block;
 }
-/* ./packages/jsxstyle-loader/tests/mock/ternary-null-values.js:2 (Block) */
+/* ./tests/jsxstyle-loader/mock/ternary-null-values.js:2 (Block) */
 ._x1 {
   color: blue;
 }
@@ -940,22 +940,22 @@ describe('experimental: jsxstyle lite', () => {
 <row />;
 <col flexGrow={1} />;`;
 
-  const expectedCSS = `/* ./packages/jsxstyle-loader/tests/mock/lite-mode.js:1 (block) */
+  const expectedCSS = `/* ./tests/jsxstyle-loader/mock/lite-mode.js:1 (block) */
 ._x0 {
   display: block;
   static: value;
 }
-/* ./packages/jsxstyle-loader/tests/mock/lite-mode.js:2 (inline-block) */
+/* ./tests/jsxstyle-loader/mock/lite-mode.js:2 (inline-block) */
 ._x1 {
   color: blue;
   display: inline-block;
 }
-/* ./packages/jsxstyle-loader/tests/mock/lite-mode.js:4 (row) */
+/* ./tests/jsxstyle-loader/mock/lite-mode.js:4 (row) */
 ._x2 {
   display: flex;
   flex-direction: row;
 }
-/* ./packages/jsxstyle-loader/tests/mock/lite-mode.js:5 (col) */
+/* ./tests/jsxstyle-loader/mock/lite-mode.js:5 (col) */
 ._x3 {
   display: flex;
   flex-direction: column;
@@ -1038,7 +1038,7 @@ describe('deterministic rendering', () => {
     expect(rv.js).toEqual(`import "./consistent-hashes__jsxstyle.css";
 <div className="_d3bqdr" />;`);
     expect(rv.css)
-      .toEqual(`/* ./packages/jsxstyle-loader/tests/mock/consistent-hashes.js:2-9 (Block) */
+      .toEqual(`/* ./tests/jsxstyle-loader/mock/consistent-hashes.js:2-9 (Block) */
 ._d3bqdr {
   color: red;
   display: block;

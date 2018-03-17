@@ -24,6 +24,9 @@
   "dependencies": {
     "@types/karma": "^1.7.3",
     "@types/lodash": "^4.14.106",
+    "@types/node": "^9.4.0",
+    "@types/react": "^16.0.35",
+    "@types/webpack-env": "^1.13.2",
     "@types/webpack": "^3.8.11",
     "babel-eslint": "^8.2.1",
     "babel-jest": "^22.1.0",
@@ -79,11 +82,11 @@
   },
   "jest": {
     "transform": {
-      ".js": "<rootDir>/misc/jestBabelTransform.js"
+      "^.+\\.js$": "babel-jest"
     },
     "watchman": false,
     "testMatch": [
-      "<rootDir>/packages/*/tests/*.spec.js"
+      "<rootDir>/tests/**/*.spec.js"
     ]
   },
   "eslintIgnore": [
@@ -91,10 +94,5 @@
     "*.cjs.js",
     "*.es.js",
     "node_modules"
-  ],
-  "devDependencies": {
-    "@types/node": "^9.4.0",
-    "@types/react": "^16.0.35",
-    "@types/webpack-env": "^1.13.2"
-  }
+  ]
 }

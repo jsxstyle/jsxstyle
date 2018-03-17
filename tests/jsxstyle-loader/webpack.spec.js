@@ -39,12 +39,12 @@ it('builds without issue', () => {
       );
 
       expect(redCSS)
-        .toEqual(`/* ./packages/jsxstyle-loader/tests/webpack/test-app/RedApp.js:8 (Inline) */
+        .toEqual(`/* ./tests/jsxstyle-loader/webpack/test-app/RedApp.js:8 (Inline) */
 ._1ioutjs {
   color: red;
   display: inline;
 }
-/* ./packages/jsxstyle-loader/tests/webpack/test-app/Shared.js:8 (Block) */
+/* ./tests/jsxstyle-loader/webpack/test-app/Shared.js:8 (Block) */
 ._1qb53c2 {
   display: block;
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
@@ -53,14 +53,14 @@ it('builds without issue', () => {
 }
 `);
       expect(blueCSS)
-        .toEqual(`/* ./packages/jsxstyle-loader/tests/webpack/test-app/Shared.js:8 (Block) */
+        .toEqual(`/* ./tests/jsxstyle-loader/webpack/test-app/Shared.js:8 (Block) */
 ._1qb53c2 {
   display: block;
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 18px;
   line-height: 22px;
 }
-/* ./packages/jsxstyle-loader/tests/webpack/test-app/BlueApp.js:8 (Inline) */
+/* ./tests/jsxstyle-loader/webpack/test-app/BlueApp.js:8 (Inline) */
 ._1qr3dx1 {
   color: blue;
   display: inline;

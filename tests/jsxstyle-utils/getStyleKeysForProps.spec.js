@@ -1,4 +1,4 @@
-import { getStyleKeysForProps } from '..';
+import { getStyleKeysForProps } from 'jsxstyle-utils';
 
 describe('getStyleKeysForProps', () => {
   it('returns null when given an empty style object', () => {

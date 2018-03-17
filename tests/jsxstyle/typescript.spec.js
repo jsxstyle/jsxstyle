@@ -1,7 +1,7 @@
 const ts = require('typescript');
 const path = require('path');
 
-const tsConfig = require('../tsconfig.json');
+const tsConfig = require('jsxstyle/tsconfig.json');
 
 const demoFile = path.resolve(__dirname, './typescript/demo.tsx');
 

@@ -17,7 +17,7 @@ it('has a runtime size of less than 3KB', () => {
     external: ['react', 'preact'],
     plugins: [
       rollupNodeResolve({
-        jail: path.resolve(__dirname, '../../../'),
+        jail: path.resolve(__dirname, '../../'),
         customResolveOptions: {
           moduleDirectory: 'packages',
         },

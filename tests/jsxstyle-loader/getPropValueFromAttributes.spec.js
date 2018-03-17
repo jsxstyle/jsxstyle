@@ -1,9 +1,9 @@
 'use strict';
 
-const parse = require('../utils/ast/parse');
-const generate = require('../utils/ast/generate');
+const parse = require('jsxstyle-loader/utils/ast/parse');
+const generate = require('jsxstyle-loader/utils/ast/generate');
 
-const getPropValueFromAttributes = require('../utils/ast/getPropValueFromAttributes');
+const getPropValueFromAttributes = require('jsxstyle-loader/utils/ast/getPropValueFromAttributes');
 
 describe('getPropValueFromAttributes', () => {
   it('returns the original prop value if no spread attributes appear before the requested prop', () => {

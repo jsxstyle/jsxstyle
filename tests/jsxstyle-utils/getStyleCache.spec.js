@@ -1,4 +1,4 @@
-import { getStyleCache } from '..';
+import { getStyleCache } from 'jsxstyle-utils';
 
 const kitchenSink = {
   mediaQueries: { test: 'test' },
