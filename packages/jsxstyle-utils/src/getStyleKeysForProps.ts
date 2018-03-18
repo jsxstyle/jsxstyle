@@ -1,6 +1,6 @@
 import hyphenateStyleName from './hyphenateStyleName';
 import dangerousStyleValue from './dangerousStyleValue';
-import { Dict } from '../jsxstyle-utils';
+import { Dict, CSSProperties } from '../jsxstyle-utils';
 
 // global flag makes subsequent calls of capRegex.test advance to the next match
 const capRegex = /[A-Z]/g;
@@ -44,7 +44,7 @@ export type StyleKeyObj = Dict<{
 }> & { classNameKey: string };
 
 export default function getStyleKeysForProps(
-  props: any,
+  props: CSSProperties & { mediaQueries?: Dict<string> },
   pretty = false
 ): StyleKeyObj | null {
   if (typeof props !== 'object' || props === null) {
@@ -65,12 +65,12 @@ export default function getStyleKeysForProps(
   const styleKeyObj = {} as StyleKeyObj;
 
   let classNameKey = '';
-  const seenMQs = {};
+  const seenMQs: Dict<string> = {};
 
-  const mqSortKeys = {};
+  const mqSortKeys: Dict<string> = {};
   if (hasMediaQueries) {
     let idx = -1;
-    for (const k in mediaQueries) {
+    for (const k in mediaQueries!) {
       mqSortKeys[k] = `@${1000 + ++idx}`;
     }
   }
@@ -85,22 +85,22 @@ export default function getStyleKeysForProps(
       continue;
     }
 
-    let propName = originalPropName;
-    let propSansMQ;
-    let pseudoelement;
-    let pseudoclass;
-    let mqKey;
+    let propName: string = originalPropName;
+    let propSansMQ: string | undefined;
+    let pseudoelement: string | undefined;
+    let pseudoclass: string | undefined;
+    let mqKey: string | undefined;
 
     capRegex.lastIndex = 0;
     let splitIndex = 0;
 
-    let prefix =
+    let prefix: string | false =
       capRegex.test(originalPropName) &&
       capRegex.lastIndex > 1 &&
       originalPropName.slice(0, capRegex.lastIndex - 1);
 
     // check for media query prefix
-    if (prefix && hasMediaQueries && mediaQueries.hasOwnProperty(prefix)) {
+    if (prefix && hasMediaQueries && mediaQueries!.hasOwnProperty(prefix)) {
       usesMediaQueries = true;
       mqKey = prefix;
       splitIndex = capRegex.lastIndex - 1;
@@ -142,7 +142,7 @@ export default function getStyleKeysForProps(
       continue;
     }
 
-    const mediaQuery = mqKey && mediaQueries[mqKey];
+    const mediaQuery = mqKey && mediaQueries![mqKey];
     const mqSortKey = mqKey && mqSortKeys[mqKey];
 
     const key =

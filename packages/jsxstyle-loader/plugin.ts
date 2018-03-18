@@ -1,8 +1,7 @@
-'use strict';
-
-const webpack = require('webpack');
-const fs = require('fs');
-const NodeWatchFileSystem = require('webpack/lib/node/NodeWatchFileSystem');
+import webpack = require('webpack');
+import fs = require('fs');
+import NodeWatchFileSystem = require('webpack/lib/node/NodeWatchFileSystem');
+import { CacheObject, LoaderContext } from './utils/types';
 
 const handledMethods = {
   // exists: true,
@@ -27,12 +26,16 @@ const handledMethods = {
   writeFileSync: true,
 };
 
-class JsxstyleWebpackPlugin {
+const counterKey = Symbol.for('counter');
+
+class JsxstyleWebpackPlugin implements webpack.Plugin {
   constructor() {
-    this.memoryFS = new webpack.MemoryOutputFileSystem();
+    this.memoryFS = new (webpack as any).MemoryOutputFileSystem();
 
     // the default cache object. can be overridden on a per-loader instance basis with the `cacheFile` option.
-    this.cacheObject = {};
+    this.cacheObject = {
+      [counterKey]: 0,
+    };
 
     // context object that gets passed to each loader.
     // available in each loader as this[Symbol.for('jsxstyle-loader')]
@@ -41,20 +44,30 @@ class JsxstyleWebpackPlugin {
       cacheFile: null,
       memoryFS: this.memoryFS,
       fileList: new Set(),
-      compileCallback: null,
     };
   }
 
-  apply(compiler) {
+  private memoryFS: any;
+  private cacheObject: CacheObject;
+  private ctx: LoaderContext;
+
+  apply(
+    compiler: webpack.Compiler & {
+      inputFileSystem: any;
+      watchFileSystem: any;
+    }
+  ) {
     const memoryFS = this.memoryFS;
 
-    compiler.plugin('environment', () => {
+    const plugin = 'JsxstyleLoaderPlugin';
+
+    const environmentPlugin = (): void => {
       compiler.inputFileSystem = new Proxy(compiler.inputFileSystem, {
         get: (target, key) => {
           const value = target[key];
 
           if (handledMethods.hasOwnProperty(key)) {
-            return function(filePath, ...args) {
+            return function(this: any, filePath: string, ...args: string[]) {
               if (filePath.endsWith('__jsxstyle.css')) {
                 return memoryFS[key](filePath, ...args);
               }
@@ -69,22 +82,32 @@ class JsxstyleWebpackPlugin {
       compiler.watchFileSystem = new NodeWatchFileSystem(
         compiler.inputFileSystem
       );
-    });
+    };
 
-    compiler.plugin('compilation', compilation => {
-      compilation.plugin('normal-module-loader', loaderContext => {
+    const compilationPlugin = (compilation: any): void => {
+      const nmlPlugin = (loaderContext: any) => {
         loaderContext[Symbol.for('jsxstyle-loader')] = this.ctx;
-      });
-    });
+      };
 
-    compiler.plugin('done', () => {
+      if (compilation.hooks) {
+        compilation.hooks.normalModuleLoader.tap(plugin, nmlPlugin);
+      } else {
+        compilation.plugin('normal-module-loader', nmlPlugin);
+      }
+    };
+
+    const donePlugin = (): void => {
       if (this.ctx.cacheFile) {
         // write contents of cache object as a newline-separated list of CSS strings
         const cacheString = Object.keys(this.ctx.cacheObject).join('\n') + '\n';
         fs.writeFileSync(this.ctx.cacheFile, cacheString, 'utf8');
       }
-    });
+    };
+
+    compiler.plugin('environment', environmentPlugin);
+    compiler.plugin('compilation', compilationPlugin);
+    compiler.plugin('done', donePlugin);
   }
 }
 
-module.exports = JsxstyleWebpackPlugin;
+export = JsxstyleWebpackPlugin;

@@ -1,10 +1,11 @@
-'use strict';
-
-const t = require('@babel/types');
+import t = require('@babel/types');
 
 // accessSafe wraps memberExpressions in object/null checks
 // TODO: inject this as a function? this gets pretty repetitive
-function accessSafe(obj, member) {
+export default function accessSafe(
+  obj: t.Expression,
+  member: string
+): t.LogicalExpression {
   return t.logicalExpression(
     '&&',
     t.logicalExpression(
@@ -22,5 +23,3 @@ function accessSafe(obj, member) {
     t.memberExpression(obj, t.identifier(member), false)
   );
 }
-
-module.exports = accessSafe;

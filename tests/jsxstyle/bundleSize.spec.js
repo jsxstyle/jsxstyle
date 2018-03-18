@@ -1,11 +1,9 @@
-'use strict';
-
-const path = require('path');
-const rollup = require('rollup');
-const rollupNodeResolve = require('rollup-plugin-node-resolve');
-const rollupReplace = require('rollup-plugin-replace');
-const rollupUglify = require('rollup-plugin-uglify');
-const zlib = require('zlib');
+import path from 'path';
+import { rollup } from 'rollup';
+import rollupNodeResolve from 'rollup-plugin-node-resolve';
+import rollupReplace from 'rollup-plugin-replace';
+import rollupUglify from 'rollup-plugin-uglify';
+import zlib from 'zlib';
 
 const entry = 'bundleSize entrypoint';
 
@@ -40,8 +38,7 @@ it('has a runtime size of less than 3KB', () => {
   const outputOptions = { format: 'cjs' };
 
   return new Promise((resolve, reject) => {
-    rollup
-      .rollup(inputOptions)
+    rollup(inputOptions)
       .then(bundle => {
         bundle
           .generate(outputOptions)

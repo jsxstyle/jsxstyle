@@ -1,9 +1,7 @@
-'use strict';
-
-const evaluateAstNode = require('jsxstyle-loader/utils/ast/evaluateAstNode');
-const parse = require('jsxstyle-loader/utils/ast/parse');
-const vm = require('vm');
-const generate = require('@babel/generator').default;
+import evaluateAstNode from 'jsxstyle-loader/utils/ast/evaluateAstNode';
+import parse from 'jsxstyle-loader/utils/ast/parse';
+import vm from 'vm';
+import generate from '@babel/generator';
 
 const staticNamespace = {
   LC: {

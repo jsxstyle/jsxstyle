@@ -38,6 +38,11 @@ module.exports = function(env = {}, options = {}) {
       options.hot && new ReactIndexPlugin(),
       env.experimental && new webpack.ProgressPlugin(progressHandler),
     ].filter(Boolean),
+    resolve: {
+      alias: {
+        jsxstyle: require.resolve('jsxstyle'),
+      },
+    },
     module: {
       rules: [
         {

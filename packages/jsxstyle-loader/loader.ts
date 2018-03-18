@@ -1,17 +1,22 @@
-'use strict';
+import invariant = require('invariant');
+import loaderUtils = require('loader-utils');
+import path = require('path');
+import util = require('util');
+import fs = require('fs');
 
-const extractStyles = require('./utils/ast/extractStyles');
+import { LoaderContext, CacheObject } from './utils/types';
+import extractStyles from './utils/ast/extractStyles';
 
-const invariant = require('invariant');
-const loaderUtils = require('loader-utils');
-const path = require('path');
-const util = require('util');
-const fs = require('fs');
+const counter = Symbol.for('counter');
 
-function jsxstyleLoader(content) {
+const jsxstyleLoader = function jsxstyleLoader(
+  // TODO: remove when webpack types suck less
+  this: any,
+  content: string | Buffer
+) {
   this.cacheable && this.cacheable();
 
-  const pluginContext = this[Symbol.for('jsxstyle-loader')];
+  const pluginContext: LoaderContext = this[Symbol.for('jsxstyle-loader')];
 
   invariant(
     pluginContext,
@@ -22,13 +27,13 @@ function jsxstyleLoader(content) {
 
   if (options.cacheFile && pluginContext.cacheFile !== options.cacheFile) {
     try {
-      const newCacheObject = {};
+      const newCacheObject: CacheObject = {};
 
       if (fs.existsSync(options.cacheFile)) {
         const cacheFileContents = fs.readFileSync(options.cacheFile, 'utf8');
 
         // create mapping of unique CSS strings to class names
-        const lines = new Set(cacheFileContents.trim().split('\n'));
+        const lines = new Set<string>(cacheFileContents.trim().split('\n'));
         let lineCount = 0;
         lines.forEach(line => {
           const className = '_x' + (lineCount++).toString(36);
@@ -36,7 +41,7 @@ function jsxstyleLoader(content) {
         });
 
         // set counter
-        newCacheObject[Symbol.for('counter')] = lineCount;
+        newCacheObject[counter] = lineCount;
       }
 
       pluginContext.cacheObject = newCacheObject;
@@ -59,21 +64,23 @@ function jsxstyleLoader(content) {
     this.resourcePath,
     {
       cacheObject,
-      warnCallback: (...args) =>
-        this.emitWarning(new Error(util.format(...args))),
-      errorCallback: (...args) =>
-        this.emitError(new Error(util.format(...args))),
+      warnCallback: (str, ...args: any[]) =>
+        this.emitWarning(new Error(util.format(str, ...args))),
+      errorCallback: (str, ...args: any[]) =>
+        this.emitError(new Error(util.format(str, ...args))),
     },
     options
   );
 
-  if (rv.css.length === 0) {
+  if (rv.cssFileName == null || rv.css.length === 0) {
     return content;
   }
 
   memoryFS.mkdirpSync(path.dirname(rv.cssFileName));
   memoryFS.writeFileSync(rv.cssFileName, rv.css);
-  this.callback(null, rv.js, rv.map, rv.ast);
-}
+  this.callback(null, rv.js, rv.map);
 
-module.exports = jsxstyleLoader;
+  return;
+};
+
+export default jsxstyleLoader;

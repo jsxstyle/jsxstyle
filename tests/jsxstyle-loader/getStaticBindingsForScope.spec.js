@@ -1,10 +1,7 @@
-'use strict';
-
-const getStaticBindingsForScope = require('jsxstyle-loader/utils/ast/getStaticBindingsForScope');
-
-const traverse = require('@babel/traverse').default;
+import getStaticBindingsForScope from 'jsxstyle-loader/utils/ast/getStaticBindingsForScope';
 const parse = require('jsxstyle-loader/utils/ast/parse');
-const path = require('path');
+import path from 'path';
+import traverse from '@babel/traverse';
 
 const whitelistedModules = [require.resolve('./mock/LC')];
 

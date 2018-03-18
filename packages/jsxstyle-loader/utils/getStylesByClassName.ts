@@ -1,8 +1,6 @@
-'use strict';
-
-const invariant = require('invariant');
-
-const getClassNameFromCache = require('./getClassNameFromCache');
+import getClassNameFromCache from './getClassNameFromCache';
+import { CSSProperties } from 'jsxstyle-utils';
+import { CacheObject, StyleProps } from './types';
 
 const nonStyleProps = {
   children: true,
@@ -12,24 +10,28 @@ const nonStyleProps = {
   style: true,
 };
 
-function getStylesByClassName(
-  styleGroups,
-  namedStyleGroups,
-  staticAttributes,
-  cacheObject,
-  classNameFormat
-) {
-  if (typeof staticAttributes !== 'undefined') {
-    invariant(
-      typeof staticAttributes === 'object' && staticAttributes !== null,
+export interface StylesByClassName {
+  [key: string]: CSSProperties;
+}
+
+export default function getStylesByClassName(
+  styleGroups: StyleProps[] = [],
+  namedStyleGroups: { [key: string]: CSSProperties } = {},
+  staticAttributes: { [key: string]: string | number },
+  cacheObject: CacheObject,
+  classNameFormat?: 'hash'
+): StylesByClassName {
+  if (typeof staticAttributes !== 'undefined' && staticAttributes == null) {
+    throw new Error(
       'getStylesByClassName expects an object as its second parameter'
     );
   }
 
-  invariant(
-    typeof cacheObject === 'object' && cacheObject !== null,
-    'getStylesByClassName expects an object as its third parameter'
-  );
+  if (cacheObject == null) {
+    throw new Error(
+      'getStylesByClassName expects an object as its third parameter'
+    );
+  }
 
   let hasItems = false;
   const styleProps = {};
@@ -48,7 +50,7 @@ function getStylesByClassName(
     return {};
   }
 
-  const stylesByClassName = {};
+  const stylesByClassName: StylesByClassName = {};
 
   // Feature: Style groups! if you want a bit more control over how classNames are generated,
   //   you can specify an object of style objects keyed by the className that should represent that group of styles.
@@ -134,5 +136,3 @@ function getStylesByClassName(
 
   return stylesByClassName;
 }
-
-module.exports = getStylesByClassName;

@@ -1,11 +1,21 @@
-'use strict';
+import traverse from '@babel/traverse';
+import parse from 'jsxstyle-loader/utils/ast/parse';
+import getSourceModule from 'jsxstyle-loader/utils/ast/getSourceModule';
 
-const getSourceModuleForItem = require('jsxstyle-loader/utils/ast/getSourceModuleForItem');
-const parse = require('jsxstyle-loader/utils/ast/parse');
+function getSourceModuleForItem(itemName, scope, warnCallback) {
+  let itemBinding = null;
 
-const traverse = require('@babel/traverse').default;
+  if (scope.hasBinding(itemName)) {
+    itemBinding = scope.getBinding(itemName);
+  } else {
+    warnCallback('Item `%s` is not in scope', itemName);
+    return null;
+  }
 
-describe('getSourceModuleForItem', () => {
+  return getSourceModule(itemName, itemBinding);
+}
+
+describe('getSourceModule', () => {
   const ast = parse(`
 const Thing1 = require('thing');
 const {Destructured1} = require('destructured');

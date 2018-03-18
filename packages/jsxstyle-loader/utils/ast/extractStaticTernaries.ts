@@ -1,12 +1,22 @@
-'use strict';
+import generate from '@babel/generator';
+import t = require('@babel/types');
+import invariant = require('invariant');
+import { Dict, CSSProperties } from 'jsxstyle-utils';
 
-const t = require('@babel/types');
-const invariant = require('invariant');
+import getClassNameFromCache from '../getClassNameFromCache';
+import { StaticTernary, CacheObject } from '../types';
+import { StylesByClassName } from '../getStylesByClassName';
 
-const generate = require('./generate');
-const getClassNameFromCache = require('../getClassNameFromCache');
-
-function extractStaticTernaries(ternaries, cacheObject, classNameFormat) {
+export default function extractStaticTernaries(
+  ternaries: StaticTernary[],
+  cacheObject: CacheObject,
+  classNameFormat?: 'hash'
+): {
+  /** styles to be extracted */
+  stylesByClassName: StylesByClassName;
+  /** ternaries grouped into one binary expression */
+  ternaryExpression: t.BinaryExpression | t.ConditionalExpression;
+} | null {
   invariant(
     Array.isArray(ternaries),
     'extractStaticTernaries expects param 1 to be an array of ternaries'
@@ -20,7 +30,11 @@ function extractStaticTernaries(ternaries, cacheObject, classNameFormat) {
     return null;
   }
 
-  const ternariesByKey = {};
+  const ternariesByKey: Dict<{
+    test: t.Expression;
+    consequentStyles: CSSProperties;
+    alternateStyles: CSSProperties;
+  }> = {};
   for (let idx = -1, len = ternaries.length; ++idx < len; ) {
     const { name, test, consequent, alternate } = ternaries[idx];
 
@@ -60,7 +74,7 @@ function extractStaticTernaries(ternaries, cacheObject, classNameFormat) {
       : alternate;
   }
 
-  const stylesByClassName = {};
+  const stylesByClassName: StylesByClassName = {};
 
   const ternaryExpression = Object.keys(ternariesByKey)
     .map((key, idx) => {
@@ -116,9 +130,9 @@ function extractStaticTernaries(ternaries, cacheObject, classNameFormat) {
         );
       }
     })
-    .filter(f => f)
+    .filter(Boolean)
     .reduce(
-      (acc, val) => (acc ? t.binaryExpression('+', acc, val) : val),
+      (acc, val) => (acc && val ? t.binaryExpression('+', acc, val) : val),
       null
     );
 
@@ -126,12 +140,5 @@ function extractStaticTernaries(ternaries, cacheObject, classNameFormat) {
     return null;
   }
 
-  return {
-    // styles to be extracted
-    stylesByClassName,
-    // ternaries grouped into one binary expression
-    ternaryExpression,
-  };
+  return { stylesByClassName, ternaryExpression };
 }
-
-module.exports = extractStaticTernaries;

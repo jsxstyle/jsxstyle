@@ -1,10 +1,8 @@
-'use strict';
+import invariant = require('invariant');
+import t = require('@babel/types');
+import generate from '@babel/generator';
 
-const invariant = require('invariant');
-const t = require('@babel/types');
-const generate = require('./generate');
-
-const accessSafe = require('./accessSafe');
+import accessSafe from './accessSafe';
 
 // getPropValueFromAttributes gets a prop by name from a list of attributes and accounts for potential spread operators.
 
@@ -17,16 +15,32 @@ const accessSafe = require('./accessSafe');
 
 // The returned value should (obviously) be placed after spread operators.
 
-function getPropValueFromAttributes(propName, attrs) {
-  const propIndex = attrs.findIndex(
-    attr => attr.name && attr.name.name === propName
-  );
+export default function getPropValueFromAttributes(
+  propName: string,
+  attrs: (t.JSXAttribute | t.JSXSpreadAttribute)[]
+): t.Expression | null {
+  let propIndex: number = -1;
+  let jsxAttr: t.JSXAttribute | null = null;
+  for (let idx = -1, len = attrs.length; ++idx < len; ) {
+    const attr = attrs[idx];
+    if (t.isJSXAttribute(attr) && attr.name && attr.name.name === propName) {
+      propIndex = idx;
+      jsxAttr = attr;
+      break;
+    }
+  }
 
-  if (propIndex === -1) {
+  if (!jsxAttr || jsxAttr.value == null) {
     return null;
   }
 
-  let propValue = attrs[propIndex].value;
+  let propValue:
+    | t.JSXElement
+    | t.JSXFragment
+    | t.StringLiteral
+    | t.JSXExpressionContainer
+    | t.Expression =
+    jsxAttr.value;
 
   if (t.isJSXExpressionContainer(propValue)) {
     propValue = propValue.expression;
@@ -37,7 +51,7 @@ function getPropValueFromAttributes(propName, attrs) {
     .filter(
       // 1. idx is greater than propValue prop index
       // 2. attr is a spread operator
-      (attr, idx) => {
+      (attr, idx): attr is t.JSXSpreadAttribute => {
         if (t.isJSXSpreadAttribute(attr)) {
           invariant(
             // only allow member expressions and identifiers to be spread for now
@@ -58,7 +72,7 @@ function getPropValueFromAttributes(propName, attrs) {
   // i.e. before1.propValue || before2.propValue || propValue
   // TODO: figure out how to do this without all the extra parens
   if (applicableSpreads.length > 0) {
-    propValue = applicableSpreads.reduce(
+    propValue = applicableSpreads.reduce<t.Expression>(
       (acc, val) => t.logicalExpression('||', accessSafe(val, propName), acc),
       propValue
     );
@@ -66,5 +80,3 @@ function getPropValueFromAttributes(propName, attrs) {
 
   return propValue;
 }
-
-module.exports = getPropValueFromAttributes;

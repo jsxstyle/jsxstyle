@@ -1,13 +1,16 @@
-'use strict';
+import { getStyleKeysForProps, stringHash } from 'jsxstyle-utils';
+import { CacheObject, StyleProps } from './types';
 
-const invariant = require('invariant');
-const { getStyleKeysForProps, stringHash } = require('jsxstyle-utils');
-
-function getClassNameFromCache(styleObject, cacheObject, classNameFormat) {
-  invariant(
-    typeof cacheObject === 'object' && cacheObject !== null,
-    'getClassNameFromCache expects an object as its second parameter'
-  );
+export default function getClassNameFromCache(
+  styleObject: StyleProps,
+  cacheObject: CacheObject,
+  classNameFormat?: 'hash'
+): string | null {
+  if (cacheObject == null) {
+    throw new Error(
+      'getClassNameFromCache expects an object as its second parameter'
+    );
+  }
 
   if (!styleObject || typeof styleObject !== 'object') {
     console.warn(
@@ -42,5 +45,3 @@ function getClassNameFromCache(styleObject, cacheObject, classNameFormat) {
 
   return cacheObject[classNameKey];
 }
-
-module.exports = getClassNameFromCache;

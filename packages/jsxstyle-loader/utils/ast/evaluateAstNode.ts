@@ -1,30 +1,34 @@
-'use strict';
+import t = require('@babel/types');
+import { Dict } from 'jsxstyle-utils';
 
-const t = require('@babel/types');
-const invariant = require('invariant');
-
-function evaluateAstNode(exprNode, evalFn) {
-  const hasFn = evalFn && typeof evalFn === 'function';
-
+export default function evaluateAstNode(
+  exprNode: t.Node,
+  evalFn?: (node: t.Node) => boolean
+): any {
   // loop through ObjectExpression keys
   if (t.isObjectExpression(exprNode)) {
-    const ret = {};
+    const ret: Dict<any> = {};
     for (let idx = -1, len = exprNode.properties.length; ++idx < len; ) {
       const value = exprNode.properties[idx];
 
-      let key = null;
+      if (!t.isObjectProperty(value)) {
+        throw new Error('evaluateAstNode can only evaluate object properties');
+      }
+
+      let key: any = null;
       if (value.computed) {
-        invariant(
-          hasFn,
-          'evaluateAstNode does not support computed keys unless an eval function is provided'
-        );
+        if (typeof evalFn !== 'function') {
+          throw new Error(
+            'evaluateAstNode does not support computed keys unless an eval function is provided'
+          );
+        }
         key = evaluateAstNode(value.key, evalFn);
       } else if (t.isIdentifier(value.key)) {
         key = value.key.name;
       } else if (t.isLiteral(value.key)) {
         key = value.key.value;
       } else {
-        invariant(false, 'Unsupported key type: %s', value.key.type);
+        throw new Error('Unsupported key type: ' + value.key.type);
       }
 
       ret[key] = evaluateAstNode(value.value);
@@ -33,16 +37,21 @@ function evaluateAstNode(exprNode, evalFn) {
   }
 
   if (t.isUnaryExpression(exprNode) && exprNode.operator === '-') {
-    return -evaluateAstNode(exprNode.argument, evalFn);
+    const ret = evaluateAstNode(exprNode.argument, evalFn);
+    if (ret == null) {
+      return null;
+    }
+    return -ret;
   }
 
   if (t.isTemplateLiteral(exprNode)) {
-    invariant(
-      hasFn,
-      'evaluateAstNode does not support template literals unless an eval function is provided'
-    );
+    if (typeof evalFn !== 'function') {
+      throw new Error(
+        'evaluateAstNode does not support template literals unless an eval function is provided'
+      );
+    }
 
-    let ret = '';
+    let ret: string = '';
     for (let idx = -1, len = exprNode.quasis.length; ++idx < len; ) {
       const quasi = exprNode.quasis[idx];
       const expr = exprNode.expressions[idx];
@@ -54,10 +63,16 @@ function evaluateAstNode(exprNode, evalFn) {
     return ret;
   }
 
-  if (t.isLiteral(exprNode)) {
+  // In the interest of representing the "evaluated" prop
+  // as the user intended, we support negative null. Why not.
+  if (t.isNullLiteral(exprNode)) {
+    return null;
+  }
+
+  if (t.isNumericLiteral(exprNode) || t.isStringLiteral(exprNode)) {
     // In the interest of representing the "evaluated" prop
     // as the user intended, we support negative null. Why not.
-    return t.isNullLiteral(exprNode) ? null : exprNode.value;
+    return exprNode.value;
   }
 
   if (t.isBinaryExpression(exprNode)) {
@@ -87,12 +102,11 @@ function evaluateAstNode(exprNode, evalFn) {
   // TODO: member expression?
 
   // if we've made it this far, the value has to be evaluated
-  invariant(
-    hasFn,
-    'evaluateAstNode does not support non-literal values unless an eval function is provided'
-  );
+  if (typeof evalFn !== 'function') {
+    throw new Error(
+      'evaluateAstNode does not support non-literal values unless an eval function is provided'
+    );
+  }
 
   return evalFn(exprNode);
 }
-
-module.exports = evaluateAstNode;

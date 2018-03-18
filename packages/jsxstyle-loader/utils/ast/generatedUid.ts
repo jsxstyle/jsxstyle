@@ -1,10 +1,13 @@
-'use strict';
+import invariant = require('invariant');
+import t = require('@babel/types');
 
-const invariant = require('invariant');
-const t = require('@babel/types');
+// TODO: open a PR upstream
+declare module '@babel/types' {
+  export function toIdentifier(input: string): string;
+}
 
 // A clone of path.scope.generateUid that doesn't prepend underscores
-function generateUid(scope, name) {
+export default function generateUid(scope: any, name: string): string {
   invariant(
     typeof scope === 'object',
     'generateUid expects a scope object as its first parameter'
@@ -41,5 +44,3 @@ function generateUid(scope, name) {
 
   return uid;
 }
-
-module.exports = generateUid;

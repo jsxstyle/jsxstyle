@@ -1,8 +1,6 @@
-'use strict';
-
-const path = require('path');
-const webpackConfig = require('./webpack/webpack.config');
-const webpack = require('webpack');
+import path from 'path';
+import webpackConfig from './webpack/webpack.config';
+import webpack from 'webpack';
 
 // one minute
 jest.setTimeout(60000);

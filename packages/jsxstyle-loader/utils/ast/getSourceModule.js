@@ -1,8 +1,9 @@
-'use strict';
-
 const t = require('@babel/types');
 
-function getSourceModule(itemName, itemBinding) {
+module.exports = function getSourceModule(
+  itemName,
+  itemBinding
+) {
   // TODO: deal with reassignment
   if (!itemBinding.constant) {
     return null;
@@ -14,57 +15,62 @@ function getSourceModule(itemName, itemBinding) {
   let destructured;
   let usesImportSyntax = false;
 
+  const itemNode = itemBinding.path.node;
+
   if (
     // import x from 'y';
-    t.isImportDefaultSpecifier(itemBinding.path.node) ||
+    t.isImportDefaultSpecifier(itemNode) ||
     // import {x} from 'y';
-    t.isImportSpecifier(itemBinding.path.node)
+    t.isImportSpecifier(itemNode)
   ) {
-    if (
-      t.isImportDeclaration(itemBinding.path.parent) &&
-      t.isStringLiteral(itemBinding.path.parent.source)
-    ) {
+    if (t.isImportDeclaration(itemBinding.path.parent)) {
       sourceModule = itemBinding.path.parent.source.value;
-      local = itemBinding.path.node.local.name;
+      local = itemNode.local.name;
       usesImportSyntax = true;
-      if (itemBinding.path.node.imported) {
-        imported = itemBinding.path.node.imported.name;
+      if (t.isImportSpecifier(itemNode)) {
+        imported = itemNode.imported.name;
         destructured = true;
       } else {
-        imported = itemBinding.path.node.local.name;
+        imported = itemNode.local.name;
         destructured = false;
       }
     }
   } else if (
-    t.isVariableDeclarator(itemBinding.path.node) &&
-    t.isCallExpression(itemBinding.path.node.init) &&
-    t.isIdentifier(itemBinding.path.node.init.callee) &&
-    itemBinding.path.node.init.callee.name === 'require' &&
-    itemBinding.path.node.init.arguments.length === 1 &&
-    t.isStringLiteral(itemBinding.path.node.init.arguments[0])
+    t.isVariableDeclarator(itemNode) &&
+    itemNode.init != null &&
+    t.isCallExpression(itemNode.init) &&
+    t.isIdentifier(itemNode.init.callee) &&
+    itemNode.init.callee.name === 'require' &&
+    itemNode.init.arguments.length === 1
   ) {
-    sourceModule = itemBinding.path.node.init.arguments[0].value;
+    const firstArg = itemNode.init.arguments[0];
+    if (!t.isStringLiteral(firstArg)) return null;
+    sourceModule = firstArg.value;
 
-    if (t.isIdentifier(itemBinding.path.node.id)) {
-      local = itemBinding.path.node.id.name;
-      imported = itemBinding.path.node.id.name;
+    if (t.isIdentifier(itemNode.id)) {
+      local = itemNode.id.name;
+      imported = itemNode.id.name;
       destructured = false;
-    } else if (t.isObjectPattern(itemBinding.path.node.id)) {
-      // TODO: better way to get ObjectProperty
-      const objProp = itemBinding.path.node.id.properties.find(
-        p => t.isIdentifier(p.value) && p.value.name === itemName
-      );
+    } else if (t.isObjectPattern(itemNode.id)) {
+      for (const objProp of itemNode.id.properties) {
+        if (
+          t.isObjectProperty(objProp) &&
+          t.isIdentifier(objProp.value) &&
+          objProp.value.name === itemName
+        ) {
+          local = objProp.value.name;
+          imported = objProp.key.name;
+          destructured = true;
+          break;
+        }
+      }
 
-      if (!objProp) {
+      if (!local || !imported) {
         console.error('could not find prop with value `%s`', itemName);
         return null;
       }
-
-      local = objProp.value.name;
-      imported = objProp.key.name;
-      destructured = true;
     } else {
-      console.error('Unhandled id type: %s', itemBinding.path.node.id.type);
+      console.error('Unhandled id type: %s', itemNode.id.type);
       return null;
     }
   } else {
@@ -79,5 +85,3 @@ function getSourceModule(itemName, itemBinding) {
     usesImportSyntax,
   };
 }
-
-module.exports = getSourceModule;

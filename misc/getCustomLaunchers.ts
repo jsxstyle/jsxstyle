@@ -171,9 +171,8 @@ appiumDevices.forEach(data => {
 
 // browsers that support the `latest` field
 ['MicrosoftEdge', 'Safari', 'Firefox', 'Chrome'].forEach(b => {
-  const total = b === 'MicrosoftEdge' ? 3 : 5;
   const niceName = b === 'MicrosoftEdge' ? 'Edge' : b;
-  for (let idx = -1; ++idx < total; ) {
+  for (let idx = -1; ++idx < 4; ) {
     const k = `sl_${b}_latest${idx > 0 ? `-${idx}` : ''}`.toLowerCase();
     const version = `latest${idx > 0 ? `-${idx}` : ''}`;
 
