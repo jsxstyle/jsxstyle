@@ -10,5 +10,8 @@
   "types": "jsxstyle-utils.d.ts",
   "keywords": [
     "jsxstyle"
-  ]
+  ],
+  "dependencies": {
+    "csstype": "^2.1.1"
+  }
 }

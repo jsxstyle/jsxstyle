@@ -1,7 +1,10 @@
 import * as React from 'react';
-import { Dict, componentStyles, getStyleCache } from 'jsxstyle-utils';
-
-import CSSProperties from './CSSProperties';
+import {
+  componentStyles,
+  CSSProperties,
+  Dict,
+  getStyleCache,
+} from 'jsxstyle-utils';
 
 export const cache = getStyleCache();
 

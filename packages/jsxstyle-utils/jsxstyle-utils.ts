@@ -7,4 +7,8 @@ export { pseudoelements, pseudoclasses } from './src/getStyleKeysForProps';
 export { default as hyphenateStyleName } from './src/hyphenateStyleName';
 export { default as stringHash } from './src/stringHash';
 
+import { Properties } from 'csstype';
+// Dict<any> is required until pseudoclass prefixed style props have types
+export type CSSProperties = Properties<string | number> & Dict<any>;
+
 export type Dict<T> = { [key: string]: T };

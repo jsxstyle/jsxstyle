@@ -1,7 +1,10 @@
 import * as preact from 'preact';
-import { Dict, getStyleCache, componentStyles } from 'jsxstyle-utils';
-
-import CSSProperties from '../CSSProperties';
+import {
+  componentStyles,
+  CSSProperties,
+  Dict,
+  getStyleCache,
+} from 'jsxstyle-utils';
 
 export const cache = getStyleCache();
 
