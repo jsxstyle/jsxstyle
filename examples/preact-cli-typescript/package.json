@@ -1,0 +1,20 @@
+{
+  "name": "jsxstyle-preact-cli-typescript",
+  "private": true,
+  "version": "0.0.0",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "preact build",
+    "serve": "preact build && preact serve",
+    "dev": "preact watch",
+    "tsc-check": "tsc --noEmit --p ./tsconfig.json"
+  },
+  "devDependencies": {
+    "preact-cli": "^2.1.1",
+    "ts-loader": "^3.5.0",
+    "typescript": "^2.8.1"
+  },
+  "dependencies": {
+    "jsxstyle": "^2.0.11"
+  }
+}

@@ -2,5 +2,6 @@
   "name": "jsxstyle-preact",
   "main": "jsxstyle-preact.cjs.js",
   "module": "jsxstyle-preact.es.js",
-  "jsnext:main": "jsxstyle-preact.es.js"
+  "jsnext:main": "jsxstyle-preact.es.js",
+  "types": "jsxstyle-preact.d.ts"
 }

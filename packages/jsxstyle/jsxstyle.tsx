@@ -28,8 +28,8 @@ function factory(displayName: string, defaultProps?: Dict<React.ReactText>) {
   const tagName = 'div';
 
   return class JsxstyleComponent<P> extends React.Component<JsxstyleProps<P>> {
-    className: string | null;
-    component: AnyComponent<JsxstyleProps<P>>;
+    public className: string | null;
+    public component: AnyComponent<JsxstyleProps<P>>;
 
     constructor(props: JsxstyleProps<P>) {
       super(props);

@@ -43,10 +43,11 @@ module.exports = {
         'no-undef': 0,
         'no-unused-vars': 0,
         'no-useless-constructor': 0,
+        'no-use-before-define': 0,
       },
     },
     {
-      files: ['examples/preact-cli/src/**/*.js'],
+      files: ['examples/preact-*/src/**/*.js'],
       settings: {
         react: {
           pragma: 'h',

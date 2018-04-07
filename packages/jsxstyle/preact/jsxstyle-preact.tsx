@@ -15,9 +15,12 @@ export interface StyleProps {
 
 export type AnyComponent<Props extends StyleProps> =
   | keyof JSX.IntrinsicElements
-  | preact.AnyComponent<Props, {}>;
+  | preact.AnyComponent<Props, any>
+  // this isn't covered by preact.FunctionalComponent for some reason
+  | ((props?: Props) => preact.VNode);
 
 export type JsxstyleProps<ComponentProps> = {
+  children?: preact.VNode[];
   component?: AnyComponent<ComponentProps>;
   mediaQueries?: Dict<string>;
   props?: ComponentProps;
@@ -39,8 +42,8 @@ function factory(
     JsxstyleProps<P>,
     {}
   > {
-    className: string | null;
-    component: AnyComponent<JsxstyleProps<P>>;
+    public className: string | null;
+    public component: AnyComponent<JsxstyleProps<P>>;
 
     constructor(props: JsxstyleProps<P>) {
       super(props);

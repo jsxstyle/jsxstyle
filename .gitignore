@@ -8,4 +8,4 @@ lib/
 *.amd.js
 *.d.ts
 stats.json
-.*
+.rpt2_cache
