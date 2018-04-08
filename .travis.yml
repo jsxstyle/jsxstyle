@@ -12,6 +12,7 @@ install:
   - npm install
 script:
   - npm run jest
+  - curl https://saucelabs.com/rest/v1/info/platforms/appium > saucelabs-appium.json
   - travis_retry npm run karma
 addons:
   sauce_connect:

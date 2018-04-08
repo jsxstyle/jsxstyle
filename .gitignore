@@ -9,3 +9,4 @@ lib/
 *.d.ts
 stats.json
 .rpt2_cache
+/saucelabs-appium.json

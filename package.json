@@ -18,9 +18,13 @@
     "rollup": "npm run reset && rollup -c && prettier --write packages/{*,*/*}/jsxstyle*.{es,cjs,amd}.js",
     "rollup_watch": "npm run reset && rollup -c -w;",
     "start": "webpack-dev-server --hot --hotOnly --inline --historyApiFallback --config=example/webpack.config.js",
-    "update_readme": "echo \"$(<./misc/monorepo-preamble.md)\\n\\n---\\n\\n$(<./packages/jsxstyle/README.md)\" > README.md"
+    "update_readme": "echo \"$(<./misc/monorepo-preamble.md)\\n\\n---\\n\\n$(<./packages/jsxstyle/README.md)\" > README.md",
+    "update_sauce_data": "curl https://saucelabs.com/rest/v1/info/platforms/all > saucelabs-appium.json"
   },
   "dependencies": {
+    "@types/karma": "^1.7.3",
+    "@types/lodash": "^4.14.106",
+    "@types/webpack": "^3.8.11",
     "babel-eslint": "^8.2.1",
     "babel-jest": "^22.1.0",
     "babel-loader": "^7.1.2",
@@ -41,6 +45,7 @@
     "eslint-plugin-typescript": "^0.8.1",
     "extract-text-webpack-plugin": "^3.0.0",
     "html-webpack-plugin": "^2.30.1",
+    "invariant": "^2.2.4",
     "jasmine-core": "^2.9.1",
     "jest": "^22.1.4",
     "karma": "^2.0.0",
@@ -62,7 +67,8 @@
     "rollup-plugin-typescript2": "^0.10.0",
     "rollup-plugin-uglify": "^3.0.0",
     "style-loader": "^0.20.1",
-    "typescript": "^2.6.1",
+    "ts-node": "^5.0.1",
+    "typescript": "^2.8.1",
     "typescript-eslint-parser": "^12.0.0",
     "webpack": "^3.6.0",
     "webpack-dev-server": "^2.11.1"
