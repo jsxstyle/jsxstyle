@@ -59,9 +59,9 @@ export = (config: KarmaConfig) => {
     captureTimeout: 180000,
     // 30 seconds
     browserNoActivityTimeout: 30000,
-    files: ['packages/*/tests/*.karma.js'],
+    files: ['tests/**/*.karma.js'],
     preprocessors: {
-      '**/*.karma.js': ['webpack', 'sourcemap'],
+      'tests/**/*.karma.js': ['webpack', 'sourcemap'],
     },
     sauceLabs: {
       recordScreenshots: false,
