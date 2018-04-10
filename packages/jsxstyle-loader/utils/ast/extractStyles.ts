@@ -16,9 +16,9 @@ import evaluateAstNode from './evaluateAstNode';
 import extractStaticTernaries from './extractStaticTernaries';
 import generateUid from './generatedUid';
 import getPropValueFromAttributes from './getPropValueFromAttributes';
-const getStaticBindingsForScope = require('./getStaticBindingsForScope');
+import getStaticBindingsForScope from './getStaticBindingsForScope';
 import getStylesByClassName from '../getStylesByClassName';
-const parse = require('./parse');
+import parse from './parse';
 import {
   StyleProps,
   CacheObject,

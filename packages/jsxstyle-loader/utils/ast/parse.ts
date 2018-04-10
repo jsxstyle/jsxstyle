@@ -1,13 +1,14 @@
-const babylon = require('babylon');
+import babylon = require('babylon');
+import { BabylonPlugin } from '../types';
 
-module.exports = function parse(
-  code,
-  plugins = []
-) {
+export default function parse(
+  code: string | Buffer,
+  plugins: BabylonPlugin[] = []
+): any {
   return babylon.parse(code.toString(), {
     sourceType: 'module',
     plugins: Array.from(
-      new Set([
+      new Set<BabylonPlugin>([
         'asyncGenerators',
         'classProperties',
         'dynamicImport',

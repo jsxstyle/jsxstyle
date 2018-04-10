@@ -1,17 +1,41 @@
-const path = require('path');
-const t = require('@babel/types');
+import path = require('path');
+import t = require('@babel/types');
+import { Dict } from 'jsxstyle-utils';
 
-const getSourceModule = require('./getSourceModule');
-const evaluateAstNode = require('./evaluateAstNode').default;
+import getSourceModule from './getSourceModule';
+import evaluateAstNode from './evaluateAstNode';
 
-module.exports = function getStaticBindingsForScope(
-  scope,
-  whitelist = [],
-  sourceFileName,
-  bindingCache
-) {
-  const bindings = scope.getAllBindings();
-  const ret = {};
+export interface BindingCache {
+  [key: string]: string | null;
+}
+
+interface Binding {
+  identifier: any;
+  scope: any;
+  path: any;
+  // this list is incomplete
+  kind: 'module' | 'let' | 'const' | 'var' | 'param' | 'hoisted' | 'local';
+
+  constantViolations: any[];
+  constant: boolean;
+
+  referencePaths: any[]; // NodePath[]
+  referenced: boolean;
+  references: number;
+
+  hasDeoptedValue: boolean;
+  hasValue: boolean;
+  value: any;
+}
+
+export default function getStaticBindingsForScope(
+  scope: any,
+  whitelist: string[] = [],
+  sourceFileName: string,
+  bindingCache: BindingCache
+): Dict<any> {
+  const bindings: Dict<Binding> = scope.getAllBindings();
+  const ret: Dict<any> = {};
   const sourceDir = path.dirname(sourceFileName);
 
   if (!bindingCache) {

@@ -1,18 +1,29 @@
-const t = require('@babel/types');
+import t = require('@babel/types');
 
-module.exports = function getSourceModule(
-  itemName,
-  itemBinding
-) {
+export interface SourceModule {
+  sourceModule?: string;
+  imported?: string;
+  local?: string;
+  destructured?: boolean;
+  usesImportSyntax: boolean;
+}
+
+export default function getSourceModule(
+  itemName: string,
+  itemBinding: {
+    constant?: boolean;
+    path: { node: t.Node; parent: any };
+  }
+): SourceModule | null {
   // TODO: deal with reassignment
   if (!itemBinding.constant) {
     return null;
   }
 
-  let sourceModule;
-  let imported;
-  let local;
-  let destructured;
+  let sourceModule: string | undefined;
+  let imported: string | undefined;
+  let local: string | undefined;
+  let destructured: boolean | undefined;
   let usesImportSyntax = false;
 
   const itemNode = itemBinding.path.node;
