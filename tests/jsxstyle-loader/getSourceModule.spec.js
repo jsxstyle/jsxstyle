@@ -1,6 +1,6 @@
 import traverse from '@babel/traverse';
-import parse from 'jsxstyle-loader/utils/ast/parse';
-import getSourceModule from 'jsxstyle-loader/utils/ast/getSourceModule';
+import parse from 'jsxstyle-loader/lib/utils/ast/parse';
+import getSourceModule from 'jsxstyle-loader/lib/utils/ast/getSourceModule';
 
 function getSourceModuleForItem(itemName, scope, warnCallback) {
   let itemBinding = null;

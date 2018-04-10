@@ -10,13 +10,13 @@
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noUnusedLocals": true,
-    "outDir": ".",
+    "outDir": "lib",
     "strictNullChecks": true,
     "suppressImplicitAnyIndexErrors": true,
     "target": "es6",
     "types": ["node"],
-    "inlineSourceMap": true
+    "sourceMap": true
   },
   "exclude": ["**/node_modules/**/*", "types/**/*.d.ts"],
-  "include": ["**/*.ts"]
+  "include": ["src/**/*.ts"]
 }

@@ -22,11 +22,11 @@ import parse from './parse';
 import {
   StyleProps,
   CacheObject,
-  StaticTernary,
   BabylonPlugin,
-} from '../types';
+  StaticTernary,
+} from '../../types';
 
-const loaderSchema = require('../../schema/loader.json');
+const loaderSchema = require('../../../schema/loader.json');
 
 export interface ExtractStylesOptions {
   classNameFormat?: 'hash';

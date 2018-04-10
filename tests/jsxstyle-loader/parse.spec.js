@@ -1,4 +1,4 @@
-import parse from 'jsxstyle-loader/utils/ast/parse';
+import parse from 'jsxstyle-loader/lib/utils/ast/parse';
 import generate from '@babel/generator';
 
 // parse helper

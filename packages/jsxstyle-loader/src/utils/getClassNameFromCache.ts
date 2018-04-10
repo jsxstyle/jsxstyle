@@ -1,5 +1,5 @@
 import { getStyleKeysForProps, stringHash } from 'jsxstyle-utils';
-import { CacheObject, StyleProps } from './types';
+import { CacheObject, StyleProps } from '../types';
 
 export default function getClassNameFromCache(
   styleObject: StyleProps,

@@ -1,7 +1,7 @@
-import parse from 'jsxstyle-loader/utils/ast/parse';
+import parse from 'jsxstyle-loader/lib/utils/ast/parse';
 import generate from '@babel/generator';
 
-import getPropValueFromAttributes from 'jsxstyle-loader/utils/ast/getPropValueFromAttributes';
+import getPropValueFromAttributes from 'jsxstyle-loader/lib/utils/ast/getPropValueFromAttributes';
 
 describe('getPropValueFromAttributes', () => {
   it('returns the original prop value if no spread attributes appear before the requested prop', () => {

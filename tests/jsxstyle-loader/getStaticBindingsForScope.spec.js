@@ -1,5 +1,5 @@
-import getStaticBindingsForScope from 'jsxstyle-loader/utils/ast/getStaticBindingsForScope';
-import parse from 'jsxstyle-loader/utils/ast/parse';
+import getStaticBindingsForScope from 'jsxstyle-loader/lib/utils/ast/getStaticBindingsForScope';
+import parse from 'jsxstyle-loader/lib/utils/ast/parse';
 import path from 'path';
 import traverse from '@babel/traverse';
 

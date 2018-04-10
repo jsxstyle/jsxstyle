@@ -1,12 +1,7 @@
 node_modules
-lib/
 .vscode
 .env
 *.log
-*.es.js
-*.cjs.js
-*.amd.js
-*.d.ts
 stats.json
 .rpt2_cache
-/saucelabs-appium.json
+saucelabs-appium.json

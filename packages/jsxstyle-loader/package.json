@@ -4,8 +4,8 @@
   "description": "A webpack loader that extracts out static styles defined on jsxstyle components",
   "author": "Mike Meyer",
   "license": "Apache-2.0",
-  "main": "loader.js",
-  "types": "loader.d.ts",
+  "main": "lib/loader.js",
+  "types": "lib/loader.d.ts",
   "engines": {
     "node": ">=6.0.0"
   },

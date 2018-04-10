@@ -1,5 +1,5 @@
 import babylon = require('babylon');
-import { BabylonPlugin } from '../types';
+import { BabylonPlugin } from '../../types';
 
 export default function parse(
   code: string | Buffer,

@@ -1,7 +1,7 @@
 import webpack = require('webpack');
 import fs = require('fs');
 import NodeWatchFileSystem = require('webpack/lib/node/NodeWatchFileSystem');
-import { CacheObject, LoaderContext } from './utils/types';
+import { CacheObject, LoaderContext } from './types';
 
 const handledMethods = {
   // exists: true,

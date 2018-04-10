@@ -4,7 +4,7 @@ import invariant = require('invariant');
 import { Dict, CSSProperties } from 'jsxstyle-utils';
 
 import getClassNameFromCache from '../getClassNameFromCache';
-import { StaticTernary, CacheObject } from '../types';
+import { CacheObject, StaticTernary } from '../../types';
 import { StylesByClassName } from '../getStylesByClassName';
 
 export default function extractStaticTernaries(

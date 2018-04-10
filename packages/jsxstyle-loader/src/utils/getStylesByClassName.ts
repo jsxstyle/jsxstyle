@@ -1,6 +1,6 @@
 import getClassNameFromCache from './getClassNameFromCache';
 import { CSSProperties } from 'jsxstyle-utils';
-import { CacheObject, StyleProps } from './types';
+import { CacheObject, StyleProps } from '../types';
 
 const nonStyleProps = {
   children: true,

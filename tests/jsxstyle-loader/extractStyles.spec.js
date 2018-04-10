@@ -1,5 +1,5 @@
 import path from 'path';
-import extractStyles from 'jsxstyle-loader/utils/ast/extractStyles';
+import extractStyles from 'jsxstyle-loader/lib/utils/ast/extractStyles';
 
 const whitelistedModules = [require.resolve('./mock/LC')];
 

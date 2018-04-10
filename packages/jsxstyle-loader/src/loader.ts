@@ -4,8 +4,8 @@ import path = require('path');
 import util = require('util');
 import fs = require('fs');
 
-import { LoaderContext, CacheObject } from './utils/types';
 import extractStyles from './utils/ast/extractStyles';
+import { LoaderContext, CacheObject } from './types';
 
 const counter = Symbol.for('counter');
 

@@ -1,5 +1,5 @@
-import evaluateAstNode from 'jsxstyle-loader/utils/ast/evaluateAstNode';
-import parse from 'jsxstyle-loader/utils/ast/parse';
+import evaluateAstNode from 'jsxstyle-loader/lib/utils/ast/evaluateAstNode';
+import parse from 'jsxstyle-loader/lib/utils/ast/parse';
 import vm from 'vm';
 import generate from '@babel/generator';
 
