@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "allowJs": false,
+    "declaration": true,
+    "declarationDir": "../lib",
+    "forceConsistentCasingInFileNames": true,
+    "jsx": "react",
+    "jsxFactory": "preact.h",
+    "lib": ["es6", "dom"],
+    "module": "esnext",
+    "moduleResolution": "node",
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "sourceMap": true,
+    "strictNullChecks": true,
+    "target": "es5",
+    "types": ["node", "preact"]
+  },
+  "include": ["*.ts", "*.tsx"]
+}

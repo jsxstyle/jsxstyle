@@ -1,13 +1,11 @@
-'use strict';
-
-const path = require('path');
-const webpack = require('webpack');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const JsxstyleLoaderPlugin = require('jsxstyle-loader/plugin');
+import path = require('path');
+import webpack = require('webpack');
+import JsxstyleLoaderPlugin = require('jsxstyle-loader/plugin');
+import ReactIndexPlugin = require('../../misc/ReactIndexPlugin');
 
 const appSrc = path.join(__dirname, 'src');
 
-module.exports = {
+const config: webpack.Configuration = {
   devtool: 'cheap-module-source-map',
   entry: path.join(__dirname, './src/index.tsx'),
   output: {
@@ -16,8 +14,6 @@ module.exports = {
     filename: 'bundle.js',
     chunkFilename: '[name].chunk.js',
     publicPath: '/',
-    devtoolModuleFilenameTemplate: info =>
-      path.resolve(info.absoluteResourcePath).replace(/\\/g, '/'),
   },
 
   resolve: {
@@ -34,10 +30,7 @@ module.exports = {
 
   plugins: [
     new JsxstyleLoaderPlugin(),
-    new HtmlWebpackPlugin({
-      inject: true,
-      template: path.resolve(__dirname, '../react/template.html'),
-    }),
+    new ReactIndexPlugin(),
     new webpack.NamedModulesPlugin(),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('development'),
@@ -89,7 +82,14 @@ module.exports = {
                 loader: require.resolve('jsxstyle-loader'),
                 options: { cacheFile: __dirname + '/jsxstyle-cache' },
               },
-              require.resolve('ts-loader'),
+              {
+                loader: require.resolve('ts-loader'),
+                options: {
+                  compilerOptions: {
+                    module: 'esnext',
+                  },
+                },
+              },
             ],
           },
           {
@@ -105,8 +105,10 @@ module.exports = {
             ],
           },
           {
-            exclude: [/\.js$/, /\.html$/, /\.json$/],
+            // test is a required key in webpack.Rule
+            test: /./,
             loader: require.resolve('file-loader'),
+            exclude: [/\.js$/, /\.html$/, /\.json$/],
             options: {
               name: 'static/media/[name].[hash:8].[ext]',
             },
@@ -116,3 +118,5 @@ module.exports = {
     ],
   },
 };
+
+export = config;

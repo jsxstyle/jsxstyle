@@ -4,7 +4,7 @@ const webpack = require('webpack');
 const path = require('path');
 const JsxstyleWebpackPlugin = require('jsxstyle-loader/plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const ReactIndexPlugin = require('./ReactIndexPlugin');
+const ReactIndexPlugin = require('../../../misc/ReactIndexPlugin');
 
 function progressHandler(percentage, msg, ...args) {
   if (percentage === 0 || percentage === 1) return;

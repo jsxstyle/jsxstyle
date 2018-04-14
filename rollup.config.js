@@ -7,19 +7,19 @@ export default [
 ].map(([pkg, ext]) => {
   const filename = pkg.replace(/[^a-z-]/g, '-');
   return {
-    input: `packages/${pkg}/${filename}.${ext}`,
+    input: `packages/${pkg}/src/${filename}.${ext}`,
     output: [
       {
         format: 'amd',
-        file: `packages/${pkg}/${filename}.amd.js`,
+        file: `packages/${pkg}/lib/${filename}.js`,
         amd: { id: pkg },
       },
-      { format: 'cjs', file: `packages/${pkg}/${filename}.cjs.js` },
-      { format: 'es', file: `packages/${pkg}/${filename}.es.js` },
+      { format: 'cjs', file: `packages/${pkg}/lib/${filename}.cjs.js` },
+      { format: 'es', file: `packages/${pkg}/lib/${filename}.es.js` },
     ],
     plugins: [
       typescript({
-        tsconfig: `packages/${pkg}/tsconfig.json`,
+        tsconfig: `packages/${pkg}/src/tsconfig.json`,
         useTsconfigDeclarationDir: true,
       }),
     ],

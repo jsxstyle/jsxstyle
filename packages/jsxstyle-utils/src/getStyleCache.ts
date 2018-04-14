@@ -1,7 +1,7 @@
 import getStyleKeysForProps from './getStyleKeysForProps';
 import addStyleToHead from './addStyleToHead';
 import stringHash from './stringHash';
-import { Dict } from '../jsxstyle-utils';
+import { Dict } from './types';
 
 type InsertRuleCallback = (rule: string, props?: {}) => boolean | void;
 
@@ -23,7 +23,7 @@ function getStringHash(key: string): string {
 }
 
 export default function getStyleCache() {
-  let _classNameCache = {};
+  let _classNameCache: Dict<string> = {};
   let getClassNameForKey = getStringHash;
   let onInsertRule: InsertRuleCallback;
   let pretty = false;

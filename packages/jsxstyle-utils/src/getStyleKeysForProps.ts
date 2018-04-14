@@ -1,6 +1,6 @@
 import hyphenateStyleName from './hyphenateStyleName';
 import dangerousStyleValue from './dangerousStyleValue';
-import { Dict, CSSProperties } from '../jsxstyle-utils';
+import { Dict, CSSProperties } from './types';
 
 // global flag makes subsequent calls of capRegex.test advance to the next match
 const capRegex = /[A-Z]/g;

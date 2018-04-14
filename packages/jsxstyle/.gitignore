@@ -1,4 +1,1 @@
-*.es.js
-*.cjs.js
-*.amd.js
-*.d.ts
+lib/

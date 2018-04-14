@@ -51,12 +51,7 @@ class JsxstyleWebpackPlugin implements webpack.Plugin {
   private cacheObject: CacheObject;
   private ctx: LoaderContext;
 
-  apply(
-    compiler: webpack.Compiler & {
-      inputFileSystem: any;
-      watchFileSystem: any;
-    }
-  ) {
+  apply(compiler: any) {
     const memoryFS = this.memoryFS;
 
     const plugin = 'JsxstyleLoaderPlugin';

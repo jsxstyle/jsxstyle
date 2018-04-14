@@ -1,8 +1,1 @@
-.*
-*.*
-!*.es.js
-!*.cjs.js
-!*.amd.js
-!*.d.ts
-!**/package.json
-**/node_modules
+src/

@@ -18,6 +18,7 @@ class ReactIndexPlugin {
         const indexFileContents = []
           .concat(
             '<!doctype html>',
+            '<title>jsxstyle demo</title>',
             '<div id=".jsxstyle-demo"></div>',
             `<script src="${bundleFile}"></script>`
           )

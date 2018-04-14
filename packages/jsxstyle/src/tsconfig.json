@@ -2,6 +2,7 @@
   "compilerOptions": {
     "allowJs": false,
     "declaration": true,
+    "declarationDir": "../lib",
     "forceConsistentCasingInFileNames": true,
     "jsx": "react",
     "lib": ["es6", "dom"],
@@ -11,13 +12,11 @@
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noUnusedLocals": true,
-    "rootDir": "../../",
     "sourceMap": true,
     "strictNullChecks": true,
-    "suppressImplicitAnyIndexErrors": true,
     "target": "es5",
     "types": ["node", "react"]
   },
   "exclude": ["node_modules", "preact/*"],
-  "include": ["*.ts", "*.tsx"]
+  "include": ["*.tsx"]
 }

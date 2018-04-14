@@ -2,9 +2,8 @@
   "compilerOptions": {
     "allowJs": false,
     "declaration": true,
+    "declarationDir": "../lib",
     "forceConsistentCasingInFileNames": true,
-    "jsx": "react",
-    "jsxFactory": "preact.h",
     "lib": ["es6", "dom"],
     "module": "esnext",
     "moduleResolution": "node",
@@ -12,12 +11,10 @@
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noUnusedLocals": true,
-    "rootDir": "../../../",
     "sourceMap": true,
     "strictNullChecks": true,
-    "suppressImplicitAnyIndexErrors": true,
     "target": "es5",
-    "types": ["node", "preact"]
+    "types": ["node"]
   },
-  "include": ["*.ts", "*.tsx"]
+  "include": ["*.ts"]
 }

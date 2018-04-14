@@ -5,10 +5,10 @@
   "repository": "git@github.com:smyte/jsxstyle.git",
   "author": "Pete Hunt",
   "license": "Apache-2.0",
-  "main": "jsxstyle.cjs.js",
-  "module": "jsxstyle.es.js",
-  "jsnext:main": "jsxstyle.es.js",
-  "types": "jsxstyle.d.ts",
+  "main": "lib/jsxstyle.cjs.js",
+  "module": "lib/jsxstyle.es.js",
+  "jsnext:main": "lib/jsxstyle.es.js",
+  "types": "lib/jsxstyle.d.ts",
   "dependencies": {
     "jsxstyle-utils": "^2.0.6"
   },

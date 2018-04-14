@@ -1,5 +1,5 @@
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ReactIndexPlugin = require('../../misc/ReactIndexPlugin');
 const webpack = require('webpack');
 
 module.exports = (env, options = {}) => ({
@@ -10,10 +10,7 @@ module.exports = (env, options = {}) => ({
   },
   plugins: [
     new webpack.NamedModulesPlugin(),
-    new HtmlWebpackPlugin({
-      template: __dirname + '/template.html',
-      inject: false,
-    }),
+    new ReactIndexPlugin(),
     !options.hot && new ExtractTextPlugin('bundle.css'),
   ].filter(f => f),
   resolve: {
