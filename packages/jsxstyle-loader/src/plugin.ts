@@ -51,36 +51,41 @@ class JsxstyleWebpackPlugin implements webpack.Plugin {
   private cacheObject: CacheObject;
   private ctx: LoaderContext;
 
-  apply(compiler: any) {
+  apply(compiler: webpack.Compiler) {
     const memoryFS = this.memoryFS;
 
     const plugin = 'JsxstyleLoaderPlugin';
 
     const environmentPlugin = (): void => {
-      compiler.inputFileSystem = new Proxy(compiler.inputFileSystem, {
-        get: (target, key) => {
-          const value = target[key];
+      (compiler as any).inputFileSystem = new Proxy(
+        (compiler as any).inputFileSystem,
+        {
+          get: (target, key) => {
+            const value = target[key];
 
-          if (handledMethods.hasOwnProperty(key)) {
-            return function(this: any, filePath: string, ...args: string[]) {
-              if (filePath.endsWith('__jsxstyle.css')) {
-                return memoryFS[key](filePath, ...args);
-              }
-              return value.call(this, filePath, ...args);
-            };
-          }
+            if (handledMethods.hasOwnProperty(key)) {
+              return function(this: any, filePath: string, ...args: string[]) {
+                if (filePath.endsWith('__jsxstyle.css')) {
+                  return memoryFS[key](filePath, ...args);
+                }
+                return value.call(this, filePath, ...args);
+              };
+            }
 
-          return value;
-        },
-      });
+            return value;
+          },
+        }
+      );
 
-      compiler.watchFileSystem = new NodeWatchFileSystem(
-        compiler.inputFileSystem
+      (compiler as any).watchFileSystem = new NodeWatchFileSystem(
+        (compiler as any).inputFileSystem
       );
     };
 
-    const compilationPlugin = (compilation: any): void => {
-      const nmlPlugin = (loaderContext: any) => {
+    const compilationPlugin = (
+      compilation: webpack.compilation.Compilation
+    ): void => {
+      const nmlPlugin = loaderContext => {
         loaderContext[Symbol.for('jsxstyle-loader')] = this.ctx;
       };
 
@@ -99,9 +104,15 @@ class JsxstyleWebpackPlugin implements webpack.Plugin {
       }
     };
 
-    compiler.plugin('environment', environmentPlugin);
-    compiler.plugin('compilation', compilationPlugin);
-    compiler.plugin('done', donePlugin);
+    if (compiler.hooks) {
+      compiler.hooks.environment.tap(plugin, environmentPlugin);
+      compiler.hooks.compilation.tap(plugin, compilationPlugin);
+      compiler.hooks.done.tap(plugin, donePlugin);
+    } else {
+      compiler.plugin('environment', environmentPlugin);
+      compiler.plugin('compilation', compilationPlugin);
+      compiler.plugin('done', donePlugin);
+    }
   }
 }
 

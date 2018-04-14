@@ -6,7 +6,7 @@ import ReactIndexPlugin = require('../../misc/ReactIndexPlugin');
 const appSrc = path.join(__dirname, 'src');
 
 const config: webpack.Configuration = {
-  devtool: 'cheap-module-source-map',
+  mode: 'development',
   entry: path.join(__dirname, './src/index.tsx'),
   output: {
     path: path.join(__dirname, 'build'),
@@ -20,33 +20,11 @@ const config: webpack.Configuration = {
     extensions: ['.ts', '.tsx', '.js', '.json'],
   },
 
-  node: {
-    dgram: 'empty',
-    fs: 'empty',
-    net: 'empty',
-    tls: 'empty',
-    child_process: 'empty',
-  },
-
-  plugins: [
-    new JsxstyleLoaderPlugin(),
-    new ReactIndexPlugin(),
-    new webpack.NamedModulesPlugin(),
-    new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify('development'),
-    }),
-    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
-  ],
+  plugins: [new JsxstyleLoaderPlugin(), new ReactIndexPlugin()],
 
   module: {
     strictExportPresence: true,
     rules: [
-      {
-        test: /\.js$/,
-        loader: require.resolve('source-map-loader'),
-        enforce: 'pre',
-        include: appSrc,
-      },
       {
         test: /\.(?:js|tsx?)/,
         exclude: /node_modules/,

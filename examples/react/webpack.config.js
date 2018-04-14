@@ -1,18 +1,13 @@
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const ReactIndexPlugin = require('../../misc/ReactIndexPlugin');
-const webpack = require('webpack');
 
-module.exports = (env, options = {}) => ({
+module.exports = {
+  mode: 'production',
   entry: require.resolve('./entry'),
   output: {
     path: __dirname + '/build',
     filename: 'bundle.js',
   },
-  plugins: [
-    new webpack.NamedModulesPlugin(),
-    new ReactIndexPlugin(),
-    !options.hot && new ExtractTextPlugin('bundle.css'),
-  ].filter(f => f),
+  plugins: [new ReactIndexPlugin()],
   resolve: {
     alias: {
       jsxstyle: require.resolve('jsxstyle'),
@@ -44,18 +39,10 @@ module.exports = (env, options = {}) => ({
           ],
         },
       },
-      options.hot
-        ? {
-            test: /\.css$/,
-            use: ['style-loader', 'css-loader'],
-          }
-        : {
-            test: /\.css$/,
-            loader: ExtractTextPlugin.extract({
-              fallback: 'style-loader',
-              use: 'css-loader',
-            }),
-          },
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader'],
+      },
     ],
   },
-});
+};

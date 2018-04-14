@@ -42,6 +42,7 @@ it('builds without issue', () => {
   color: red;
   display: inline;
 }
+
 /* ./tests/jsxstyle-loader/webpack/test-app/Shared.js:8 (Block) */
 ._1qb53c2 {
   display: block;
@@ -49,6 +50,7 @@ it('builds without issue', () => {
   font-size: 18px;
   line-height: 22px;
 }
+
 `);
       expect(blueCSS)
         .toEqual(`/* ./tests/jsxstyle-loader/webpack/test-app/Shared.js:8 (Block) */
@@ -58,11 +60,13 @@ it('builds without issue', () => {
   font-size: 18px;
   line-height: 22px;
 }
+
 /* ./tests/jsxstyle-loader/webpack/test-app/BlueApp.js:8 (Inline) */
 ._1qr3dx1 {
   color: blue;
   display: inline;
 }
+
 `);
 
       resolve();

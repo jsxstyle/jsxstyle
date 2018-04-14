@@ -3,7 +3,7 @@
 const webpack = require('webpack');
 const path = require('path');
 const JsxstyleWebpackPlugin = require('jsxstyle-loader/plugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const ReactIndexPlugin = require('../../../misc/ReactIndexPlugin');
 
 function progressHandler(percentage, msg, ...args) {
@@ -22,6 +22,7 @@ function progressHandler(percentage, msg, ...args) {
 
 module.exports = function(env = {}, options = {}) {
   return {
+    mode: 'development',
     entry: {
       red: require.resolve('./test-app/red-entrypoint'),
       blue: require.resolve('./test-app/blue-entrypoint'),
@@ -32,9 +33,12 @@ module.exports = function(env = {}, options = {}) {
       filename: 'bundle-[name].js',
     },
     plugins: [
-      new webpack.NamedModulesPlugin(),
       new JsxstyleWebpackPlugin(),
-      !options.hot && new ExtractTextPlugin('bundle-[name].css'),
+      !options.hot &&
+        new MiniCssExtractPlugin({
+          filename: options.cssFilename || 'bundle-[name].css',
+          chunkFilename: '[id].css',
+        }),
       options.hot && new ReactIndexPlugin(),
       env.experimental && new webpack.ProgressPlugin(progressHandler),
     ].filter(Boolean),
@@ -72,10 +76,7 @@ module.exports = function(env = {}, options = {}) {
           test: /\.css$/,
           use: options.hot
             ? ['style-loader', 'css-loader']
-            : ExtractTextPlugin.extract({
-                fallback: require.resolve('style-loader'),
-                use: require.resolve('css-loader'),
-              }),
+            : [MiniCssExtractPlugin.loader, 'css-loader'],
         },
       ],
     },
