@@ -78,6 +78,7 @@ export = (config: KarmaConfig) => {
       noInfo: true,
     },
     webpack: {
+      mode: 'development',
       devtool: 'inline-source-map',
       resolve: {
         alias: {
@@ -87,6 +88,7 @@ export = (config: KarmaConfig) => {
           'react-dom': require.resolve('react-dom'),
         },
       },
+      performance: { hints: false },
       module: {
         rules: [
           {

@@ -1,36 +1,18 @@
-import webpack = require('webpack');
+import { CacheObject, PluginContext } from './types';
 import fs = require('fs');
+import MemoryFileSystem = require('webpack/lib/MemoryOutputFileSystem');
 import NodeWatchFileSystem = require('webpack/lib/node/NodeWatchFileSystem');
-import { CacheObject, LoaderContext } from './types';
+import webpack = require('webpack');
+import wrapFileSystem from './utils/wrapFileSystem';
 
-const handledMethods = {
-  // exists: true,
-  // existsSync: true,
-  mkdir: true,
-  mkdirSync: true,
-  mkdirp: true,
-  mkdirpSync: true,
-  readdir: true,
-  readdirSync: true,
-  readFile: true,
-  readFileSync: true,
-  // readlink: true,
-  // readlinkSync: true,
-  rmdir: true,
-  rmdirSync: true,
-  stat: true,
-  statSync: true,
-  unlink: true,
-  unlinkSync: true,
-  writeFile: true,
-  writeFileSync: true,
-};
+import Compiler = webpack.Compiler;
+import Compilation = webpack.compilation.Compilation;
 
 const counterKey = Symbol.for('counter');
 
 class JsxstyleWebpackPlugin implements webpack.Plugin {
   constructor() {
-    this.memoryFS = new (webpack as any).MemoryOutputFileSystem();
+    this.memoryFS = new MemoryFileSystem();
 
     // the default cache object. can be overridden on a per-loader instance basis with the `cacheFile` option.
     this.cacheObject = {
@@ -47,71 +29,52 @@ class JsxstyleWebpackPlugin implements webpack.Plugin {
     };
   }
 
-  private memoryFS: any;
+  private pluginName = 'JsxstyleLoaderPlugin';
+  private memoryFS: MemoryFileSystem;
   private cacheObject: CacheObject;
-  private ctx: LoaderContext;
+  private ctx: PluginContext;
 
-  apply(compiler: webpack.Compiler) {
-    const memoryFS = this.memoryFS;
+  private nmlPlugin = (loaderContext: any): void => {
+    loaderContext[Symbol.for('jsxstyle-loader')] = this.ctx;
+  };
 
-    const plugin = 'JsxstyleLoaderPlugin';
+  private compilationPlugin = (compilation: Compilation): void => {
+    if (compilation.hooks) {
+      compilation.hooks.normalModuleLoader.tap(this.pluginName, this.nmlPlugin);
+    } else {
+      compilation.plugin('normal-module-loader', this.nmlPlugin);
+    }
+  };
 
+  private donePlugin = (): void => {
+    if (this.ctx.cacheFile) {
+      // write contents of cache object as a newline-separated list of CSS strings
+      const cacheString = Object.keys(this.ctx.cacheObject).join('\n') + '\n';
+      fs.writeFileSync(this.ctx.cacheFile, cacheString, 'utf8');
+    }
+  };
+
+  apply(compiler: Compiler) {
     const environmentPlugin = (): void => {
-      (compiler as any).inputFileSystem = new Proxy(
+      // compiler is of type `any` here because Compiler types are incomplete
+      const wrappedFS = wrapFileSystem(
         (compiler as any).inputFileSystem,
-        {
-          get: (target, key) => {
-            const value = target[key];
-
-            if (handledMethods.hasOwnProperty(key)) {
-              return function(this: any, filePath: string, ...args: string[]) {
-                if (filePath.endsWith('__jsxstyle.css')) {
-                  return memoryFS[key](filePath, ...args);
-                }
-                return value.call(this, filePath, ...args);
-              };
-            }
-
-            return value;
-          },
-        }
+        this.memoryFS
       );
-
-      (compiler as any).watchFileSystem = new NodeWatchFileSystem(
-        (compiler as any).inputFileSystem
-      );
-    };
-
-    const compilationPlugin = (
-      compilation: webpack.compilation.Compilation
-    ): void => {
-      const nmlPlugin = loaderContext => {
-        loaderContext[Symbol.for('jsxstyle-loader')] = this.ctx;
-      };
-
-      if (compilation.hooks) {
-        compilation.hooks.normalModuleLoader.tap(plugin, nmlPlugin);
-      } else {
-        compilation.plugin('normal-module-loader', nmlPlugin);
-      }
-    };
-
-    const donePlugin = (): void => {
-      if (this.ctx.cacheFile) {
-        // write contents of cache object as a newline-separated list of CSS strings
-        const cacheString = Object.keys(this.ctx.cacheObject).join('\n') + '\n';
-        fs.writeFileSync(this.ctx.cacheFile, cacheString, 'utf8');
-      }
+      (compiler as any).inputFileSystem = wrappedFS;
+      (compiler as any).watchFileSystem = new NodeWatchFileSystem(wrappedFS);
     };
 
     if (compiler.hooks) {
-      compiler.hooks.environment.tap(plugin, environmentPlugin);
-      compiler.hooks.compilation.tap(plugin, compilationPlugin);
-      compiler.hooks.done.tap(plugin, donePlugin);
+      // webpack 4+
+      compiler.hooks.environment.tap(this.pluginName, environmentPlugin);
+      compiler.hooks.compilation.tap(this.pluginName, this.compilationPlugin);
+      compiler.hooks.done.tap(this.pluginName, this.donePlugin);
     } else {
+      // webpack 1-3
       compiler.plugin('environment', environmentPlugin);
-      compiler.plugin('compilation', compilationPlugin);
-      compiler.plugin('done', donePlugin);
+      compiler.plugin('compilation', this.compilationPlugin);
+      compiler.plugin('done', this.donePlugin);
     }
   }
 }

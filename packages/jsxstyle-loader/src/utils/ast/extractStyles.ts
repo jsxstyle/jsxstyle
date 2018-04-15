@@ -13,18 +13,13 @@ import {
 } from 'jsxstyle-utils';
 
 import evaluateAstNode from './evaluateAstNode';
-import extractStaticTernaries from './extractStaticTernaries';
+import extractStaticTernaries, { Ternary } from './extractStaticTernaries';
 import generateUid from './generatedUid';
 import getPropValueFromAttributes from './getPropValueFromAttributes';
 import getStaticBindingsForScope from './getStaticBindingsForScope';
 import getStylesByClassName from '../getStylesByClassName';
-import parse from './parse';
-import {
-  StyleProps,
-  CacheObject,
-  BabylonPlugin,
-  StaticTernary,
-} from '../../types';
+import parse, { BabylonPlugin } from './parse';
+import { StyleProps, CacheObject } from '../../types';
 
 const loaderSchema = require('../../../schema/loader.json');
 
@@ -34,7 +29,7 @@ export interface ExtractStylesOptions {
   namedStyleGroups?: {
     [key: string]: CSSProperties;
   };
-  parserPlugins?: BabylonPlugin[]; // TODO: replace with babylon.PluginName
+  parserPlugins?: BabylonPlugin[];
   styleGroups?: StyleProps[];
   whitelistedModules?: string[];
   cssModules?: boolean;
@@ -158,6 +153,7 @@ export default function extractStyles(
       '`warnCallback` is expected to be a function'
     );
   } else {
+    // eslint-disable-next-line no-console
     warnCallback = console.warn;
   }
 
@@ -491,7 +487,7 @@ export default function extractStyles(
         const staticAttributes: { [key: string]: any } = {};
         let inlinePropCount = 0;
 
-        const staticTernaries: StaticTernary[] = [];
+        const staticTernaries: Ternary[] = [];
 
         node.attributes = node.attributes.filter((attribute, idx) => {
           if (

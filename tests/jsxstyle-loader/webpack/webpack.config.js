@@ -47,6 +47,7 @@ module.exports = function(env = {}, options = {}) {
         jsxstyle: require.resolve('jsxstyle'),
       },
     },
+    performance: { hints: false },
     module: {
       rules: [
         {

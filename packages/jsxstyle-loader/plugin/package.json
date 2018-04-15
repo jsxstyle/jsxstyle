@@ -1,0 +1,4 @@
+{
+  "main": "../lib/plugin.js",
+  "types": "../lib/plugin.d.ts"
+}

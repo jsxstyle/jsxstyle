@@ -4,11 +4,18 @@ import invariant = require('invariant');
 import { Dict, CSSProperties } from 'jsxstyle-utils';
 
 import getClassNameFromCache from '../getClassNameFromCache';
-import { CacheObject, StaticTernary } from '../../types';
+import { CacheObject } from '../../types';
 import { StylesByClassName } from '../getStylesByClassName';
 
+export interface Ternary {
+  name: string;
+  test: t.Expression;
+  consequent: string | null;
+  alternate: string | null;
+}
+
 export default function extractStaticTernaries(
-  ternaries: StaticTernary[],
+  ternaries: Ternary[],
   cacheObject: CacheObject,
   classNameFormat?: 'hash'
 ): {

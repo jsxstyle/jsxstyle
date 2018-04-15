@@ -3,27 +3,28 @@ import loaderUtils = require('loader-utils');
 import path = require('path');
 import util = require('util');
 import fs = require('fs');
+import webpack = require('webpack');
+import LoaderContext = webpack.loader.LoaderContext;
 
 import extractStyles from './utils/ast/extractStyles';
-import { LoaderContext, CacheObject } from './types';
+import { PluginContext, CacheObject, LoaderOptions } from './types';
 
 const counter = Symbol.for('counter');
 
 const jsxstyleLoader = function jsxstyleLoader(
-  // TODO: remove when webpack types suck less
-  this: any,
+  this: LoaderContext,
   content: string | Buffer
 ) {
   this.cacheable && this.cacheable();
 
-  const pluginContext: LoaderContext = this[Symbol.for('jsxstyle-loader')];
+  const pluginContext: PluginContext = this[Symbol.for('jsxstyle-loader')];
 
   invariant(
     pluginContext,
     'jsxstyle-loader cannot be used without the corresponding plugin'
   );
 
-  const options = loaderUtils.getOptions(this) || {};
+  const options: LoaderOptions = loaderUtils.getOptions(this) || {};
 
   if (options.cacheFile && pluginContext.cacheFile !== options.cacheFile) {
     try {
@@ -72,7 +73,7 @@ const jsxstyleLoader = function jsxstyleLoader(
     options
   );
 
-  if (rv.cssFileName == null || rv.css.length === 0) {
+  if (!rv.cssFileName || rv.css.length === 0) {
     return content;
   }
 
@@ -83,4 +84,4 @@ const jsxstyleLoader = function jsxstyleLoader(
   return;
 };
 
-export default jsxstyleLoader;
+export = jsxstyleLoader;
