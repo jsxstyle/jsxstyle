@@ -36,24 +36,25 @@ describe('jsxstyle', () => {
             </Block>
           </Row>
         </Col>,
-        node
+        node,
+        () => {
+          const item = document.getElementById(id);
+          expect(item.getAttribute('class')).toEqual('_1fc5o');
+
+          const style = window.getComputedStyle(item);
+          const styleObj = {};
+          for (let idx = -1, len = style.length; ++idx < len; ) {
+            const k = style[idx];
+            styleObj[k] = style.getPropertyValue(k);
+          }
+          expect(styleObj).toEqual(
+            jasmine.objectContaining({
+              color: 'rgb(0, 0, 255)',
+              'max-width': '600px',
+            })
+          );
+        }
       );
     }).not.toThrow();
-
-    const item = document.getElementById(id);
-    expect(item.getAttribute('class')).toEqual('_1fc5o');
-
-    const style = window.getComputedStyle(item);
-    const styleObj = {};
-    for (let idx = -1, len = style.length; ++idx < len; ) {
-      const k = style[idx];
-      styleObj[k] = style.getPropertyValue(k);
-    }
-    expect(styleObj).toEqual(
-      jasmine.objectContaining({
-        color: 'rgb(0, 0, 255)',
-        'max-width': '600px',
-      })
-    );
   });
 });

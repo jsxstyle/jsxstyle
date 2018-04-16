@@ -4,4 +4,4 @@ node_modules
 *.log
 stats.json
 .rpt2_cache
-saucelabs-appium.json
+saucelabs-data.json

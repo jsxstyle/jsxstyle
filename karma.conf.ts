@@ -2,6 +2,8 @@ import invariant = require('invariant');
 import karma = require('karma');
 import path = require('path');
 import webpack = require('webpack');
+import getCustomLaunchers from './misc/getCustomLaunchers';
+
 require('dotenv').config();
 
 invariant(
@@ -14,18 +16,18 @@ const isLocal = !!process.env.KARMA_LOCAL;
 
 const pkgPath = pkg => path.join(__dirname, 'packages', pkg);
 
-type KarmaConfigOptions = karma.ConfigOptions & {
+export type KarmaConfigOptions = karma.ConfigOptions & {
   customLaunchers?: { [key: string]: any };
   sauceLabs?: any;
   webpack?: webpack.Configuration;
   webpackServer?: any;
 };
 
-interface KarmaConfig extends karma.Config {
+export interface KarmaConfig extends karma.Config {
   set: (config: KarmaConfigOptions) => void;
 }
 
-export = (config: KarmaConfig) => {
+export default (config: KarmaConfig) => {
   if (isLocal) {
     config.set({
       browsers: ['ChromeHeadless'],
@@ -33,7 +35,7 @@ export = (config: KarmaConfig) => {
       reporters: ['progress'],
     });
   } else {
-    const customLaunchers = require('./misc/getCustomLaunchers');
+    const customLaunchers = getCustomLaunchers();
     config.set({
       customLaunchers,
       browsers: Object.keys(customLaunchers),
@@ -64,7 +66,8 @@ export = (config: KarmaConfig) => {
       'tests/**/*.karma.js': ['webpack', 'sourcemap'],
     },
     sauceLabs: {
-      recordScreenshots: false,
+      recordScreenshots: true,
+      recordVideo: true,
       startConnect: !isCI,
       tunnelIdentifier,
       tags: isCI
@@ -72,6 +75,7 @@ export = (config: KarmaConfig) => {
         : ['local'],
       connectOptions: {
         logfile: 'sauce_connect.log',
+        connectRetries: 2,
       },
     },
     webpackServer: {
