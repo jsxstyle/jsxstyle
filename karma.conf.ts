@@ -40,7 +40,7 @@ export default (config: KarmaConfig) => {
       customLaunchers,
       browsers: Object.keys(customLaunchers),
       concurrency: 5,
-      reporters: ['progress', 'saucelabs'],
+      reporters: ['fail-fast', 'progress', 'saucelabs'],
     });
   }
 

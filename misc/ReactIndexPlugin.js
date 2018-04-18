@@ -30,7 +30,9 @@ function emitPlugin(compilation, callback) {
     };
   }
 
-  callback();
+  if (callback) {
+    callback();
+  }
 }
 
 class ReactIndexPlugin {

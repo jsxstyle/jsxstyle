@@ -162,7 +162,7 @@ export default function getCustomLaunchers(): { [key: string]: Launcher } {
   });
 
   // IE 9-11
-  [/*11, 10,*/ 9].forEach(v => {
+  [11, 10, 9].forEach(v => {
     customLaunchers[`sl_ie_${v}`] = {
       base: 'SauceLabs',
       name: `Internet Explorer ${v}`,
