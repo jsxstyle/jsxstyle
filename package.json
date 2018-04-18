@@ -54,6 +54,7 @@
     "jest": "^22.1.4",
     "karma": "^2.0.0",
     "karma-chrome-launcher": "^2.2.0",
+    "karma-fail-fast-reporter": "^1.0.5",
     "karma-jasmine": "^1.1.0",
     "karma-sauce-launcher": "^1.2.0",
     "karma-sourcemap-loader": "^0.3.7",
