@@ -2,10 +2,7 @@ language: node_js
 node_js:
   - node
 sudo: false
-# if: tag IS blank
-branches:
-  only:
-  - master
+if: tag IS blank
 before_install:
   - export TZ=America/Los_Angeles
 install:
