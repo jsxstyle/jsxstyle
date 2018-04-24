@@ -47,7 +47,7 @@ module.exports = {
       },
     },
     {
-      files: ['examples/preact-*/src/**/*.js'],
+      files: ['examples/jsxstyle-preact-*/src/**/*.js'],
       settings: {
         react: {
           pragma: 'h',

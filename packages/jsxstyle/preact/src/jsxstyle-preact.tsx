@@ -17,6 +17,7 @@ export type AnyComponent<Props extends StyleProps> =
   | keyof JSX.IntrinsicElements
   | preact.AnyComponent<Props, any>
   // this isn't covered by preact.FunctionalComponent for some reason
+  // see: https://github.com/developit/preact-router/blob/eb0206b/src/match.d.ts#L13
   | ((props?: Props) => preact.VNode);
 
 export type JsxstyleProps<ComponentProps> = {
@@ -38,10 +39,7 @@ function factory(
 ): JsxstyleComponent {
   const tagName = 'div';
 
-  return class JsxstyleComponent<P> extends preact.Component<
-    JsxstyleProps<P>,
-    {}
-  > {
+  return class<P> extends preact.Component<JsxstyleProps<P>, {}> {
     public className: string | null;
     public component: AnyComponent<JsxstyleProps<P>>;
 
@@ -59,14 +57,10 @@ function factory(
       this.className = cache.getClassName(props, props.class);
     }
 
-    render(props: JsxstyleProps<P>) {
+    render({ props, style, children }: JsxstyleProps<P>) {
       return (
-        <this.component
-          {...props.props}
-          class={this.className}
-          style={props.style}
-        >
-          {props.children}
+        <this.component {...props} class={this.className} style={style}>
+          {children}
         </this.component>
       );
     }

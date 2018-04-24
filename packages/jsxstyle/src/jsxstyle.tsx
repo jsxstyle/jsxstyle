@@ -64,12 +64,6 @@ export const Row = factory('Row', componentStyles.Row);
 export const Col = factory('Col', componentStyles.Col);
 export const Grid = factory('Grid', componentStyles.Grid);
 
-export function install() {
-  console.error(
-    'jsxstyle\u2019s `install` method is no longer required and will be removed in jsxstyle 2.0.'
-  );
-}
-
 function depFactory(displayName: string, defaultProps: {}) {
   let hasWarned = false;
   return class DeprecatedJsxstyleComponent extends React.Component {
