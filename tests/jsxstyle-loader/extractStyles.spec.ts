@@ -1,5 +1,5 @@
-import path from 'path';
 import extractStyles from 'jsxstyle-loader/lib/utils/ast/extractStyles';
+import path = require('path');
 
 const whitelistedModules = [require.resolve('./mock/LC')];
 
@@ -178,8 +178,8 @@ describe('style groups', () => {
   it('groups styles when a `styleGroups` array is provided', () => {
     const styleGroups = [
       {
-        thing: 'wow',
         hoverThing: 'ok',
+        thing: 'wow',
       },
       {
         display: 'inline-block',
@@ -204,8 +204,8 @@ describe('style groups', () => {
   it('groups styles when a `namedStyleGroups` object is provided', () => {
     const namedStyleGroups = {
       _test1: {
-        thing: 'wow',
         hoverThing: 'ok',
+        thing: 'wow',
       },
       _test2: {
         display: 'inline-block',
@@ -622,17 +622,17 @@ export interface ThingProps {
 export const Thing: React.SFC<ThingProps> = props => <Block />;
 ReactDOM.render(<Thing />, (document.getElementById('root') as HTMLElement));`;
 
-    const rv_ts = extractStyles(src, pathTo('mock/typescript.ts'), {
+    const tsResults = extractStyles(src, pathTo('mock/typescript.ts'), {
       cacheObject: {},
     });
 
-    const rv_tsx = extractStyles(src, pathTo('mock/typescript.tsx'), {
+    const tsxResults = extractStyles(src, pathTo('mock/typescript.tsx'), {
       cacheObject: {},
     });
 
-    expect(rv_ts.js).toEqual(rv_tsx.js);
-    expect(rv_ts.js).toMatchSnapshot();
-    expect(rv_tsx.js).toMatchSnapshot();
+    expect(tsResults.js).toEqual(tsxResults.js);
+    expect(tsResults.js).toMatchSnapshot();
+    expect(tsxResults.js).toMatchSnapshot();
   });
 });
 

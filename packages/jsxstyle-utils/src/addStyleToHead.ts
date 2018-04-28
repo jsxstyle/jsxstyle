@@ -49,7 +49,6 @@ export default function addStyleToHead(rule: string): void {
       // insertRule will fail for rules with pseudoelements the browser doesn't support.
       // see: https://github.com/smyte/jsxstyle/issues/75
       if (process.env.NODE_ENV !== 'production') {
-        // eslint-disable-next-line no-console
         console.error(
           '[jsxstyle] Could not insert rule at position ' +
             sheet.cssRules.length +

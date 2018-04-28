@@ -1,20 +1,20 @@
-import path from 'path';
-import webpackConfig from './webpack/webpack.config';
-import webpack from 'webpack';
+import path = require('path');
+import webpack = require('webpack');
+import MemoryFS = require('webpack/lib/MemoryOutputFileSystem');
+import webpackConfig = require('./webpack/webpack.config');
 
 // one minute
 jest.setTimeout(60000);
 
 // TODO: evaluate webpack bundle
 it('builds without issue', () => {
-  const config = webpackConfig({ multipleEntrypoints: true });
-  const compiler = webpack(config);
-  const fs = new webpack.MemoryOutputFileSystem();
+  const compiler = webpack(webpackConfig);
+  const fs = new MemoryFS();
   compiler.outputFileSystem = fs;
 
   expect.assertions(2);
   return new Promise((resolve, reject) => {
-    compiler.run((err, stats) => {
+    compiler.run((err: Error & { details: any }, stats) => {
       if (err) {
         console.error(err.stack || err);
         if (err.details) {
@@ -24,26 +24,30 @@ it('builds without issue', () => {
       }
 
       const info = stats.toJson();
-      if (stats.hasErrors()) return reject(info.errors);
-      if (stats.hasWarnings()) console.warn(info.warnings);
+      if (stats.hasErrors()) {
+        return reject(info.errors);
+      }
+      if (stats.hasWarnings()) {
+        console.warn(info.warnings);
+      }
 
       const redCSS = fs.readFileSync(
-        path.join(config.output.path, 'bundle-red.css'),
+        path.join(webpackConfig.output.path, 'bundle-red.css'),
         'utf8'
       );
       const blueCSS = fs.readFileSync(
-        path.join(config.output.path, 'bundle-blue.css'),
+        path.join(webpackConfig.output.path, 'bundle-blue.css'),
         'utf8'
       );
 
       expect(redCSS)
-        .toEqual(`/* ./tests/jsxstyle-loader/webpack/test-app/RedApp.js:8 (Inline) */
+        .toEqual(`/* ./jsxstyle-loader/webpack/test-app/RedApp.js:8 (Inline) */
 ._1ioutjs {
   color: red;
   display: inline;
 }
 
-/* ./tests/jsxstyle-loader/webpack/test-app/Shared.js:8 (Block) */
+/* ./jsxstyle-loader/webpack/test-app/Shared.js:8 (Block) */
 ._1qb53c2 {
   display: block;
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
@@ -53,7 +57,7 @@ it('builds without issue', () => {
 
 `);
       expect(blueCSS)
-        .toEqual(`/* ./tests/jsxstyle-loader/webpack/test-app/Shared.js:8 (Block) */
+        .toEqual(`/* ./jsxstyle-loader/webpack/test-app/Shared.js:8 (Block) */
 ._1qb53c2 {
   display: block;
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
@@ -61,7 +65,7 @@ it('builds without issue', () => {
   line-height: 22px;
 }
 
-/* ./tests/jsxstyle-loader/webpack/test-app/BlueApp.js:8 (Inline) */
+/* ./jsxstyle-loader/webpack/test-app/BlueApp.js:8 (Inline) */
 ._1qr3dx1 {
   color: blue;
   display: inline;

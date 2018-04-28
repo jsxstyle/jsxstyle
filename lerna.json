@@ -2,7 +2,8 @@
   "lerna": "2.2.0",
   "packages": [
     "packages/*",
-    "examples/*"
+    "examples/*",
+    "tests"
   ],
   "version": "independent",
   "commands": {
@@ -12,8 +13,7 @@
     "publish": {
       "ignore": [
         "**/*.md",
-        "**/*.spec.js",
-        "**/.eslintrc.js",
+        "**/*.spec.ts",
         "**/package.json"
       ],
       "allowBranch": "master"

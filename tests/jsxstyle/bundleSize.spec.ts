@@ -1,9 +1,9 @@
-import path from 'path';
-import { rollup } from 'rollup';
-import rollupNodeResolve from 'rollup-plugin-node-resolve';
-import rollupReplace from 'rollup-plugin-replace';
-import rollupUglify from 'rollup-plugin-uglify';
-import zlib from 'zlib';
+import path = require('path');
+import { OutputOptions, rollup } from 'rollup';
+import rollupNodeResolve = require('rollup-plugin-node-resolve');
+import rollupReplace = require('rollup-plugin-replace');
+import rollupUglify = require('rollup-plugin-uglify');
+import zlib = require('zlib');
 
 const entry = 'bundleSize entrypoint';
 
@@ -35,7 +35,7 @@ it('has a runtime size of less than 3KB', () => {
     ],
   };
 
-  const outputOptions = { format: 'cjs' };
+  const outputOptions: OutputOptions = { format: 'cjs' };
 
   return new Promise((resolve, reject) => {
     rollup(inputOptions)
@@ -47,13 +47,11 @@ it('has a runtime size of less than 3KB', () => {
               if (err) reject(err);
               const strLen = Buffer.byteLength(code);
               const gzipLen = buf.byteLength;
-              // eslint-disable-next-line no-console
               console.warn(
                 'jsxstyle bundle size: %s bytes (%skb)',
                 strLen,
                 (strLen / 1024).toFixed(4)
               );
-              // eslint-disable-next-line no-console
               console.warn(
                 'jsxstyle bundle size (gzip): %s bytes (%skb)',
                 gzipLen,

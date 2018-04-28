@@ -27,7 +27,7 @@ const loaderSchema = require('../../../schema/loader.json');
 
 export interface ExtractStylesOptions {
   classNameFormat?: 'hash';
-  liteMode?: boolean;
+  liteMode?: boolean | 'react' | 'preact';
   namedStyleGroups?: {
     [key: string]: CSSProperties;
   };
@@ -40,8 +40,8 @@ export interface ExtractStylesOptions {
 
 export interface Options {
   cacheObject: CacheObject;
-  errorCallback: (...args: any[]) => void;
-  warnCallback: (...args: any[]) => void;
+  errorCallback?: (str: string, ...args: any[]) => void;
+  warnCallback?: (str: string, ...args: any[]) => void;
 }
 
 interface TraversePath<TNode = any> {
@@ -149,23 +149,22 @@ export default function extractStyles(
     '`cacheObject` must be an object'
   );
 
+  let logWarning = console.warn;
   if (typeof warnCallback !== 'undefined') {
     invariant(
       typeof warnCallback === 'function',
       '`warnCallback` is expected to be a function'
     );
-  } else {
-    // eslint-disable-next-line no-console
-    warnCallback = console.warn;
+    logWarning = warnCallback;
   }
 
+  let logError = console.error;
   if (typeof errorCallback !== 'undefined') {
     invariant(
       typeof errorCallback === 'function',
       '`errorCallback` is expected to be a function'
     );
-  } else {
-    errorCallback = console.error;
+    logError = errorCallback;
   }
 
   const ajv = new Ajv({
@@ -180,7 +179,7 @@ export default function extractStyles(
       (ajv.errors || [])
         .map(err => util.format(' - options%s %s', err.dataPath, err.message))
         .join('\n');
-    errorCallback(msg);
+    logError(msg);
     throw new Error(msg);
   }
 
@@ -518,7 +517,7 @@ export default function extractStyles(
               : attribute.value;
 
           if (!value) {
-            warnCallback('`%s` prop does not have a value', name);
+            logWarning('`%s` prop does not have a value', name);
             inlinePropCount++;
             return true;
           }
@@ -545,7 +544,7 @@ export default function extractStyles(
           }
 
           if (name === 'ref') {
-            warnCallback(
+            logWarning(
               'The `ref` prop cannot be extracted from a jsxstyle component. ' +
                 'If you want to attach a ref to the underlying component ' +
                 'or element, specify a `ref` property in the `props` object.'
@@ -579,7 +578,7 @@ export default function extractStyles(
                     if (/^\w[\w-]+$/.test(propObj.key.value)) {
                       key = propObj.key.value;
                     } else {
-                      warnCallback(
+                      logWarning(
                         '`props` prop contains an invalid key: `%s`',
                         propObj.key.value
                       );
@@ -587,7 +586,7 @@ export default function extractStyles(
                       continue;
                     }
                   } else {
-                    warnCallback(
+                    logWarning(
                       'unhandled object property key type: `%s`',
                       propObj.type
                     );
@@ -599,7 +598,7 @@ export default function extractStyles(
                   }
 
                   if (ALL_SPECIAL_PROPS.hasOwnProperty(key)) {
-                    warnCallback(
+                    logWarning(
                       '`props` prop cannot contain `%s` as it is used by jsxstyle and will be overwritten.',
                       key
                     );
@@ -633,7 +632,7 @@ export default function extractStyles(
                 } else if (t.isSpreadElement(propObj)) {
                   attributes.push(t.jsxSpreadAttribute(propObj.argument));
                 } else {
-                  warnCallback(
+                  logWarning(
                     'unhandled object property value type: `%s`',
                     propObj.type
                   );
@@ -664,7 +663,7 @@ export default function extractStyles(
             }
 
             // if props prop is weird-looking, leave it and warn
-            warnCallback('props prop is an unhandled type: `%s`', value.type);
+            logWarning('props prop is an unhandled type: `%s`', value.type);
             inlinePropCount++;
             return true;
           }
@@ -674,7 +673,7 @@ export default function extractStyles(
               staticAttributes[name] = attemptEval(value);
               return false;
             } catch (e) {
-              warnCallback(
+              logWarning(
                 'cannot evaluate media query prop: `%s`',
                 generate(value).code
               );
@@ -818,7 +817,7 @@ export default function extractStyles(
 
             if (isComplex) {
               // still going to warn since the user should really do this themselves
-              warnCallback(
+              logWarning(
                 'Complex `component` prop value (`%s`) will be extracted out as a separate variable declaration.',
                 generate(componentPropValue).code
               );
@@ -853,7 +852,7 @@ export default function extractStyles(
         if (traversePath.node.closingElement) {
           // this seems strange
           if (t.isJSXMemberExpression(traversePath.node.closingElement.name)) {
-            warnCallback('Closing element is a member expression');
+            logWarning('Closing element is a member expression');
             return;
           }
           traversePath.node.closingElement.name.name = node.name.name;

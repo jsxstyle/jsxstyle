@@ -1,0 +1,38 @@
+{
+  "name": "jsxstyle-tests",
+  "scripts": {
+    "jest": "jest --verbose --runInBand",
+    "jest-update-snapshot": "jest --updateSnapshot"
+  },
+  "dependencies": {
+    "@types/jest": "^22.2.3",
+    "@types/node": "^9.6.7",
+    "babel-jest": "^22.1.0",
+    "babel-plugin-jest-hoist": "^22.1.0",
+    "jest": "^22.1.4",
+    "jsxstyle": "^2.0.11",
+    "jsxstyle-loader": "^1.0.16",
+    "jsxstyle-utils": "^2.0.6",
+    "ts-jest": "^22.4.4",
+    "typescript": "^2.8.1"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.js$": "babel-jest",
+      "^.+\\.ts$": "ts-jest"
+    },
+    "watchman": false,
+    "testMatch": [
+      "<rootDir>/**/*.spec.js",
+      "<rootDir>/**/*.spec.ts"
+    ],
+    "testEnvironment": "node",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json"
+    ]
+  }
+}

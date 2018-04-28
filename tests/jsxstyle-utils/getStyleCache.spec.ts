@@ -1,10 +1,10 @@
 import { getStyleCache } from 'jsxstyle-utils';
 
 const kitchenSink = {
-  mediaQueries: { test: 'test' },
   activeFlex: 3,
   flex: 1,
   hoverFlex: 4,
+  mediaQueries: { test: 'test' },
   placeholderFlex: 2,
   placeholderHoverFlex: 5,
   testActiveFlex: 8,
@@ -33,13 +33,13 @@ describe('styleCache', () => {
   it('generates a classname hash of `_d3bqdr` for the specified style object', () => {
     const styleCache = getStyleCache();
     const className = styleCache.getClassName({
-      display: 'block',
       color: 'red',
+      display: 'block',
       hoverColor: 'green',
-      testActiveColor: 'blue',
       mediaQueries: {
         test: 'example media query',
       },
+      testActiveColor: 'blue',
     });
     expect(className).toEqual('_d3bqdr');
   });
@@ -53,7 +53,11 @@ describe('styleCache', () => {
   it('converts a style object to a sorted object of objects', () => {
     const styleCache = getStyleCache();
     const styles = [];
-    styleCache.injectOptions({ onInsertRule: css => styles.push(css) });
+    styleCache.injectOptions({
+      onInsertRule: css => {
+        styles.push(css);
+      },
+    });
     const className = styleCache.getClassName(kitchenSink);
 
     expect(styles).toEqual([
@@ -71,9 +75,14 @@ describe('styleCache', () => {
   });
 
   it('respects media query order', () => {
+    // tslint:disable object-literal-sort-keys
     let allCSS = '\n';
     const styleCache = getStyleCache();
-    styleCache.injectOptions({ onInsertRule: css => (allCSS += css + '\n') });
+    styleCache.injectOptions({
+      onInsertRule: css => {
+        allCSS += css + '\n';
+      },
+    });
 
     const className = styleCache.getClassName({
       mediaQueries: {
@@ -90,12 +99,17 @@ describe('styleCache', () => {
 @media zzzz { .${className} {flex:2;} }
 @media aaaa { .${className} {flex:3;} }
 `);
+    // tslint:enable object-literal-sort-keys
   });
 
   it('works with addRule injection', () => {
     let allCSS = '\n';
     const styleCache = getStyleCache();
-    styleCache.injectOptions({ onInsertRule: css => (allCSS += css + '\n') });
+    styleCache.injectOptions({
+      onInsertRule: css => {
+        allCSS += css + '\n';
+      },
+    });
 
     const className = styleCache.getClassName(kitchenSink);
 

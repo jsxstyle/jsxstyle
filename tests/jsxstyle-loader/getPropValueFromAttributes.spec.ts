@@ -1,5 +1,5 @@
-import parse from 'jsxstyle-loader/lib/utils/ast/parse';
 import generate from '@babel/generator';
+import parse from 'jsxstyle-loader/lib/utils/ast/parse';
 
 import getPropValueFromAttributes from 'jsxstyle-loader/lib/utils/ast/getPropValueFromAttributes';
 

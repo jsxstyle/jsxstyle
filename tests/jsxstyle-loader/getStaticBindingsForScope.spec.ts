@@ -1,7 +1,8 @@
+import traverse from '@babel/traverse';
 import getStaticBindingsForScope from 'jsxstyle-loader/lib/utils/ast/getStaticBindingsForScope';
 import parse from 'jsxstyle-loader/lib/utils/ast/parse';
-import path from 'path';
-import traverse from '@babel/traverse';
+import { Dict } from 'jsxstyle-utils/lib/types';
+import path = require('path');
 
 const whitelistedModules = [require.resolve('./mock/LC')];
 
@@ -31,13 +32,13 @@ function outerFunction(innerParam1, innerParam2) {
 }
 `);
 
-  const testItems = {};
+  const testItems: Dict<{ attrs: Dict<any>; scope: any }> = {};
   traverse(ast, {
-    JSXElement(path) {
-      const node = path.node.openingElement;
+    JSXElement(traversePath) {
+      const node = traversePath.node.openingElement;
       testItems[node.name.name] = {
-        scope: path.scope,
         attrs: {},
+        scope: traversePath.scope,
       };
 
       node.attributes.forEach(attr => {
@@ -65,12 +66,12 @@ function outerFunction(innerParam1, innerParam2) {
       set(target, name, value) {
         setFn();
         thingsToSet.push(name);
-        target[name] = value;
+        return Reflect.set(target, name, value);
       },
       getOwnPropertyDescriptor(target, name) {
         getFn();
         thingsToGet.push(name);
-        return Object.getOwnPropertyDescriptor(target, name);
+        return Reflect.getOwnPropertyDescriptor(target, name);
       },
     });
 
@@ -82,14 +83,14 @@ function outerFunction(innerParam1, innerParam2) {
     );
 
     expect(blockBindings).toEqual({
-      LC: require('./mock/LC'),
       blue: 'blueberry',
+      innerLiteral: 'wow',
+      LC: require('./mock/LC'),
       nullLiteral: null,
       outerLiteral: 42,
       outerObject: {
         value: 28980,
       },
-      innerLiteral: 'wow',
     });
 
     const results = {

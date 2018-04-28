@@ -1,14 +1,14 @@
 import traverse from '@babel/traverse';
-import parse from 'jsxstyle-loader/lib/utils/ast/parse';
 import getSourceModule from 'jsxstyle-loader/lib/utils/ast/getSourceModule';
+import parse from 'jsxstyle-loader/lib/utils/ast/parse';
 
-function getSourceModuleForItem(itemName, scope, warnCallback) {
+function getSourceModuleForItem(itemName, scope) {
   let itemBinding = null;
 
   if (scope.hasBinding(itemName)) {
     itemBinding = scope.getBinding(itemName);
   } else {
-    warnCallback('Item `%s` is not in scope', itemName);
+    console.warn('Item `%s` is not in scope', itemName);
     return null;
   }
 
@@ -33,7 +33,7 @@ import {Original as Reassigned2} from 'reassigned';
 <Reassigned2 />;
 `);
 
-  const testItems = {};
+  const testItems: { [key: string]: any } = {};
   traverse(ast, {
     JSXElement(path) {
       const node = path.node.openingElement;
@@ -56,7 +56,7 @@ import {Original as Reassigned2} from 'reassigned';
   });
 
   it('handles regular requires', () => {
-    const { node, scope } = testItems['Thing1'];
+    const { node, scope } = testItems.Thing1;
     const itemName = node.name.name;
     const sourceModule = getSourceModuleForItem(itemName, scope);
 
@@ -68,7 +68,7 @@ import {Original as Reassigned2} from 'reassigned';
   });
 
   it('handles destructured requires', () => {
-    const { node, scope } = testItems['Destructured1'];
+    const { node, scope } = testItems.Destructured1;
     const itemName = node.name.name;
     const sourceModule = getSourceModuleForItem(itemName, scope);
 
@@ -80,7 +80,7 @@ import {Original as Reassigned2} from 'reassigned';
   });
 
   it('handles reassigned requires', () => {
-    const { node, scope } = testItems['Reassigned1'];
+    const { node, scope } = testItems.Reassigned1;
     const itemName = node.name.name;
     const sourceModule = getSourceModuleForItem(itemName, scope);
 
@@ -92,7 +92,7 @@ import {Original as Reassigned2} from 'reassigned';
   });
 
   it('handles regular imports', () => {
-    const { node, scope } = testItems['Thing2'];
+    const { node, scope } = testItems.Thing2;
     const itemName = node.name.name;
     const sourceModule = getSourceModuleForItem(itemName, scope);
 
@@ -104,7 +104,7 @@ import {Original as Reassigned2} from 'reassigned';
   });
 
   it('handles destructured imports', () => {
-    const { node, scope } = testItems['Destructured2'];
+    const { node, scope } = testItems.Destructured2;
     const itemName = node.name.name;
     const sourceModule = getSourceModuleForItem(itemName, scope);
 
@@ -116,7 +116,7 @@ import {Original as Reassigned2} from 'reassigned';
   });
 
   it('handles reassigned imports', () => {
-    const { node, scope } = testItems['Reassigned2'];
+    const { node, scope } = testItems.Reassigned2;
     const itemName = node.name.name;
     const sourceModule = getSourceModuleForItem(itemName, scope);
 

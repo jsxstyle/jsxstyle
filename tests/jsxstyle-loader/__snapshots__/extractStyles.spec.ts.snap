@@ -28,7 +28,7 @@ exports[`deterministic rendering generates a classname hash of \`_d3bqdr\` for t
 `;
 
 exports[`deterministic rendering generates a classname hash of \`_d3bqdr\` for the specified style object 2`] = `
-"/* ./tests/jsxstyle-loader/mock/consistent-hashes.js:2-9 (Block) */
+"/* ./jsxstyle-loader/mock/consistent-hashes.js:2-9 (Block) */
 ._d3bqdr {
   color: red;
   display: block;
@@ -76,7 +76,7 @@ import LC from \\"./LC\\";
 `;
 
 exports[`element conversion converts jsxstyle elements to Block elements when some props aren’t static 2`] = `
-"/* ./tests/jsxstyle-loader/mock/extract-static2.js:4 (Block) */
+"/* ./jsxstyle-loader/mock/extract-static2.js:4 (Block) */
 ._x0 {
   display: block;
   static-int: 69px;
@@ -95,7 +95,7 @@ const val = \\"thing\\";
 `;
 
 exports[`element conversion converts jsxstyle elements to plain elements when all props are static 2`] = `
-"/* ./tests/jsxstyle-loader/mock/extract-static1.js:4-11 (Block) */
+"/* ./jsxstyle-loader/mock/extract-static1.js:4-11 (Block) */
 ._x0 {
   display: block;
   static-float: 6.9px;
@@ -134,22 +134,22 @@ var Box = require(\\"jsxstyle/preact\\").Box;
 `;
 
 exports[`experimental: jsxstyle lite converts lite mode elements to jsxstyle components (Preact) 2`] = `
-"/* ./tests/jsxstyle-loader/mock/lite-mode.js:1 (block) */
+"/* ./jsxstyle-loader/mock/lite-mode.js:1 (block) */
 ._x0 {
   display: block;
   static: value;
 }
-/* ./tests/jsxstyle-loader/mock/lite-mode.js:2 (inline-block) */
+/* ./jsxstyle-loader/mock/lite-mode.js:2 (inline-block) */
 ._x1 {
   color: blue;
   display: inline-block;
 }
-/* ./tests/jsxstyle-loader/mock/lite-mode.js:4 (row) */
+/* ./jsxstyle-loader/mock/lite-mode.js:4 (row) */
 ._x2 {
   display: flex;
   flex-direction: row;
 }
-/* ./tests/jsxstyle-loader/mock/lite-mode.js:5 (col) */
+/* ./jsxstyle-loader/mock/lite-mode.js:5 (col) */
 ._x3 {
   display: flex;
   flex-direction: column;
@@ -171,22 +171,22 @@ var Box = require(\\"jsxstyle\\").Box;
 `;
 
 exports[`experimental: jsxstyle lite converts lite mode elements to jsxstyle components (React) 2`] = `
-"/* ./tests/jsxstyle-loader/mock/lite-mode.js:1 (block) */
+"/* ./jsxstyle-loader/mock/lite-mode.js:1 (block) */
 ._x0 {
   display: block;
   static: value;
 }
-/* ./tests/jsxstyle-loader/mock/lite-mode.js:2 (inline-block) */
+/* ./jsxstyle-loader/mock/lite-mode.js:2 (inline-block) */
 ._x1 {
   color: blue;
   display: inline-block;
 }
-/* ./tests/jsxstyle-loader/mock/lite-mode.js:4 (row) */
+/* ./jsxstyle-loader/mock/lite-mode.js:4 (row) */
 ._x2 {
   display: flex;
   flex-direction: row;
 }
-/* ./tests/jsxstyle-loader/mock/lite-mode.js:5 (col) */
+/* ./jsxstyle-loader/mock/lite-mode.js:5 (col) */
 ._x3 {
   display: flex;
   flex-direction: column;
@@ -223,7 +223,7 @@ import LC from \\"./LC\\";
 `;
 
 exports[`jsxstyle-specific props evaluates the \`mediaQueries\` prop correctly 2`] = `
-"/* ./tests/jsxstyle-loader/mock/media-queries.js:3-7 (Block) */
+"/* ./jsxstyle-loader/mock/media-queries.js:3-7 (Block) */
 ._x0 {
   display: block;
   width: 640px;
@@ -257,7 +257,7 @@ exports[`jsxstyle-specific props handles the \`mediaQueries\` prop correctly 1`]
 `;
 
 exports[`jsxstyle-specific props handles the \`mediaQueries\` prop correctly 2`] = `
-"/* ./tests/jsxstyle-loader/mock/media-queries.js:2-6 (Block) */
+"/* ./jsxstyle-loader/mock/media-queries.js:2-6 (Block) */
 ._x0 {
   display: block;
   width: 640px;
@@ -334,7 +334,7 @@ function Thing(props) {
 `;
 
 exports[`spread operators extracts spreads from trusted sources 2`] = `
-"/* ./tests/jsxstyle-loader/mock/trusted-spreads.js:9 (Block) */
+"/* ./jsxstyle-loader/mock/trusted-spreads.js:9 (Block) */
 ._x0 {
   background-color: #FFF;
   border-radius: 4px;
@@ -353,7 +353,7 @@ import { Box } from \\"jsxstyle\\";
 `;
 
 exports[`spread operators handles props mixed with spread operators 2`] = `
-"/* ./tests/jsxstyle-loader/mock/spread.js:2 (Block) */
+"/* ./jsxstyle-loader/mock/spread.js:2 (Block) */
 ._x0 {
   extract: yep;
 }
@@ -369,7 +369,7 @@ import { Box } from \\"jsxstyle\\";
 `;
 
 exports[`spread operators handles reserved props before the spread operators 2`] = `
-"/* ./tests/jsxstyle-loader/mock/spread.js:2-11 (Block) */
+"/* ./jsxstyle-loader/mock/spread.js:2-11 (Block) */
 ._x0 {
   color: red;
 }
@@ -385,19 +385,19 @@ exports[`style groups groups styles when a \`namedStyleGroups\` object is provid
 `;
 
 exports[`style groups groups styles when a \`namedStyleGroups\` object is provided 2`] = `
-"/* ./tests/jsxstyle-loader/mock/named-style-groups.js:2 (Block) */
-/* ./tests/jsxstyle-loader/mock/named-style-groups.js:3 (Block) */
+"/* ./jsxstyle-loader/mock/named-style-groups.js:2 (Block) */
+/* ./jsxstyle-loader/mock/named-style-groups.js:3 (Block) */
 ._x0 {
   display: block;
 }
-/* ./tests/jsxstyle-loader/mock/named-style-groups.js:3 (Block) */
+/* ./jsxstyle-loader/mock/named-style-groups.js:3 (Block) */
 ._test1 {
   thing: wow;
 }
 ._test1:hover {
   thing: ok;
 }
-/* ./tests/jsxstyle-loader/mock/named-style-groups.js:4 (InlineBlock) */
+/* ./jsxstyle-loader/mock/named-style-groups.js:4 (InlineBlock) */
 ._test2 {
   display: inline-block;
 }
@@ -413,19 +413,19 @@ exports[`style groups groups styles when a \`styleGroups\` array is provided 1`]
 `;
 
 exports[`style groups groups styles when a \`styleGroups\` array is provided 2`] = `
-"/* ./tests/jsxstyle-loader/mock/style-groups.js:2 (Block) */
-/* ./tests/jsxstyle-loader/mock/style-groups.js:3 (Block) */
+"/* ./jsxstyle-loader/mock/style-groups.js:2 (Block) */
+/* ./jsxstyle-loader/mock/style-groups.js:3 (Block) */
 ._x0 {
   display: block;
 }
-/* ./tests/jsxstyle-loader/mock/style-groups.js:3 (Block) */
+/* ./jsxstyle-loader/mock/style-groups.js:3 (Block) */
 ._x1 {
   thing: wow;
 }
 ._x1:hover {
   thing: ok;
 }
-/* ./tests/jsxstyle-loader/mock/style-groups.js:4 (InlineBlock) */
+/* ./jsxstyle-loader/mock/style-groups.js:4 (InlineBlock) */
 ._x2 {
   display: inline-block;
 }
@@ -438,11 +438,11 @@ exports[`ternaries extracts a conditional expression with a static right side an
 `;
 
 exports[`ternaries extracts a conditional expression with a static right side and an AND operator 2`] = `
-"/* ./tests/jsxstyle-loader/mock/ternary.js:2 (Block) */
+"/* ./jsxstyle-loader/mock/ternary.js:2 (Block) */
 ._x0 {
   display: block;
 }
-/* ./tests/jsxstyle-loader/mock/ternary.js:2 (Block) */
+/* ./jsxstyle-loader/mock/ternary.js:2 (Block) */
 ._x1 {
   color: red;
 }
@@ -461,11 +461,11 @@ import { Box } from \\"jsxstyle\\";
 `;
 
 exports[`ternaries extracts a ternary expression from a component that has a spread operator specified 2`] = `
-"/* ./tests/jsxstyle-loader/mock/ternary-with-spread.js:2 (Block) */
+"/* ./jsxstyle-loader/mock/ternary-with-spread.js:2 (Block) */
 ._x0 {
   color: red;
 }
-/* ./tests/jsxstyle-loader/mock/ternary-with-spread.js:2 (Block) */
+/* ./jsxstyle-loader/mock/ternary-with-spread.js:2 (Block) */
 ._x1 {
   color: blue;
 }
@@ -480,15 +480,15 @@ const blue = \\"blueberry\\";
 `;
 
 exports[`ternaries extracts a ternary expression that has a whitelisted consequent and alternate 2`] = `
-"/* ./tests/jsxstyle-loader/mock/ternary.js:4 (Block) */
+"/* ./jsxstyle-loader/mock/ternary.js:4 (Block) */
 ._x0 {
   display: block;
 }
-/* ./tests/jsxstyle-loader/mock/ternary.js:4 (Block) */
+/* ./jsxstyle-loader/mock/ternary.js:4 (Block) */
 ._x1 {
   color: strawberry;
 }
-/* ./tests/jsxstyle-loader/mock/ternary.js:4 (Block) */
+/* ./jsxstyle-loader/mock/ternary.js:4 (Block) */
 ._x2 {
   color: blueberry;
 }
@@ -506,16 +506,16 @@ exports[`ternaries groups extracted ternary statements 1`] = `
 `;
 
 exports[`ternaries groups extracted ternary statements 2`] = `
-"/* ./tests/jsxstyle-loader/mock/ternary-groups.js:2 (Block) */
+"/* ./jsxstyle-loader/mock/ternary-groups.js:2 (Block) */
 ._x0 {
   display: block;
 }
-/* ./tests/jsxstyle-loader/mock/ternary-groups.js:2 (Block) */
+/* ./jsxstyle-loader/mock/ternary-groups.js:2 (Block) */
 ._x1 {
   color: red;
   width: 200px;
 }
-/* ./tests/jsxstyle-loader/mock/ternary-groups.js:2 (Block) */
+/* ./jsxstyle-loader/mock/ternary-groups.js:2 (Block) */
 ._x2 {
   color: blue;
   width: 400px;
@@ -529,11 +529,11 @@ exports[`ternaries handles null values in ternaries correctly 1`] = `
 `;
 
 exports[`ternaries handles null values in ternaries correctly 2`] = `
-"/* ./tests/jsxstyle-loader/mock/ternary-null-values.js:2 (Block) */
+"/* ./jsxstyle-loader/mock/ternary-null-values.js:2 (Block) */
 ._x0 {
   display: block;
 }
-/* ./tests/jsxstyle-loader/mock/ternary-null-values.js:2 (Block) */
+/* ./jsxstyle-loader/mock/ternary-null-values.js:2 (Block) */
 ._x1 {
   color: blue;
 }
@@ -551,17 +551,17 @@ exports[`ternaries positivizes binary expressions 2`] = `
 `;
 
 exports[`ternaries positivizes binary expressions 3`] = `
-"/* ./tests/jsxstyle-loader/mock/binary-expressions.js:2-7 (Block) */
+"/* ./jsxstyle-loader/mock/binary-expressions.js:2-7 (Block) */
 ._x0 {
   display: block;
 }
-/* ./tests/jsxstyle-loader/mock/binary-expressions.js:2-7 (Block) */
+/* ./jsxstyle-loader/mock/binary-expressions.js:2-7 (Block) */
 ._x1 {
   thing1: four;
   thing3: four;
   thing4: four;
 }
-/* ./tests/jsxstyle-loader/mock/binary-expressions.js:2-7 (Block) */
+/* ./jsxstyle-loader/mock/binary-expressions.js:2-7 (Block) */
 ._x2 {
   thing2: not four;
   thing3: not four;
@@ -576,17 +576,17 @@ exports[`ternaries positivizes unary expressions 1`] = `
 `;
 
 exports[`ternaries positivizes unary expressions 2`] = `
-"/* ./tests/jsxstyle-loader/mock/unary-expressions.js:2-7 (Block) */
+"/* ./jsxstyle-loader/mock/unary-expressions.js:2-7 (Block) */
 ._x0 {
   display: block;
 }
-/* ./tests/jsxstyle-loader/mock/unary-expressions.js:2-7 (Block) */
+/* ./jsxstyle-loader/mock/unary-expressions.js:2-7 (Block) */
 ._x1 {
   thing1: mod 2;
   thing3: mod 2;
   thing4: mod 2;
 }
-/* ./tests/jsxstyle-loader/mock/unary-expressions.js:2-7 (Block) */
+/* ./jsxstyle-loader/mock/unary-expressions.js:2-7 (Block) */
 ._x2 {
   thing2: not mod 2;
   thing3: not mod 2;

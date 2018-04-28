@@ -1,7 +1,8 @@
 import './polyfills';
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { Block, InlineBlock, Row, Col, cache } from 'jsxstyle';
+
+import { Block, Col, InlineBlock, Row, cache } from 'jsxstyle';
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 
 describe('jsxstyle', () => {
   const node = document.createElement('div');

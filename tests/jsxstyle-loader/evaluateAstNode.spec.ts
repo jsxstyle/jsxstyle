@@ -1,7 +1,7 @@
+import generate from '@babel/generator';
 import evaluateAstNode from 'jsxstyle-loader/lib/utils/ast/evaluateAstNode';
 import parse from 'jsxstyle-loader/lib/utils/ast/parse';
-import vm from 'vm';
-import generate from '@babel/generator';
+import vm = require('vm');
 
 const staticNamespace = {
   LC: {
@@ -14,8 +14,8 @@ const staticNamespace = {
       level2: 'level3',
     },
   },
-  staticValue: 69,
   staticKey: 'thing3',
+  staticValue: 69,
 };
 
 const ctx = vm.createContext(staticNamespace);

@@ -17,8 +17,7 @@ function alreadyInjected() {
   );
 }
 
-function getStringHash(key: string, props: {}): string;
-function getStringHash(key: string): string {
+function getStringHash(key: string, props?: any): string {
   return '_' + stringHash(key).toString(36);
 }
 
@@ -33,10 +32,10 @@ export default function getStyleCache() {
       _classNameCache = {};
     },
 
-    injectOptions(options: {
-      onInsertRule: InsertRuleCallback;
-      pretty: boolean;
-      getClassName(key: string, props?: {}): string;
+    injectOptions(options?: {
+      onInsertRule?: InsertRuleCallback;
+      pretty?: boolean;
+      getClassName?: (key: string, props?: {}) => string;
     }) {
       if (options) {
         if (options.getClassName) {

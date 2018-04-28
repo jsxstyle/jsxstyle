@@ -50,10 +50,10 @@ describe('getStyleKeysForProps', () => {
   it('splits out pseudoelements and pseudoclasses', () => {
     const keyObj = getStyleKeysForProps(
       {
-        selectionBackgroundColor: 'red',
-        placeholderColor: 'blue',
-        hoverColor: 'orange',
         activeColor: 'purple',
+        hoverColor: 'orange',
+        placeholderColor: 'blue',
+        selectionBackgroundColor: 'red',
       },
       false
     );
