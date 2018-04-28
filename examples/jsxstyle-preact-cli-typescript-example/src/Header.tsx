@@ -1,10 +1,10 @@
-import { h, Component } from 'preact';
 import { Block } from 'jsxstyle/preact';
+import { Component, h } from 'preact';
 
 import NavLink from './NavLink';
 
 export default class Header extends Component<{}, {}> {
-  render() {
+  public render() {
     return (
       <Block
         component="header"

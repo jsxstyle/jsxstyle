@@ -1,7 +1,9 @@
-import * as React from 'react';
-import './App.css';
 import { Block, InlineBlock } from 'jsxstyle';
+import * as React from 'react';
 
+import './App.css';
+
+// tslint:disable-next-line no-var-requires
 const logo = require('./logo.svg');
 const width = '100%';
 const height = () => 150;
@@ -22,7 +24,7 @@ const Logo: React.SFC<LogoProps> = props => (
 );
 
 class App extends React.Component {
-  render() {
+  public render() {
     return (
       <Block textAlign="center">
         <Block

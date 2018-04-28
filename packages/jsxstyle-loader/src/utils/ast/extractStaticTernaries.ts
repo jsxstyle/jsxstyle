@@ -1,10 +1,10 @@
 import generate from '@babel/generator';
 import t = require('@babel/types');
 import invariant = require('invariant');
-import { Dict, CSSProperties } from 'jsxstyle-utils';
+import { CSSProperties, Dict } from 'jsxstyle-utils';
 
-import getClassNameFromCache from '../getClassNameFromCache';
 import { CacheObject } from '../../types';
+import getClassNameFromCache from '../getClassNameFromCache';
 import { StylesByClassName } from '../getStylesByClassName';
 
 export interface Ternary {
@@ -69,9 +69,9 @@ export default function extractStaticTernaries(
 
     const key = generate(ternaryTest).code;
     ternariesByKey[key] = ternariesByKey[key] || {
-      test: ternaryTest,
-      consequentStyles: {},
       alternateStyles: {},
+      consequentStyles: {},
+      test: ternaryTest,
     };
     ternariesByKey[key].consequentStyles[name] = shouldSwap
       ? alternate

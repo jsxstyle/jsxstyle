@@ -1,6 +1,6 @@
-import { h, Component } from 'preact';
-import { Router } from 'preact-router';
 import { Block } from 'jsxstyle/preact';
+import { Component, h } from 'preact';
+import { Router } from 'preact-router';
 
 import Header from './Header';
 import Home from './routes/Home';
@@ -9,7 +9,7 @@ import Profile from './routes/Profile';
 import './style.css';
 
 export default class App extends Component<{}, {}> {
-  render() {
+  public render() {
     return (
       <Block height="100%">
         <Header />

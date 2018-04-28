@@ -1,10 +1,10 @@
-import * as preact from 'preact';
 import {
   componentStyles,
   CSSProperties,
   Dict,
   getStyleCache,
 } from 'jsxstyle-utils';
+import * as preact from 'preact';
 
 export const cache = getStyleCache();
 
@@ -40,24 +40,23 @@ function factory(
   const tagName = 'div';
 
   return class<P> extends preact.Component<JsxstyleProps<P>, {}> {
-    public className: string | null;
-    public component: AnyComponent<JsxstyleProps<P>>;
-
     constructor(props: JsxstyleProps<P>) {
       super(props);
       this.component = props.component || tagName;
       this.className = cache.getClassName(props, props.class);
     }
 
-    static defaultProps = defaultProps;
-    static displayName = displayName;
+    public static defaultProps = defaultProps;
+    public static displayName = displayName;
+    public className: string | null;
+    public component: AnyComponent<JsxstyleProps<P>>;
 
-    componentWillReceiveProps(props: JsxstyleProps<P>) {
+    public componentWillReceiveProps(props: JsxstyleProps<P>) {
       this.component = props.component || tagName;
       this.className = cache.getClassName(props, props.class);
     }
 
-    render({ props, style, children }: JsxstyleProps<P>) {
+    public render({ props, style, children }: JsxstyleProps<P>) {
       return (
         <this.component {...props} class={this.className} style={style}>
           {children}

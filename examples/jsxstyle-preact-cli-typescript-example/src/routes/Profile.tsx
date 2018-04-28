@@ -1,5 +1,5 @@
-import { h, Component } from 'preact';
 import { Block } from 'jsxstyle/preact';
+import { Component, h } from 'preact';
 
 interface ProfileProps {
   user?: string;
@@ -11,21 +11,21 @@ interface ProfileState {
 }
 
 export default class Profile extends Component<ProfileProps, ProfileState> {
-  state = {
-    time: Date.now(),
+  public state = {
     count: 10,
+    time: Date.now(),
   };
 
   private timer: NodeJS.Timer;
 
   // gets called when this route is navigated to
-  componentDidMount() {
+  public componentDidMount() {
     // start a timer for the clock:
     this.timer = global.setInterval(this.updateTime, 1000);
   }
 
   // gets called just before navigating away from the route
-  componentWillUnmount() {
+  public componentWillUnmount() {
     global.clearInterval(this.timer);
   }
 
@@ -39,7 +39,7 @@ export default class Profile extends Component<ProfileProps, ProfileState> {
   };
 
   // Note: `user` comes from the URL, courtesy of our router
-  render({ user }: ProfileProps, { time, count }: ProfileState) {
+  public render({ user }: ProfileProps, { time, count }: ProfileState) {
     return (
       <Block padding="56px 20px" minHeight="100%" width="100%">
         <h1>Profile: {user}</h1>

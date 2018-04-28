@@ -26,19 +26,19 @@ const isUnitlessNumber: Dict<true> = {
   columns: true,
   flex: true,
   flexGrow: true,
-  flexPositive: true,
-  flexShrink: true,
   flexNegative: true,
   flexOrder: true,
-  gridRow: true,
-  gridRowEnd: true,
-  gridRowSpan: true,
-  gridRowStart: true,
+  flexPositive: true,
+  flexShrink: true,
+  fontWeight: true,
   gridColumn: true,
   gridColumnEnd: true,
   gridColumnSpan: true,
   gridColumnStart: true,
-  fontWeight: true,
+  gridRow: true,
+  gridRowEnd: true,
+  gridRowSpan: true,
+  gridRowStart: true,
   lineClamp: true,
   lineHeight: true,
   opacity: true,
@@ -67,7 +67,7 @@ function prefixKey(prefix: string, key: string): string {
 const prefixes = ['Webkit', 'ms', 'Moz', 'O'];
 
 Object.keys(isUnitlessNumber).forEach(prop => {
-  prefixes.forEach(function(prefix) {
+  prefixes.forEach(prefix => {
     isUnitlessNumber[prefixKey(prefix, prop)] = isUnitlessNumber[prop];
   });
 });

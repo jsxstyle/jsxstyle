@@ -1,9 +1,9 @@
-import path = require('path');
 import t = require('@babel/types');
 import { Dict } from 'jsxstyle-utils';
+import path = require('path');
 
-import getSourceModule from './getSourceModule';
 import evaluateAstNode from './evaluateAstNode';
+import getSourceModule from './getSourceModule';
 
 export interface BindingCache {
   [key: string]: string | null;
@@ -48,7 +48,9 @@ export default function getStaticBindingsForScope(
     // check to see if the item is a module
     const sourceModule = getSourceModule(k, binding);
     if (sourceModule) {
-      if (!sourceModule.sourceModule) continue;
+      if (!sourceModule.sourceModule) {
+        continue;
+      }
       let moduleName = sourceModule.sourceModule;
 
       // if modulePath is an absolute or relative path
@@ -93,7 +95,9 @@ export default function getStaticBindingsForScope(
 
     // if init is not set, there's nothing to evaluate
     // TODO: handle spread syntax
-    if (!dec || !dec.init) continue;
+    if (!dec || !dec.init) {
+      continue;
+    }
 
     // missing start/end will break caching
     if (typeof dec.id.start !== 'number' || typeof dec.id.end !== 'number') {

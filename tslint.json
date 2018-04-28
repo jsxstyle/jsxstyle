@@ -1,0 +1,31 @@
+{
+  "defaultSeverity": "error",
+  "extends": ["tslint:recommended", "tslint-react", "tslint-config-prettier"],
+  "jsRules": {},
+  "rules": {
+    "forin": false,
+    "interface-name": [true, "never-prefix"],
+    "member-ordering": [
+      true,
+      {
+        "order": [
+          "constructor",
+          "static-field",
+          "static-method",
+          "instance-field",
+          "instance-method"
+        ]
+      }
+    ],
+    "no-console": [true, "log"],
+    "object-literal-sort-keys": [true, "ignore-case"],
+    "variable-name": [
+      true,
+      "ban-keywords",
+      "check-format",
+      "allow-leading-underscore",
+      "allow-pascal-case"
+    ]
+  },
+  "rulesDirectory": []
+}

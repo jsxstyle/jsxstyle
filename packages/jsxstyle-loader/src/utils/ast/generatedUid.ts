@@ -1,5 +1,5 @@
-import invariant = require('invariant');
 import t = require('@babel/types');
+import invariant = require('invariant');
 
 // TODO: open a PR upstream
 declare module '@babel/types' {

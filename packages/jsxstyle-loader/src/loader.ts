@@ -1,21 +1,19 @@
+import fs = require('fs');
 import invariant = require('invariant');
 import loaderUtils = require('loader-utils');
 import path = require('path');
 import util = require('util');
-import fs = require('fs');
 import webpack = require('webpack');
-import LoaderContext = webpack.loader.LoaderContext;
 
+import { CacheObject, LoaderOptions, PluginContext } from './types';
 import extractStyles from './utils/ast/extractStyles';
-import { PluginContext, CacheObject, LoaderOptions } from './types';
 
 const counter = Symbol.for('counter');
 
-const jsxstyleLoader = function jsxstyleLoader(
-  this: LoaderContext,
-  content: string | Buffer
-) {
-  this.cacheable && this.cacheable();
+const jsxstyleLoader: webpack.loader.Loader = function(content) {
+  if (this.cacheable) {
+    this.cacheable();
+  }
 
   const pluginContext: PluginContext = this[Symbol.for('jsxstyle-loader')];
 
@@ -65,10 +63,10 @@ const jsxstyleLoader = function jsxstyleLoader(
     this.resourcePath,
     {
       cacheObject,
-      warnCallback: (str, ...args: any[]) =>
-        this.emitWarning(new Error(util.format(str, ...args))),
       errorCallback: (str, ...args: any[]) =>
         this.emitError(new Error(util.format(str, ...args))),
+      warnCallback: (str, ...args: any[]) =>
+        this.emitWarning(new Error(util.format(str, ...args))),
     },
     options
   );

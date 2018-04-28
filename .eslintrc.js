@@ -35,18 +35,6 @@ module.exports = {
 
   overrides: [
     {
-      files: ['**/*.ts', '**/*/tsx'],
-      parser: 'typescript-eslint-parser',
-      plugins: ['react', 'typescript'],
-      // https://github.com/eslint/typescript-eslint-parser#known-issues
-      rules: {
-        'no-undef': 0,
-        'no-unused-vars': 0,
-        'no-useless-constructor': 0,
-        'no-use-before-define': 0,
-      },
-    },
-    {
       files: ['examples/jsxstyle-preact-*/src/**/*.js'],
       settings: {
         react: {

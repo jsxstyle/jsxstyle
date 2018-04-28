@@ -1,6 +1,6 @@
-import { h, FunctionalComponent } from 'preact';
-import { Link } from 'preact-router/match';
 import { InlineBlock } from 'jsxstyle/preact';
+import { FunctionalComponent, h } from 'preact';
+import { Link } from 'preact-router/match';
 import * as style from './style.css';
 
 interface NavLinkProps {
@@ -16,8 +16,8 @@ const NavLink: FunctionalComponent<NavLinkProps> = ({
     <InlineBlock
       component={Link}
       props={{
-        href,
         activeClassName: style.active,
+        href,
       }}
       height={56}
       lineHeight="56px"

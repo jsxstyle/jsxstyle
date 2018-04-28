@@ -1,6 +1,6 @@
-import hyphenateStyleName from './hyphenateStyleName';
 import dangerousStyleValue from './dangerousStyleValue';
-import { Dict, CSSProperties } from './types';
+import hyphenateStyleName from './hyphenateStyleName';
+import { CSSProperties, Dict } from './types';
 
 // global flag makes subsequent calls of capRegex.test advance to the next match
 const capRegex = /[A-Z]/g;
@@ -31,9 +31,9 @@ const specialCaseProps = {
   class: true,
   className: true,
   component: true,
+  mediaQueries: true,
   props: true,
   style: true,
-  mediaQueries: true,
 };
 
 export type StyleKeyObj = Dict<{
@@ -153,9 +153,15 @@ export default function getStyleKeysForProps(
 
     if (!styleKeyObj.hasOwnProperty(key)) {
       styleKeyObj[key] = { styles: pretty ? '\n' : '' };
-      if (mediaQuery) styleKeyObj[key].mediaQuery = mediaQuery;
-      if (pseudoclass) styleKeyObj[key].pseudoclass = pseudoclass;
-      if (pseudoelement) styleKeyObj[key].pseudoelement = pseudoelement;
+      if (mediaQuery) {
+        styleKeyObj[key].mediaQuery = mediaQuery;
+      }
+      if (pseudoclass) {
+        styleKeyObj[key].pseudoclass = pseudoclass;
+      }
+      if (pseudoelement) {
+        styleKeyObj[key].pseudoelement = pseudoelement;
+      }
     }
 
     if (mediaQuery) {

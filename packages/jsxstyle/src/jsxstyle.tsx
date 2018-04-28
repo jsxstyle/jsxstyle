@@ -1,10 +1,10 @@
-import * as React from 'react';
 import {
   componentStyles,
   CSSProperties,
   Dict,
   getStyleCache,
 } from 'jsxstyle-utils';
+import * as React from 'react';
 
 export const cache = getStyleCache();
 
@@ -28,24 +28,24 @@ function factory(displayName: string, defaultProps?: Dict<React.ReactText>) {
   const tagName = 'div';
 
   return class JsxstyleComponent<P> extends React.Component<JsxstyleProps<P>> {
-    public className: string | null;
-    public component: AnyComponent<JsxstyleProps<P>>;
-
     constructor(props: JsxstyleProps<P>) {
       super(props);
       this.component = props.component || tagName;
       this.className = cache.getClassName(props, props.className);
     }
 
-    static defaultProps = defaultProps;
-    static displayName = displayName;
+    public static defaultProps = defaultProps;
+    public static displayName = displayName;
 
-    componentWillReceiveProps(props: JsxstyleProps<P>) {
+    public className: string | null;
+    public component: AnyComponent<JsxstyleProps<P>>;
+
+    public componentWillReceiveProps(props: JsxstyleProps<P>) {
       this.component = props.component || tagName;
       this.className = cache.getClassName(props, props.className);
     }
 
-    render() {
+    public render() {
       const { props, style, children } = this.props;
       return (
         <this.component {...props} className={this.className} style={style}>
@@ -66,14 +66,16 @@ export const Grid = factory('Grid', componentStyles.Grid);
 
 function depFactory(displayName: string, defaultProps: {}) {
   let hasWarned = false;
+  // tslint:disable-next-line max-classes-per-file
   return class DeprecatedJsxstyleComponent extends React.Component {
-    static displayName = displayName;
-    static defaultProps = defaultProps;
+    public static displayName = displayName;
+    public static defaultProps = defaultProps;
 
-    componentWillMount() {
+    public componentWillMount() {
       if (process.env.NODE_ENV !== 'production') {
         if (!hasWarned) {
           hasWarned = true;
+          // tslint:disable-next-line no-console
           console.error(
             'jsxstyle\u2019s `%s` component is deprecated and will be removed in future versions of jsxstyle.',
             displayName
@@ -82,7 +84,7 @@ function depFactory(displayName: string, defaultProps: {}) {
       }
     }
 
-    render() {
+    public render() {
       return <Box {...this.props} />;
     }
   };

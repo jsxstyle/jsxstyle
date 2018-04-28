@@ -1,26 +1,28 @@
+import generate from '@babel/generator';
+import traverse, { VisitNodeObject } from '@babel/traverse';
+import t = require('@babel/types');
 import Ajv = require('ajv');
 import invariant = require('invariant');
 import path = require('path');
 import util = require('util');
 import vm = require('vm');
-import generate from '@babel/generator';
-import traverse, { VisitNodeObject } from '@babel/traverse';
-import t = require('@babel/types');
+
 import {
-  getStyleKeysForProps,
   componentStyles,
   CSSProperties,
+  getStyleKeysForProps,
 } from 'jsxstyle-utils';
 
+import { CacheObject, StyleProps } from '../../types';
+import getStylesByClassName from '../getStylesByClassName';
 import evaluateAstNode from './evaluateAstNode';
 import extractStaticTernaries, { Ternary } from './extractStaticTernaries';
 import generateUid from './generatedUid';
 import getPropValueFromAttributes from './getPropValueFromAttributes';
 import getStaticBindingsForScope from './getStaticBindingsForScope';
-import getStylesByClassName from '../getStylesByClassName';
 import parse, { BabylonPlugin } from './parse';
-import { StyleProps, CacheObject } from '../../types';
 
+// tslint:disable-next-line no-var-requires
 const loaderSchema = require('../../../schema/loader.json');
 
 export interface ExtractStylesOptions {
@@ -42,12 +44,10 @@ export interface Options {
   warnCallback: (...args: any[]) => void;
 }
 
-export interface BabelTraverseScope {}
-
 interface TraversePath<TNode = any> {
   node: TNode;
-  scope: BabelTraverseScope;
-  _complexComponentProp?: any; //t.VariableDeclarator;
+  scope: {}; // TODO
+  _complexComponentProp?: any; // t.VariableDeclarator;
   parentPath: TraversePath<any>;
   insertBefore: (arg: t.Node) => void;
 }
@@ -61,8 +61,8 @@ const UNTOUCHED_PROPS = {
 // props that cannot appear in the props prop (so meta)
 const ALL_SPECIAL_PROPS = Object.assign(
   {
-    component: true,
     className: true,
+    component: true,
   },
   UNTOUCHED_PROPS
 );
@@ -87,7 +87,9 @@ for (const componentName in componentStyles) {
   const styleObj = componentStyles[componentName];
 
   // skip `Box`
-  if (!styleObj) continue;
+  if (!styleObj) {
+    continue;
+  }
 
   const propKeys: string[] = Object.keys(styleObj);
   const styleProps: t.JSXAttribute[] = [];
@@ -168,8 +170,8 @@ export default function extractStyles(
 
   const ajv = new Ajv({
     allErrors: true,
-    useDefaults: true,
     errorDataPath: 'property',
+    useDefaults: true,
   });
 
   if (!ajv.validate(loaderSchema, options)) {
@@ -294,13 +296,17 @@ export default function extractStyles(
           return false;
         });
 
-        if (dec.id.properties.length > 0) return true;
+        if (dec.id.properties.length > 0) {
+          return true;
+        }
 
         // if all props on the variable declaration have been handled, filter it out
         return false;
       });
 
-      if (item.declarations.length === 0) return false;
+      if (item.declarations.length === 0) {
+        return false;
+      }
     } else if (t.isImportDeclaration(item)) {
       // omfg everyone please just use import syntax
 
@@ -344,7 +350,9 @@ export default function extractStyles(
       });
 
       // remove import
-      if (item.specifiers.length === 0) return false;
+      if (item.specifiers.length === 0) {
+        return false;
+      }
     }
 
     return true;
@@ -353,10 +361,10 @@ export default function extractStyles(
   // jsxstyle isn't included anywhere, so let's bail
   if (jsxstyleSrc == null || !hasValidComponents) {
     return {
-      js: src,
+      ast,
       css: '',
       cssFileName: null,
-      ast,
+      js: src,
       map: null,
     };
   }
@@ -368,8 +376,8 @@ export default function extractStyles(
   // Generate a UID that's unique in the program scope
   let boxComponentName: string | undefined;
   traverse(ast, {
-    Program(path: TraversePath) {
-      boxComponentName = generateUid(path.scope, 'Box');
+    Program(traversePath: TraversePath) {
+      boxComponentName = generateUid(traversePath.scope, 'Box');
     },
   });
 
@@ -378,8 +386,8 @@ export default function extractStyles(
 
   const traverseOptions: { JSXElement: VisitNodeObject<t.JSXElement> } = {
     JSXElement: {
-      enter(path: TraversePath<t.JSXElement>) {
-        const node = path.node.openingElement;
+      enter(traversePath: TraversePath<t.JSXElement>) {
+        const node = traversePath.node.openingElement;
 
         if (
           // skip non-identifier opening elements (member expressions, etc.)
@@ -392,22 +400,22 @@ export default function extractStyles(
 
         // Remember the source component
         const originalNodeName = node.name.name;
-        const src = validComponents[originalNodeName];
+        const srcKey = validComponents[originalNodeName];
 
         node.name.name = boxComponentName!;
 
         // prepend initial styles
-        const initialStyles = defaultStyleAttributes[src];
+        const initialStyles = defaultStyleAttributes[srcKey];
         if (initialStyles) {
           node.attributes = [...initialStyles, ...node.attributes];
         }
 
         const attemptEval = !evaluateVars
           ? evaluateAstNode
-          : (function() {
+          : (() => {
               // Generate scope object at this level
               const staticNamespace = getStaticBindingsForScope(
-                path.scope,
+                traversePath.scope,
                 whitelistedModules,
                 sourceFileName,
                 bindingCache
@@ -432,9 +440,9 @@ export default function extractStyles(
             })();
 
         let lastSpreadIndex: number = -1;
-        const flattenedAttributes: (
-          | t.JSXAttribute
-          | t.JSXSpreadAttribute)[] = [];
+        const flattenedAttributes: Array<
+          t.JSXAttribute | t.JSXSpreadAttribute
+        > = [];
         node.attributes.forEach(attr => {
           if (t.isJSXSpreadAttribute(attr)) {
             try {
@@ -483,7 +491,7 @@ export default function extractStyles(
 
         node.attributes = flattenedAttributes;
 
-        let propsAttributes: (t.JSXSpreadAttribute | t.JSXAttribute)[] = [];
+        let propsAttributes: Array<t.JSXSpreadAttribute | t.JSXAttribute> = [];
         const staticAttributes: { [key: string]: any } = {};
         let inlinePropCount = 0;
 
@@ -554,7 +562,9 @@ export default function extractStyles(
           if (name === 'props') {
             if (t.isObjectExpression(value)) {
               let errorCount = 0;
-              const attributes: (t.JSXAttribute | t.JSXSpreadAttribute)[] = [];
+              const attributes: Array<
+                t.JSXAttribute | t.JSXSpreadAttribute
+              > = [];
 
               for (const k in value.properties) {
                 const propObj = value.properties[k];
@@ -584,7 +594,9 @@ export default function extractStyles(
                     errorCount++;
                   }
 
-                  if (!key) continue;
+                  if (!key) {
+                    continue;
+                  }
 
                   if (ALL_SPECIAL_PROPS.hasOwnProperty(key)) {
                     warnCallback(
@@ -686,10 +698,10 @@ export default function extractStyles(
               const alternate = attemptEval(value.alternate);
 
               staticTernaries.push({
+                alternate,
+                consequent,
                 name,
                 test: value.test,
-                consequent,
-                alternate,
               });
               // mark the prop as extracted
               staticAttributes[name] = null;
@@ -703,10 +715,10 @@ export default function extractStyles(
               try {
                 const consequent = attemptEval(value.right);
                 staticTernaries.push({
+                  alternate: null,
+                  consequent,
                   name,
                   test: value.left,
-                  consequent,
-                  alternate: null,
                 });
                 staticAttributes[name] = null;
                 return false;
@@ -810,8 +822,8 @@ export default function extractStyles(
                 'Complex `component` prop value (`%s`) will be extracted out as a separate variable declaration.',
                 generate(componentPropValue).code
               );
-              node.name.name = generateUid(path.scope, 'Component');
-              path._complexComponentProp = t.variableDeclarator(
+              node.name.name = generateUid(traversePath.scope, 'Component');
+              traversePath._complexComponentProp = t.variableDeclarator(
                 t.identifier(node.name.name),
                 componentPropValue
               );
@@ -838,13 +850,13 @@ export default function extractStyles(
           }
         }
 
-        if (path.node.closingElement) {
+        if (traversePath.node.closingElement) {
           // this seems strange
-          if (t.isJSXMemberExpression(path.node.closingElement.name)) {
+          if (t.isJSXMemberExpression(traversePath.node.closingElement.name)) {
             warnCallback('Closing element is a member expression');
             return;
           }
-          path.node.closingElement.name.name = node.name.name;
+          traversePath.node.closingElement.name.name = node.name.name;
         }
 
         const stylesByClassName = getStylesByClassName(
@@ -859,7 +871,7 @@ export default function extractStyles(
           ' '
         );
 
-        const classNameObjects: (t.StringLiteral | t.Expression)[] = [];
+        const classNameObjects: Array<t.StringLiteral | t.Expression> = [];
 
         if (classNamePropValue) {
           try {
@@ -997,7 +1009,9 @@ export default function extractStyles(
 
             // get object of style objects
             const styleObjects = getStyleKeysForProps(styleProps, true);
-            if (styleObjects == null) continue;
+            if (styleObjects == null) {
+              continue;
+            }
             delete styleObjects.classNameKey;
             const styleObjectKeys = Object.keys(styleObjects).sort();
 
@@ -1021,17 +1035,17 @@ export default function extractStyles(
           }
         }
       },
-      exit(path: TraversePath<t.JSXElement>) {
-        if (path._complexComponentProp) {
-          if (t.isJSXElement(path.parentPath)) {
+      exit(traversePath: TraversePath<t.JSXElement>) {
+        if (traversePath._complexComponentProp) {
+          if (t.isJSXElement(traversePath.parentPath)) {
             // bump
-            path.parentPath._complexComponentProp = [].concat(
-              path.parentPath._complexComponentProp || [],
-              path._complexComponentProp
+            traversePath.parentPath._complexComponentProp = [].concat(
+              traversePath.parentPath._complexComponentProp || [],
+              traversePath._complexComponentProp
             );
           } else {
             // find nearest Statement
-            let statementPath = path;
+            let statementPath = traversePath;
             do {
               statementPath = statementPath.parentPath;
             } while (!t.isStatement(statementPath));
@@ -1043,20 +1057,20 @@ export default function extractStyles(
 
             const decs = t.variableDeclaration(
               'var',
-              [].concat(path._complexComponentProp)
+              [].concat(traversePath._complexComponentProp)
             );
 
             statementPath.insertBefore(decs);
           }
-          path._complexComponentProp = null;
+          traversePath._complexComponentProp = null;
         }
       },
     },
   };
   traverse(ast, traverseOptions);
 
-  const css = Array.from(cssMap.values())
-    .map(n => n.commentTexts.map(t => `${t}\n`).join('') + n.css)
+  const resultCSS = Array.from(cssMap.values())
+    .map(n => n.commentTexts.map(txt => `${txt}\n`).join('') + n.css)
     .join('');
   // path.parse doesn't exist in the webpack'd bundle but path.dirname and path.basename do.
   const extName = path.extname(sourceFileName);
@@ -1096,7 +1110,7 @@ export default function extractStyles(
   }
 
   // append require/import statement to the document
-  if (css !== '') {
+  if (resultCSS !== '') {
     if (useImportSyntax) {
       ast.program.body.unshift(
         t.importDeclaration([], t.stringLiteral(cssRelativeFileName))
@@ -1115,22 +1129,22 @@ export default function extractStyles(
   const result = generate(
     ast,
     {
-      filename: sourceFileName,
-      retainLines: false,
       compact: 'auto',
       concise: false,
-      sourceMaps: true,
-      sourceFileName,
+      filename: sourceFileName,
       quotes: 'single',
+      retainLines: false,
+      sourceFileName,
+      sourceMaps: true,
     },
     src
   );
 
   return {
-    js: result.code,
-    css,
-    cssFileName,
     ast,
+    css: resultCSS,
+    cssFileName,
+    js: result.code,
     map: result.map,
   };
 }

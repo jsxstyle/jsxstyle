@@ -55,7 +55,9 @@ export default function getSourceModule(
     itemNode.init.arguments.length === 1
   ) {
     const firstArg = itemNode.init.arguments[0];
-    if (!t.isStringLiteral(firstArg)) return null;
+    if (!t.isStringLiteral(firstArg)) {
+      return null;
+    }
     sourceModule = firstArg.value;
 
     if (t.isIdentifier(itemNode.id)) {
@@ -89,10 +91,10 @@ export default function getSourceModule(
   }
 
   return {
-    sourceModule,
+    destructured,
     imported,
     local,
-    destructured,
+    sourceModule,
     usesImportSyntax,
   };
 }

@@ -1,6 +1,7 @@
-import getClassNameFromCache from './getClassNameFromCache';
 import { CSSProperties } from 'jsxstyle-utils';
+
 import { CacheObject, StyleProps } from '../types';
+import getClassNameFromCache from './getClassNameFromCache';
 
 const nonStyleProps = {
   children: true,
@@ -88,8 +89,10 @@ export default function getStylesByClassName(
     arrayLoop: for (let idx = -1, len = styleGroups.length; ++idx < len; ) {
       const styleObject = styleGroups[idx];
       for (const prop in styleObject) {
-        const value = styleObject[prop];
-        if (!styleProps.hasOwnProperty(prop) || styleProps[prop] !== value) {
+        if (
+          !styleProps.hasOwnProperty(prop) ||
+          styleProps[prop] !== styleObject[prop]
+        ) {
           // skip to the next style object
           continue arrayLoop;
         }

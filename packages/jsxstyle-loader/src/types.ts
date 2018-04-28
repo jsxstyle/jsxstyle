@@ -1,4 +1,4 @@
-import { Dict, CSSProperties } from 'jsxstyle-utils';
+import { CSSProperties, Dict } from 'jsxstyle-utils';
 import { ExtractStylesOptions } from './utils/ast/extractStyles';
 
 export type StyleProps = { mediaQueries?: Dict<string> } & CSSProperties;

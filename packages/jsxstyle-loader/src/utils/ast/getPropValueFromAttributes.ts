@@ -1,6 +1,6 @@
-import invariant = require('invariant');
-import t = require('@babel/types');
 import generate from '@babel/generator';
+import t = require('@babel/types');
+import invariant = require('invariant');
 
 import accessSafe from './accessSafe';
 
@@ -22,7 +22,7 @@ import accessSafe from './accessSafe';
  */
 export default function getPropValueFromAttributes(
   propName: string,
-  attrs: (t.JSXAttribute | t.JSXSpreadAttribute)[]
+  attrs: Array<t.JSXAttribute | t.JSXSpreadAttribute>
 ): t.Expression | null {
   let propIndex: number = -1;
   let jsxAttr: t.JSXAttribute | null = null;

@@ -1,7 +1,8 @@
+/* tslint:disable no-bitwise */
 // thx darksky: https://git.io/v9kWO
 export default function stringHash(str: string): number {
-  let hash = 5381,
-    i = str.length;
+  let hash = 5381;
+  let i = str.length;
 
   while (i) {
     hash = (hash * 33) ^ str.charCodeAt(--i);

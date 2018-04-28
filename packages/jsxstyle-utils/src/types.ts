@@ -1,6 +1,8 @@
 import { Properties } from 'csstype';
 
-export type Dict<T> = { [key: string]: T };
+export interface Dict<T> {
+  [key: string]: T;
+}
 
 export type ExactCSSProperties = Properties<string | number>;
 

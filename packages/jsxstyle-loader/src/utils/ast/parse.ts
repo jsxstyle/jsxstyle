@@ -34,7 +34,6 @@ export default function parse(
   plugins: BabylonPlugin[] = []
 ): any {
   return babylon.parse(code.toString(), {
-    sourceType: 'module',
     plugins: Array.from(
       new Set<BabylonPlugin>([
         'asyncGenerators',
@@ -46,5 +45,6 @@ export default function parse(
         ...plugins,
       ])
     ),
+    sourceType: 'module',
   });
 }

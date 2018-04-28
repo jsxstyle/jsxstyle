@@ -1,8 +1,9 @@
 import { CacheObject, PluginContext } from './types';
+
 import fs = require('fs');
+import webpack = require('webpack');
 import MemoryFileSystem = require('webpack/lib/MemoryOutputFileSystem');
 import NodeWatchFileSystem = require('webpack/lib/node/NodeWatchFileSystem');
-import webpack = require('webpack');
 import wrapFileSystem from './utils/wrapFileSystem';
 
 import Compiler = webpack.Compiler;
@@ -22,10 +23,10 @@ class JsxstyleWebpackPlugin implements webpack.Plugin {
     // context object that gets passed to each loader.
     // available in each loader as this[Symbol.for('jsxstyle-loader')]
     this.ctx = {
-      cacheObject: this.cacheObject,
       cacheFile: null,
-      memoryFS: this.memoryFS,
+      cacheObject: this.cacheObject,
       fileList: new Set(),
+      memoryFS: this.memoryFS,
     };
   }
 
@@ -54,7 +55,7 @@ class JsxstyleWebpackPlugin implements webpack.Plugin {
     }
   };
 
-  apply(compiler: Compiler) {
+  public apply(compiler: Compiler) {
     const environmentPlugin = (): void => {
       // compiler is of type `any` here because Compiler types are incomplete
       const wrappedFS = wrapFileSystem(

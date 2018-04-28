@@ -1,5 +1,5 @@
-import getStyleKeysForProps from './getStyleKeysForProps';
 import addStyleToHead from './addStyleToHead';
+import getStyleKeysForProps from './getStyleKeysForProps';
 import stringHash from './stringHash';
 import { Dict } from './types';
 
@@ -34,14 +34,20 @@ export default function getStyleCache() {
     },
 
     injectOptions(options: {
-      getClassName(key: string, props?: {}): string;
       onInsertRule: InsertRuleCallback;
       pretty: boolean;
+      getClassName(key: string, props?: {}): string;
     }) {
       if (options) {
-        if (options.getClassName) getClassNameForKey = options.getClassName;
-        if (options.onInsertRule) onInsertRule = options.onInsertRule;
-        if (options.pretty) pretty = options.pretty;
+        if (options.getClassName) {
+          getClassNameForKey = options.getClassName;
+        }
+        if (options.onInsertRule) {
+          onInsertRule = options.onInsertRule;
+        }
+        if (options.pretty) {
+          pretty = options.pretty;
+        }
       }
       styleCache.injectOptions = alreadyInjected;
     },
