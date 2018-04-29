@@ -3,8 +3,6 @@ import MiniCssExtractPlugin = require('mini-css-extract-plugin');
 import path = require('path');
 import webpack = require('webpack');
 
-import ReactIndexPlugin = require('../../../misc/ReactIndexPlugin');
-
 const config: webpack.Configuration = {
   entry: {
     blue: require.resolve('./test-app/blue-entrypoint'),
