@@ -4,6 +4,7 @@ import path = require('path');
 import webpack = require('webpack');
 import getCustomLaunchers from './misc/getCustomLaunchers';
 
+// tslint:disable-next-line no-var-requires
 require('dotenv').config();
 
 invariant(
@@ -37,9 +38,9 @@ export default (config: KarmaConfig) => {
   } else {
     const customLaunchers = getCustomLaunchers();
     config.set({
-      customLaunchers,
       browsers: Object.keys(customLaunchers),
       concurrency: 5,
+      customLaunchers,
       reporters: ['progress', 'saucelabs'],
     });
   }
@@ -49,76 +50,80 @@ export default (config: KarmaConfig) => {
     tunnelIdentifier = process.env.TRAVIS_JOB_NUMBER;
   }
 
+  // tslint:disable object-literal-sort-keys
+  const webpackConfig: webpack.Configuration = {
+    devtool: 'inline-source-map',
+    mode: 'development',
+    resolve: {
+      alias: {
+        jsxstyle: pkgPath('jsxstyle'),
+        'jsxstyle-utils': pkgPath('jsxstyle-utils'),
+        react: require.resolve('react'),
+        'react-dom': require.resolve('react-dom'),
+      },
+    },
+    performance: { hints: false },
+    module: {
+      rules: [
+        {
+          test: /\.js$/,
+          exclude: /node_modules/,
+          loader: 'babel-loader',
+          options: {
+            babelrc: false,
+            presets: [
+              [
+                'env',
+                {
+                  modules: false,
+                  targets: { browsers: ['last 2 versions'] },
+                },
+              ],
+              'react',
+            ],
+            plugins: [
+              'transform-object-rest-spread',
+              'transform-object-assign',
+            ],
+          },
+        },
+      ],
+    },
+  };
+  // tslint:enable object-literal-sort-keys
+
   config.set({
+    autoWatch: false,
+    // 30 seconds
+    browserNoActivityTimeout: 30000,
+    // three minutes
+    captureTimeout: 180000,
+    colors: true,
+    files: ['tests/**/*.karma.js'],
     frameworks: ['jasmine'],
     // LOG_DISABLE, LOG_ERROR, LOG_WARN, LOG_INFO, LOG_DEBUG
     logLevel: config.LOG_INFO,
     port: 9876,
-    colors: true,
-    autoWatch: false,
-    singleRun: true,
-    // three minutes
-    captureTimeout: 180000,
-    // 30 seconds
-    browserNoActivityTimeout: 30000,
-    files: ['tests/**/*.karma.js'],
     preprocessors: {
       'tests/**/*.karma.js': ['webpack', 'sourcemap'],
     },
     sauceLabs: {
+      connectOptions: {
+        connectRetries: 2,
+        logfile: 'sauce_connect.log',
+      },
       recordScreenshots: true,
       recordVideo: true,
       startConnect: !isCI,
-      tunnelIdentifier,
       tags: isCI
         ? ['ci', 'travis:' + process.env.TRAVIS_EVENT_TYPE]
         : ['local'],
-      connectOptions: {
-        logfile: 'sauce_connect.log',
-        connectRetries: 2,
-      },
+      tunnelIdentifier,
     },
+    singleRun: true,
+    webpack: webpackConfig,
     webpackServer: {
       noInfo: true,
-    },
-    webpack: {
-      mode: 'development',
-      devtool: 'inline-source-map',
-      resolve: {
-        alias: {
-          jsxstyle: pkgPath('jsxstyle'),
-          'jsxstyle-utils': pkgPath('jsxstyle-utils'),
-          react: require.resolve('react'),
-          'react-dom': require.resolve('react-dom'),
-        },
-      },
-      performance: { hints: false },
-      module: {
-        rules: [
-          {
-            test: /\.js$/,
-            exclude: /node_modules/,
-            loader: 'babel-loader',
-            options: {
-              babelrc: false,
-              presets: [
-                [
-                  'env',
-                  {
-                    targets: { browsers: ['last 2 versions'] },
-                    modules: false,
-                  },
-                ],
-                'react',
-              ],
-              plugins: [
-                'transform-object-rest-spread',
-                'transform-object-assign',
-              ],
-            },
-          },
-        ],
-      },
     },
   });
 };

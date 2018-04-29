@@ -19,7 +19,7 @@
     "rollup_watch": "npm run reset && rollup -c -w;",
     "tsc": "tsc -p packages/jsxstyle-loader/tsconfig.json",
     "tslint": "tslint",
-    "tslint-packages": "find packages -type f -name 'tsconfig.json' -not -path '*/node_modules/*' -exec echo {} \\; -exec tslint -p {} \\;",
+    "tslint-all": "find . -type f -name 'tsconfig.json' -not -path '*/node_modules/*' -exec echo {} \\; -exec tslint -p {} \\;",
     "update_readme": "echo \"$(<./misc/monorepo-preamble.md)\\n\\n---\\n\\n$(<./packages/jsxstyle/README.md)\" > README.md",
     "update_sauce_data": "curl https://saucelabs.com/rest/v1/info/platforms/appium > saucelabs-data.json"
   },

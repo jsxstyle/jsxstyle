@@ -1,18 +1,18 @@
+import JsxstyleLoaderPlugin = require('jsxstyle-loader/plugin');
 import path = require('path');
 import webpack = require('webpack');
-import JsxstyleLoaderPlugin = require('jsxstyle-loader/plugin');
 import ReactIndexPlugin = require('../../misc/ReactIndexPlugin');
 
 const appSrc = path.join(__dirname, 'src');
 
 const config: webpack.Configuration = {
-  mode: 'development',
   entry: path.join(__dirname, './src/index.tsx'),
+  mode: 'development',
   output: {
+    chunkFilename: '[name].chunk.js',
+    filename: 'bundle.js',
     path: path.join(__dirname, 'build'),
     pathinfo: true,
-    filename: 'bundle.js',
-    chunkFilename: '[name].chunk.js',
     publicPath: '/',
   },
 
@@ -22,6 +22,7 @@ const config: webpack.Configuration = {
 
   plugins: [new JsxstyleLoaderPlugin(), new ReactIndexPlugin()],
 
+  // tslint:disable object-literal-sort-keys
   module: {
     strictExportPresence: true,
     rules: [
@@ -95,6 +96,7 @@ const config: webpack.Configuration = {
       },
     ],
   },
+  // tslint:enable object-literal-sort-keys
 };
 
 export = config;

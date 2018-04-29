@@ -40,38 +40,8 @@ it('builds without issue', () => {
         'utf8'
       );
 
-      expect(redCSS)
-        .toEqual(`/* ./jsxstyle-loader/webpack/test-app/RedApp.js:8 (Inline) */
-._1ioutjs {
-  color: red;
-  display: inline;
-}
-
-/* ./jsxstyle-loader/webpack/test-app/Shared.js:8 (Block) */
-._1qb53c2 {
-  display: block;
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-  font-size: 18px;
-  line-height: 22px;
-}
-
-`);
-      expect(blueCSS)
-        .toEqual(`/* ./jsxstyle-loader/webpack/test-app/Shared.js:8 (Block) */
-._1qb53c2 {
-  display: block;
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-  font-size: 18px;
-  line-height: 22px;
-}
-
-/* ./jsxstyle-loader/webpack/test-app/BlueApp.js:8 (Inline) */
-._1qr3dx1 {
-  color: blue;
-  display: inline;
-}
-
-`);
+      expect(redCSS).toMatchSnapshot();
+      expect(blueCSS).toMatchSnapshot();
 
       resolve();
     });

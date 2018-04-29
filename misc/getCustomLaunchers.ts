@@ -1,11 +1,11 @@
-import { groupBy, flattenDeep, uniqBy, sample } from 'lodash';
 import fs = require('fs');
 import invariant = require('invariant');
+import { flattenDeep, groupBy, sample, uniqBy } from 'lodash';
 import path = require('path');
 
 const mobilePlatforms = {
-  iphone: 'iOS',
   android: 'Android',
+  iphone: 'iOS',
 };
 
 export type SauceApiName =
@@ -71,7 +71,9 @@ export type Launcher = WebdriverLauncher | AppiumLauncher;
 /** Left pads a number with zeros. will fail on numbers greater than 10,000 */
 const padNum = (num: string): string => {
   const numInt = parseInt(num, 10);
-  if (isNaN(numInt)) return 'NaN_';
+  if (isNaN(numInt)) {
+    return 'NaN_';
+  }
   return ('' + (parseInt(num, 10) + 10000)).slice(1);
 };
 
@@ -148,16 +150,16 @@ export default function getCustomLaunchers(): { [key: string]: Launcher } {
     }
 
     customLaunchers[key] = {
-      base: 'SauceLabs',
-      name: `${data.long_name} ${data.short_version}`,
-      browserName,
-      platformName: mobilePlatforms[data.api_name] || data.long_name,
-      platformVersion: data.short_version,
-      deviceName: data.long_name,
       // recommended_backend_version can be an empty string
       appiumVersion:
         data.recommended_backend_version ||
         data.supported_backend_versions.slice(-1)[0],
+      base: 'SauceLabs',
+      browserName,
+      deviceName: data.long_name,
+      name: `${data.long_name} ${data.short_version}`,
+      platformName: mobilePlatforms[data.api_name] || data.long_name,
+      platformVersion: data.short_version,
     };
   });
 
@@ -165,8 +167,8 @@ export default function getCustomLaunchers(): { [key: string]: Launcher } {
   [11, 10, 9].forEach(v => {
     customLaunchers[`sl_ie_${v}`] = {
       base: 'SauceLabs',
-      name: `Internet Explorer ${v}`,
       browserName: 'Internet Explorer',
+      name: `Internet Explorer ${v}`,
       version: '' + v,
     };
   });
@@ -184,8 +186,8 @@ export default function getCustomLaunchers(): { [key: string]: Launcher } {
 
       customLaunchers[k] = {
         base: 'SauceLabs',
-        name: `${niceName} ${version}`,
         browserName: b,
+        name: `${niceName} ${version}`,
         platform,
         version,
       };

@@ -7,8 +7,8 @@ import ReactIndexPlugin = require('../../../misc/ReactIndexPlugin');
 
 const config: webpack.Configuration = {
   entry: {
-    red: require.resolve('./test-app/red-entrypoint'),
     blue: require.resolve('./test-app/blue-entrypoint'),
+    red: require.resolve('./test-app/red-entrypoint'),
   },
   mode: 'development',
   output: {

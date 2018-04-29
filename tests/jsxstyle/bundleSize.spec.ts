@@ -7,18 +7,18 @@ import zlib = require('zlib');
 
 const entry = 'bundleSize entrypoint';
 
-it('has a runtime size of less than 3KB', () => {
+it('has a runtime size of less than 3KB', async () => {
   expect.assertions(3);
 
   const inputOptions = {
-    input: entry,
     external: ['react', 'preact'],
+    input: entry,
     plugins: [
       rollupNodeResolve({
-        jail: path.resolve(__dirname, '../../'),
         customResolveOptions: {
           moduleDirectory: 'packages',
         },
+        jail: path.resolve(__dirname, '../../'),
       }),
       rollupUglify(),
       rollupReplace({
@@ -26,10 +26,14 @@ it('has a runtime size of less than 3KB', () => {
       }),
       {
         resolveId(id) {
-          if (id === entry) return entry;
+          if (id === entry) {
+            return entry;
+          }
         },
         load(id) {
-          if (id === entry) return "export * from 'jsxstyle';\n";
+          if (id === entry) {
+            return "export * from 'jsxstyle';\n";
+          }
         },
       },
     ],
@@ -37,36 +41,35 @@ it('has a runtime size of less than 3KB', () => {
 
   const outputOptions: OutputOptions = { format: 'cjs' };
 
-  return new Promise((resolve, reject) => {
-    rollup(inputOptions)
-      .then(bundle => {
-        bundle
-          .generate(outputOptions)
-          .then(({ code }) => {
-            zlib.deflate(code, (err, buf) => {
-              if (err) reject(err);
-              const strLen = Buffer.byteLength(code);
-              const gzipLen = buf.byteLength;
-              console.warn(
-                'jsxstyle bundle size: %s bytes (%skb)',
-                strLen,
-                (strLen / 1024).toFixed(4)
-              );
-              console.warn(
-                'jsxstyle bundle size (gzip): %s bytes (%skb)',
-                gzipLen,
-                (gzipLen / 1024).toFixed(4)
-              );
-              // ensure jsxstyle and jsxstyle-utils are bundled
-              expect(code).not.toMatch(/require\(['"]jsxstyle['"]\)/);
-              expect(code).not.toMatch(/require\(['"]jsxstyle-utils['"]\)/);
-              // check file size
-              expect(gzipLen).toBeLessThan(1024 * 3);
-              resolve();
-            });
-          })
-          .catch(err => reject(err));
-      })
-      .catch(err => reject(err));
-  });
+  const bundle = await rollup(inputOptions);
+  const result = await bundle.generate(outputOptions);
+
+  // TODO: narrow this correctly
+  const code = (result as any).code;
+
+  return new Promise((resolve, reject) =>
+    zlib.deflate(code, (err, buf) => {
+      if (err) {
+        return reject(err);
+      }
+      const strLen = Buffer.byteLength(code);
+      const gzipLen = buf.byteLength;
+      console.warn(
+        'jsxstyle bundle size: %s bytes (%skb)',
+        strLen,
+        (strLen / 1024).toFixed(4)
+      );
+      console.warn(
+        'jsxstyle bundle size (gzip): %s bytes (%skb)',
+        gzipLen,
+        (gzipLen / 1024).toFixed(4)
+      );
+      // ensure jsxstyle and jsxstyle-utils are bundled
+      expect(code).not.toMatch(/require\(['"]jsxstyle['"]\)/);
+      expect(code).not.toMatch(/require\(['"]jsxstyle-utils['"]\)/);
+      // check file size
+      expect(gzipLen).toBeLessThan(1024 * 3);
+      resolve();
+    })
+  );
 });

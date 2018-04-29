@@ -3,5 +3,5 @@ import { Block } from '../../../packages/jsxstyle';
 
 const Div: React.SFC = props => <div {...props} />;
 
-<Block component="input" props={{ value: 'wow' }} />;
-<Block component={Div} props={{ title: 'wow' }} />;
+export const Demo1 = () => <Block component="input" props={{ value: 'wow' }} />;
+export const Demo2 = () => <Block component={Div} props={{ title: 'wow' }} />;
