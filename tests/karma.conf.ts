@@ -1,8 +1,8 @@
-import invariant = require('invariant');
-import karma = require('karma');
-import path = require('path');
-import webpack = require('webpack');
-import getCustomLaunchers from './misc/getCustomLaunchers';
+import * as invariant from 'invariant';
+import * as karma from 'karma';
+import * as path from 'path';
+import * as webpack from 'webpack';
+import getCustomLaunchers from './getCustomLaunchers';
 
 // tslint:disable-next-line no-var-requires
 require('dotenv').config();
@@ -14,8 +14,6 @@ invariant(
 
 const isCI = !!process.env.CI;
 const isLocal = !!process.env.KARMA_LOCAL;
-
-const pkgPath = pkg => path.join(__dirname, 'packages', pkg);
 
 export type KarmaConfigOptions = karma.ConfigOptions & {
   customLaunchers?: { [key: string]: any };
@@ -56,17 +54,18 @@ export default (config: KarmaConfig) => {
     mode: 'development',
     resolve: {
       alias: {
-        jsxstyle: pkgPath('jsxstyle'),
-        'jsxstyle-utils': pkgPath('jsxstyle-utils'),
+        jsxstyle: require.resolve('jsxstyle'),
+        'jsxstyle-utils': require.resolve('jsxstyle-utils'),
         react: require.resolve('react'),
         'react-dom': require.resolve('react-dom'),
       },
+      extensions: ['.ts', '.tsx', '.js', '.json'],
     },
     performance: { hints: false },
     module: {
       rules: [
         {
-          test: /\.js$/,
+          test: /\.(js|tsx?)$/,
           exclude: /node_modules/,
           loader: 'babel-loader',
           options: {
@@ -87,6 +86,10 @@ export default (config: KarmaConfig) => {
             ],
           },
         },
+        {
+          test: /\.tsx?/,
+          loader: require.resolve('ts-loader'),
+        },
       ],
     },
   };
@@ -99,13 +102,13 @@ export default (config: KarmaConfig) => {
     // three minutes
     captureTimeout: 180000,
     colors: true,
-    files: ['tests/**/*.karma.js'],
+    files: ['**/*.karma.tsx'],
     frameworks: ['jasmine'],
     // LOG_DISABLE, LOG_ERROR, LOG_WARN, LOG_INFO, LOG_DEBUG
     logLevel: config.LOG_INFO,
     port: 9876,
     preprocessors: {
-      'tests/**/*.karma.js': ['webpack', 'sourcemap'],
+      '**/*.karma.tsx': ['webpack', 'sourcemap'],
     },
     sauceLabs: {
       connectOptions: {

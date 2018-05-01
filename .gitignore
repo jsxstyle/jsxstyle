@@ -1,7 +1,5 @@
-node_modules
-.vscode
-.env
 *.log
-stats.json
-.rpt2_cache
-saucelabs-data.json
+/.rpt2_cache
+/.vscode
+/tests/saucelabs-data.json
+node_modules

@@ -1,7 +1,7 @@
-import fs = require('fs');
-import invariant = require('invariant');
+import * as fs from 'fs';
+import * as invariant from 'invariant';
 import { flattenDeep, groupBy, sample, uniqBy } from 'lodash';
-import path = require('path');
+import * as path from 'path';
 
 const mobilePlatforms = {
   android: 'Android',
@@ -88,7 +88,7 @@ const semverToSortString = (str: string): string =>
 const semverSort = (a: string, b: string) =>
   semverToSortString(a).localeCompare(semverToSortString(b));
 
-const sauceDataFile = path.resolve(__dirname, '..', 'saucelabs-data.json');
+const sauceDataFile = path.join(__dirname, 'saucelabs-data.json');
 invariant(fs.existsSync(sauceDataFile), 'Sauce data file does not exist');
 
 export default function getCustomLaunchers(): { [key: string]: Launcher } {
