@@ -15,10 +15,10 @@ export interface StyleProps {
 
 export type AnyComponent<Props extends StyleProps> =
   | keyof JSX.IntrinsicElements
-  | preact.AnyComponent<Props, any>
+  | preact.ComponentConstructor<Props, any>
   // this isn't covered by preact.FunctionalComponent for some reason
   // see: https://github.com/developit/preact-router/blob/eb0206b/src/match.d.ts#L13
-  | ((props?: Props) => preact.VNode);
+  | ((props?: Props, ...args: any[]) => preact.VNode | null);
 
 export type JsxstyleProps<ComponentProps> = {
   children?: preact.VNode[];
@@ -48,6 +48,7 @@ function factory(
 
     public static defaultProps = defaultProps;
     public static displayName = displayName;
+
     public className: string | null;
     public component: AnyComponent<JsxstyleProps<P>>;
 

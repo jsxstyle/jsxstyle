@@ -8,7 +8,7 @@ before_install:
 install:
   - npm install
 script:
-  - npm run --prefix tests jest
+  - npm run jest
   - npm run --prefix tests update_sauce_data
   - travis_retry npm run --prefix tests karma
 addons:
