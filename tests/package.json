@@ -1,11 +1,12 @@
 {
   "name": "jsxstyle-tests",
+  "private": true,
   "scripts": {
     "jest": "jest --verbose --runInBand",
     "jest-update-snapshot": "jest --updateSnapshot",
     "karma": "karma start",
-    "karma_local": "KARMA_LOCAL=yep karma start",
-    "update_sauce_data": "curl https://saucelabs.com/rest/v1/info/platforms/appium > saucelabs-data.json"
+    "karma-local": "KARMA_LOCAL=yep karma start",
+    "update-sauce-data": "curl https://saucelabs.com/rest/v1/info/platforms/appium > saucelabs-data.json"
   },
   "dependencies": {
     "@babel/generator": "^7.0.0-beta.44",
@@ -30,6 +31,7 @@
     "karma-sourcemap-loader": "^0.3.7",
     "karma-webpack": "^2.0.4",
     "mini-css-extract-plugin": "^0.4.0",
+    "npm-packlist": "^1.1.10",
     "rollup-plugin-node-resolve": "^3.0.2",
     "rollup-plugin-replace": "^2.0.0",
     "rollup-plugin-uglify": "^3.0.0",

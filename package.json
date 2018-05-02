@@ -5,20 +5,19 @@
   "private": true,
   "homepage": "https://github.com/smyte/jsxstyle#readme",
   "scripts": {
-    "build": "npm run reset && rollup -c && npm run tsc && prettier --write \"packages/{*,*/*}/lib/**/*.js\"",
+    "build": "npm run reset && rollup -c && npm run tsc && prettier --write \"packages/{*,*/*}/lib/**/*.{js,ts}\"",
     "jest": "npm run build && npm run --prefix tests jest",
     "jest-update-snapshot": "npm run build && npm run --prefix tests jest-update-snapshot",
-    "lerna_clean": "lerna clean",
-    "lerna_updated": "lerna updated",
+    "lerna-clean": "lerna clean",
+    "lerna-updated": "lerna updated",
     "postinstall": "lerna bootstrap",
     "prettier": "prettier --write \"{packages/**/*,examples/**/*}.{js,ts,tsx,css,md}\"",
     "release": "npm run jest && lerna publish",
     "reset": "rimraf packages/{*,*/*}/lib/",
-    "rollup_watch": "npm run reset && rollup -c -w;",
     "tsc": "tsc -p packages/jsxstyle-loader/tsconfig.json",
     "tslint": "tslint",
     "tslint-all": "find . -type f -name 'tsconfig.json' -not -path '*/node_modules/*' -exec echo {} \\; -exec tslint -p {} \\;",
-    "update_readme": "echo \"$(<./misc/monorepo-preamble.md)\\n\\n---\\n\\n$(<./packages/jsxstyle/README.md)\" > README.md"
+    "update-readme": "echo \"$(<./misc/monorepo-preamble.md)\\n\\n---\\n\\n$(<./packages/jsxstyle/README.md)\" > README.md"
   },
   "dependencies": {
     "@types/fs-extra": "^5.0.2",

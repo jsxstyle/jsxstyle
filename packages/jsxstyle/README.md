@@ -74,13 +74,14 @@ jsxstyle provides the following seven components:
 All props passed to these components are assumed to be CSS properties.
 There are five exceptions to this rule:
 
-| Property       | Type                                             | Description                                                                                            |
-| :------------- | :----------------------------------------------- | :----------------------------------------------------------------------------------------------------- |
-| `component`    | `string`,&nbsp;`function`,&nbsp;or&nbsp;`object` | the underlying HTML tag or component to render. Defaults&nbsp;to&nbsp;`'div'`                          |
-| `props`        | `object`                                         | additional props to pass directly to the underlying tag&nbsp;or&nbsp;component.                        |
-| `mediaQueries` | `object`                                         | an object of media query strings keyed by prefix. More&nbsp;on&nbsp;that&nbsp;[below](#media-queries). |
-| `className`    | `string`                                         | Class name to be passed through to the underlying tag&nbsp;or&nbsp;component.                          |
-| `style`        | `any`                                            | _Passed through untouched_                                                                             |
+<!-- prettier-ignore -->
+| Property | Type | Description |
+| :-- | :-- | :-- |
+| `component`    | `string`,&nbsp;`function`,&nbsp;or&nbsp;`object` | the underlying HTML tag or component to render. Defaults&nbsp;to&nbsp;`'div'` |
+| `props`        | `object` | additional props to pass directly to the underlying tag&nbsp;or&nbsp;component. |
+| `mediaQueries` | `object` | an object of media query strings keyed by prefix. More&nbsp;on&nbsp;that&nbsp;[below](#media-queries). |
+| `className`    | `string` | Class name to be passed through to the underlying tag&nbsp;or&nbsp;component. |
+| `style`        | `any`    | _Passed through untouched_ |
 
 ## Features
 
@@ -99,8 +100,9 @@ import { Block } from 'jsxstyle/preact';
 />;
 ```
 
-| Supported Pseudoclasses                                                                                         | Supported Pseudoelements                      |
-| --------------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
+<!-- prettier-ignore -->
+| Supported Pseudoclasses | Supported Pseudoelements |
+| -- | -- |
 | `active`, `checked`, `disabled`, `empty`, `enabled`, `focus`, `hover`, `invalid`, `required`, `target`, `valid` | `placeholder`, `selection`, `before`, `after` |
 
 <br>
@@ -130,27 +132,27 @@ Define a `mediaQueries` property with an object of media queries keyed by whatev
 <details>
 <summary>Writing styles inline does away with name fatigue and constantly bouncing between CSS and component code in your editor, and jsxstyle’s approach to inline styles ensures that a best-in-class developer experience comes with no performance cost.</summary>
 
-1. ### Naming things is hard.
+1.  ### Naming things is hard.
 
-   jsxstyle manages CSS and corresponding generated class names, which means that _what those class names actually are becomes unimportant_. jsxstyle can generate short, production-optimized class names and retain a mapping of those class names to corresponding style objects. All you have to do is worry about actual style properties.
+    jsxstyle manages CSS and corresponding generated class names, which means that _what those class names actually are becomes unimportant_. jsxstyle can generate short, production-optimized class names and retain a mapping of those class names to corresponding style objects. All you have to do is worry about actual style properties.
 
-2. ### Jumping between JS and CSS in your editor wastes time.
+2.  ### Jumping between JS and CSS in your editor wastes time.
 
-   There’s no need to constantly jump between components and the CSS file(s) that define how those components are styled because styles are defined right at the component level. CSS has always been a language that describes what HTML elements look like. With jsxstyle, those descriptions are right where you need them.
+    There’s no need to constantly jump between components and the CSS file(s) that define how those components are styled because styles are defined right at the component level. CSS has always been a language that describes what HTML elements look like. With jsxstyle, those descriptions are right where you need them.
 
-3. ### Styles are… _inline_.
+3.  ### Styles are… _inline_.
 
-   With inline styles, any frontend contributor can look at an element and know in a matter of seconds _exactly_ how it’s styled. Inline styles describe an element’s appearance better than CSS classes ever could, and because you don’t have to worry about the class abstraction, there’s no fear of you or another frontend contributor taking a pure CSS class (like `.red { color: tomato }`) and corrupting it by modifying its styles.
+    With inline styles, any frontend contributor can look at an element and know in a matter of seconds _exactly_ how it’s styled. Inline styles describe an element’s appearance better than CSS classes ever could, and because you don’t have to worry about the class abstraction, there’s no fear of you or another frontend contributor taking a pure CSS class (like `.red { color: tomato }`) and corrupting it by modifying its styles.
 
-   Also, because styles are inline, when you delete a component, you delete its style properties along with it. Dead CSS is no longer a concern.
+    Also, because styles are inline, when you delete a component, you delete its style properties along with it. Dead CSS is no longer a concern.
 
-4. ### Styles written inline don’t _remain_ inline.
+4.  ### Styles written inline don’t _remain_ inline.
 
-   jsxstyle is first and foremost _syntax_ for styling components at a particular scope. The styles you specify on jsxstyle components are added to the document and a `div` or component you specify is output with a class name that points to the added styles.
+    jsxstyle is first and foremost _syntax_ for styling components at a particular scope. The styles you specify on jsxstyle components are added to the document and a `div` or component you specify is output with a class name that points to the added styles.
 
-5. ### Building tooling around inline styles is simple and straightforward.
+5.  ### Building tooling around inline styles is simple and straightforward.
 
-   Statically analyzing inline styles on known components is trivial. Most of the styles you’ll end up writing on jsxstyle primitive components are static. Once you’re done perusing this README, check out [`jsxstyle-loader`][jsxstyle-loader]. It’s a webpack loader that, at build time, extracts static styles defined on jsxstyle components into separate CSS files. `jsxstyle-loader` reduces and in some cases _entirely removes_ the need for runtime jsxstyle. jsxstyle becomes nothing more than syntactic sugar for styling components, much like how JSX itself is syntactic sugar for nested function calls. Dude, that’s next level!
+    Statically analyzing inline styles on known components is trivial. Most of the styles you’ll end up writing on jsxstyle primitive components are static. Once you’re done perusing this README, check out [`jsxstyle-loader`][jsxstyle-loader]. It’s a webpack loader that, at build time, extracts static styles defined on jsxstyle components into separate CSS files. `jsxstyle-loader` reduces and in some cases _entirely removes_ the need for runtime jsxstyle. jsxstyle becomes nothing more than syntactic sugar for styling components, much like how JSX itself is syntactic sugar for nested function calls. Dude, that’s next level!
 
 </details>
 
@@ -188,9 +190,9 @@ Yes! jsxstyle is designed to work _alongside_ existing styles and style systems.
 
 jsxstyle exports a `cache` object with a few functions that make adding support for server rendering a breeze. Two things you need to know:
 
-1. In a server environment, the function that adds styles to the document is a noop, but it can be replaced with any arbitrary function. When server rendering, you can aggregate jsxstyle-injected styles when rendering your app to a string, and then add those styles to the response you send to the client.
+1.  In a server environment, the function that adds styles to the document is a noop, but it can be replaced with any arbitrary function. When server rendering, you can aggregate jsxstyle-injected styles when rendering your app to a string, and then add those styles to the response you send to the client.
 
-2. jsxstyle builds a cache of styles that have been added to the document to ensure they’re added exactly once. When server rendering, this cache will need to be reset between each render.
+2.  jsxstyle builds a cache of styles that have been added to the document to ensure they’re added exactly once. When server rendering, this cache will need to be reset between each render.
 
 Here’s a minimal (untested!) example of jsxstyle server rendering with Koa:
 

@@ -1,0 +1,113 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`jest picks the right packages 1`] = `
+"
+jsxstyle        --> packages/jsxstyle/lib/jsxstyle.cjs.js
+jsxstyle-loader --> packages/jsxstyle-loader/lib/loader.js
+jsxstyle-utils  --> packages/jsxstyle-utils/lib/jsxstyle-utils.cjs.js
+"
+`;
+
+exports[`npm publish only publishes the intended files: private packages 1`] = `
+Array [
+  "jsxstyle-preact-cli-example",
+  "jsxstyle-preact-cli-typescript-example",
+  "jsxstyle-react-example",
+  "jsxstyle-tests",
+  "jsxstyle-typescript-example",
+]
+`;
+
+exports[`npm publish only publishes the intended files: public packages 1`] = `
+Array [
+  "
+jsxstyle
+========
+- package.json
+- LICENSE
+- README.md
+- lib/jsxstyle.cjs.js
+- lib/jsxstyle.d.ts
+- lib/jsxstyle.es.js
+- lib/jsxstyle.js
+- preact/lib/jsxstyle-preact.cjs.js
+- preact/lib/jsxstyle-preact.d.ts
+- preact/lib/jsxstyle-preact.es.js
+- preact/lib/jsxstyle-preact.js
+- preact/package.json
+",
+  "
+jsxstyle-loader
+===============
+- package.json
+- LICENSE
+- README.md
+- lib/loader.d.ts
+- lib/loader.js
+- lib/loader.js.map
+- lib/plugin.d.ts
+- lib/plugin.js
+- lib/plugin.js.map
+- lib/types.d.ts
+- lib/types.js
+- lib/types.js.map
+- lib/utils/ast/accessSafe.d.ts
+- lib/utils/ast/accessSafe.js
+- lib/utils/ast/accessSafe.js.map
+- lib/utils/ast/evaluateAstNode.d.ts
+- lib/utils/ast/evaluateAstNode.js
+- lib/utils/ast/evaluateAstNode.js.map
+- lib/utils/ast/extractStaticTernaries.d.ts
+- lib/utils/ast/extractStaticTernaries.js
+- lib/utils/ast/extractStaticTernaries.js.map
+- lib/utils/ast/extractStyles.d.ts
+- lib/utils/ast/extractStyles.js
+- lib/utils/ast/extractStyles.js.map
+- lib/utils/ast/generatedUid.d.ts
+- lib/utils/ast/generatedUid.js
+- lib/utils/ast/generatedUid.js.map
+- lib/utils/ast/getPropValueFromAttributes.d.ts
+- lib/utils/ast/getPropValueFromAttributes.js
+- lib/utils/ast/getPropValueFromAttributes.js.map
+- lib/utils/ast/getSourceModule.d.ts
+- lib/utils/ast/getSourceModule.js
+- lib/utils/ast/getSourceModule.js.map
+- lib/utils/ast/getStaticBindingsForScope.d.ts
+- lib/utils/ast/getStaticBindingsForScope.js
+- lib/utils/ast/getStaticBindingsForScope.js.map
+- lib/utils/ast/parse.d.ts
+- lib/utils/ast/parse.js
+- lib/utils/ast/parse.js.map
+- lib/utils/getClassNameFromCache.d.ts
+- lib/utils/getClassNameFromCache.js
+- lib/utils/getClassNameFromCache.js.map
+- lib/utils/getStylesByClassName.d.ts
+- lib/utils/getStylesByClassName.js
+- lib/utils/getStylesByClassName.js.map
+- lib/utils/wrapFileSystem.d.ts
+- lib/utils/wrapFileSystem.js
+- lib/utils/wrapFileSystem.js.map
+- plugin/package.json
+- schema/loader.json
+",
+  "
+jsxstyle-utils
+==============
+- package.json
+- LICENSE
+- README.md
+- lib/addStyleToHead.d.ts
+- lib/componentStyles.d.ts
+- lib/dangerousStyleValue.d.ts
+- lib/getStyleCache.d.ts
+- lib/getStyleKeysForProps.d.ts
+- lib/hyphenateStyleName.d.ts
+- lib/jsxstyle-utils.cjs.js
+- lib/jsxstyle-utils.d.ts
+- lib/jsxstyle-utils.es.js
+- lib/jsxstyle-utils.js
+- lib/stringHash.d.ts
+- lib/types.d.ts
+",
+]
+`;

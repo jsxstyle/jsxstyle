@@ -6,6 +6,8 @@ import {
 } from 'jsxstyle-utils';
 import * as preact from 'preact';
 
+export { CSSProperties };
+
 export const cache = getStyleCache();
 
 export interface StyleProps {

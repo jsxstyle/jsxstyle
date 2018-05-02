@@ -9,7 +9,7 @@ install:
   - npm install
 script:
   - npm run jest
-  - npm run --prefix tests update_sauce_data
+  - npm run --prefix tests update-sauce-data
   - travis_retry npm run --prefix tests karma
 addons:
   sauce_connect:

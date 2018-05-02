@@ -17,6 +17,5 @@
     "target": "es5",
     "types": ["node", "react"]
   },
-  "exclude": ["node_modules", "preact/*"],
-  "include": ["*.tsx"]
+  "files": ["jsxstyle.tsx"]
 }

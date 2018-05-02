@@ -18,5 +18,5 @@
     "target": "es5",
     "types": ["node", "preact"]
   },
-  "include": ["*.ts", "*.tsx"]
+  "files": ["jsxstyle-preact.tsx"]
 }

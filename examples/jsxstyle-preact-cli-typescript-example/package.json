@@ -6,8 +6,7 @@
   "scripts": {
     "build": "preact build",
     "serve": "preact build && preact serve",
-    "start": "preact watch",
-    "tsc-check": "tsc --noEmit --p ./tsconfig.json"
+    "start": "preact watch"
   },
   "devDependencies": {
     "preact-cli": "^2.1.1",

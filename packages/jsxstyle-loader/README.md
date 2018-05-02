@@ -6,11 +6,11 @@ Don’t know what jsxstyle is? Check out the [jsxstyle README][] for more inform
 
 ## Getting Started
 
-1. Add a new rule object for `jsxstyle-loader` to your webpack config.
+1.  Add a new rule object for `jsxstyle-loader` to your webpack config.
 
-2. Add a loader that handles `.css` files to your webpack config, because `jsxstyle-loader` adds a `.css` `require` to each component that uses jsxstyle.
+2.  Add a loader that handles `.css` files to your webpack config, because `jsxstyle-loader` adds a `.css` `require` to each component that uses jsxstyle.
 
-3. Add `jsxstyle-loader`’s companion plugin to the `plugins` section of your webpack config.
+3.  Add `jsxstyle-loader`’s companion plugin to the `plugins` section of your webpack config.
 
 When you’re done, the relevant parts of your webpack config should look like this:
 
@@ -137,31 +137,31 @@ Yes! Flow parsing is automatically enabled for any non-Typescript files.
 
 ### Can I use `jsxstyle-loader` with Typescript?
 
-Yes! Take a look at [examples/typescript][ts example] and [issue #82][issue 82] for some context. You’ll need to make a few configuration changes:
+Yes! Take a look at [the TypeScript example][ts example] and [issue #82][issue 82] for some context. You’ll need to make a few configuration changes:
 
-1. Set `jsx` to `preserve` in the `compilerOptions` section of your `tsconfig.json` file.
-2. Ensure `jsxstyle-loader` runs _after_ `ts-loader`. Webpack loaders run from bottom to top, to `jsxstyle-loader` needs to be placed _before_ `ts-loader` in your webpack config.
-3. Add a loader that transpiles JSX, since `ts-loader` is now set to preserve JSX.
+1.  Set `jsx` to `preserve` in the `compilerOptions` section of your `tsconfig.json` file.
+2.  Ensure `jsxstyle-loader` runs _after_ `ts-loader`. Webpack loaders run from bottom to top, to `jsxstyle-loader` needs to be placed _before_ `ts-loader` in your webpack config.
+3.  Add a loader that transpiles JSX, since `ts-loader` is now set to preserve JSX.
 
 ### It’s not working 😩
 
-1. Make sure the loader object `test` regex matches JS files that use jsxstyle.
-2. `jsxstyle-loader` relies on JSX still being around, so make sure it runs _before_ `babel-loader` does its thing.
-3. `jsxstyle-loader` only supports destructured `require`/`import` syntax:
+1.  Make sure the loader object `test` regex matches JS files that use jsxstyle.
+2.  `jsxstyle-loader` relies on JSX still being around, so make sure it runs _before_ `babel-loader` does its thing.
+3.  `jsxstyle-loader` only supports destructured `require`/`import` syntax:
 
-   ```jsx
-   // Cool!
-   import { Block } from 'jsxstyle';
-   <Block />;
+    ```jsx
+    // Cool!
+    import { Block } from 'jsxstyle';
+    <Block />;
 
-   // Neat!
-   const { Block } = require('jsxstyle');
-   <Block />;
+    // Neat!
+    const { Block } = require('jsxstyle');
+    <Block />;
 
-   // Nope :(
-   const Block = require('jsxstyle').Block;
-   <Block />;
-   ```
+    // Nope :(
+    const Block = require('jsxstyle').Block;
+    <Block />;
+    ```
 
 ### What are “static style props”?
 
@@ -203,5 +203,5 @@ Got an idea for `jsxstyle-loader`? Did you encounter a bug? [Open an issue][new 
 [babylon plugins]: https://github.com/babel/babylon#plugins
 [new issue]: https://github.com/smyte/jsxstyle/issues/new
 [pr]: https://github.com/smyte/jsxstyle/pulls
-[ts example]: https://github.com/smyte/jsxstyle/tree/master/examples/typescript
+[ts example]: https://github.com/smyte/jsxstyle/tree/master/examples/jsxstyle-typescript-example
 [issue 82]: https://github.com/smyte/jsxstyle/issues/82#issuecomment-355141948

@@ -13,14 +13,11 @@ function emitPlugin(compilation, callback) {
         : statsObj.assetsByChunkName[entryName]
     );
 
-    const indexFileContents = []
-      .concat(
-        '<!doctype html>',
-        '<title>jsxstyle demo</title>',
-        '<div id=".jsxstyle-demo"></div>',
-        `<script src="${bundleFile}"></script>`
-      )
-      .join('\n');
+    const indexFileContents = `<!doctype html>
+<title>jsxstyle demo</title>
+<div id=".jsxstyle-demo"></div>
+<script src="${bundleFile}"></script>
+`;
 
     const fileName = (entryName === 'main' ? 'index' : entryName) + '.html';
 
