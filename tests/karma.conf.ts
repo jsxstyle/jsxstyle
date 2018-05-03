@@ -7,6 +7,11 @@ import getCustomLaunchers from './getCustomLaunchers';
 // tslint:disable-next-line no-var-requires
 require('dotenv').config();
 
+if (process.env.TRAVIS_PULL_REQUEST) {
+  console.info('Karma tests do not run for pull requests');
+  process.exit(0);
+}
+
 invariant(
   !!process.env.SAUCE_USERNAME && !!process.env.SAUCE_ACCESS_KEY,
   'SAUCE_USERNAME and SAUCE_ACCESS_KEY must both be set'
