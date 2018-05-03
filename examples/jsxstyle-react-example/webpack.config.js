@@ -1,4 +1,4 @@
-const ReactIndexPlugin = require('../../misc/ReactIndexPlugin');
+const ReactIndexPlugin = require('../ReactIndexPlugin');
 
 module.exports = {
   mode: 'production',

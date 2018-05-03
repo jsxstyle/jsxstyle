@@ -16,7 +16,7 @@
     "react-dom": "^16.0.0",
     "style-loader": "^0.20.3",
     "ts-loader": "^4.2.0",
-    "typescript": "^2.6.1",
+    "typescript": "^2.8.3",
     "url-loader": "^1.0.1",
     "webpack": "^4.5.0",
     "webpack-serve": "^0.3.1"

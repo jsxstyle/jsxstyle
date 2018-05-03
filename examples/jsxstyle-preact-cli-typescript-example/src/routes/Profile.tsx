@@ -2,6 +2,7 @@ import { Block } from 'jsxstyle/preact';
 import { Component, h } from 'preact';
 
 interface ProfileProps {
+  path: string;
   user?: string;
 }
 
