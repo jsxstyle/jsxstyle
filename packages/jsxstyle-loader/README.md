@@ -6,11 +6,13 @@ Don’t know what jsxstyle is? Check out the [jsxstyle README][] for more inform
 
 ## Getting Started
 
-1.  Add a new rule object for `jsxstyle-loader` to your webpack config.
+1.  Add a new rule object for `jsxstyle-loader` to your webpack config, _below_ any other JS loaders.
 
-2.  Add a loader that handles `.css` files to your webpack config, because `jsxstyle-loader` adds a `.css` `require` to each component that uses jsxstyle.
+    > `jsxstyle-loader` relies on untranspiled JSX to be present in order to extract styles. Since webpack loaders run from right to left and bottom to top, `jsxstyle-loader` should be placed at the end of your list of JS loaders.
 
-3.  Add `jsxstyle-loader`’s companion plugin to the `plugins` section of your webpack config.
+2.  Add `jsxstyle-loader`’s companion plugin to the `plugins` section of your webpack config.
+
+3.  Ensure your webpack config contains a loader that handles `.css` files.
 
 When you’re done, the relevant parts of your webpack config should look like this:
 
@@ -26,7 +28,16 @@ module.exports = {
       // ...
       {
         test: /\.js$/,
-        use: 'jsxstyle-loader',
+        use: [
+          // any loaders that transpile JSX should go above jsxstyle-loader
+          {
+            loader: 'your-cool-js-loader',
+          },
+          // jsxstyle-loader goes at the end
+          {
+            loader: 'jsxstyle-loader',
+          },
+        ],
       },
       {
         test: /\.css$/,
@@ -107,6 +118,8 @@ The `whitelistedModules` config option allows you to add modules to the evaluati
   },
 }
 ```
+
+> **Note**: the modules you specify as `whitelistedModules` _will not be transpiled_, so make sure they’re in a format that’s compatible with your version of node.
 
 ### `parserPlugins`
 
