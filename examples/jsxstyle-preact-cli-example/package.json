@@ -1,7 +1,6 @@
 {
   "name": "jsxstyle-preact-cli-example",
   "private": true,
-  "version": "0.0.6",
   "main": "src/index.js",
   "scripts": {
     "build": "preact build",
@@ -12,8 +11,8 @@
     "preact-cli": "^2.1.1"
   },
   "dependencies": {
-    "jsxstyle": "^2.0.11",
-    "jsxstyle-loader": "^1.0.16",
+    "jsxstyle": "^2.1.0",
+    "jsxstyle-loader": "^1.1.0",
     "preact": "^8.2.7",
     "preact-compat": "^3.17.0",
     "preact-router": "^2.6.0"

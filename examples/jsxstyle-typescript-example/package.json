@@ -1,7 +1,6 @@
 {
   "name": "jsxstyle-typescript-example",
   "private": true,
-  "version": "0.0.12",
   "scripts": {
     "start": "ts-node ./node_modules/.bin/webpack-serve --config=webpack.config.ts"
   },
@@ -10,8 +9,8 @@
     "babel-preset-env": "^1.6.0",
     "css-loader": "^0.28.7",
     "file-loader": "^1.1.5",
-    "jsxstyle": "^2.0.11",
-    "jsxstyle-loader": "^1.0.16",
+    "jsxstyle": "^2.1.0",
+    "jsxstyle-loader": "^1.1.0",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
     "style-loader": "^0.20.3",

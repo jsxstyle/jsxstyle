@@ -1,7 +1,6 @@
 {
   "name": "jsxstyle-preact-cli-typescript-example",
   "private": true,
-  "version": "0.0.0",
   "main": "src/index.js",
   "scripts": {
     "build": "preact build",
@@ -14,6 +13,6 @@
     "typescript": "^2.8.1"
   },
   "dependencies": {
-    "jsxstyle": "^2.0.11"
+    "jsxstyle": "^2.1.0"
   }
 }
