@@ -16,8 +16,21 @@ describe('dangerousStyleValue', () => {
     expect(value).toEqual('60%');
   });
 
-  it('rounds fractional number values to a percentage', () => {
+  it('rounds fractional number values to four decimal places', () => {
     const value = dangerousStyleValue('width', 2 / 3);
     expect(value).toEqual('66.6667%');
+  });
+
+  it('returns an empty string for invalid properties', () => {
+    process.env.NODE_ENV = 'development';
+
+    const value1 = dangerousStyleValue('nullPrototype', Object.create(null));
+    expect(value1).toEqual('');
+
+    const value2 = dangerousStyleValue('nullPrototype', true);
+    expect(value2).toEqual('');
+
+    const value3 = dangerousStyleValue('nullPrototype', undefined);
+    expect(value3).toEqual('');
   });
 });

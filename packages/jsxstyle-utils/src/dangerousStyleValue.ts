@@ -89,5 +89,20 @@ export default function dangerousStyleValue(name: any, value: any): string {
     return value + 'px';
   }
 
-  return ('' + value).trim();
+  try {
+    return ('' + value).trim();
+  } catch (err) {
+    // values that lack a toString method on their prototype will throw a TypeError
+    // see https://github.com/smyte/jsxstyle/issues/112
+    if (process.env.NODE_ENV === 'development') {
+      console.error(
+        'Value for prop `%s` (`%o`) could not be stringified.',
+        name,
+        value,
+        err
+      );
+    }
+  }
+
+  return '';
 }
