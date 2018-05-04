@@ -1,14 +1,16 @@
 import * as invariant from 'invariant';
 import * as karma from 'karma';
-import * as path from 'path';
 import * as webpack from 'webpack';
 import getCustomLaunchers from './getCustomLaunchers';
 
 // tslint:disable-next-line no-var-requires
 require('dotenv').config();
 
-if (process.env.TRAVIS_PULL_REQUEST) {
-  console.info('Karma tests do not run for pull requests');
+if (
+  process.env.TRAVIS_PULL_REQUEST === 'true' &&
+  process.env.TRAVIS_SECURE_ENV_VARS === 'false'
+) {
+  console.info('Karma tests do not run for external pull requests');
   process.exit(0);
 }
 
