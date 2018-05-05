@@ -13,6 +13,6 @@
     "typescript": "^2.8.1"
   },
   "dependencies": {
-    "jsxstyle": "^2.1.0"
+    "jsxstyle": "file:../../packages/jsxstyle"
   }
 }

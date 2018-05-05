@@ -13,8 +13,10 @@
     "publish": {
       "ignore": [
         "**/*.md",
+        "**/package.json",
+        "karma.conf.ts",
         "**/*.spec.ts",
-        "**/package.json"
+        "**/*.snap"
       ],
       "allowBranch": "master"
     }
