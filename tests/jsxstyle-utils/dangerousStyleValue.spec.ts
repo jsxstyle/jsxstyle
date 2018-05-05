@@ -22,15 +22,13 @@ describe('dangerousStyleValue', () => {
   });
 
   it('returns an empty string for invalid properties', () => {
-    process.env.NODE_ENV = 'development';
-
     const value1 = dangerousStyleValue('nullPrototype', Object.create(null));
     expect(value1).toEqual('');
 
-    const value2 = dangerousStyleValue('nullPrototype', true);
+    const value2 = dangerousStyleValue('boolean', true);
     expect(value2).toEqual('');
 
-    const value3 = dangerousStyleValue('nullPrototype', undefined);
+    const value3 = dangerousStyleValue('undefined', undefined);
     expect(value3).toEqual('');
   });
 });
