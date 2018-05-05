@@ -216,6 +216,12 @@ function Test({
 }"
 `;
 
+exports[`jsxstyle-specific props does not attempt to extract a ref prop found on a jsxstyle component 1`] = `
+"import \\"./props-prop2__jsxstyle.css\\";
+import { Box } from \\"jsxstyle\\";
+<Box ref={this.cannotBeExtracted} className=\\"_x0\\" />;"
+`;
+
 exports[`jsxstyle-specific props evaluates the \`mediaQueries\` prop correctly 1`] = `
 "import \\"./media-queries__jsxstyle.css\\";
 import LC from \\"./LC\\";
@@ -297,12 +303,6 @@ import { Box } from \\"jsxstyle\\";
 <Box props={{
   \\"-aria-hidden\\": true
 }} className=\\"_x0\\" />;"
-`;
-
-exports[`jsxstyle-specific props handles the \`props\` prop correctly 2`] = `
-"import \\"./props-prop2__jsxstyle.css\\";
-import { Box } from \\"jsxstyle\\";
-<Box ref={this.cannotBeExtracted} className=\\"_x0\\" />;"
 `;
 
 exports[`spread operators doesn't explode if you use the spread operator 1`] = `

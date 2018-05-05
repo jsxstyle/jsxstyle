@@ -232,7 +232,7 @@ describe('jsxstyle-specific props', () => {
   it('handles the `props` prop correctly', () => {
     const warnCallback = jest.fn();
 
-    const rv1 = extractStyles(
+    const rv = extractStyles(
       `import {Block} from "jsxstyle";
 <Block props={{staticObject: "yep"}} />;
 <Block props={{}} />;
@@ -252,18 +252,24 @@ describe('jsxstyle-specific props', () => {
       { cacheObject: {}, warnCallback }
     );
 
-    expect(rv1.js).toMatchSnapshot();
-
+    expect(rv.js).toMatchSnapshot();
     expect(warnCallback).toHaveBeenCalledTimes(6);
+  });
 
-    const rv2 = extractStyles(
+  it('does not attempt to extract a ref prop found on a jsxstyle component', () => {
+    const warnCallback = jest.fn();
+
+    const rv = extractStyles(
       `import {Block} from "jsxstyle";
 <Block color="red" ref={this.cannotBeExtracted} />`,
       pathTo('mock/props-prop2.js'),
-      { cacheObject: {} }
+      { cacheObject: {}, warnCallback }
     );
 
-    expect(rv2.js).toMatchSnapshot();
+    expect(rv.js).toMatchSnapshot();
+    expect(warnCallback).toHaveBeenCalledWith(
+      'The `ref` prop cannot be extracted from a jsxstyle component. If you want to attach a ref to the underlying component or element, specify a `ref` property in the `props` object.'
+    );
   });
 
   it('handles the `component` prop correctly', () => {
@@ -280,11 +286,7 @@ describe('jsxstyle-specific props', () => {
 
     expect(rv.js).toMatchSnapshot();
 
-    const jestErrorFn = jest.fn();
-    const warnCallback = (...props) => {
-      console.warn(...props);
-      jestErrorFn();
-    };
+    const warnCallback = jest.fn();
 
     // does not warn
     extractStyles(
@@ -316,10 +318,12 @@ describe('jsxstyle-specific props', () => {
       { cacheObject: {}, warnCallback }
     );
 
-    expect(jestErrorFn).toHaveBeenCalledTimes(4);
+    expect(warnCallback).toHaveBeenCalledTimes(4);
   });
 
   it('converts complex `component` prop values to varable declarations', () => {
+    const warnCallback = jest.fn();
+
     const rv = extractStyles(
       `import { Block } from "jsxstyle";
 function Test({ component, thing }) {
@@ -334,9 +338,10 @@ function Test({ component, thing }) {
   <Block component={complex} />;
 }`,
       pathTo('mock/funky-component-prop.js'),
-      { cacheObject: {} }
+      { cacheObject: {}, warnCallback }
     );
 
+    expect(warnCallback).toHaveBeenCalledTimes(4);
     expect(rv.js).toMatchSnapshot();
   });
 

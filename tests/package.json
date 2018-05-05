@@ -2,7 +2,7 @@
   "name": "jsxstyle-tests",
   "private": true,
   "scripts": {
-    "jest": "jest --verbose --runInBand",
+    "jest": "jest",
     "jest-update-snapshot": "jest --updateSnapshot",
     "karma": "karma start",
     "karma-local": "KARMA_LOCAL=yep karma start",
