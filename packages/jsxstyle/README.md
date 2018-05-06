@@ -105,7 +105,7 @@ import { Block } from 'jsxstyle/preact';
 <!-- prettier-ignore -->
 | Supported Pseudoclasses | Supported Pseudoelements |
 | -- | -- |
-| `active`, `checked`, `disabled`, `empty`, `enabled`, `focus`, `hover`, `invalid`, `required`, `target`, `valid` | `placeholder`, `selection`, `before`, `after` |
+| `active`, `checked`, `disabled`, `empty`, `enabled`, `focus`, `hover`, `invalid`, `link`, `required`, `target`, `valid` | `placeholder`, `selection`, `before`, `after` |
 
 <br>
 

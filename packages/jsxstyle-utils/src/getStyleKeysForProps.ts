@@ -20,6 +20,7 @@ export const pseudoclasses = {
   focus: true,
   hover: true,
   invalid: true,
+  link: true,
   required: true,
   target: true,
   valid: true,
