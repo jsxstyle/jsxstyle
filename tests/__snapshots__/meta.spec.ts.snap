@@ -8,17 +8,7 @@ jsxstyle-utils  --> packages/jsxstyle-utils/lib/jsxstyle-utils.cjs.js
 "
 `;
 
-exports[`npm publish only publishes the intended files: private packages 1`] = `
-Array [
-  "jsxstyle-preact-cli-example",
-  "jsxstyle-preact-cli-typescript-example",
-  "jsxstyle-react-example",
-  "jsxstyle-tests",
-  "jsxstyle-typescript-example",
-]
-`;
-
-exports[`npm publish only publishes the intended files: public packages 1`] = `
+exports[`npm publish only publishes the intended files 1`] = `
 Array [
   "
 jsxstyle

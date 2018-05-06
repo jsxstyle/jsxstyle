@@ -25,19 +25,15 @@ const repo = new Repository(JSXSTYLE_ROOT);
 const packages: Package[] = PackageUtilities.getPackages(repo);
 packages.sort((a, b) => a._package.name.localeCompare(b._package.name));
 
-// separate private and public packages
-const privatePackages = packages.filter(pkg => pkg._package.private);
-const publicPackages = packages.filter(pkg => !pkg._package.private);
-
 describe('jest', () => {
   it('picks the right packages', () => {
-    expect.assertions(publicPackages.length + 1);
+    expect.assertions(packages.length + 1);
     let resolvedPaths = '\n';
     const maxPkgNameLen = Math.max(
-      ...publicPackages.map(pkg => pkg._package.name.length)
+      ...packages.map(pkg => pkg._package.name.length)
     );
 
-    publicPackages.forEach(pkg => {
+    packages.forEach(pkg => {
       const { name } = pkg._package;
       const pkgPath = require.resolve(pkg._location);
       const resolvedPath = require.resolve(name);
@@ -53,11 +49,8 @@ describe('jest', () => {
 
 describe('npm publish', () => {
   it('only publishes the intended files', async () => {
-    const privatePackageNames = privatePackages.map(pkg => pkg._package.name);
-    expect(privatePackageNames).toMatchSnapshot('private packages');
-
     const pkgPromises = Promise.all(
-      publicPackages.map(async pkg => {
+      packages.map(async pkg => {
         const fileList = await packlist({ path: pkg._location });
         return `
 ${pkg._package.name}
@@ -67,6 +60,6 @@ ${fileList.map(f => `- ${f}`).join('\n')}
       })
     );
 
-    await expect(pkgPromises).resolves.toMatchSnapshot('public packages');
+    await expect(pkgPromises).resolves.toMatchSnapshot();
   });
 });

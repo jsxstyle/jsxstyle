@@ -1,9 +1,7 @@
 {
-  "lerna": "2.2.0",
+  "lerna": "2.11.0",
   "packages": [
-    "packages/*",
-    "examples/*",
-    "tests"
+    "packages/*"
   ],
   "version": "independent",
   "commands": {
@@ -13,10 +11,7 @@
     "publish": {
       "ignore": [
         "**/*.md",
-        "**/package.json",
-        "karma.conf.ts",
-        "**/*.spec.ts",
-        "**/*.snap"
+        "**/package.json"
       ],
       "allowBranch": "master"
     }
