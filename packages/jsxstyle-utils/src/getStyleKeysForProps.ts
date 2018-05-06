@@ -24,6 +24,7 @@ export const pseudoclasses = {
   required: true,
   target: true,
   valid: true,
+  link: true
 };
 
 const specialCaseProps = {
