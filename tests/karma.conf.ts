@@ -7,17 +7,17 @@ import getCustomLaunchers from './getCustomLaunchers';
 require('dotenv').config();
 
 if (
-  process.env.TRAVIS_PULL_REQUEST === 'true' &&
-  process.env.TRAVIS_SECURE_ENV_VARS === 'false'
+  process.env.TRAVIS_PULL_REQUEST !== 'false' &&
+  process.env.TRAVIS_SECURE_ENV_VARS !== 'true'
 ) {
   console.info('Karma tests do not run for external pull requests');
   process.exit(0);
 }
 
-invariant(
-  !!process.env.SAUCE_USERNAME && !!process.env.SAUCE_ACCESS_KEY,
-  'SAUCE_USERNAME and SAUCE_ACCESS_KEY must both be set'
-);
+if (!process.env.SAUCE_USERNAME || !process.env.SAUCE_ACCESS_KEY) {
+  console.error('SAUCE_USERNAME and SAUCE_ACCESS_KEY must both be set');
+  process.exit(1);
+}
 
 const isCI = !!process.env.CI;
 const isLocal = !!process.env.KARMA_LOCAL;
