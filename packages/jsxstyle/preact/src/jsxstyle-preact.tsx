@@ -1,10 +1,8 @@
-import {
-  componentStyles,
-  CSSProperties,
-  Dict,
-  getStyleCache,
-} from 'jsxstyle-utils';
+import { componentStyles, Dict, getStyleCache } from 'jsxstyle-utils';
 import * as preact from 'preact';
+
+// TODO: use CSSProperties from 'jsxstyle-utils'
+type CSSProperties = Dict<any>;
 
 export { CSSProperties };
 
