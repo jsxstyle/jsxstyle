@@ -11,11 +11,11 @@
     "noImplicitThis": true,
     "noUnusedLocals": true,
     "outDir": "lib",
+    "sourceMap": true,
     "strictNullChecks": true,
     "suppressImplicitAnyIndexErrors": true,
     "target": "es6",
-    "types": ["node"],
-    "sourceMap": true
+    "types": ["node"]
   },
   "exclude": ["**/node_modules/**/*"],
   "include": ["src/**/*.ts"]
