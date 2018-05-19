@@ -5,7 +5,6 @@
   "author": "Mike Meyer",
   "license": "Apache-2.0",
   "main": "lib/loader.js",
-  "types": "lib/loader.d.ts",
   "engines": {
     "node": ">=6.0.0"
   },

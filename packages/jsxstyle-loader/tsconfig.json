@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "allowJs": false,
-    "declaration": true,
+    "declaration": false,
     "forceConsistentCasingInFileNames": true,
     "lib": ["es6", "dom"],
     "module": "commonjs",
