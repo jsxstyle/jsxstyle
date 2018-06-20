@@ -10,12 +10,12 @@ export { CSSProperties };
 
 export const cache = getStyleCache();
 
-export interface StyleProps {
+export interface StylableComponentProps {
   class?: string;
   style?: any;
 }
 
-export type AnyComponent<Props extends StyleProps> =
+export type AnyComponent<Props extends StylableComponentProps> =
   | keyof JSX.IntrinsicElements
   | preact.ComponentConstructor<Props, any>
   // this isn't covered by preact.FunctionalComponent for some reason
@@ -27,7 +27,7 @@ export type JsxstyleProps<ComponentProps> = {
   component?: AnyComponent<ComponentProps>;
   mediaQueries?: Dict<string>;
   props?: ComponentProps;
-} & StyleProps &
+} & StylableComponentProps &
   CSSProperties;
 
 type JsxstyleComponent = preact.ComponentConstructor<

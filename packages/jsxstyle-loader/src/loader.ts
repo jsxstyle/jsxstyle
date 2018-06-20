@@ -8,7 +8,7 @@ import webpack = require('webpack');
 import { CacheObject, LoaderOptions, PluginContext } from './types';
 import extractStyles from './utils/ast/extractStyles';
 
-const counter = Symbol.for('counter');
+const counter: any = Symbol.for('counter');
 
 const jsxstyleLoader: webpack.loader.Loader = function(content) {
   if (this.cacheable) {

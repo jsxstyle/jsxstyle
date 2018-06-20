@@ -1,6 +1,6 @@
 import { CSSProperties } from 'jsxstyle-utils';
 
-import { CacheObject, StyleProps } from '../types';
+import { CacheObject } from '../types';
 import getClassNameFromCache from './getClassNameFromCache';
 
 const nonStyleProps = {
@@ -16,9 +16,9 @@ export interface StylesByClassName {
 }
 
 export default function getStylesByClassName(
-  styleGroups: StyleProps[] = [],
+  styleGroups: CSSProperties[] = [],
   namedStyleGroups: { [key: string]: CSSProperties } = {},
-  staticAttributes: { [key: string]: string | number },
+  staticAttributes: CSSProperties,
   cacheObject: CacheObject,
   classNameFormat?: 'hash'
 ): StylesByClassName {

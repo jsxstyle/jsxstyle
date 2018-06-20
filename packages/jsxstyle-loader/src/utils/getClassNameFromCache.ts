@@ -1,8 +1,12 @@
-import { getStyleKeysForProps, stringHash } from 'jsxstyle-utils';
-import { CacheObject, StyleProps } from '../types';
+import {
+  CSSProperties,
+  getStyleKeysForProps,
+  stringHash,
+} from 'jsxstyle-utils';
+import { CacheObject } from '../types';
 
 export default function getClassNameFromCache(
-  styleObject: StyleProps,
+  styleObject: CSSProperties,
   cacheObject: CacheObject,
   classNameFormat?: 'hash'
 ): string | null {
@@ -29,7 +33,7 @@ export default function getClassNameFromCache(
   }
 
   const classNameKey = styleObjects.classNameKey;
-  const counterKey = Symbol.for('counter');
+  const counterKey: any = Symbol.for('counter');
   cacheObject[counterKey] = cacheObject[counterKey] || 0;
 
   if (!cacheObject[classNameKey]) {

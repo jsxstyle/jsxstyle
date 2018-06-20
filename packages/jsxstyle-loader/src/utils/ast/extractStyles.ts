@@ -13,7 +13,7 @@ import {
   getStyleKeysForProps,
 } from 'jsxstyle-utils';
 
-import { CacheObject, StyleProps } from '../../types';
+import { CacheObject } from '../../types';
 import getStylesByClassName from '../getStylesByClassName';
 import evaluateAstNode from './evaluateAstNode';
 import extractStaticTernaries, { Ternary } from './extractStaticTernaries';
@@ -32,7 +32,7 @@ export interface ExtractStylesOptions {
     [key: string]: CSSProperties;
   };
   parserPlugins?: BabylonPlugin[];
-  styleGroups?: StyleProps[];
+  styleGroups?: CSSProperties[];
   whitelistedModules?: string[];
   cssModules?: boolean;
   evaluateVars?: boolean;

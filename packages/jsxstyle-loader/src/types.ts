@@ -1,7 +1,4 @@
-import { CSSProperties, Dict } from 'jsxstyle-utils';
 import { ExtractStylesOptions } from './utils/ast/extractStyles';
-
-export type StyleProps = { mediaQueries?: Dict<string> } & CSSProperties;
 
 export interface CacheObject {
   [key: string]: any;

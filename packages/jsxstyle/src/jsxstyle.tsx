@@ -10,12 +10,12 @@ export { CSSProperties };
 
 export const cache = getStyleCache();
 
-export interface StyleProps {
+export interface StylableComponentProps {
   className?: string;
   style?: React.CSSProperties;
 }
 
-export type AnyComponent<Props extends StyleProps> =
+export type AnyComponent<Props extends StylableComponentProps> =
   | keyof JSX.IntrinsicElements
   | React.ComponentType<Props>;
 
@@ -23,7 +23,7 @@ export type JsxstyleProps<ComponentProps> = {
   component?: AnyComponent<ComponentProps>;
   mediaQueries?: Dict<string>;
   props?: ComponentProps;
-} & StyleProps &
+} & StylableComponentProps &
   CSSProperties;
 
 function factory(displayName: string, defaultProps?: Dict<React.ReactText>) {
