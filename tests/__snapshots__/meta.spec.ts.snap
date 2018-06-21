@@ -2,14 +2,24 @@
 
 exports[`jest picks the right packages 1`] = `
 "
-jsxstyle        --> packages/jsxstyle/lib/jsxstyle.cjs.js
-jsxstyle-loader --> packages/jsxstyle-loader/lib/loader.js
-jsxstyle-utils  --> packages/jsxstyle-utils/lib/jsxstyle-utils.cjs.js
+gatsby-plugin-jsxstyle --> packages/gatsby-plugin-jsxstyle/index.js
+jsxstyle               --> packages/jsxstyle/lib/jsxstyle.cjs.js
+jsxstyle-loader        --> packages/jsxstyle-loader/lib/loader.js
+jsxstyle-utils         --> packages/jsxstyle-utils/lib/jsxstyle-utils.cjs.js
 "
 `;
 
 exports[`npm publish only publishes the intended files 1`] = `
 Array [
+  "
+gatsby-plugin-jsxstyle
+======================
+- package.json
+- gatsby-node.js
+- gatsby-ssr.js
+- index.js
+- LICENSE
+",
   "
 jsxstyle
 ========
