@@ -211,10 +211,10 @@ One big one: CSS class names are not de-duplicated across components. Any CSS mi
 
 Got an idea for `jsxstyle-loader`? Did you encounter a bug? [Open an issue][new issue] and let’s talk it through. [PRs welcome too][pr]!
 
-[jsxstyle readme]: https://github.com/smyte/jsxstyle/tree/master/packages/jsxstyle#readme
-[jsxstyle faqs]: https://github.com/smyte/jsxstyle/tree/master/packages/jsxstyle#faqs
+[jsxstyle readme]: https://github.com/jsxstyle/jsxstyle/tree/master/packages/jsxstyle#readme
+[jsxstyle faqs]: https://github.com/jsxstyle/jsxstyle/tree/master/packages/jsxstyle#faqs
 [babylon plugins]: https://github.com/babel/babylon#plugins
-[new issue]: https://github.com/smyte/jsxstyle/issues/new
-[pr]: https://github.com/smyte/jsxstyle/pulls
-[ts example]: https://github.com/smyte/jsxstyle/tree/master/examples/jsxstyle-typescript-example
-[issue 82]: https://github.com/smyte/jsxstyle/issues/82#issuecomment-355141948
+[new issue]: https://github.com/jsxstyle/jsxstyle/issues/new
+[pr]: https://github.com/jsxstyle/jsxstyle/pulls
+[ts example]: https://github.com/jsxstyle/jsxstyle/tree/master/examples/jsxstyle-typescript-example
+[issue 82]: https://github.com/jsxstyle/jsxstyle/issues/82#issuecomment-355141948

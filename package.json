@@ -3,7 +3,7 @@
   "description": "The monorepo for jsxstyle and tools built for jsxstyle",
   "license": "Apache-2.0",
   "private": true,
-  "homepage": "https://github.com/smyte/jsxstyle#readme",
+  "homepage": "https://github.com/jsxstyle/jsxstyle#readme",
   "scripts": {
     "build": "npm run reset && rollup -c && npm run tsc && prettier --write \"packages/{*,*/*}/lib/**/*.{js,ts}\"",
     "example": "ts-node examples/run.ts",

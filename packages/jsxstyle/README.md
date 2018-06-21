@@ -167,15 +167,15 @@ Countless systems have been developed to either solve or circumvent inherent pro
 
 jsxstyle provides all the benefits of a good CSS class-naming system, with the added benefit of _not having to learn or remember a CSS class-naming system_.
 
-* ### No more specificity issues, collisions, accidental overstyling, or inscrutable class names.
+- ### No more specificity issues, collisions, accidental overstyling, or inscrutable class names.
 
   jsxstyle manages class names and generated styles, leaving you to do what you do best… write styles. Selector complexity is a thing of the past. Each jsxstyle component gets a single class name based on the inline styles specified on the component. The class name is reused when repeat instances of that set of style props are encountered.
 
-* ### No more bikeshedding!
+- ### No more bikeshedding!
 
   No more extended discussions about which CSS class naming strategy is best! I cannot emphasize enough how much time and mental energy this saves. Code review is simple as well. CSS-related nits only involve _actual style properties_. Conversations about how to style a thing begin and end with _the actual CSS properties that need to be written_.
 
-* ### Onboarding new frontend contributors takes seconds, not hours.
+- ### Onboarding new frontend contributors takes seconds, not hours.
   A knowledge of existing styles is _not required_ for a new frontend contributor to be 100% productive right from the start. In codebases without jsxstyle, in order for someone to be able to contribute, they usually have to know what styles to put where and where to look to put new styles. There are usually mixins and variables they don’t know exist because they don’t yet “know their way around the place”. With jsxstyle, you’re just writing styles on components.
   </details>
 
@@ -255,21 +255,21 @@ So you don’t think jsxstyle is the thing for you? That’s quite alright. It�
 
 Sorting through the myriad CSS-in-JS solutions out there can get tiring, but there are a few projects out there that have stuck out to me:
 
-* [Tachyons][tachyons] by [Adam Morse][mrmrs] enables a lot of the the same benefits as jsxstyle but allows you to still use CSS classes. I love the “no new CSS” concept behind Tachyons. Tachyons elegantly solves the issues that Adam covers in [his excellent blog post on scalable CSS][scalable css].
+- [Tachyons][tachyons] by [Adam Morse][mrmrs] enables a lot of the the same benefits as jsxstyle but allows you to still use CSS classes. I love the “no new CSS” concept behind Tachyons. Tachyons elegantly solves the issues that Adam covers in [his excellent blog post on scalable CSS][scalable css].
 
-* [Rebass][rebass] by [Brent Jackson][jxnblk] is “a functional React UI component library, built with `styled-components`”. Rebass has similar API to jsxstyle, but is a bit more opinionated when it comes to separation of presentation and logic. Syntactically it’s more compact, and it has a few more tricks. We don’t like tricks over here at jsxstyle dot com but we do give Rebass two meaty thumbs up.
+- [Rebass][rebass] by [Brent Jackson][jxnblk] is “a functional React UI component library, built with `styled-components`”. Rebass has similar API to jsxstyle, but is a bit more opinionated when it comes to separation of presentation and logic. Syntactically it’s more compact, and it has a few more tricks. We don’t like tricks over here at jsxstyle dot com but we do give Rebass two meaty thumbs up.
 
 [`styled-components`][styled-components] and (more recently) [`emotion`][emotion] have both gained serious traction in the frontend JS community. I can’t do either system justice in a single sentence and I’ve never used either system, but they both seem like reasonable jsxstyle alternatives that embrace the funky things you can do with tagged template literals.
 
 [emotion]: https://github.com/emotion-js/emotion
-[jsxstyle-loader]: https://github.com/smyte/jsxstyle/tree/master/packages/jsxstyle-loader
+[jsxstyle-loader]: https://github.com/jsxstyle/jsxstyle/tree/master/packages/jsxstyle-loader
 [jxnblk]: https://github.com/jxnblk
 [mrmrs]: https://github.com/mrmrs
-[new issue]: https://github.com/smyte/jsxstyle/issues/new
-[pr]: https://github.com/smyte/jsxstyle/pulls
+[new issue]: https://github.com/jsxstyle/jsxstyle/issues/new
+[pr]: https://github.com/jsxstyle/jsxstyle/pulls
 [rebass]: https://github.com/jxnblk/rebass
 [sauce]: https://saucelabs.com/u/jsxstyle
 [scalable css]: http://mrmrs.github.io/writing/2016/03/24/scalable-css/
 [styled-components]: https://www.styled-components.com
 [tachyons]: http://tachyons.io
-[travis]: https://travis-ci.org/smyte/jsxstyle
+[travis]: https://travis-ci.org/jsxstyle/jsxstyle

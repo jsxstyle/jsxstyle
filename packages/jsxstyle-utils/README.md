@@ -12,14 +12,14 @@ If you’re interested in digging around in the internals of jsxstyle, you’ve 
 
 `getStyleCache` returns an object consisting of four methods for manipulate a cache of styles:
 
-* `cache.getClassName(props: object)`: takes an object of props and passes it through to `getStyleKeysForProps`. The `styleCacheKey` it receives from `getStyleKeysForProps` is [hashed with `stringHash`](#stringhashcontent-string) and used as the base of a class name that represents the props object. If this generated class name is not present in the internal style cache, the class name is added to the cache and the corresponding styles provided by `getStyleKeysForProps` are [added to the document with `addStyleToHead`](#addstyletoheadrule-string). The generated class name is returned.
+- `cache.getClassName(props: object)`: takes an object of props and passes it through to `getStyleKeysForProps`. The `styleCacheKey` it receives from `getStyleKeysForProps` is [hashed with `stringHash`](#stringhashcontent-string) and used as the base of a class name that represents the props object. If this generated class name is not present in the internal style cache, the class name is added to the cache and the corresponding styles provided by `getStyleKeysForProps` are [added to the document with `addStyleToHead`](#addstyletoheadrule-string). The generated class name is returned.
 
-* `cache.reset()`: sets the internal style cache object to a new object.
+- `cache.reset()`: sets the internal style cache object to a new object.
 
-* `cache.injectOptions(options: object)`: allows the user to inject config options into the style cache. Available options:
-  * `onInsertRule(rule: string, props: object)`: function called each time a string of styles is added to the document. If provided, this function will be called once for each unique string of styles. Return `false` from `onInsertRule` to prevent the CSS rule from being added to the document head.
-  * `getClassName(styleKey: string, props: object)`: function that should return a CSS class name unique to the `styleKey`.
-  * `pretty: boolean`: whether or not CSS output should contain non-essential whitespace.
+- `cache.injectOptions(options: object)`: allows the user to inject config options into the style cache. Available options:
+  - `onInsertRule(rule: string, props: object)`: function called each time a string of styles is added to the document. If provided, this function will be called once for each unique string of styles. Return `false` from `onInsertRule` to prevent the CSS rule from being added to the document head.
+  - `getClassName(styleKey: string, props: object)`: function that should return a CSS class name unique to the `styleKey`.
+  - `pretty: boolean`: whether or not CSS output should contain non-essential whitespace.
 
 Each component returned by a jsxstyle component factory calls `cache.getClassName` with the component’s props whenever the component receives props. The `class`/`className` prop of the returned element is set to the return value of `getClassName`.
 
@@ -58,10 +58,10 @@ An object of styles keyed by component name. This is the object representation o
 | `Box`         | `null`                                         |
 
 [string-hash]: https://github.com/darkskyapp/string-hash
-[addstyletohead]: https://github.com/smyte/jsxstyle/blob/master/packages/jsxstyle-utils/src/addStyleToHead.js
-[componentstyles]: https://github.com/smyte/jsxstyle/blob/master/packages/jsxstyle-utils/src/componentStyles.js
-[dangerousstylevalue]: https://github.com/smyte/jsxstyle/blob/master/packages/jsxstyle-utils/src/dangerousStyleValue.js
-[getstylecache]: https://github.com/smyte/jsxstyle/blob/master/packages/jsxstyle-utils/src/getStyleCache.js
-[getstylekeysforprops]: https://github.com/smyte/jsxstyle/blob/master/packages/jsxstyle-utils/src/getStyleKeysForProps.js
-[hyphenatestylenames]: https://github.com/smyte/jsxstyle/blob/master/packages/jsxstyle-utils/src/hyphenateStyleName.js
-[stringhash]: https://github.com/smyte/jsxstyle/blob/master/packages/jsxstyle-utils/src/stringHash.js
+[addstyletohead]: https://github.com/jsxstyle/jsxstyle/blob/master/packages/jsxstyle-utils/src/addStyleToHead.js
+[componentstyles]: https://github.com/jsxstyle/jsxstyle/blob/master/packages/jsxstyle-utils/src/componentStyles.js
+[dangerousstylevalue]: https://github.com/jsxstyle/jsxstyle/blob/master/packages/jsxstyle-utils/src/dangerousStyleValue.js
+[getstylecache]: https://github.com/jsxstyle/jsxstyle/blob/master/packages/jsxstyle-utils/src/getStyleCache.js
+[getstylekeysforprops]: https://github.com/jsxstyle/jsxstyle/blob/master/packages/jsxstyle-utils/src/getStyleKeysForProps.js
+[hyphenatestylenames]: https://github.com/jsxstyle/jsxstyle/blob/master/packages/jsxstyle-utils/src/hyphenateStyleName.js
+[stringhash]: https://github.com/jsxstyle/jsxstyle/blob/master/packages/jsxstyle-utils/src/stringHash.js

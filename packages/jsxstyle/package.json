@@ -2,7 +2,7 @@
   "name": "jsxstyle",
   "version": "2.1.1",
   "description": "Inline style system for React and Preact",
-  "repository": "git@github.com:smyte/jsxstyle.git",
+  "repository": "git@github.com:jsxstyle/jsxstyle.git",
   "author": "Pete Hunt",
   "license": "Apache-2.0",
   "main": "lib/jsxstyle.cjs.js",
