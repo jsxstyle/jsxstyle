@@ -1,8 +1,8 @@
-import babylon = require('babylon');
+import babelParser = require('@babel/parser');
 
-// https://github.com/babel/babel/tree/master/packages/babylon#plugins
-// TODO: replace with babylon.PluginName
-export type BabylonPlugin =
+// https://new.babeljs.io/docs/en/next/babel-parser.html#plugins
+// TODO: replace with babelParser.PluginName
+export type ParserPlugin =
   | 'asyncGenerators'
   | 'bigInt'
   | 'classPrivateMethods'
@@ -31,11 +31,11 @@ export type BabylonPlugin =
 
 export default function parse(
   code: string | Buffer,
-  plugins: BabylonPlugin[] = []
+  plugins: ParserPlugin[] = []
 ): any {
-  return babylon.parse(code.toString(), {
+  return babelParser.parse(code.toString(), {
     plugins: Array.from(
-      new Set<BabylonPlugin>([
+      new Set<ParserPlugin>([
         'asyncGenerators',
         'classProperties',
         'dynamicImport',

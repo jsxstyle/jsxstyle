@@ -2,7 +2,7 @@ import path = require('path');
 import { OutputOptions, rollup } from 'rollup';
 import rollupNodeResolve = require('rollup-plugin-node-resolve');
 import rollupReplace = require('rollup-plugin-replace');
-import rollupUglify = require('rollup-plugin-uglify');
+import { uglify as rollupUglify } from 'rollup-plugin-uglify';
 import zlib = require('zlib');
 
 const entry = 'bundleSize entrypoint';

@@ -25,7 +25,7 @@
       }
     },
     "parserPlugins": {
-      "description": "array of plugins that should be passed to babylon. You can see a full list of available plugins here: https://git.io/v5ITC",
+      "description": "array of plugins that should be passed to @babel/parser. You can see a full list of available plugins here: https://new.babeljs.io/docs/en/next/babel-parser.html#plugins",
       "type": "array",
       "items": {
         "type": "string"

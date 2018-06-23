@@ -20,7 +20,7 @@ import extractStaticTernaries, { Ternary } from './extractStaticTernaries';
 import generateUid from './generatedUid';
 import getPropValueFromAttributes from './getPropValueFromAttributes';
 import getStaticBindingsForScope from './getStaticBindingsForScope';
-import parse, { BabylonPlugin } from './parse';
+import parse, { ParserPlugin } from './parse';
 
 // tslint:disable-next-line no-var-requires
 const loaderSchema = require('../../../schema/loader.json');
@@ -31,7 +31,7 @@ export interface ExtractStylesOptions {
   namedStyleGroups?: {
     [key: string]: CSSProperties;
   };
-  parserPlugins?: BabylonPlugin[];
+  parserPlugins?: ParserPlugin[];
   styleGroups?: CSSProperties[];
   whitelistedModules?: string[];
   cssModules?: boolean;
