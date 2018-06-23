@@ -1,4 +1,3 @@
-import * as invariant from 'invariant';
 import * as karma from 'karma';
 import * as webpack from 'webpack';
 import getCustomLaunchers from './getCustomLaunchers';
@@ -6,7 +5,11 @@ import getCustomLaunchers from './getCustomLaunchers';
 // tslint:disable-next-line no-var-requires
 require('dotenv').config();
 
+const isCI = !!process.env.CI;
+const isLocal = !!process.env.KARMA_LOCAL;
+
 if (
+  isCI &&
   process.env.TRAVIS_PULL_REQUEST !== 'false' &&
   process.env.TRAVIS_SECURE_ENV_VARS !== 'true'
 ) {
@@ -18,9 +21,6 @@ if (!process.env.SAUCE_USERNAME || !process.env.SAUCE_ACCESS_KEY) {
   console.error('SAUCE_USERNAME and SAUCE_ACCESS_KEY must both be set');
   process.exit(1);
 }
-
-const isCI = !!process.env.CI;
-const isLocal = !!process.env.KARMA_LOCAL;
 
 export type KarmaConfigOptions = karma.ConfigOptions & {
   customLaunchers?: { [key: string]: any };
@@ -61,8 +61,8 @@ export default (config: KarmaConfig) => {
     mode: 'development',
     resolve: {
       alias: {
-        jsxstyle: require.resolve('jsxstyle'),
-        'jsxstyle-utils': require.resolve('jsxstyle-utils'),
+        jsxstyle: require.resolve('../packages/jsxstyle'),
+        'jsxstyle-utils': require.resolve('../packages/jsxstyle-utils'),
         react: require.resolve('react'),
         'react-dom': require.resolve('react-dom'),
       },

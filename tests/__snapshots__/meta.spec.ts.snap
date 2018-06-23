@@ -1,14 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`jest picks the right packages 1`] = `
-"
-gatsby-plugin-jsxstyle  --> packages/gatsby-plugin-jsxstyle/index.js
-jsxstyle                --> packages/jsxstyle/lib/jsxstyle.cjs.js
-jsxstyle-utils          --> packages/jsxstyle-utils/lib/jsxstyle-utils.cjs.js
-jsxstyle-webpack-plugin --> packages/jsxstyle-webpack-plugin/lib/plugin.js
-"
-`;
-
 exports[`npm publish only publishes the intended files 1`] = `
 Array [
   "

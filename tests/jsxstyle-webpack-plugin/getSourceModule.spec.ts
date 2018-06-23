@@ -1,6 +1,6 @@
 import traverse from '@babel/traverse';
-import getSourceModule from 'jsxstyle-webpack-plugin/lib/utils/ast/getSourceModule';
-import parse from 'jsxstyle-webpack-plugin/lib/utils/ast/parse';
+import getSourceModule from '../../packages/jsxstyle-webpack-plugin/lib/utils/ast/getSourceModule';
+import parse from '../../packages/jsxstyle-webpack-plugin/lib/utils/ast/parse';
 
 function getSourceModuleForItem(itemName, scope) {
   let itemBinding = null;

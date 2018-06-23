@@ -1,9 +1,9 @@
 import './polyfills';
 
-import { Block, cache, Col, InlineBlock, Row } from 'jsxstyle';
-import { Dict } from 'jsxstyle-utils';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { Block, cache, Col, InlineBlock, Row } from '../../packages/jsxstyle';
+import { Dict } from '../../packages/jsxstyle-utils';
 
 describe('jsxstyle', () => {
   const node = document.createElement('div');

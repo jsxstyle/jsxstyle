@@ -1,7 +1,7 @@
 import generate from '@babel/generator';
-import parse from 'jsxstyle-webpack-plugin/lib/utils/ast/parse';
+import parse from '../../packages/jsxstyle-webpack-plugin/lib/utils/ast/parse';
 
-import getPropValueFromAttributes from 'jsxstyle-webpack-plugin/lib/utils/ast/getPropValueFromAttributes';
+import getPropValueFromAttributes from '../../packages/jsxstyle-webpack-plugin/lib/utils/ast/getPropValueFromAttributes';
 
 describe('getPropValueFromAttributes', () => {
   it('returns the original prop value if no spread attributes appear before the requested prop', () => {

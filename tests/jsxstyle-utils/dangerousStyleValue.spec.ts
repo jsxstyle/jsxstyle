@@ -1,4 +1,4 @@
-import { dangerousStyleValue } from 'jsxstyle-utils';
+import { dangerousStyleValue } from '../../packages/jsxstyle-utils';
 
 describe('dangerousStyleValue', () => {
   it('adds a px prefix to whitelisted unitless values', () => {

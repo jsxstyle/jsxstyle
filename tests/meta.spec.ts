@@ -1,8 +1,8 @@
-import { Dict } from 'jsxstyle-utils';
 import * as PackageUtilities from 'lerna/lib/PackageUtilities';
 import * as Repository from 'lerna/lib/Repository';
 import * as packlist from 'npm-packlist';
 import * as path from 'path';
+import { Dict } from '../packages/jsxstyle-utils';
 
 interface Package {
   /** parsed contents of the package's package.json file */
@@ -24,28 +24,6 @@ const JSXSTYLE_ROOT = path.resolve(__dirname, '..');
 const repo = new Repository(JSXSTYLE_ROOT);
 const packages: Package[] = PackageUtilities.getPackages(repo);
 packages.sort((a, b) => a._package.name.localeCompare(b._package.name));
-
-describe('jest', () => {
-  it('picks the right packages', () => {
-    expect.assertions(packages.length + 1);
-    let resolvedPaths = '\n';
-    const maxPkgNameLen = Math.max(
-      ...packages.map(pkg => pkg._package.name.length)
-    );
-
-    packages.forEach(pkg => {
-      const { name } = pkg._package;
-      const pkgPath = require.resolve(pkg._location);
-      const resolvedPath = require.resolve(name);
-      const relativePath = path.relative(JSXSTYLE_ROOT, pkgPath);
-      const pad = ' '.repeat(maxPkgNameLen - name.length);
-      resolvedPaths += `${name}${pad} --> ${relativePath}\n`;
-      expect(pkgPath).toBe(resolvedPath);
-    });
-
-    expect(resolvedPaths).toMatchSnapshot();
-  });
-});
 
 describe('npm publish', () => {
   it('only publishes the intended files', async () => {

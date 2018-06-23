@@ -1,4 +1,4 @@
-import { getStyleCache } from 'jsxstyle-utils';
+import { getStyleCache } from '../../packages/jsxstyle-utils';
 
 const kitchenSink = {
   activeFlex: 3,
