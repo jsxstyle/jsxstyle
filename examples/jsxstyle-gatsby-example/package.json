@@ -10,9 +10,7 @@
   "dependencies": {
     "gatsby": "next",
     "gatsby-cli": "next",
-    "gatsby-plugin-jsxstyle": "file:../../packages/gatsby-plugin-jsxstyle",
     "gatsby-plugin-react-helmet": "next",
-    "jsxstyle": "file:../../packages/jsxstyle",
     "react-helmet": "^5.2.0"
   }
 }

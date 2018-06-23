@@ -11,8 +11,5 @@
     "preact-cli": "^2.1.1",
     "ts-loader": "^3.5.0",
     "typescript": "^2.9.2"
-  },
-  "dependencies": {
-    "jsxstyle": "file:../../packages/jsxstyle"
   }
 }
