@@ -175,7 +175,7 @@ export default function extractStyles(
 
   if (!ajv.validate(loaderSchema, options)) {
     const msg =
-      'jsxstyle-loader is incorrectly configured:\n' +
+      'jsxstyle-webpack-plugin is incorrectly configured:\n' +
       (ajv.errors || [])
         .map(err => util.format(' - options%s %s', err.dataPath, err.message))
         .join('\n');

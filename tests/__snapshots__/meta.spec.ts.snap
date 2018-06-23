@@ -2,10 +2,10 @@
 
 exports[`jest picks the right packages 1`] = `
 "
-gatsby-plugin-jsxstyle --> packages/gatsby-plugin-jsxstyle/index.js
-jsxstyle               --> packages/jsxstyle/lib/jsxstyle.cjs.js
-jsxstyle-loader        --> packages/jsxstyle-loader/lib/loader.js
-jsxstyle-utils         --> packages/jsxstyle-utils/lib/jsxstyle-utils.cjs.js
+gatsby-plugin-jsxstyle  --> packages/gatsby-plugin-jsxstyle/index.js
+jsxstyle                --> packages/jsxstyle/lib/jsxstyle.cjs.js
+jsxstyle-utils          --> packages/jsxstyle-utils/lib/jsxstyle-utils.cjs.js
+jsxstyle-webpack-plugin --> packages/jsxstyle-webpack-plugin/lib/plugin.js
 "
 `;
 
@@ -37,8 +37,27 @@ jsxstyle
 - preact/package.json
 ",
   "
-jsxstyle-loader
-===============
+jsxstyle-utils
+==============
+- package.json
+- LICENSE
+- README.md
+- lib/addStyleToHead.d.ts
+- lib/componentStyles.d.ts
+- lib/dangerousStyleValue.d.ts
+- lib/getStyleCache.d.ts
+- lib/getStyleKeysForProps.d.ts
+- lib/hyphenateStyleName.d.ts
+- lib/jsxstyle-utils.cjs.js
+- lib/jsxstyle-utils.d.ts
+- lib/jsxstyle-utils.es.js
+- lib/jsxstyle-utils.js
+- lib/stringHash.d.ts
+- lib/types.d.ts
+",
+  "
+jsxstyle-webpack-plugin
+=======================
 - package.json
 - LICENSE
 - README.md
@@ -87,27 +106,7 @@ jsxstyle-loader
 - lib/utils/wrapFileSystem.d.ts
 - lib/utils/wrapFileSystem.js
 - lib/utils/wrapFileSystem.js.map
-- plugin/package.json
 - schema/loader.json
-",
-  "
-jsxstyle-utils
-==============
-- package.json
-- LICENSE
-- README.md
-- lib/addStyleToHead.d.ts
-- lib/componentStyles.d.ts
-- lib/dangerousStyleValue.d.ts
-- lib/getStyleCache.d.ts
-- lib/getStyleKeysForProps.d.ts
-- lib/hyphenateStyleName.d.ts
-- lib/jsxstyle-utils.cjs.js
-- lib/jsxstyle-utils.d.ts
-- lib/jsxstyle-utils.es.js
-- lib/jsxstyle-utils.js
-- lib/stringHash.d.ts
-- lib/types.d.ts
 ",
 ]
 `;

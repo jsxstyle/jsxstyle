@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "jsxstyle": "file:../../packages/jsxstyle",
-    "jsxstyle-loader": "file:../../packages/jsxstyle-loader",
+    "jsxstyle-webpack-plugin": "file:../../packages/jsxstyle-webpack-plugin",
     "preact": "^8.2.7",
     "preact-compat": "^3.17.0",
     "preact-router": "^2.6.0"

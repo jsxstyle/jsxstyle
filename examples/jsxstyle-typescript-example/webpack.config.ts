@@ -1,4 +1,4 @@
-import JsxstyleLoaderPlugin = require('jsxstyle-loader/plugin');
+import JsxstylePlugin = require('jsxstyle-webpack-plugin');
 import path = require('path');
 import webpack = require('webpack');
 import ReactIndexPlugin = require('../ReactIndexPlugin');
@@ -20,7 +20,7 @@ const config: webpack.Configuration = {
     extensions: ['.ts', '.tsx', '.js', '.json'],
   },
 
-  plugins: [new JsxstyleLoaderPlugin(), new ReactIndexPlugin()],
+  plugins: [new JsxstylePlugin(), new ReactIndexPlugin()],
 
   // tslint:disable object-literal-sort-keys
   module: {
@@ -58,7 +58,7 @@ const config: webpack.Configuration = {
             // loaders run from bottom to top!
             use: [
               {
-                loader: require.resolve('jsxstyle-loader'),
+                loader: JsxstylePlugin.loader,
                 options: { cacheFile: __dirname + '/jsxstyle-cache' },
               },
               {

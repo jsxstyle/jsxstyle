@@ -1,7 +1,7 @@
 import traverse from '@babel/traverse';
-import getStaticBindingsForScope from 'jsxstyle-loader/lib/utils/ast/getStaticBindingsForScope';
-import parse from 'jsxstyle-loader/lib/utils/ast/parse';
 import { Dict } from 'jsxstyle-utils/lib/types';
+import getStaticBindingsForScope from 'jsxstyle-webpack-plugin/lib/utils/ast/getStaticBindingsForScope';
+import parse from 'jsxstyle-webpack-plugin/lib/utils/ast/parse';
 import path = require('path');
 
 const whitelistedModules = [require.resolve('./mock/LC')];

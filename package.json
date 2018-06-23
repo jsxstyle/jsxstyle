@@ -11,11 +11,11 @@
     "jest-update-snapshot": "npm run build && npm run --prefix tests jest-update-snapshot",
     "lerna-clean": "lerna clean",
     "lerna-updated": "lerna updated",
-    "postinstall": "npm --prefix tests install && lerna bootstrap",
+    "postinstall": "lerna bootstrap && npm --prefix tests install",
     "prettier": "prettier --write \"{packages/**/*,examples/**/*}.{js,ts,tsx,css,md}\"",
     "release": "npm run jest && lerna publish",
     "reset": "rimraf packages/{*,*/*}/lib/",
-    "tsc": "tsc -p packages/jsxstyle-loader/tsconfig.json",
+    "tsc": "tsc -p packages/jsxstyle-webpack-plugin/tsconfig.json",
     "tslint": "tslint",
     "tslint-all": "find . -type f -name 'tsconfig.json' -not -path '*/node_modules/*' -exec echo {} \\; -exec tslint -p {} \\;",
     "update-readme": "echo \"$(<./misc/monorepo-preamble.md)\\n\\n---\\n\\n$(<./packages/jsxstyle/README.md)\" > README.md"

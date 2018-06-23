@@ -1,27 +1,27 @@
-# jsxstyle-loader
+# jsxstyle-webpack-plugin
 
-`jsxstyle-loader` is a webpack loader that extracts [**static style props**](#what-are-static-style-props) from jsxstyle components into a separate CSS file.
+`jsxstyle-webpack-plugin` is a webpack plugin that extracts [**static style props**](#what-are-static-style-props) from jsxstyle components into a separate CSS file.
 
 Don’t know what jsxstyle is? Check out the [jsxstyle README][] for more information.
 
 ## Getting Started
 
-1.  Add a new rule object for `jsxstyle-loader` to your webpack config, _below_ any other JS loaders.
+1.  Import `jsxstyle-webpack-plugin` and add it to the `plugins` section of your webpack config.
 
-    > `jsxstyle-loader` relies on untranspiled JSX to be present in order to extract styles. Since webpack loaders run from right to left and bottom to top, `jsxstyle-loader` should be placed at the end of your list of JS loaders.
+2.  Add a new rule object with `jsxstyle-webpack-plugin`’s companion loader to your webpack config, _below_ any other JS loaders.
 
-2.  Add `jsxstyle-loader`’s companion plugin to the `plugins` section of your webpack config.
+    > `jsxstyle-webpack-plugin` relies on untranspiled JSX to be present in order to extract styles. Since webpack loaders run from right to left and bottom to top, `jsxstyle-webpack-plugin` should be placed at the end of your list of JS loaders.
 
 3.  Ensure your webpack config contains a loader that handles `.css` files.
 
 When you’re done, the relevant parts of your webpack config should look like this:
 
 ```js
-const JsxstyleLoaderPlugin = require('jsxstyle-loader/plugin');
+const JsxstylePlugin = require('jsxstyle-webpack-plugin');
 
 module.exports = {
   // ...
-  plugins: [new JsxstyleLoaderPlugin()],
+  plugins: [new JsxstylePlugin()],
   // ...
   module: {
     rules: [
@@ -29,13 +29,14 @@ module.exports = {
       {
         test: /\.js$/,
         use: [
-          // any loaders that transpile JSX should go above jsxstyle-loader
+          // loaders that transpile JSX should go before jsxstyle-webpack-plugin’s companion loader
           {
             loader: 'your-cool-js-loader',
           },
-          // jsxstyle-loader goes at the end
+
+          // companion loader goes at the end
           {
-            loader: 'jsxstyle-loader',
+            loader: JsxstylePlugin.loader,
           },
         ],
       },
@@ -53,13 +54,13 @@ module.exports = {
 
 ### `styleGroups`
 
-By default, `jsxstyle-loader` will extract all static style props on a jsxstyle component into one class. This can lead to CSS classes that contain a lot of common style declarations. A good CSS minifier should help with this, but if you want a bit more control over how styles are grouped into CSS classes, you can provide an _array_ of CSS style objects. When `jsxstyle-loader` encounters a component that contains all styles in a style object, those styles will be extracted into a separate class name.
+By default, `jsxstyle-webpack-plugin` will extract all static style props on a jsxstyle component into one class. This can lead to CSS classes that contain a lot of common style declarations. A good CSS minifier should help with this, but if you want a bit more control over how styles are grouped into CSS classes, you can provide an _array_ of CSS style objects. When `jsxstyle-webpack-plugin` encounters a component that contains all styles in a style object, those styles will be extracted into a separate class name.
 
 For example, with the following loader config:
 
 ```js
 {
-  loader: 'jsxstyle-loader',
+  loader: JsxstylePlugin.loader,
   options: {
     styleGroups: [
       {
@@ -104,13 +105,30 @@ Without the `styleGroups` parameter, all five style props would be extracted int
 
 The `namedStyleGroups` config option is just like the `styleGroups` config option, with one key difference: it is expected to be an _object_ of CSS style objects, not an array. The key of the CSS style object will be used as the class name if all props and values are present on a jsxstyle component.
 
+```js
+{
+  loader: JsxstylePlugin.loader,
+  options: {
+    namedStyleGroups: {
+      db: {
+        display: 'block',
+      },
+      mh15: {
+        marginLeft: 15,
+        marginRight: 15,
+      },
+    },
+  },
+}
+```
+
 ### `whitelistedModules`
 
 The `whitelistedModules` config option allows you to add modules to the evaluation context. For example, with the following loader config, any prop on a jsxstyle component that references a value from `./LayoutConstants.js` will be assumed to be evaluatable:
 
 ```js
 {
-  loader: 'jsxstyle-loader',
+  loader: JsxstylePlugin.loader,
   options: {
     whitelistedModules: [
       require.resolve('./LayoutConstants'),
@@ -123,13 +141,13 @@ The `whitelistedModules` config option allows you to add modules to the evaluati
 
 ### `parserPlugins`
 
-`jsxstyle-loader` uses `babylon` to parse javascript into an AST. By default, `jsxstyle-loader` is preconfigured with most of `babylon`’s plugins enabled, but if you need to enable additional plugins, you can specify an array of plugins with the `parserPlugins` option.
+`jsxstyle-webpack-plugin` uses `babylon` to parse javascript into an AST. By default, `jsxstyle-webpack-plugin` is preconfigured with most of `babylon`’s plugins enabled, but if you need to enable additional plugins, you can specify an array of plugins with the `parserPlugins` option.
 
-You can see a list of all available plugins in [the `babylon` README][babylon plugins].
+You can see a list of all available plugins in [the `@babel/parser` documentation][parser plugins].
 
 ### `classNameFormat`
 
-Out of the box, `jsxstyle-loader` will use a _non-deterministic_ class naming scheme. Because webpack’s module iteration order is not guaranteed, class names will differ slightly between builds of the same code. If you need class names to remain the same each time the same code is bundled, set the `classNameFormat` option to `hash` in your loader config. Class names will be generated using a content-based hash.
+Out of the box, `jsxstyle-webpack-plugin` will use a _non-deterministic_ class naming scheme. Because webpack’s module iteration order is not guaranteed, class names will differ slightly between builds of the same code. If you need class names to remain the same each time the same code is bundled, set the `classNameFormat` option to `hash` in your loader config. Class names will be generated using a content-based hash.
 
 ### `liteMode`
 
@@ -138,29 +156,29 @@ Out of the box, `jsxstyle-loader` will use a _non-deterministic_ class naming sc
 <block color="red">This text will be red</block>
 ```
 
-Instead of importing components from `jsxstyle` or `jsxstyle/preact`, don’t import _anything_ and just use the dash-case version of the component name as if it’s a valid DOM element. When `jsxstyle-loader` encounters one of these dash-case elements, it’ll treat it like the PascalCased equivalent component imported from `jsxstyle` or `jsxstyle/preact`.
+Instead of importing components from `jsxstyle` or `jsxstyle/preact`, don’t import _anything_ and just use the dash-case version of the component name as if it’s a valid DOM element. When `jsxstyle-webpack-plugin` encounters one of these dash-case elements, it’ll treat it like the PascalCased equivalent component imported from `jsxstyle` or `jsxstyle/preact`.
 
 To enable this feature, set `liteMode` in your loader options to either `'react'` or `'preact'`.
 
 ## FAQs
 
-### Can I use `jsxstyle-loader` with Flow?
+### Can I use `jsxstyle-webpack-plugin` with Flow?
 
 Yes! Flow parsing is automatically enabled for any non-Typescript files.
 
-### Can I use `jsxstyle-loader` with Typescript?
+### Can I use `jsxstyle-webpack-plugin` with Typescript?
 
 Yes! Take a look at [the TypeScript example][ts example] and [issue #82][issue 82] for some context. You’ll need to make a few configuration changes:
 
 1.  Set `jsx` to `preserve` in the `compilerOptions` section of your `tsconfig.json` file.
-2.  Ensure `jsxstyle-loader` runs _after_ `ts-loader`. Webpack loaders run from bottom to top, to `jsxstyle-loader` needs to be placed _before_ `ts-loader` in your webpack config.
+2.  Ensure `jsxstyle-webpack-plugin`’s companion loader runs _after_ `ts-loader`. Webpack loaders run from bottom to top, to `jsxstyle-webpack-plugin` needs to be placed _before_ `ts-loader` in your webpack config.
 3.  Add a loader that transpiles JSX, since `ts-loader` is now set to preserve JSX.
 
 ### It’s not working 😩
 
 1.  Make sure the loader object `test` regex matches JS files that use jsxstyle.
-2.  `jsxstyle-loader` relies on JSX still being around, so make sure it runs _before_ `babel-loader` does its thing.
-3.  `jsxstyle-loader` only supports destructured `require`/`import` syntax:
+2.  `jsxstyle-webpack-plugin` relies on JSX still being around, so make sure the companion loader runs _before_ `babel-loader` does its thing.
+3.  `jsxstyle-webpack-plugin` only supports destructured `require`/`import` syntax:
 
     ```jsx
     // Cool!
@@ -201,19 +219,19 @@ See [the jsxstyle FAQs][jsxstyle faqs].
 
 ### Does it work with hot reloading?
 
-It sure does, but using it in development will only cause confusion, since what you will see in the developer tools is the _transformed_ JS. `jsxstyle-loader` is a _production_ optimisation.
+It sure does, but using it in development will only cause confusion, since what you will see in the developer tools is the _transformed_ JS. `jsxstyle-webpack-plugin` is a _production_ optimisation.
 
 ### Any caveats?
 
-One big one: CSS class names are not de-duplicated across components. Any CSS minifier that combines identical class names will handle deduplication.
+CSS class names are reused across components but they are not de-duplicated. Any CSS minifier that combines identical class names will handle deduplication.
 
 ## Contributing
 
-Got an idea for `jsxstyle-loader`? Did you encounter a bug? [Open an issue][new issue] and let’s talk it through. [PRs welcome too][pr]!
+Got an idea for `jsxstyle-webpack-plugin`? Did you encounter a bug? [Open an issue][new issue] and let’s talk it through. [PRs welcome too][pr]!
 
 [jsxstyle readme]: https://github.com/jsxstyle/jsxstyle/tree/master/packages/jsxstyle#readme
 [jsxstyle faqs]: https://github.com/jsxstyle/jsxstyle/tree/master/packages/jsxstyle#faqs
-[babylon plugins]: https://github.com/babel/babylon#plugins
+[parser plugins]: https://new.babeljs.io/docs/en/next/babel-parser.html#plugins
 [new issue]: https://github.com/jsxstyle/jsxstyle/issues/new
 [pr]: https://github.com/jsxstyle/jsxstyle/pulls
 [ts example]: https://github.com/jsxstyle/jsxstyle/tree/master/examples/jsxstyle-typescript-example

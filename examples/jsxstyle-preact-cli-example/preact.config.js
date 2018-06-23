@@ -1,12 +1,12 @@
-import JsxstyleLoaderPlugin from 'jsxstyle-loader/plugin';
+import JsxstylePlugin from 'jsxstyle-webpack-plugin';
 export default function(config) {
   // add plugin
-  config.plugins.push(new JsxstyleLoaderPlugin());
+  config.plugins.push(new JsxstylePlugin());
 
   // append loader
   config.module.loaders.push({
     test: /\.js$/,
-    loader: 'jsxstyle-loader',
+    loader: JsxstylePlugin.loader,
     exclude: /node_modules/,
     enforce: 'pre',
     options: {

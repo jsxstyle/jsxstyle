@@ -1,6 +1,6 @@
 # jsxstyle-utils
 
-If you’re interested in digging around in the internals of jsxstyle, you’ve come to the right place. Runtime jsxstyle packages only contain framework-specific jsxstyle components. `jsxstyle-utils` exports the functions that provide specific features to both runtime jsxstyle and `jsxstyle-loader`.
+If you’re interested in digging around in the internals of jsxstyle, you’ve come to the right place. `jsxstyle` only contains React- and preact-specific jsxstyle components. `jsxstyle-utils` exports the functions that provide specific features to both runtime jsxstyle and `jsxstyle-webpack-plugin`.
 
 ## Core functionality
 

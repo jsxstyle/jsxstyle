@@ -15,11 +15,13 @@ const jsxstyleLoader: webpack.loader.Loader = function(content) {
     this.cacheable();
   }
 
-  const pluginContext: PluginContext = this[Symbol.for('jsxstyle-loader')];
+  const pluginContext: PluginContext = this[
+    Symbol.for('jsxstyle-webpack-plugin')
+  ];
 
   invariant(
     pluginContext,
-    'jsxstyle-loader cannot be used without the corresponding plugin'
+    'jsxstyle-webpack-plugin must be added to the plugins array in your webpack config'
   );
 
   const options: LoaderOptions = loaderUtils.getOptions(this) || {};

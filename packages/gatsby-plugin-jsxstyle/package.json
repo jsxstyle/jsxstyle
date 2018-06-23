@@ -8,7 +8,7 @@
   "main": "index.js",
   "dependencies": {
     "jsxstyle": "^2.0.11",
-    "jsxstyle-loader": "^1.0.16"
+    "jsxstyle-webpack-plugin": "^1.0.16"
   },
   "peerDependencies": {
     "gatsby-cli": "^2.0.0"

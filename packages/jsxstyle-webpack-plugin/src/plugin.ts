@@ -21,7 +21,7 @@ class JsxstyleWebpackPlugin implements webpack.Plugin {
     };
 
     // context object that gets passed to each loader.
-    // available in each loader as this[Symbol.for('jsxstyle-loader')]
+    // available in each loader as this[Symbol.for('jsxstyle-webpack-plugin')]
     this.ctx = {
       cacheFile: null,
       cacheObject: this.cacheObject,
@@ -30,13 +30,15 @@ class JsxstyleWebpackPlugin implements webpack.Plugin {
     };
   }
 
-  private pluginName = 'JsxstyleLoaderPlugin';
+  public static loader = require.resolve('./loader');
+
+  private pluginName = 'JsxstylePlugin';
   private memoryFS: MemoryFileSystem;
   private cacheObject: CacheObject;
   private ctx: PluginContext;
 
   private nmlPlugin = (loaderContext: any): void => {
-    loaderContext[Symbol.for('jsxstyle-loader')] = this.ctx;
+    loaderContext[Symbol.for('jsxstyle-webpack-plugin')] = this.ctx;
   };
 
   private compilationPlugin = (compilation: Compilation): void => {

@@ -1,13 +1,13 @@
-const JsxstyleLoaderPlugin = require('jsxstyle-loader/plugin');
+const JsxstylePlugin = require('jsxstyle-webpack-plugin');
 
 exports.onCreateWebpackConfig = ({ actions }) => {
   actions.setWebpackConfig({
-    plugins: [new JsxstyleLoaderPlugin()],
+    plugins: [new JsxstylePlugin()],
     module: {
       rules: [
         {
           test: /\.(jsx?|tsx)/,
-          use: [require.resolve('jsxstyle-loader')],
+          use: [JsxstylePlugin.loader],
         },
       ],
     },

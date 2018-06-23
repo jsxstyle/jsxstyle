@@ -6,11 +6,11 @@ This repository is the monorepo for runtime versions jsxstyle as well as a few t
 | Package | Description |
 | :-- | :-- |
 | [`jsxstyle`][jsxstyle] | stylable React/Preact components |
-| [`jsxstyle-loader`][jsxstyle-loader] | `webpack` loader that extracts static styles from jsxstyle components at build time |
-| [`jsxstyle-utils`][jsxstyle-utils] | utility functions used by `jsxstyle-loader` and runtime jsxstyle |
+| [`jsxstyle-webpack-plugin`][jsxstyle-webpack-plugin] | `webpack` plugin that extracts static styles from jsxstyle components at build time |
+| [`jsxstyle-utils`][jsxstyle-utils] | utility functions used by `jsxstyle-webpack-plugin` and runtime jsxstyle |
 
 [jsxstyle]: https://github.com/jsxstyle/jsxstyle/tree/master/packages/jsxstyle
-[jsxstyle-loader]: https://github.com/jsxstyle/jsxstyle/tree/master/packages/jsxstyle-loader
+[jsxstyle-webpack-plugin]: https://github.com/jsxstyle/jsxstyle/tree/master/packages/jsxstyle-webpack-plugin
 [jsxstyle-utils]: https://github.com/jsxstyle/jsxstyle/tree/master/packages/jsxstyle-utils
 
 ---
@@ -70,7 +70,7 @@ jsxstyle’s mental model is easy to teach and easy to learn, which means onboar
 
 ## 🛠 Powerful build-time optimizations.
 
-Styles written inline on a set of components from a known source can very easily be statically analyzed, which opens up new possibilities for tooling and optimization. One such optimization is [`jsxstyle-loader`][jsxstyle-loader], a webpack loader that extracts static styles from jsxstyle components _at build time_. `jsxstyle-loader` reduces and in some cases _entirely removes_ the need for runtime jsxstyle.
+Styles written inline on a set of components from a known source can very easily be statically analyzed, which opens up new possibilities for tooling and optimization. One such optimization is [`jsxstyle-webpack-plugin`][jsxstyle-webpack-plugin], a webpack plugin that extracts static styles from jsxstyle components _at build time_. `jsxstyle-webpack-plugin` reduces and in some cases _entirely removes_ the need for runtime jsxstyle.
 
 # Getting started
 
@@ -169,7 +169,7 @@ Define a `mediaQueries` property with an object of media queries keyed by whatev
 
 5.  ### Building tooling around inline styles is simple and straightforward.
 
-    Statically analyzing inline styles on known components is trivial. Most of the styles you’ll end up writing on jsxstyle primitive components are static. Once you’re done perusing this README, check out [`jsxstyle-loader`][jsxstyle-loader]. It’s a webpack loader that, at build time, extracts static styles defined on jsxstyle components into separate CSS files. `jsxstyle-loader` reduces and in some cases _entirely removes_ the need for runtime jsxstyle. jsxstyle becomes nothing more than syntactic sugar for styling components, much like how JSX itself is syntactic sugar for nested function calls. Dude, that’s next level!
+    Statically analyzing inline styles on known components is trivial. Most of the styles you’ll end up writing on jsxstyle primitive components are static. Once you’re done perusing this README, check out [`jsxstyle-webpack-plugin`][jsxstyle-webpack-plugin]. It’s a webpack plugin that, at build time, extracts static styles defined on jsxstyle components into separate CSS files. `jsxstyle-webpack-plugin` reduces and in some cases _entirely removes_ the need for runtime jsxstyle. jsxstyle becomes nothing more than syntactic sugar for styling components, much like how JSX itself is syntactic sugar for nested function calls. Dude, that’s next level!
 
 </details>
 
@@ -248,7 +248,7 @@ app.use(async ctx => {
 
 ## Does jsxstyle support autoprefixing?
 
-Runtime jsxstyle does not bundle an autoprefixer, but autoprefixing is easily doable if you use webpack. We recommend combining [`jsxstyle-loader`][jsxstyle-loader] with a CSS loader that handles provides autoprefixing. At Smyte, we use `postcss-loader` with `postcss-cssnext`. Not using `webpack` and you’d like to see runtime autoprefixing supported? [Open an issue][new issue] and let us know!
+Runtime jsxstyle does not bundle an autoprefixer, but autoprefixing is easily doable if you use webpack. We recommend combining [`jsxstyle-webpack-plugin`][jsxstyle-webpack-plugin] with a CSS loader that handles provides autoprefixing. At Smyte, we use `postcss-loader` with `postcss-cssnext`. Not using `webpack` and you’d like to see runtime autoprefixing supported? [Open an issue][new issue] and let us know!
 
 ## What about global styles?
 
@@ -279,7 +279,7 @@ Sorting through the myriad CSS-in-JS solutions out there can get tiring, but the
 [`styled-components`][styled-components] and (more recently) [`emotion`][emotion] have both gained serious traction in the frontend JS community. I can’t do either system justice in a single sentence and I’ve never used either system, but they both seem like reasonable jsxstyle alternatives that embrace the funky things you can do with tagged template literals.
 
 [emotion]: https://github.com/emotion-js/emotion
-[jsxstyle-loader]: https://github.com/jsxstyle/jsxstyle/tree/master/packages/jsxstyle-loader
+[jsxstyle-webpack-plugin]: https://github.com/jsxstyle/jsxstyle/tree/master/packages/jsxstyle-webpack-plugin
 [jxnblk]: https://github.com/jxnblk
 [mrmrs]: https://github.com/mrmrs
 [new issue]: https://github.com/jsxstyle/jsxstyle/issues/new

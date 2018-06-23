@@ -1,4 +1,4 @@
-import JsxstyleWebpackPlugin = require('jsxstyle-loader/plugin');
+import JsxstylePlugin = require('jsxstyle-webpack-plugin');
 import MiniCssExtractPlugin = require('mini-css-extract-plugin');
 import path = require('path');
 import webpack = require('webpack');
@@ -16,7 +16,7 @@ const config: webpack.Configuration = {
   },
   performance: { hints: false },
   plugins: [
-    new JsxstyleWebpackPlugin(),
+    new JsxstylePlugin(),
     new MiniCssExtractPlugin({
       chunkFilename: '[id].css',
       filename: 'bundle-[name].css',
@@ -46,7 +46,7 @@ config.module = {
           },
         },
         {
-          loader: require.resolve('jsxstyle-loader'),
+          loader: JsxstylePlugin.loader,
           options: {
             classNameFormat: 'hash',
             liteMode: 'react',

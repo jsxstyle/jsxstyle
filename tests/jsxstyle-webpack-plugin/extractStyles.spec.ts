@@ -1,4 +1,4 @@
-import extractStyles from 'jsxstyle-loader/lib/utils/ast/extractStyles';
+import extractStyles from 'jsxstyle-webpack-plugin/lib/utils/ast/extractStyles';
 import path = require('path');
 
 const whitelistedModules = [require.resolve('./mock/LC')];
