@@ -6,7 +6,7 @@ exports.onCreateWebpackConfig = ({ actions }) => {
     module: {
       rules: [
         {
-          test: /\.(jsx?|tsx)/,
+          test: /\.(?:jsx?|tsx)$/,
           use: [JsxstylePlugin.loader],
         },
       ],
