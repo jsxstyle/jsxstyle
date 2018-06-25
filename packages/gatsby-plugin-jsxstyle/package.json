@@ -1,14 +1,14 @@
 {
   "name": "gatsby-plugin-jsxstyle",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Gatsby plugin that enables advanced optimisations for jsxstyle",
   "repository": "git@github.com:jsxstyle/jsxstyle.git",
   "author": "Mike Meyer",
   "license": "Apache-2.0",
   "main": "index.js",
   "dependencies": {
-    "jsxstyle": "^2.0.11",
-    "jsxstyle-webpack-plugin": "^1.0.16"
+    "jsxstyle": "^2.1.2",
+    "jsxstyle-webpack-plugin": "^1.1.2"
   },
   "peerDependencies": {
     "gatsby-cli": "^2.0.0"
