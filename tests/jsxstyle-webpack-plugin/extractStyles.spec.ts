@@ -8,13 +8,16 @@ const pathTo = thing => path.resolve(__dirname, thing);
 describe('the basics', () => {
   it('only extracts styles from valid jsxstyle components', () => {
     const rv1 = extractStyles(
-      `import {Block as TestBlock} from "jsxstyle";
+      `import {Block as TestBlock, Flex, InlineRow, InlineCol} from "jsxstyle";
 const {Col: TestCol, Row} = require("jsxstyle");
 <Block extract="nope" />;
 <TestBlock extract="yep" />;
 <Row extract="yep" />;
 <Col extract="nope" />;
 <InlineBlock extract="nope" />;
+<Flex extract="yep" />;
+<InlineRow extract="yep" />;
+<InlineCol extract="yep" />;
 <TestCol extract="yep" />;`,
       pathTo('mock/validate.js'),
       { cacheObject: {} }

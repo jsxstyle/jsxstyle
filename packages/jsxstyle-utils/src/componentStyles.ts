@@ -8,4 +8,11 @@ export default {
   InlineCol: { display: 'inline-flex', flexDirection: 'column' },
   InlineRow: { display: 'inline-flex', flexDirection: 'row' },
   Row: { display: 'flex', flexDirection: 'row' },
+
+  // deprecated
+  Flex: { display: 'flex' },
+  InlineFlex: { display: 'inline-flex' },
+  Table: { display: 'table' },
+  TableCell: { display: 'table-cell' },
+  TableRow: { display: 'table-row' },
 };

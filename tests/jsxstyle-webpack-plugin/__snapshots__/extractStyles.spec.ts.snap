@@ -602,7 +602,10 @@ exports[`the basics only extracts styles from valid jsxstyle components 1`] = `
 <div className=\\"_x1\\" />;
 <Col extract=\\"nope\\" />;
 <InlineBlock extract=\\"nope\\" />;
-<div className=\\"_x2\\" />;"
+<div className=\\"_x2\\" />;
+<div className=\\"_x3\\" />;
+<div className=\\"_x4\\" />;
+<div className=\\"_x5\\" />;"
 `;
 
 exports[`the basics puts spaces between each class name 1`] = `
