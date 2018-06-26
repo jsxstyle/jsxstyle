@@ -6,6 +6,8 @@ import {
 } from 'jsxstyle-utils';
 import * as React from 'react';
 
+type ComponentName = keyof typeof componentStyles;
+
 export { CSSProperties };
 
 export const cache = getStyleCache();
@@ -26,8 +28,9 @@ export type JsxstyleProps<ComponentProps> = {
 } & StylableComponentProps &
   CSSProperties;
 
-function factory(displayName: string, defaultProps?: Dict<React.ReactText>) {
+function factory(displayName: ComponentName) {
   const tagName = 'div';
+  const defaultProps = componentStyles[displayName] || undefined;
 
   return class JsxstyleComponent<P> extends React.Component<JsxstyleProps<P>> {
     constructor(props: JsxstyleProps<P>) {
@@ -59,14 +62,19 @@ function factory(displayName: string, defaultProps?: Dict<React.ReactText>) {
 }
 
 export const Box = factory('Box');
-export const Block = factory('Block', componentStyles.Block);
-export const Inline = factory('Inline', componentStyles.Inline);
-export const InlineBlock = factory('InlineBlock', componentStyles.InlineBlock);
-export const Row = factory('Row', componentStyles.Row);
-export const Col = factory('Col', componentStyles.Col);
-export const Grid = factory('Grid', componentStyles.Grid);
+export const Block = factory('Block');
+export const Inline = factory('Inline');
+export const InlineBlock = factory('InlineBlock');
 
-function depFactory(displayName: string, defaultProps: {}) {
+export const Row = factory('Row');
+export const Col = factory('Col');
+export const InlineRow = factory('InlineRow');
+export const InlineCol = factory('InlineCol');
+
+export const Grid = factory('Grid');
+
+function depFactory(displayName: ComponentName) {
+  const defaultProps = componentStyles[displayName];
   let hasWarned = false;
   // tslint:disable-next-line max-classes-per-file
   return class DeprecatedJsxstyleComponent extends React.Component {
@@ -93,9 +101,9 @@ function depFactory(displayName: string, defaultProps: {}) {
 }
 
 // <Box component="table" />
-export const Table = depFactory('Table', { display: 'table' });
-export const TableRow = depFactory('TableRow', { display: 'table-row' });
-export const TableCell = depFactory('TableCell', { display: 'table-cell' });
+export const Table = depFactory('Table');
+export const TableRow = depFactory('TableRow');
+export const TableCell = depFactory('TableCell');
 // <Row display="inline-flex" />
-export const Flex = depFactory('Flex', { display: 'flex' });
-export const InlineFlex = depFactory('InlineFlex', { display: 'inline-flex' });
+export const Flex = depFactory('Flex');
+export const InlineFlex = depFactory('InlineFlex');

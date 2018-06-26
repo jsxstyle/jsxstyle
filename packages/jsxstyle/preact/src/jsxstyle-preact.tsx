@@ -6,6 +6,8 @@ import {
 } from 'jsxstyle-utils';
 import * as preact from 'preact';
 
+type ComponentName = keyof typeof componentStyles;
+
 export { CSSProperties };
 
 export const cache = getStyleCache();
@@ -35,11 +37,9 @@ type JsxstyleComponent = preact.ComponentConstructor<
   {}
 >;
 
-function factory(
-  displayName: string,
-  defaultProps?: Dict<string | number>
-): JsxstyleComponent {
+function factory(displayName: ComponentName): JsxstyleComponent {
   const tagName = 'div';
+  const defaultProps = componentStyles[displayName] || undefined;
 
   return class<P> extends preact.Component<JsxstyleProps<P>, {}> {
     constructor(props: JsxstyleProps<P>) {
@@ -70,9 +70,13 @@ function factory(
 }
 
 export const Box = factory('Box');
-export const Block = factory('Block', componentStyles.Block);
-export const Inline = factory('Inline', componentStyles.Inline);
-export const InlineBlock = factory('InlineBlock', componentStyles.InlineBlock);
-export const Row = factory('Row', componentStyles.Row);
-export const Col = factory('Col', componentStyles.Col);
-export const Grid = factory('Grid', componentStyles.Grid);
+export const Block = factory('Block');
+export const Inline = factory('Inline');
+export const InlineBlock = factory('InlineBlock');
+
+export const Row = factory('Row');
+export const Col = factory('Col');
+export const InlineRow = factory('InlineRow');
+export const InlineCol = factory('InlineCol');
+
+export const Grid = factory('Grid');

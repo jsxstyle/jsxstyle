@@ -61,15 +61,17 @@ Install the `jsxstyle` package with your preferred node package manager. Compone
 
 jsxstyle provides the following seven components:
 
-| Component     | Default styles                           |
-| :------------ | :--------------------------------------- |
-| `Block`       | `display: block;`                        |
-| `Inline`      | `display: inline;`                       |
-| `InlineBlock` | `display: inline-block;`                 |
-| `Row`         | `display: flex; flex-direction: row;`    |
-| `Col`         | `display: flex; flex-direction: column;` |
-| `Grid`        | `display: grid;`                         |
-| `Box`         | _No default styles_                      |
+| Component     | Default styles                                  |
+| :------------ | :---------------------------------------------- |
+| `Block`       | `display: block;`                               |
+| `Inline`      | `display: inline;`                              |
+| `InlineBlock` | `display: inline-block;`                        |
+| `Row`         | `display: flex; flex-direction: row;`           |
+| `Col`         | `display: flex; flex-direction: column;`        |
+| `InlineRow`   | `display: inline-flex; flex-direction: row;`    |
+| `InlineCol`   | `display: inline-flex; flex-direction: column;` |
+| `Grid`        | `display: grid;`                                |
+| `Box`         | _No default styles_                             |
 
 All props passed to these components are assumed to be CSS properties.
 There are five exceptions to this rule:
