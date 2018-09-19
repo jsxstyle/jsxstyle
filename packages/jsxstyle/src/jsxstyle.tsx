@@ -2,13 +2,14 @@ import {
   componentStyles,
   CSSProperties,
   Dict,
+  ExactCSSProperties,
   getStyleCache,
 } from 'jsxstyle-utils';
 import * as React from 'react';
 
 type ComponentName = keyof typeof componentStyles;
 
-export { CSSProperties };
+export { CSSProperties, ExactCSSProperties };
 
 export const cache = getStyleCache();
 
