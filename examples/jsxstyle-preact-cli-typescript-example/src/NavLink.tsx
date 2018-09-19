@@ -1,11 +1,11 @@
 import { InlineBlock } from 'jsxstyle/preact';
-import { FunctionalComponent, h } from 'preact';
+import { ComponentChildren, FunctionalComponent, h } from 'preact';
 import { Link } from 'preact-router/match';
 import * as style from './style.css';
 
 interface NavLinkProps {
   href: string;
-  children?: JSX.Element[];
+  children?: ComponentChildren;
 }
 
 const NavLink: FunctionalComponent<NavLinkProps> = ({

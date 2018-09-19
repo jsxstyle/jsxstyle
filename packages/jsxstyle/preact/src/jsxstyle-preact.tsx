@@ -26,7 +26,7 @@ export type AnyComponent<Props extends StylableComponentProps> =
   | ((props?: Props, ...args: any[]) => preact.VNode | null);
 
 export type JsxstyleProps<ComponentProps> = {
-  children?: preact.VNode[];
+  children?: preact.ComponentChildren;
   component?: AnyComponent<ComponentProps>;
   mediaQueries?: Dict<string>;
   props?: ComponentProps;
