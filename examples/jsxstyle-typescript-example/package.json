@@ -1,6 +1,7 @@
 {
   "name": "jsxstyle-typescript-example",
   "private": true,
+  "version": "0.0.0",
   "scripts": {
     "start": "ts-node ./node_modules/.bin/webpack-serve --config=webpack.config.ts"
   },

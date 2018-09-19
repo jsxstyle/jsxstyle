@@ -5,20 +5,29 @@
   "private": true,
   "homepage": "https://github.com/jsxstyle/jsxstyle#readme",
   "scripts": {
-    "build": "npm run reset && rollup -c && npm run tsc && prettier --write \"packages/{*,*/*}/lib/**/*.{js,ts}\"",
+    "build": "yarn reset && rollup -c && yarn tsc && prettier --write \"packages/{*,*/*}/lib/**/*.{js,ts}\"",
     "clean": "find . -name 'node_modules' -type d -prune -exec echo {} \\; -exec rm -rf {} \\;",
     "example": "ts-node examples/run.ts",
-    "jest": "npm run build && npm run --prefix tests jest",
-    "jest-update-snapshot": "npm run build && npm run --prefix tests jest-update-snapshot",
-    "lerna-updated": "lerna updated",
-    "postinstall": "npm --prefix tests install && lerna bootstrap",
+    "jest": "yarn build && yarn --cwd \"tests\" run jest",
+    "jest-update-snapshot": "yarn build && yarn --cwd \"tests\" run jest-update-snapshot",
     "prettier": "prettier --write \"{packages/**/*,examples/**/*}.{js,ts,tsx,css,md}\"",
-    "release": "npm run jest && lerna publish",
+    "release": "yarn jest && lerna publish",
     "reset": "rimraf packages/{*,*/*}/lib/",
     "tsc": "tsc -p packages/jsxstyle-webpack-plugin/tsconfig.json",
     "tslint": "tslint",
     "tslint-all": "find . -type f -name 'tsconfig.json' -not -path '*/node_modules/*' -exec echo {} \\; -exec tslint -p {} \\;",
     "update-readme": "echo \"$(<./misc/monorepo-preamble.md)\\n\\n---\\n\\n$(<./packages/jsxstyle/README.md)\" > README.md"
+  },
+  "workspaces": {
+    "packages": [
+      "packages/*",
+      "examples/*",
+      "tests"
+    ],
+    "nohoist": [
+      "jsxstyle-preact-cli-example",
+      "jsxstyle-preact-cli-typescript-example"
+    ]
   },
   "dependencies": {
     "@babel/core": "^7.1.0",
@@ -26,14 +35,12 @@
     "@babel/plugin-transform-object-assign": "^7.0.0",
     "@babel/preset-env": "^7.1.0",
     "@babel/preset-react": "^7.0.0",
-    "@types/fs-extra": "^5.0.2",
     "@types/invariant": "^2.2.29",
     "@types/lodash": "^4.14.116",
     "@types/node": "^10.10.1",
     "@types/react": "^16.4.14",
     "@types/webpack": "^4.4.12",
     "@types/webpack-env": "^1.13.6",
-    "fs-extra": "^7.0.0",
     "inquirer": "^6.0.0",
     "lerna": "^3.4.0",
     "preact": "^8.2.6",

@@ -1,6 +1,7 @@
 {
   "name": "jsxstyle-preact-cli-example",
   "private": true,
+  "version": "0.0.0",
   "main": "src/index.js",
   "scripts": {
     "build": "preact build",

@@ -1,6 +1,7 @@
 {
   "name": "jsxstyle-tests",
   "private": true,
+  "version": "0.0.0",
   "scripts": {
     "jest": "jest",
     "jest-update-snapshot": "jest --updateSnapshot",
