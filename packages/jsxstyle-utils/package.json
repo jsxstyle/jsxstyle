@@ -12,6 +12,6 @@
     "jsxstyle"
   ],
   "dependencies": {
-    "csstype": "^2.2.0"
+    "csstype": "^2.5.7"
   }
 }

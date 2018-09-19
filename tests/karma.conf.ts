@@ -79,17 +79,17 @@ export default (config: KarmaConfig) => {
             babelrc: false,
             presets: [
               [
-                'env',
+                '@babel/preset-env',
                 {
                   modules: false,
                   targets: { browsers: ['last 2 versions'] },
                 },
               ],
-              'react',
+              '@babel/preset-react',
             ],
             plugins: [
-              'transform-object-rest-spread',
-              'transform-object-assign',
+              '@babel/plugin-proposal-object-rest-spread',
+              '@babel/plugin-transform-object-assign',
             ],
           },
         },

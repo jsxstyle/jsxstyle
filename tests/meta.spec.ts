@@ -1,43 +1,36 @@
-import * as PackageUtilities from 'lerna/lib/PackageUtilities';
-import * as Repository from 'lerna/lib/Repository';
-import * as packlist from 'npm-packlist';
+import { getPackages } from '@lerna/project';
+import packlist from 'npm-packlist';
 import * as path from 'path';
-import { Dict } from '../packages/jsxstyle-utils';
 
+// NOTE: this interface is incomplete
+// See: @lerna/package
 interface Package {
-  /** parsed contents of the package's package.json file */
-  _package: {
-    name: string;
-    private?: true;
-    version?: string;
-    main?: string;
-    scripts?: Dict<string>;
-    devDependencies?: Dict<string>;
-    dependencies?: Dict<string>;
-  };
-  /** absolute path to the package */
-  _location: string;
+  name: string;
+  location: string;
+  private: boolean;
+  toJSON: () => string;
 }
 
-// get all packages from Lerna
 const JSXSTYLE_ROOT = path.resolve(__dirname, '..');
-const repo = new Repository(JSXSTYLE_ROOT);
-const packages: Package[] = PackageUtilities.getPackages(repo);
-packages.sort((a, b) => a._package.name.localeCompare(b._package.name));
 
 describe('npm publish', () => {
   it('only publishes the intended files', async () => {
-    const pkgPromises = Promise.all(
-      packages.map(async pkg => {
-        const fileList = await packlist({ path: pkg._location });
-        return `
-${pkg._package.name}
-${pkg._package.name.replace(/./g, '=')}
+    const packages: Package[] = await getPackages(JSXSTYLE_ROOT);
+    const packagePromises = packages
+      // exclude private packages
+      .filter(pkg => !pkg.private)
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .map(pkg =>
+        // fetch file list and format it into something
+        packlist({ path: pkg.location }).then(
+          fileList => `
+${pkg.name}
+${pkg.name.replace(/./g, '=')}
 ${fileList.map(f => `- ${f}`).join('\n')}
-`;
-      })
-    );
+`
+        )
+      );
 
-    await expect(pkgPromises).resolves.toMatchSnapshot();
+    await expect(Promise.all(packagePromises)).resolves.toMatchSnapshot();
   });
 });

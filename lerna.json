@@ -4,12 +4,12 @@
     "packages/*"
   ],
   "version": "independent",
-  "commands": {
+  "command": {
     "boostrap": {
       "hoist": true
     },
     "publish": {
-      "ignore": [
+      "ignoreChanges": [
         "**/*.md",
         "**/package.json"
       ],

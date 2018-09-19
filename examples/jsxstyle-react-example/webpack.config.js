@@ -23,7 +23,7 @@ module.exports = {
           babelrc: false,
           presets: [
             [
-              'env',
+              '@babel/preset-env',
               {
                 targets: {
                   browsers: ['last 2 versions'],
@@ -31,11 +31,11 @@ module.exports = {
                 modules: false,
               },
             ],
-            'react',
+            '@babel/preset-react',
           ],
           plugins: [
-            require.resolve('babel-plugin-transform-object-rest-spread'),
-            require.resolve('babel-plugin-transform-object-assign'),
+            require.resolve('@babel/plugin-proposal-object-rest-spread'),
+            require.resolve('@babel/plugin-transform-object-assign'),
           ],
         },
       },

@@ -1,8 +1,20 @@
+import { getPackages } from '@lerna/project';
 import { spawn } from 'child_process';
-import * as fs from 'fs-extra';
 import * as inquirer from 'inquirer';
 import * as path from 'path';
 
+// NOTE: this interface is incomplete
+// See: @lerna/package
+interface Package {
+  name: string;
+  location: string;
+  private: boolean;
+  toJSON: () => string;
+}
+
+const JSXSTYLE_ROOT = path.resolve(__dirname, '..');
+
+// TODO: use @lerna/run
 const npmCommand = (example: string, ...args: string[]) =>
   new Promise<void>((resolve, reject) => {
     const childProcess = spawn('npm', args, {
@@ -27,29 +39,15 @@ const npmCommand = (example: string, ...args: string[]) =>
     });
   });
 
-(async (command, ...args) => {
-  const filenames = await fs.readdir(__dirname);
-  const exampleDirs = filenames.filter(f => {
-    if (f === 'node_modules') {
-      return false;
-    }
-    return fs.lstatSync(path.join(__dirname, f)).isDirectory();
-  });
+(async searchString => {
+  const packages: Package[] = await getPackages(JSXSTYLE_ROOT);
+  const examplePkgs = packages.filter(f => f.name.endsWith('-example'));
+  const choices = examplePkgs.map(pkg => ({ name: pkg.name, value: pkg.name }));
 
-  if (command === 'init') {
-    for (const dir of exampleDirs) {
-      await npmCommand(dir, '--silent', 'install');
-      console.info('installed dependencies for %s', dir);
-    }
-  } else if (command === 'reset') {
-    for (const dir of exampleDirs) {
-      await fs.remove(path.join(__dirname, dir, 'node_modules'));
-      console.info('deleted node_modules for %s', dir);
-    }
-  } else if (!command) {
+  if (!searchString) {
     const { example } = await inquirer.prompt([
       {
-        choices: exampleDirs.map(name => ({ name, value: name })),
+        choices,
         message: 'Pick an example',
         name: 'example',
         type: 'list',
@@ -57,7 +55,11 @@ const npmCommand = (example: string, ...args: string[]) =>
     ]);
     return npmCommand(example, 'start');
   } else {
-    throw new Error('Unsupported command: ' + command);
+    const examplePkg = examplePkgs.find(pkg => pkg.name.includes(searchString));
+    if (!examplePkg) {
+      throw new Error('Could not find example matching "' + searchString + '"');
+    }
+    return npmCommand(examplePkg.name, 'start');
   }
 })
   .apply(null, process.argv.slice(2))

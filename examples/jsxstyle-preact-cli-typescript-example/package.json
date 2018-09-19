@@ -8,8 +8,8 @@
     "start": "preact watch"
   },
   "devDependencies": {
-    "preact-cli": "^2.1.1",
-    "ts-loader": "^4.4.1",
-    "typescript": "^2.9.2"
+    "preact-cli": "^2.2.1",
+    "ts-loader": "^3.5.0",
+    "typescript": "^3.0.3"
   }
 }
