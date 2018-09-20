@@ -3,6 +3,7 @@
     "allowJs": false,
     "declaration": true,
     "declarationDir": "../lib",
+    "declarationMap": true,
     "forceConsistentCasingInFileNames": true,
     "lib": ["es6", "dom"],
     "module": "esnext",
