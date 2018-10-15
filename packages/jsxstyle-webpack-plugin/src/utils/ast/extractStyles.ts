@@ -28,9 +28,7 @@ const loaderSchema = require('../../../schema/loader.json');
 export interface ExtractStylesOptions {
   classNameFormat?: 'hash';
   liteMode?: boolean | 'react' | 'preact';
-  namedStyleGroups?: {
-    [key: string]: CSSProperties;
-  };
+  namedStyleGroups?: Record<string, CSSProperties>;
   parserPlugins?: ParserPlugin[];
   styleGroups?: CSSProperties[];
   whitelistedModules?: string[];
@@ -491,7 +489,7 @@ export default function extractStyles(
         node.attributes = flattenedAttributes;
 
         let propsAttributes: Array<t.JSXSpreadAttribute | t.JSXAttribute> = [];
-        const staticAttributes: { [key: string]: any } = {};
+        const staticAttributes: Record<string, any> = {};
         let inlinePropCount = 0;
 
         const staticTernaries: Ternary[] = [];

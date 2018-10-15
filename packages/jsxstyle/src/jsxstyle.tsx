@@ -1,7 +1,6 @@
 import {
   componentStyles,
   CSSProperties,
-  Dict,
   ExactCSSProperties,
   getStyleCache,
 } from 'jsxstyle-utils';
@@ -24,7 +23,7 @@ export type AnyComponent<Props extends StylableComponentProps> =
 
 export type JsxstyleProps<ComponentProps> = {
   component?: AnyComponent<ComponentProps>;
-  mediaQueries?: Dict<string>;
+  mediaQueries?: Record<string, string>;
   props?: ComponentProps;
 } & StylableComponentProps &
   CSSProperties;

@@ -1,5 +1,4 @@
 import t = require('@babel/types');
-import { Dict } from 'jsxstyle-utils';
 import path = require('path');
 
 import evaluateAstNode from './evaluateAstNode';
@@ -33,9 +32,9 @@ export default function getStaticBindingsForScope(
   whitelist: string[] = [],
   sourceFileName: string,
   bindingCache: BindingCache
-): Dict<any> {
-  const bindings: Dict<Binding> = scope.getAllBindings();
-  const ret: Dict<any> = {};
+): Record<string, any> {
+  const bindings: Record<string, Binding> = scope.getAllBindings();
+  const ret: Record<string, any> = {};
   const sourceDir = path.dirname(sourceFileName);
 
   if (!bindingCache) {

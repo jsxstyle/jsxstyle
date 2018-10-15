@@ -1,8 +1,6 @@
-import { Dict } from './types';
-
 const uppercasePattern = /([A-Z])/g;
 const msPattern = /^ms-/;
-const hyphenateCache: Dict<string> = {};
+const hyphenateCache: Record<string, string> = {};
 
 export default function hyphenateStyleName(styleName: string): string {
   if (hyphenateCache.hasOwnProperty(styleName)) {

@@ -33,7 +33,7 @@ import {Original as Reassigned2} from 'reassigned';
 <Reassigned2 />;
 `);
 
-  const testItems: { [key: string]: any } = {};
+  const testItems: Record<string, any> = {};
   traverse(ast, {
     JSXElement(path) {
       const node = path.node.openingElement;

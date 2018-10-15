@@ -12,9 +12,7 @@
 // https://github.com/facebook/react/blob/master/src/renderers/dom/shared/CSSProperty.js
 // https://github.com/facebook/react/blob/master/src/renderers/dom/shared/dangerousStyleValue.js
 
-import { Dict } from './types';
-
-const isUnitlessNumber: Dict<true> = {
+const isUnitlessNumber: Record<string, true> = {
   animationIterationCount: true,
   borderImageOutset: true,
   borderImageSlice: true,

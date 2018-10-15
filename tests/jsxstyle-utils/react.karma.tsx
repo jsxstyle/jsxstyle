@@ -3,7 +3,6 @@ import './polyfills';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Block, cache, Col, InlineBlock, Row } from '../../packages/jsxstyle';
-import { Dict } from '../../packages/jsxstyle-utils';
 
 describe('jsxstyle', () => {
   const node = document.createElement('div');
@@ -44,7 +43,7 @@ describe('jsxstyle', () => {
           expect(item.getAttribute('class')).toEqual('_1fc5o');
 
           const style = window.getComputedStyle(item);
-          const styleObj: Dict<string> = {};
+          const styleObj: Record<string, string> = {};
           for (let idx = -1, len = style.length; ++idx < len; ) {
             const k = style[idx];
             styleObj[k] = style.getPropertyValue(k);

@@ -6,4 +6,4 @@ export { default as getStyleKeysForProps } from './getStyleKeysForProps';
 export { pseudoelements, pseudoclasses } from './getStyleKeysForProps';
 export { default as hyphenateStyleName } from './hyphenateStyleName';
 export { default as stringHash } from './stringHash';
-export { Dict, CSSProperties, ExactCSSProperties } from './types';
+export { CSSProperties, ExactCSSProperties } from './types';

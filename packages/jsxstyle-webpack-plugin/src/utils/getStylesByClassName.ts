@@ -17,7 +17,7 @@ export interface StylesByClassName {
 
 export default function getStylesByClassName(
   styleGroups: CSSProperties[] = [],
-  namedStyleGroups: { [key: string]: CSSProperties } = {},
+  namedStyleGroups: Record<string, CSSProperties> = {},
   staticAttributes: CSSProperties,
   cacheObject: CacheObject,
   classNameFormat?: 'hash'

@@ -1,7 +1,6 @@
 import {
   componentStyles,
   CSSProperties,
-  Dict,
   ExactCSSProperties,
   getStyleCache,
 } from 'jsxstyle-utils';
@@ -28,13 +27,13 @@ export type AnyComponent<Props extends StylableComponentProps> =
 export type JsxstyleProps<ComponentProps> = {
   children?: preact.ComponentChildren;
   component?: AnyComponent<ComponentProps>;
-  mediaQueries?: Dict<string>;
+  mediaQueries?: Record<string, string>;
   props?: ComponentProps;
 } & StylableComponentProps &
   CSSProperties;
 
 type JsxstyleComponent = preact.ComponentConstructor<
-  JsxstyleProps<Dict<any>>,
+  JsxstyleProps<Record<string, any>>,
   {}
 >;
 

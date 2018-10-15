@@ -1,7 +1,7 @@
 import generate from '@babel/generator';
 import t = require('@babel/types');
 import invariant = require('invariant');
-import { CSSProperties, Dict } from 'jsxstyle-utils';
+import { CSSProperties } from 'jsxstyle-utils';
 
 import { CacheObject } from '../../types';
 import getClassNameFromCache from '../getClassNameFromCache';
@@ -37,11 +37,14 @@ export default function extractStaticTernaries(
     return null;
   }
 
-  const ternariesByKey: Dict<{
-    test: t.Expression;
-    consequentStyles: CSSProperties;
-    alternateStyles: CSSProperties;
-  }> = {};
+  const ternariesByKey: Record<
+    string,
+    {
+      test: t.Expression;
+      consequentStyles: CSSProperties;
+      alternateStyles: CSSProperties;
+    }
+  > = {};
   for (let idx = -1, len = ternaries.length; ++idx < len; ) {
     const { name, test, consequent, alternate } = ternaries[idx];
 

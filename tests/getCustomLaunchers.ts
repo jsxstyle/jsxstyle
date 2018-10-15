@@ -122,7 +122,7 @@ export default function getCustomLaunchers(): { [key: string]: Launcher } {
     })
   );
 
-  const customLaunchers: { [key: string]: Launcher } = {};
+  const customLaunchers: Record<string, Launcher> = {};
 
   // mobile devices
   devices.forEach(data => {

@@ -1,5 +1,4 @@
 import t = require('@babel/types');
-import { Dict } from 'jsxstyle-utils';
 
 export default function evaluateAstNode(
   exprNode: t.Node,
@@ -7,7 +6,7 @@ export default function evaluateAstNode(
 ): any {
   // loop through ObjectExpression keys
   if (t.isObjectExpression(exprNode)) {
-    const ret: Dict<any> = {};
+    const ret: Record<string, any> = {};
     for (let idx = -1, len = exprNode.properties.length; ++idx < len; ) {
       const value = exprNode.properties[idx];
 

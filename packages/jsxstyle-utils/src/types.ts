@@ -1,9 +1,5 @@
 import { Properties } from 'csstype';
 
-export interface Dict<T> {
-  [key: string]: T;
-}
-
 /** Make all properties in T potentially falsey */
 export type Falsey<T> = { [P in keyof T]?: T[P] | false | null };
 
@@ -20,4 +16,6 @@ export interface ExactCSSProperties
  *
  * Use this type instead of `ExactCSSProperties` if you use pseudoelement, pseudoclass, or media query props with jsxstyle.
  */
-export interface CSSProperties extends ExactCSSProperties, Dict<any> {}
+export interface CSSProperties
+  extends ExactCSSProperties,
+    Record<string, any> {}

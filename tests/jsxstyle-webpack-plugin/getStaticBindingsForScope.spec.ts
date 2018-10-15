@@ -1,6 +1,5 @@
 import traverse from '@babel/traverse';
 import path = require('path');
-import { Dict } from '../../packages/jsxstyle-utils/lib/types';
 import getStaticBindingsForScope from '../../packages/jsxstyle-webpack-plugin/lib/utils/ast/getStaticBindingsForScope';
 import parse from '../../packages/jsxstyle-webpack-plugin/lib/utils/ast/parse';
 
@@ -32,7 +31,10 @@ function outerFunction(innerParam1, innerParam2) {
 }
 `);
 
-  const testItems: Dict<{ attrs: Dict<any>; scope: any }> = {};
+  const testItems: Record<
+    string,
+    { attrs: Record<string, any>; scope: any }
+  > = {};
   traverse(ast, {
     JSXElement(traversePath) {
       const node = traversePath.node.openingElement;
