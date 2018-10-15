@@ -51,7 +51,10 @@ export default function getStyleCache() {
       styleCache.injectOptions = alreadyInjected;
     },
 
-    getClassName(props: Dict<any>, classNameProp?: string): string | null {
+    getClassName(
+      props: Record<string, any>,
+      classNameProp?: string | null | false
+    ): string | null {
       styleCache.injectOptions = cannotInject;
 
       const styleObj = getStyleKeysForProps(props, pretty);

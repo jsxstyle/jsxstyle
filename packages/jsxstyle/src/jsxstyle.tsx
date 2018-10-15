@@ -14,7 +14,7 @@ export { CSSProperties, ExactCSSProperties };
 export const cache = getStyleCache();
 
 export interface StylableComponentProps {
-  className?: string;
+  className?: string | null | false;
   style?: React.CSSProperties;
 }
 
