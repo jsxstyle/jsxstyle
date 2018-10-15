@@ -11,6 +11,6 @@
   "devDependencies": {
     "preact-cli": "^2.2.1",
     "ts-loader": "^3.5.0",
-    "typescript": "^3.0.3"
+    "typescript": "~2.9"
   }
 }
