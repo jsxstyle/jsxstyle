@@ -730,7 +730,7 @@ export default function extractStyles(
           return true;
         });
 
-        let classNamePropValue;
+        let classNamePropValue: t.Expression | null = null;
         const classNamePropIndex = node.attributes.findIndex(
           attr =>
             !t.isJSXSpreadAttribute(attr) &&
@@ -820,9 +820,17 @@ export default function extractStyles(
                 generate(componentPropValue).code
               );
               node.name.name = generateUid(traversePath.scope, 'Component');
+              if (t.isJSXEmptyExpression(componentPropValue)) {
+                logError(
+                  'Encountered JSXEmptyExpression: %s',
+                  generate(componentPropValue).code
+                );
+              }
               traversePath._complexComponentProp = t.variableDeclarator(
                 t.identifier(node.name.name),
-                componentPropValue
+                t.isJSXEmptyExpression(componentPropValue)
+                  ? t.nullLiteral()
+                  : componentPropValue
               );
             }
 

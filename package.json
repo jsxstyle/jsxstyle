@@ -17,6 +17,7 @@
     "tsc": "tsc -p packages/jsxstyle-webpack-plugin/tsconfig.json",
     "tslint": "tslint",
     "tslint-all": "find . -type f -name 'tsconfig.json' -not -path '*/node_modules/*' -exec echo {} \\; -exec tslint -p {} \\;",
+    "tsc-check-all": "find . -type f -name 'tsconfig.json' -not -path '*/node_modules/*' -exec echo {} \\; -exec tsc --noEmit --pretty --project {} \\;",
     "update-readme": "echo \"$(<./misc/monorepo-preamble.md)\\n\\n---\\n\\n$(<./packages/jsxstyle/README.md)\" > README.md"
   },
   "workspaces": {
@@ -31,17 +32,17 @@
     ]
   },
   "dependencies": {
-    "@babel/core": "^7.1.0",
+    "@babel/core": "^7.0.0",
     "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
     "@babel/plugin-transform-object-assign": "^7.0.0",
-    "@babel/preset-env": "^7.1.0",
+    "@babel/preset-env": "^7.0.0",
     "@babel/preset-react": "^7.0.0",
-    "@types/invariant": "^2.2.29",
-    "@types/lodash": "^4.14.116",
-    "@types/node": "^10.10.1",
-    "@types/react": "^16.4.14",
-    "@types/webpack": "^4.4.12",
-    "@types/webpack-env": "^1.13.6",
+    "@types/invariant": "*",
+    "@types/lodash": "*",
+    "@types/node": "*",
+    "@types/react": "*",
+    "@types/webpack": "*",
+    "@types/webpack-env": "*",
     "inquirer": "^6.0.0",
     "lerna": "^3.4.0",
     "preact": "^8.2.6",

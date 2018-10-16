@@ -44,11 +44,17 @@ export default function getPropValueFromAttributes(
     | t.JSXFragment
     | t.StringLiteral
     | t.JSXExpressionContainer
-    | t.Expression =
-    jsxAttr.value;
+    | t.JSXEmptyExpression
+    | t.Expression = jsxAttr.value;
 
   if (t.isJSXExpressionContainer(propValue)) {
     propValue = propValue.expression;
+  }
+
+  // TODO how to handle this??
+  if (t.isJSXEmptyExpression(propValue)) {
+    console.error('encountered JSXEmptyExpression');
+    return null;
   }
 
   // filter out spread props that occur before propValue

@@ -59,12 +59,9 @@ class JsxstyleWebpackPlugin implements webpack.Plugin {
 
   public apply(compiler: Compiler) {
     const environmentPlugin = (): void => {
-      // compiler is of type `any` here because Compiler types are incomplete
-      const wrappedFS = wrapFileSystem(
-        (compiler as any).inputFileSystem,
-        this.memoryFS
-      );
-      (compiler as any).inputFileSystem = wrappedFS;
+      const wrappedFS = wrapFileSystem(compiler.inputFileSystem, this.memoryFS);
+      compiler.inputFileSystem = wrappedFS;
+      // TODO submit PR to DefinitelyTyped
       (compiler as any).watchFileSystem = new NodeWatchFileSystem(wrappedFS);
     };
 

@@ -1,4 +1,6 @@
+import generate from '@babel/generator';
 import traverse from '@babel/traverse';
+import t = require('@babel/types');
 import getSourceModule from '../../packages/jsxstyle-webpack-plugin/lib/utils/ast/getSourceModule';
 import parse from '../../packages/jsxstyle-webpack-plugin/lib/utils/ast/parse';
 
@@ -37,7 +39,13 @@ import {Original as Reassigned2} from 'reassigned';
   traverse(ast, {
     JSXElement(path) {
       const node = path.node.openingElement;
-      testItems[node.name.name] = {
+      const nodeName = node.name;
+      if (!t.isJSXIdentifier(nodeName)) {
+        throw new Error(
+          'Received invalid node name: ' + generate(node.name).code
+        );
+      }
+      testItems[nodeName.name] = {
         node,
         scope: path.scope,
       };

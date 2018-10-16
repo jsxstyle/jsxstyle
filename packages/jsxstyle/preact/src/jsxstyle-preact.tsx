@@ -6,7 +6,7 @@ import {
 } from 'jsxstyle-utils';
 import * as preact from 'preact';
 
-type ComponentName = keyof typeof componentStyles;
+type JsxstyleComponentName = keyof typeof componentStyles;
 
 export { CSSProperties, ExactCSSProperties };
 
@@ -37,7 +37,7 @@ type JsxstyleComponent = preact.ComponentConstructor<
   {}
 >;
 
-function factory(displayName: ComponentName): JsxstyleComponent {
+function factory(displayName: JsxstyleComponentName): JsxstyleComponent {
   const tagName = 'div';
   const defaultProps = componentStyles[displayName] || undefined;
 
@@ -52,7 +52,7 @@ function factory(displayName: ComponentName): JsxstyleComponent {
     public static displayName = displayName;
 
     public className: string | null;
-    public component: AnyComponent<JsxstyleProps<P>>;
+    public component: AnyComponent<P>;
 
     public componentWillReceiveProps(props: JsxstyleProps<P>) {
       this.component = props.component || tagName;

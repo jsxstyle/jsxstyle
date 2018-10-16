@@ -1,4 +1,6 @@
+import generate from '@babel/generator';
 import traverse from '@babel/traverse';
+import t = require('@babel/types');
 import path = require('path');
 import getStaticBindingsForScope from '../../packages/jsxstyle-webpack-plugin/lib/utils/ast/getStaticBindingsForScope';
 import parse from '../../packages/jsxstyle-webpack-plugin/lib/utils/ast/parse';
@@ -38,13 +40,28 @@ function outerFunction(innerParam1, innerParam2) {
   traverse(ast, {
     JSXElement(traversePath) {
       const node = traversePath.node.openingElement;
-      testItems[node.name.name] = {
+      const nodeName = node.name;
+      if (!t.isJSXIdentifier(nodeName)) {
+        throw new Error(
+          'Received invalid node name: ' + generate(node.name).code
+        );
+      }
+      testItems[nodeName.name] = {
         attrs: {},
         scope: traversePath.scope,
       };
 
       node.attributes.forEach(attr => {
-        testItems[node.name.name].attrs[attr.name.name] = attr.value.expression;
+        if (
+          !t.isJSXAttribute(attr) ||
+          typeof attr.name.name !== 'string' ||
+          !t.isJSXExpressionContainer(attr.value)
+        ) {
+          throw new Error(
+            'Received invalid JSXAttribute: ' + generate(attr).code
+          );
+        }
+        testItems[nodeName.name].attrs[attr.name.name] = attr.value.expression;
       });
     },
   });

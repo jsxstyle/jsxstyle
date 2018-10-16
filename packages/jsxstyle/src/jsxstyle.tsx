@@ -6,7 +6,7 @@ import {
 } from 'jsxstyle-utils';
 import * as React from 'react';
 
-type ComponentName = keyof typeof componentStyles;
+type JsxstyleComponentName = keyof typeof componentStyles;
 
 export { CSSProperties, ExactCSSProperties };
 
@@ -28,7 +28,7 @@ export type JsxstyleProps<ComponentProps> = {
 } & StylableComponentProps &
   CSSProperties;
 
-function factory(displayName: ComponentName) {
+function factory(displayName: JsxstyleComponentName) {
   const tagName = 'div';
   const defaultProps = componentStyles[displayName] || undefined;
 
@@ -43,7 +43,7 @@ function factory(displayName: ComponentName) {
     public static displayName = displayName;
 
     public className: string | null;
-    public component: AnyComponent<JsxstyleProps<P>>;
+    public component: AnyComponent<P & StylableComponentProps>;
 
     public componentWillReceiveProps(props: JsxstyleProps<P>) {
       this.component = props.component || tagName;
@@ -73,7 +73,7 @@ export const InlineCol = factory('InlineCol');
 
 export const Grid = factory('Grid');
 
-function depFactory(displayName: ComponentName) {
+function depFactory(displayName: JsxstyleComponentName) {
   const defaultProps = componentStyles[displayName];
   let hasWarned = false;
   // tslint:disable-next-line max-classes-per-file
