@@ -10,6 +10,7 @@
     "example": "ts-node examples/run.ts",
     "jest": "yarn build && yarn --cwd \"tests\" run jest",
     "jest-update-snapshot": "yarn build && yarn --cwd \"tests\" run jest-update-snapshot",
+    "postinstall": "grep -q \"twitter.biz\" ./yarn.lock && echo \"Error: found internal URL in yarn.lock!\" && exit 1 || exit 0",
     "prettier": "prettier --write \"{packages/**/*,examples/**/*}.{js,ts,tsx,css,md}\"",
     "release": "yarn jest && lerna publish",
     "reset": "rimraf packages/{*,*/*}/lib/",

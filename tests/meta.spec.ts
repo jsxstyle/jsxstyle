@@ -1,6 +1,7 @@
 import { getPackages } from '@lerna/project';
-import packlist from 'npm-packlist';
-import * as path from 'path';
+import fs = require('fs');
+import packlist = require('npm-packlist');
+import path = require('path');
 
 // NOTE: this interface is incomplete
 // See: @lerna/package
@@ -32,5 +33,12 @@ ${fileList.map(f => `- ${f}`).join('\n')}
       );
 
     await expect(Promise.all(packagePromises)).resolves.toMatchSnapshot();
+  });
+});
+
+describe('yarn.lock', () => {
+  it('does not contain Twitter-internal URLs', async () => {
+    const lockfileContents = fs.readFileSync('../yarn.lock', 'utf8');
+    expect(lockfileContents.includes('twitter.biz')).toEqual(false);
   });
 });
