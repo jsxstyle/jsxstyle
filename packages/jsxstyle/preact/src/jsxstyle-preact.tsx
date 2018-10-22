@@ -12,8 +12,11 @@ export { CSSProperties, ExactCSSProperties };
 
 export const cache = getStyleCache();
 
+/** Props that will be passed through to whatever component is specified */
 export interface StylableComponentProps {
+  /** passed as-is through to the underlying component */
   class?: string | null | false;
+  /** passed as-is through to the underlying component */
   style?: any;
 }
 
@@ -24,13 +27,17 @@ export type AnyComponent<Props extends StylableComponentProps> =
   // see: https://github.com/developit/preact-router/blob/eb0206b/src/match.d.ts#L13
   | ((props?: Props, ...args: any[]) => preact.VNode | null);
 
-export type JsxstyleProps<ComponentProps> = {
+export interface JsxstyleProps<ComponentProps>
+  extends StylableComponentProps,
+    CSSProperties {
   children?: preact.ComponentChildren;
+  /** Component value can be either a Preact component or a tag name string. Defaults to "div". */
   component?: AnyComponent<ComponentProps>;
+  /** An object of media query values keyed by the desired style prop prefix */
   mediaQueries?: Record<string, string>;
+  /** Object of props that will be passed down to the component specified in the `component` prop */
   props?: ComponentProps;
-} & StylableComponentProps &
-  CSSProperties;
+}
 
 type JsxstyleComponent = preact.ComponentConstructor<
   JsxstyleProps<Record<string, any>>,

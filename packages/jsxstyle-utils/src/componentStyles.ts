@@ -1,4 +1,27 @@
-export default {
+type CSSProperties = import('./types').CSSProperties;
+
+export type JsxstyleComponentName =
+  | 'Block'
+  | 'Box'
+  | 'Col'
+  | 'Grid'
+  | 'Inline'
+  | 'InlineBlock'
+  | 'InlineCol'
+  | 'InlineRow'
+  | 'Row';
+
+export type DeprecatedJsxstyleComponentName =
+  | 'Flex'
+  | 'InlineFlex'
+  | 'Table'
+  | 'TableCell'
+  | 'TableRow';
+
+const componentStyles: Record<
+  JsxstyleComponentName | DeprecatedJsxstyleComponentName,
+  Pick<CSSProperties, 'display' | 'flexDirection'> | null
+> = {
   Block: { display: 'block' },
   Box: null,
   Col: { display: 'flex', flexDirection: 'column' },
@@ -16,3 +39,5 @@ export default {
   TableCell: { display: 'table-cell' },
   TableRow: { display: 'table-row' },
 };
+
+export default componentStyles;
