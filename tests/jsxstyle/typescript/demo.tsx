@@ -1,7 +1,24 @@
 import * as React from 'react';
 import { Block } from '../../../packages/jsxstyle';
 
-const Div: React.SFC = props => <div {...props} />;
+const DemoSFC: React.SFC = props => <div {...props} />;
 
-export const Demo1 = () => <Block component="input" props={{ value: 'wow' }} />;
-export const Demo2 = () => <Block component={Div} props={{ title: 'wow' }} />;
+class DemoClassComponent extends React.Component {
+  public render() {
+    return null;
+  }
+}
+
+export const ValidInputComponent = () => (
+  <Block component="input" props={{ value: 'wow', typeError: true }} />
+);
+
+export const ImplicitDivComponent = () => <Block props={{ typeError: true }} />;
+
+export const SFCWithoutProps = () => (
+  <Block component={DemoSFC} props={{ typeError: true }} />
+);
+
+export const ClassComponentWithoutProps = () => (
+  <Block component={DemoClassComponent} props={{ typeError: true }} />
+);

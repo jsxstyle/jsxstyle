@@ -1,0 +1,22 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`throws type errors for invalid component/prop types 1`] = `
+"jsxstyle/typescript/demo.tsx(13,51): error TS2326: Types of property 'props' are incompatible.
+  Type '{ value: string; typeError: boolean; }' is not assignable to type 'DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | DetailedHTMLProps<InputHTMLAt...'.
+    Object literal may only specify known properties, and 'typeError' does not exist in type 'DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | DetailedHTMLProps<InputHTMLAt...'.
+jsxstyle/typescript/demo.tsx(16,44): error TS2322: Type '{ props: { typeError: boolean; }; }' is not assignable to type '(IntrinsicAttributes & IntrinsicClassAttributes<{ render(): Element; setState<K extends \\"classNam...'.
+  Type '{ props: { typeError: boolean; }; }' is not assignable to type 'IntrinsicAttributes & IntrinsicClassAttributes<{ render(): Element; setState<K extends \\"className...'.
+    Type '{ props: { typeError: boolean; }; }' is not assignable to type 'Readonly<JsxstylePropsWithComponent<ValidComponentPropValue>>'.
+      Property 'component' is missing in type '{ props: { typeError: boolean; }; }'.
+jsxstyle/typescript/demo.tsx(19,30): error TS2326: Types of property 'props' are incompatible.
+  Type '{ typeError: boolean; }' is not assignable to type 'DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | EmptyProps'.
+    Type '{ typeError: boolean; }' is not assignable to type 'EmptyProps'.
+      Property 'typeError' is incompatible with index signature.
+        Type 'boolean' is not assignable to type 'never'.
+jsxstyle/typescript/demo.tsx(23,41): error TS2326: Types of property 'props' are incompatible.
+  Type '{ typeError: boolean; }' is not assignable to type 'DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | EmptyProps'.
+    Type '{ typeError: boolean; }' is not assignable to type 'EmptyProps'.
+      Property 'typeError' is incompatible with index signature.
+        Type 'boolean' is not assignable to type 'never'.
+"
+`;

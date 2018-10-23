@@ -3,7 +3,7 @@ import * as ts from 'typescript';
 
 const demoFile = path.resolve(__dirname, './typescript/demo.tsx');
 
-it('compiles', () => {
+it('throws type errors for invalid component/prop types', () => {
   const options: ts.CompilerOptions = {
     jsx: ts.JsxEmit.React,
     module: ts.ModuleKind.ESNext,
@@ -17,5 +17,5 @@ it('compiles', () => {
   if (diagnostics.length > 0) {
     report = ts.formatDiagnostics(diagnostics, host);
   }
-  expect(report).toEqual('');
+  expect(report).toMatchSnapshot();
 });

@@ -37,7 +37,7 @@ if (canUseDOM && !styleElement) {
   styleElement = document.createElement('style');
   styleElement.type = 'text/css';
   styleElement.appendChild(document.createTextNode('/* jsxstyle */'));
-  document.head.appendChild(styleElement);
+  document.head!.appendChild(styleElement);
 }
 
 export default function addStyleToHead(rule: string): void {
