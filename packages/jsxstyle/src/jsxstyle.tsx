@@ -17,10 +17,11 @@ type ValidComponentPropValue =
   | false
   | null
   | IntrinsicElement
-  | React.ComponentType<any>;
+  | React.StatelessComponent<any>
+  | React.ComponentClass<any>;
 
 /**
- * An object that cannot have values set on it.
+ * A silly way of typing an object with no keys.
  *
  * Empty interfaces in TypeScript seem to be unexpectedly funky.
  * This is the predictable alternative.
@@ -30,25 +31,14 @@ interface EmptyProps {
 }
 
 /**
- * Generic that extracts the `props` type from a React component.
+ * Generic that returns either the extracted props type for a React component
+ * or the props type for an IntrinsicElement.
  *
- * If a component has an empty interface specified as its props type,
- * `GetPropsFromComponent` will return an `EmptyProps` interface.
+ * If a React component has an empty interface specified as its props type,
+ * `ExtractProps` will return an `EmptyProps` interface.
  */
 // shout out to https://git.io/fxMvl
 // modified to add detection for empty interfaces
-type GetPropsFromComponent<
-  T extends React.ComponentType<any>
-> = T extends React.StatelessComponent<infer SFCProps>
-  ? keyof SFCProps extends never ? EmptyProps : SFCProps
-  : T extends React.ComponentClass<infer ClassProps>
-    ? keyof ClassProps extends never ? EmptyProps : ClassProps
-    : EmptyProps;
-
-/**
- * Generic that returns either the extracted props type for a React component
- * or the props type for an IntrinsicElement.
- */
 type ExtractProps<T extends ValidComponentPropValue> = T extends
   | null
   | false
@@ -56,9 +46,11 @@ type ExtractProps<T extends ValidComponentPropValue> = T extends
   ? JSX.IntrinsicElements['div']
   : T extends IntrinsicElement
     ? JSX.IntrinsicElements[T]
-    : T extends React.ComponentType<any>
-      ? GetPropsFromComponent<T>
-      : EmptyProps;
+    : T extends React.StatelessComponent<infer SFCProps>
+      ? keyof SFCProps extends never ? EmptyProps : SFCProps
+      : T extends React.ComponentClass<infer ClassProps>
+        ? keyof ClassProps extends never ? EmptyProps : ClassProps
+        : EmptyProps;
 
 export { CSSProperties, ExactCSSProperties };
 
@@ -100,6 +92,10 @@ type JsxstyleProps<C extends ValidComponentPropValue> =
   | JsxstyleDefaultProps
   | JsxstylePropsWithComponent<C>;
 
+interface JsxstyleComponentState {
+  className: string | null;
+}
+
 const getDerivedStateFromProps = (props: any) => ({
   className: cache.getClassName(props, props.className),
 });
@@ -108,9 +104,10 @@ function factory(displayName: JsxstyleComponentName) {
   const tagName = 'div';
   const defaultProps = componentStyles[displayName];
 
-  return class JsxstyleComponent<
-    T extends ValidComponentPropValue
-  > extends React.Component<JsxstyleProps<T>, { className: string | null }> {
+  return class<T extends ValidComponentPropValue> extends React.Component<
+    JsxstyleProps<T>,
+    JsxstyleComponentState
+  > {
     constructor(props: JsxstyleProps<T>) {
       super(props);
       // className will be set before initial render with either getDerivedStateFromProps or componentWillMount
@@ -155,24 +152,12 @@ function factory(displayName: JsxstyleComponentName) {
   };
 }
 
-export const Box = factory('Box');
-export const Block = factory('Block');
-export const Inline = factory('Inline');
-export const InlineBlock = factory('InlineBlock');
-
-export const Row = factory('Row');
-export const Col = factory('Col');
-export const InlineRow = factory('InlineRow');
-export const InlineCol = factory('InlineCol');
-
-export const Grid = factory('Grid');
-
 function depFactory(displayName: DeprecatedJsxstyleComponentName) {
   const defaultProps = componentStyles[displayName];
   let hasWarned = false;
-  return class DeprecatedJsxstyleComponent<
-    T extends ValidComponentPropValue
-  > extends React.Component<JsxstyleProps<T>> {
+  return class<T extends ValidComponentPropValue> extends React.Component<
+    JsxstyleProps<T>
+  > {
     constructor(props: JsxstyleProps<T>) {
       super(props);
       if (process.env.NODE_ENV !== 'production') {
@@ -195,10 +180,26 @@ function depFactory(displayName: DeprecatedJsxstyleComponentName) {
   };
 }
 
+// Using ReturnType + explicit typing to prevent Hella Dupes in the generated types
+type JsxstyleComponent = ReturnType<typeof factory>;
+type DeprecatedJsxstyleComponent = ReturnType<typeof depFactory>;
+
+export const Box: JsxstyleComponent = factory('Box');
+export const Block: JsxstyleComponent = factory('Block');
+export const Inline: JsxstyleComponent = factory('Inline');
+export const InlineBlock: JsxstyleComponent = factory('InlineBlock');
+
+export const Row: JsxstyleComponent = factory('Row');
+export const Col: JsxstyleComponent = factory('Col');
+export const InlineRow: JsxstyleComponent = factory('InlineRow');
+export const InlineCol: JsxstyleComponent = factory('InlineCol');
+
+export const Grid: JsxstyleComponent = factory('Grid');
+
 // <Box component="table" />
-export const Table = depFactory('Table');
-export const TableRow = depFactory('TableRow');
-export const TableCell = depFactory('TableCell');
+export const Table: DeprecatedJsxstyleComponent = depFactory('Table');
+export const TableRow: DeprecatedJsxstyleComponent = depFactory('TableRow');
+export const TableCell: DeprecatedJsxstyleComponent = depFactory('TableCell');
 // <Row display="inline-flex" />
-export const Flex = depFactory('Flex');
-export const InlineFlex = depFactory('InlineFlex');
+export const Flex: DeprecatedJsxstyleComponent = depFactory('Flex');
+export const InlineFlex: DeprecatedJsxstyleComponent = depFactory('InlineFlex');
