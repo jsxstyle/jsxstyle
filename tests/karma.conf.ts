@@ -1,6 +1,13 @@
-import * as karma from 'karma';
-import * as webpack from 'webpack';
 import getCustomLaunchers from './getCustomLaunchers';
+
+// augment karma module with custom config options
+declare module 'karma' {
+  interface ConfigOptions {
+    sauceLabs?: Record<string, any>;
+    webpack?: import('webpack').Configuration;
+    webpackServer?: Record<string, any>;
+  }
+}
 
 // tslint:disable-next-line no-var-requires
 require('dotenv').config();
@@ -22,18 +29,7 @@ if (!process.env.SAUCE_USERNAME || !process.env.SAUCE_ACCESS_KEY) {
   process.exit(1);
 }
 
-export type KarmaConfigOptions = karma.ConfigOptions & {
-  customLaunchers?: { [key: string]: any };
-  sauceLabs?: any;
-  webpack?: webpack.Configuration;
-  webpackServer?: any;
-};
-
-export interface KarmaConfig extends karma.Config {
-  set: (config: KarmaConfigOptions) => void;
-}
-
-export default (config: KarmaConfig) => {
+export default (config: import('karma').Config) => {
   if (isLocal) {
     config.set({
       browsers: ['ChromeHeadless'],
@@ -56,7 +52,7 @@ export default (config: KarmaConfig) => {
   }
 
   // tslint:disable object-literal-sort-keys
-  const webpackConfig: webpack.Configuration = {
+  const webpackConfig: import('webpack').Configuration = {
     devtool: 'inline-source-map',
     mode: 'development',
     resolve: {

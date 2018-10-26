@@ -30,7 +30,7 @@
     "karma-jasmine": "^1.1.0",
     "karma-sauce-launcher": "^1.2.0",
     "karma-sourcemap-loader": "^0.3.7",
-    "karma-webpack": "^2.0.4",
+    "karma-webpack": "^4.0.0-0",
     "mini-css-extract-plugin": "^0.4.0",
     "npm-packlist": "^1.1.10",
     "rollup-plugin-node-resolve": "^3.0.2",
