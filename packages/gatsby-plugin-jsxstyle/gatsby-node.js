@@ -7,7 +7,12 @@ exports.onCreateWebpackConfig = ({ actions }) => {
       rules: [
         {
           test: /\.(?:jsx?|tsx)$/,
-          use: [JsxstylePlugin.loader],
+          use: [{
+            loader: JsxstylePlugin.loader,
+            options: {
+              classNameFormat: 'hash'
+            },
+          }],
         },
       ],
     },
