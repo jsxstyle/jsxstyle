@@ -6,12 +6,18 @@
   "version": "independent",
   "npmClient": "yarn",
   "useWorkspaces": true,
+  "ignoreChanges": [
+    "lerna.json",
+    "**/*.md",
+    "**/package.json",
+    "**/.npmrc",
+    "**/.travis.yml",
+    ".vscode",
+    "examples/**/*",
+    "tests/**/*"
+  ],
   "command": {
     "publish": {
-      "ignoreChanges": [
-        "**/*.md",
-        "**/package.json"
-      ],
       "allowBranch": "master"
     }
   }
