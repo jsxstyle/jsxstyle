@@ -4,6 +4,11 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Block, cache, Col, InlineBlock, Row } from '../../packages/jsxstyle';
 
+// tslint:disable:no-var-requires
+const reactVersion = require('react/package').version;
+const reactDomVersion = require('react-dom/package').version;
+// tslint:enable:no-var-requires
+
 describe('jsxstyle', () => {
   const node = document.createElement('div');
   // element has to be in the page for getComputedStyle to work
@@ -16,6 +21,8 @@ describe('jsxstyle', () => {
 
   it('does the thing', () => {
     const id = 'jsxstyle-test';
+
+    console.info(`React ${reactVersion}, ReactDOM ${reactDomVersion}`);
 
     expect(() => {
       ReactDOM.render(
