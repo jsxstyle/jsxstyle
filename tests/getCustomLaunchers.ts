@@ -89,9 +89,9 @@ const semverSort = (a: string, b: string) =>
   semverToSortString(a).localeCompare(semverToSortString(b));
 
 const sauceDataFile = path.join(__dirname, 'saucelabs-data.json');
-invariant(fs.existsSync(sauceDataFile), 'Sauce data file does not exist');
 
-export default function getCustomLaunchers(): { [key: string]: Launcher } {
+export default function getCustomLaunchers(): Record<string, Launcher> {
+  invariant(fs.existsSync(sauceDataFile), 'Sauce data file does not exist');
   const sauceData: AppiumDevice[] = JSON.parse(
     fs.readFileSync(sauceDataFile, 'utf8')
   );

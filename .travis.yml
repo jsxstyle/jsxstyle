@@ -1,6 +1,7 @@
 language: node_js
 node_js:
   - node
+dist: trusty
 sudo: false
 if: tag IS blank
 before_install:
@@ -11,10 +12,11 @@ cache:
   yarn: true
 script:
   - yarn run jest
-  - yarn --cwd "tests" run update-sauce-data
-  - travis_retry yarn --cwd "tests" run karma
+  # - yarn --cwd "tests" run update-sauce-data
+  - travis_retry yarn --cwd "tests" run karma-headless-chrome
 addons:
-  sauce_connect:
-    username: jsxstyle
-    access_key:
-      secure: 'eibS8m2dHKoYLczERlPXhMY6/fxlfjOl+pYggiCL+gmZicXgMhF4A2LWIYIqKHIAQlJEBvYr3OKw2V0zh5UdfZIUzrs5R4H7+ZYvvRhDQx5aG07HROwjnheLyLlVcLSOb02FvpVqzWKlcXZCXRgCwpqOXhocL5MN5Ecu0KUbhcA/2xx/1qG0jETJSsFjVtBxQbNJ5VT6zi20ex8V6z5MqX11dftPOssuS78nzi4wB+IaK18hq5qlxkBj33adRvLMQKPkW2sG9V+sLT+Wp8D393CIXX45VcUCPo3F51f7+jeMMi+7nWuN1MC4ZVjyvp44qgk+dhbeTL9fB8AwWTa06f4XIJsfWsiHk9pLhJjx/N459GKO3wit7RpiKrS7TaAF2KSJeeu6eXgbqERIRJLofka0uF1ZB2QbSxESyCg9OHxCJ9tkxBIxgH415Ozil96GEtPAMB7NpUTc4zVsoXpbl0BcooTWO3oZc1nnJA8uYgJzkI1mURD4ApR5AnbOX68eT2zOXT2ksx0D/IgGgSeNPWdBWuMzLke6fbeRdMMGhRmrbdh1mzcLOqrJkq/jWL9k4dnH02NxD4bWGXWmZwe+A038PYrogPH9OLiJdKirKS+KyzXNSKkBivK+J1HJbw7ZtgV6DjBXLzeapBpL3q9HvYVkopEWspl5BYKqEoa8RN8='
+  chrome: stable
+  # sauce_connect:
+  #   username: jsxstyle
+  #   access_key:
+  #     secure: 'eibS8m2dHKoYLczERlPXhMY6/fxlfjOl+pYggiCL+gmZicXgMhF4A2LWIYIqKHIAQlJEBvYr3OKw2V0zh5UdfZIUzrs5R4H7+ZYvvRhDQx5aG07HROwjnheLyLlVcLSOb02FvpVqzWKlcXZCXRgCwpqOXhocL5MN5Ecu0KUbhcA/2xx/1qG0jETJSsFjVtBxQbNJ5VT6zi20ex8V6z5MqX11dftPOssuS78nzi4wB+IaK18hq5qlxkBj33adRvLMQKPkW2sG9V+sLT+Wp8D393CIXX45VcUCPo3F51f7+jeMMi+7nWuN1MC4ZVjyvp44qgk+dhbeTL9fB8AwWTa06f4XIJsfWsiHk9pLhJjx/N459GKO3wit7RpiKrS7TaAF2KSJeeu6eXgbqERIRJLofka0uF1ZB2QbSxESyCg9OHxCJ9tkxBIxgH415Ozil96GEtPAMB7NpUTc4zVsoXpbl0BcooTWO3oZc1nnJA8uYgJzkI1mURD4ApR5AnbOX68eT2zOXT2ksx0D/IgGgSeNPWdBWuMzLke6fbeRdMMGhRmrbdh1mzcLOqrJkq/jWL9k4dnH02NxD4bWGXWmZwe+A038PYrogPH9OLiJdKirKS+KyzXNSKkBivK+J1HJbw7ZtgV6DjBXLzeapBpL3q9HvYVkopEWspl5BYKqEoa8RN8='

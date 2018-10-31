@@ -6,7 +6,7 @@
     "jest": "jest",
     "jest-update-snapshot": "jest --updateSnapshot",
     "karma": "karma start",
-    "karma-local": "KARMA_LOCAL=yep karma start",
+    "karma-headless-chrome": "karma start",
     "update-sauce-data": "curl https://saucelabs.com/rest/v1/info/platforms/appium > saucelabs-data.json"
   },
   "dependencies": {
