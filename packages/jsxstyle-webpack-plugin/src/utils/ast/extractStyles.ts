@@ -15,7 +15,9 @@ import { extractStaticTernaries, Ternary } from './extractStaticTernaries';
 import { generateUid } from './generatedUid';
 import { getPropValueFromAttributes } from './getPropValueFromAttributes';
 import { getStaticBindingsForScope } from './getStaticBindingsForScope';
-import { parse, ParserPlugin } from './parse';
+import { parse } from './parse';
+
+type ParserPlugin = import('@babel/parser').ParserPlugin;
 
 // tslint:disable-next-line no-var-requires
 const loaderSchema = require('../../../schema/loader.json');
