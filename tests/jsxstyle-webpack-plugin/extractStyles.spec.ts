@@ -555,38 +555,6 @@ const blue = "blueberry";
   });
 });
 
-describe('experimental: jsxstyle lite', () => {
-  const srcJS = `<block static="value" dynamic={value} />;
-<inline-block color="blue" />;
-<box />;
-<row />;
-<col flexGrow={1} />;`;
-
-  it('converts lite mode elements to jsxstyle components (React)', () => {
-    const rv = extractStyles(
-      srcJS,
-      pathTo('mock/lite-mode.js'),
-      { cacheObject: {} },
-      { liteMode: 'react' }
-    );
-
-    expect(rv.js).toMatchSnapshot();
-    expect(rv.css).toMatchSnapshot();
-  });
-
-  it('converts lite mode elements to jsxstyle components (Preact)', () => {
-    const rv = extractStyles(
-      srcJS,
-      pathTo('mock/lite-mode.js'),
-      { cacheObject: {} },
-      { liteMode: 'preact' }
-    );
-
-    expect(rv.js).toMatchSnapshot();
-    expect(rv.css).toMatchSnapshot();
-  });
-});
-
 describe('deterministic rendering', () => {
   it('generates deterministic class names when classNameFormat is set to `hash`', () => {
     const rv = extractStyles(

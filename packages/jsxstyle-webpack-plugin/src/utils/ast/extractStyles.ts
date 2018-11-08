@@ -24,7 +24,6 @@ const loaderSchema = require('../../../schema/loader.json');
 
 export interface ExtractStylesOptions {
   classNameFormat?: 'hash';
-  liteMode?: boolean | 'react' | 'preact';
   namedStyleGroups?: Record<string, Record<string, any>>;
   parserPlugins?: ParserPlugin[];
   styleGroups?: Array<Record<string, any>>;
@@ -67,18 +66,9 @@ const JSXSTYLE_SOURCES = {
   'jsxstyle/preact': true,
 };
 
-// InlineBlock --> inline-block
-const liteComponents = {};
-const ucRegex = /([A-Z])/g;
 const defaultStyleAttributes = {};
 
 for (const componentName in componentStyles) {
-  const dashCaseName = componentName
-    .replace(ucRegex, '-$1')
-    .toLowerCase()
-    .slice(1);
-  liteComponents[dashCaseName] = componentName;
-
   const styleObj = componentStyles[componentName];
 
   // skip `Box`
@@ -180,7 +170,6 @@ export function extractStyles(
 
   const {
     classNameFormat,
-    liteMode,
     namedStyleGroups,
     parserPlugins: _parserPlugins,
     styleGroups,
@@ -213,16 +202,6 @@ export function extractStyles(
   let useImportSyntax = false;
   let hasValidComponents = false;
   let needsRuntimeJsxstyle = false;
-
-  if (typeof liteMode === 'string' || liteMode === true) {
-    if (liteMode === true) {
-      jsxstyleSrc = 'jsxstyle';
-    } else {
-      jsxstyleSrc = liteMode === 'react' ? 'jsxstyle' : `jsxstyle/${liteMode}`;
-    }
-    Object.assign(validComponents, liteComponents);
-    hasValidComponents = true;
-  }
 
   // Find jsxstyle require in program root
   ast.program.body = ast.program.body.filter((item: t.Node) => {

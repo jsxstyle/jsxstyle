@@ -31,13 +31,6 @@
         "type": "string"
       }
     },
-    "liteMode": {
-      "description": "version of jsxstyle to import when using lite mode",
-      "enum": [
-        "react",
-        "preact"
-      ]
-    },
     "classNameFormat": {
       "description": "format of generated class names. `hash` is deterministic, `base36` is not.",
       "enum": [

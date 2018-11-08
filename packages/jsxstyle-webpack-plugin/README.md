@@ -149,17 +149,6 @@ You can see a list of all available plugins in [the `@babel/parser` documentatio
 
 Out of the box, `jsxstyle-webpack-plugin` will use a _non-deterministic_ class naming scheme. Because webpack’s module iteration order is not guaranteed, class names will differ slightly between builds of the same code. If you need class names to remain the same each time the same code is bundled, set the `classNameFormat` option to `hash` in your loader config. Class names will be generated using a content-based hash.
 
-### `liteMode`
-
-```jsx
-// look ma, no jsxstyle import
-<block color="red">This text will be red</block>
-```
-
-Instead of importing components from `jsxstyle` or `jsxstyle/preact`, don’t import _anything_ and just use the dash-case version of the component name as if it’s a valid DOM element. When `jsxstyle-webpack-plugin` encounters one of these dash-case elements, it’ll treat it like the PascalCased equivalent component imported from `jsxstyle` or `jsxstyle/preact`.
-
-To enable this feature, set `liteMode` in your loader options to either `'react'` or `'preact'`.
-
 ## FAQs
 
 ### Can I use `jsxstyle-webpack-plugin` with Flow?
