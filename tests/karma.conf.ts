@@ -1,4 +1,5 @@
 import path = require('path');
+
 import getCustomLaunchers from './getCustomLaunchers';
 
 // augment karma module with custom config options

@@ -2,7 +2,7 @@ import t = require('@babel/types');
 
 export default function evaluateAstNode(
   exprNode: t.Node,
-  evalFn?: (node: t.Node) => boolean
+  evalFn?: (node: t.Node) => any
 ): any {
   // loop through ObjectExpression keys
   if (t.isObjectExpression(exprNode)) {

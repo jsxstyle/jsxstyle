@@ -230,76 +230,79 @@ export default function extractStyles(
   // Find jsxstyle require in program root
   ast.program.body = ast.program.body.filter((item: t.Node) => {
     if (t.isVariableDeclaration(item)) {
-      item.declarations = item.declarations.filter(dec => {
-        if (
-          // var ...
-          !t.isVariableDeclarator(dec) ||
-          // var {...}
-          !t.isObjectPattern(dec.id) ||
-          dec.init == null ||
-          // var {x} = require(...)
-          !t.isCallExpression(dec.init) ||
-          !t.isIdentifier(dec.init.callee) ||
-          dec.init.callee.name !== 'require' ||
-          // var {x} = require('one-thing')
-          dec.init.arguments.length !== 1 ||
-          !t.isStringLiteral(dec.init.arguments[0])
-        ) {
-          return true;
-        }
+      item.declarations = item.declarations.filter(
+        (dec): boolean => {
+          if (
+            // var ...
+            !t.isVariableDeclarator(dec) ||
+            // var {...}
+            !t.isObjectPattern(dec.id) ||
+            dec.init == null ||
+            // var {x} = require(...)
+            !t.isCallExpression(dec.init) ||
+            !t.isIdentifier(dec.init.callee) ||
+            dec.init.callee.name !== 'require' ||
+            // var {x} = require('one-thing')
+            dec.init.arguments.length !== 1
+          ) {
+            return true;
+          }
 
-        const firstArg = dec.init.arguments[0];
-        if (!t.isStringLiteral(firstArg)) {
-          return;
-        }
+          const firstArg = dec.init.arguments[0];
+          if (!t.isStringLiteral(firstArg)) {
+            return true;
+          }
 
-        // var {x} = require('jsxstyle')
-        if (!JSXSTYLE_SOURCES.hasOwnProperty(firstArg.value)) {
-          return true;
-        }
+          // var {x} = require('jsxstyle')
+          if (!JSXSTYLE_SOURCES.hasOwnProperty(firstArg.value)) {
+            return true;
+          }
 
-        if (jsxstyleSrc) {
-          invariant(
-            jsxstyleSrc === firstArg.value,
-            'Expected duplicate `require` to be from "%s", received "%s"',
-            jsxstyleSrc,
-            firstArg.value
+          if (jsxstyleSrc) {
+            invariant(
+              jsxstyleSrc === firstArg.value,
+              'Expected duplicate `require` to be from "%s", received "%s"',
+              jsxstyleSrc,
+              firstArg.value
+            );
+          }
+
+          dec.id.properties = dec.id.properties.filter(
+            (prop): boolean => {
+              // if it's funky, keep it
+              if (
+                !t.isObjectProperty(prop) ||
+                !t.isIdentifier(prop.key) ||
+                !t.isIdentifier(prop.value)
+              ) {
+                return true;
+              }
+
+              // only add uppercase identifiers to validComponents
+              if (
+                !componentStyles.hasOwnProperty(prop.key.name) ||
+                prop.value.name[0] !== prop.value.name[0].toUpperCase()
+              ) {
+                return true;
+              }
+
+              // map imported name to source component name
+              validComponents[prop.value.name] = prop.key.name;
+              hasValidComponents = true;
+
+              jsxstyleSrc = firstArg.value;
+              return false;
+            }
           );
-        }
 
-        dec.id.properties = dec.id.properties.filter(prop => {
-          // if it's funky, keep it
-          if (
-            !t.isObjectProperty(prop) ||
-            !t.isIdentifier(prop.key) ||
-            !t.isIdentifier(prop.value)
-          ) {
+          if (dec.id.properties.length > 0) {
             return true;
           }
 
-          // only add uppercase identifiers to validComponents
-          if (
-            !componentStyles.hasOwnProperty(prop.key.name) ||
-            prop.value.name[0] !== prop.value.name[0].toUpperCase()
-          ) {
-            return true;
-          }
-
-          // map imported name to source component name
-          validComponents[prop.value.name] = prop.key.name;
-          hasValidComponents = true;
-
-          jsxstyleSrc = firstArg.value;
+          // if all props on the variable declaration have been handled, filter it out
           return false;
-        });
-
-        if (dec.id.properties.length > 0) {
-          return true;
         }
-
-        // if all props on the variable declaration have been handled, filter it out
-        return false;
-      });
+      );
 
       if (item.declarations.length === 0) {
         return false;

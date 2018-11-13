@@ -1,7 +1,7 @@
 import {
-  componentStyles,
   CSSProperties,
   ExactCSSProperties,
+  componentStyles,
   getStyleCache,
 } from 'jsxstyle-utils';
 import * as preact from 'preact';

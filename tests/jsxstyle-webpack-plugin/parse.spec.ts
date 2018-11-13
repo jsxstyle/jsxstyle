@@ -1,4 +1,5 @@
 import generate from '@babel/generator';
+
 import parse from '../../packages/jsxstyle-webpack-plugin/lib/utils/ast/parse';
 
 // parse helper

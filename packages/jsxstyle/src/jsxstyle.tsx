@@ -1,12 +1,12 @@
 // tslint:disable max-classes-per-file
 
 import {
-  componentStyles,
   CSSProperties,
   DeprecatedJsxstyleComponentName,
   ExactCSSProperties,
-  getStyleCache,
   JsxstyleComponentName,
+  componentStyles,
+  getStyleCache,
 } from 'jsxstyle-utils';
 import * as React from 'react';
 

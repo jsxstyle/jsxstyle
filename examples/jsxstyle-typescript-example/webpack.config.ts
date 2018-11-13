@@ -1,6 +1,7 @@
 import JsxstylePlugin = require('jsxstyle-webpack-plugin');
 import path = require('path');
 import webpack = require('webpack');
+
 import ReactIndexPlugin = require('../ReactIndexPlugin');
 
 const appSrc = path.join(__dirname, 'src');

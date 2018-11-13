@@ -1,5 +1,7 @@
 import generate from '@babel/generator';
+import t = require('@babel/types');
 import vm = require('vm');
+
 import evaluateAstNode from '../../packages/jsxstyle-webpack-plugin/lib/utils/ast/evaluateAstNode';
 import parse from '../../packages/jsxstyle-webpack-plugin/lib/utils/ast/parse';
 
@@ -34,10 +36,14 @@ describe('evaluateAstNode', () => {
     );
 
     const errors = [];
-    ast.program.body[0].expression.openingElement.attributes.forEach(attr => {
+    const statement = ast.program.body[0] as t.ExpressionStatement;
+    const jsxElement = statement.expression as t.JSXElement;
+    jsxElement.openingElement.attributes.forEach(attr => {
       try {
-        evaluateAstNode(attr.value, evalFn);
-        errors.push(`'${attr.name.name}' should not be evaluated`);
+        if (!t.isJSXSpreadAttribute(attr)) {
+          evaluateAstNode(attr.value, evalFn);
+          errors.push(`'${attr.name.name}' should not be evaluated`);
+        }
       } catch (e) {
         //
       }
@@ -60,11 +66,18 @@ describe('evaluateAstNode', () => {
     );
 
     const errors = [];
-    ast.program.body[0].expression.openingElement.attributes.forEach(attr => {
-      try {
-        evaluateAstNode(attr.value.expression, evalFn);
-      } catch (e) {
-        errors.push(`'${attr.name.name}' should be evaluated`);
+    const statement = ast.program.body[0] as t.ExpressionStatement;
+    const jsxElement = statement.expression as t.JSXElement;
+    jsxElement.openingElement.attributes.forEach(attr => {
+      if (!t.isJSXSpreadAttribute(attr)) {
+        try {
+          evaluateAstNode(
+            (attr.value as t.JSXExpressionContainer).expression,
+            evalFn
+          );
+        } catch (e) {
+          errors.push(`'${attr.name.name}' should be evaluated`);
+        }
       }
     });
 
@@ -92,11 +105,18 @@ describe('evaluateAstNode', () => {
     };
 
     const errors = [];
-    ast.program.body[0].expression.openingElement.attributes.forEach(attr => {
-      try {
-        evaluateAstNode(attr.value.expression, cb);
-      } catch (e) {
-        errors.push(`'${attr.name.name}' should be evaluated`);
+    const statement = ast.program.body[0] as t.ExpressionStatement;
+    const jsxElement = statement.expression as t.JSXElement;
+    jsxElement.openingElement.attributes.forEach(attr => {
+      if (!t.isJSXSpreadAttribute(attr)) {
+        try {
+          evaluateAstNode(
+            (attr.value as t.JSXExpressionContainer).expression,
+            cb
+          );
+        } catch (e) {
+          errors.push(`'${attr.name.name}' should be evaluated`);
+        }
       }
     });
 

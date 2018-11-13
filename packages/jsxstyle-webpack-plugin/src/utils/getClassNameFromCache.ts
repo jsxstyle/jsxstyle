@@ -3,6 +3,7 @@ import {
   getStyleKeysForProps,
   stringHash,
 } from 'jsxstyle-utils';
+
 import { CacheObject } from '../types';
 
 export default function getClassNameFromCache(

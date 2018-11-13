@@ -1,6 +1,7 @@
 import MiniCssExtractPlugin = require('mini-css-extract-plugin');
 import path = require('path');
 import webpack = require('webpack');
+
 import JsxstylePlugin = require('../../../packages/jsxstyle-webpack-plugin');
 
 const config: webpack.Configuration = {
