@@ -1,14 +1,9 @@
-import {
-  CSSProperties,
-  ExactCSSProperties,
-  componentStyles,
-  getStyleCache,
-} from 'jsxstyle-utils';
+import { componentStyles, CSSProperties, getStyleCache } from 'jsxstyle-utils';
 import * as preact from 'preact';
 
 type JsxstyleComponentName = keyof typeof componentStyles;
 
-export { CSSProperties, ExactCSSProperties };
+export { CSSProperties };
 
 export const cache = getStyleCache();
 

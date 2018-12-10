@@ -1,12 +1,11 @@
 // tslint:disable max-classes-per-file
 
 import {
+  componentStyles,
   CSSProperties,
   DeprecatedJsxstyleComponentName,
-  ExactCSSProperties,
-  JsxstyleComponentName,
-  componentStyles,
   getStyleCache,
+  JsxstyleComponentName,
 } from 'jsxstyle-utils';
 import * as React from 'react';
 
@@ -52,7 +51,7 @@ type ExtractProps<T extends ValidComponentPropValue> = T extends
         ? keyof ClassProps extends never ? EmptyProps : ClassProps
         : EmptyProps;
 
-export { CSSProperties, ExactCSSProperties };
+export { CSSProperties };
 
 /** Shared instance of a style cache object. */
 export const cache = getStyleCache();

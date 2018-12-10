@@ -3,15 +3,10 @@ import traverse, { VisitNodeObject } from '@babel/traverse';
 import t = require('@babel/types');
 import Ajv = require('ajv');
 import invariant = require('invariant');
+import { componentStyles, getStyleKeysForProps } from 'jsxstyle-utils';
 import path = require('path');
 import util = require('util');
 import vm = require('vm');
-
-import {
-  componentStyles,
-  CSSProperties,
-  getStyleKeysForProps,
-} from 'jsxstyle-utils';
 
 import { CacheObject } from '../../types';
 import getStylesByClassName from '../getStylesByClassName';
@@ -28,9 +23,9 @@ const loaderSchema = require('../../../schema/loader.json');
 export interface ExtractStylesOptions {
   classNameFormat?: 'hash';
   liteMode?: boolean | 'react' | 'preact';
-  namedStyleGroups?: Record<string, CSSProperties>;
+  namedStyleGroups?: Record<string, Record<string, any>>;
   parserPlugins?: ParserPlugin[];
-  styleGroups?: CSSProperties[];
+  styleGroups?: Array<Record<string, any>>;
   whitelistedModules?: string[];
   cssModules?: boolean;
   evaluateVars?: boolean;

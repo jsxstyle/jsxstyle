@@ -11,14 +11,19 @@ const nonStyleProps = {
   style: true,
 };
 
+interface JsxstyleProps extends CSSProperties {
+  mediaQueries?: Record<string, string>;
+  props?: Record<string, any>;
+}
+
 export interface StylesByClassName {
-  [key: string]: CSSProperties;
+  [key: string]: JsxstyleProps;
 }
 
 export default function getStylesByClassName(
   styleGroups: CSSProperties[] = [],
   namedStyleGroups: Record<string, CSSProperties> = {},
-  staticAttributes: CSSProperties,
+  staticAttributes: Record<string, any>,
   cacheObject: CacheObject,
   classNameFormat?: 'hash'
 ): StylesByClassName {
@@ -55,7 +60,7 @@ export default function getStylesByClassName(
 
   // Feature: Style groups! if you want a bit more control over how classNames are generated,
   //   you can specify an object of style objects keyed by the className that should represent that group of styles.
-  //   if all style props in the group are present on the element, they'll be extracated and
+  //   if all style props in the group are present on the element, they'll be extracted and
   //   the corresponding className will be added to the element.
   if (namedStyleGroups) {
     // class name key --> object of style props
