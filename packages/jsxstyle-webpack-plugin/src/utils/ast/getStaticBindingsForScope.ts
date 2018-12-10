@@ -1,8 +1,8 @@
 import t = require('@babel/types');
 import path = require('path');
 
-import evaluateAstNode from './evaluateAstNode';
-import getSourceModule from './getSourceModule';
+import { evaluateAstNode } from './evaluateAstNode';
+import { getSourceModule } from './getSourceModule';
 
 export interface BindingCache {
   [key: string]: string | null;
@@ -27,7 +27,7 @@ interface Binding {
   value: any;
 }
 
-export default function getStaticBindingsForScope(
+export function getStaticBindingsForScope(
   scope: any,
   whitelist: string[] = [],
   sourceFileName: string,

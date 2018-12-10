@@ -4,7 +4,7 @@ import invariant = require('invariant');
 import { CSSProperties } from 'jsxstyle-utils';
 
 import { CacheObject } from '../../types';
-import getClassNameFromCache from '../getClassNameFromCache';
+import { getClassNameFromCache } from '../getClassNameFromCache';
 import { StylesByClassName } from '../getStylesByClassName';
 
 export interface Ternary {
@@ -14,7 +14,7 @@ export interface Ternary {
   alternate: string | null;
 }
 
-export default function extractStaticTernaries(
+export function extractStaticTernaries(
   ternaries: Ternary[],
   cacheObject: CacheObject,
   classNameFormat?: 'hash'

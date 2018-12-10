@@ -2,8 +2,8 @@ import generate from '@babel/generator';
 import t = require('@babel/types');
 import vm = require('vm');
 
-import evaluateAstNode from '../../packages/jsxstyle-webpack-plugin/lib/utils/ast/evaluateAstNode';
-import parse from '../../packages/jsxstyle-webpack-plugin/lib/utils/ast/parse';
+import { evaluateAstNode } from '../../packages/jsxstyle-webpack-plugin/lib/utils/ast/evaluateAstNode';
+import { parse } from '../../packages/jsxstyle-webpack-plugin/lib/utils/ast/parse';
 
 const staticNamespace = {
   LC: {

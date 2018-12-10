@@ -2,8 +2,8 @@ import generate from '@babel/generator';
 import traverse from '@babel/traverse';
 import t = require('@babel/types');
 
-import getSourceModule from '../../packages/jsxstyle-webpack-plugin/lib/utils/ast/getSourceModule';
-import parse from '../../packages/jsxstyle-webpack-plugin/lib/utils/ast/parse';
+import { getSourceModule } from '../../packages/jsxstyle-webpack-plugin/lib/utils/ast/getSourceModule';
+import { parse } from '../../packages/jsxstyle-webpack-plugin/lib/utils/ast/parse';
 
 function getSourceModuleForItem(itemName, scope) {
   let itemBinding = null;

@@ -8,7 +8,7 @@ export interface SourceModule {
   usesImportSyntax: boolean;
 }
 
-export default function getSourceModule(
+export function getSourceModule(
   itemName: string,
   itemBinding: {
     constant?: boolean;

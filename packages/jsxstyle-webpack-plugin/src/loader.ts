@@ -6,7 +6,7 @@ import util = require('util');
 import webpack = require('webpack');
 
 import { CacheObject, LoaderOptions, PluginContext } from './types';
-import extractStyles from './utils/ast/extractStyles';
+import { extractStyles } from './utils/ast/extractStyles';
 
 const counter: any = Symbol.for('counter');
 

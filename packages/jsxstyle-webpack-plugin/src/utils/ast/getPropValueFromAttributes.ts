@@ -2,7 +2,7 @@ import generate from '@babel/generator';
 import t = require('@babel/types');
 import invariant = require('invariant');
 
-import accessSafe from './accessSafe';
+import { accessSafe } from './accessSafe';
 
 /**
  * getPropValueFromAttributes gets a prop by name from a list of attributes and accounts for potential spread operators.
@@ -20,7 +20,7 @@ import accessSafe from './accessSafe';
  *
  * The returned value should (obviously) be placed after spread operators.
  */
-export default function getPropValueFromAttributes(
+export function getPropValueFromAttributes(
   propName: string,
   attrs: Array<t.JSXAttribute | t.JSXSpreadAttribute>
 ): t.Expression | null {

@@ -1,5 +1,5 @@
-import dangerousStyleValue from './dangerousStyleValue';
-import hyphenateStyleName from './hyphenateStyleName';
+import { dangerousStyleValue } from './dangerousStyleValue';
+import { hyphenateStyleName } from './hyphenateStyleName';
 
 // global flag makes subsequent calls of capRegex.test advance to the next match
 const capRegex = /[A-Z]/g;
@@ -45,7 +45,7 @@ export type StyleKeyObj = Record<
   }
 > & { classNameKey: string };
 
-export default function getStyleKeysForProps(
+export function getStyleKeysForProps(
   props: Record<string, any> & { mediaQueries?: Record<string, string> },
   pretty = false
 ): StyleKeyObj | null {

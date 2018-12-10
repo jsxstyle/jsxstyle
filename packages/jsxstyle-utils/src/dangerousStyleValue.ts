@@ -70,7 +70,7 @@ Object.keys(isUnitlessNumber).forEach(prop => {
   });
 });
 
-export default function dangerousStyleValue(name: any, value: any): string {
+export function dangerousStyleValue(name: any, value: any): string {
   const isEmpty = value == null || typeof value === 'boolean' || value === '';
   if (isEmpty) {
     return '';

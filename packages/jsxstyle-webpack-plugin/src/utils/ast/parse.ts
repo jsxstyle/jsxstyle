@@ -29,7 +29,7 @@ export type ParserPlugin =
   | 'throwExpressions'
   | 'typescript';
 
-export default function parse(
+export function parse(
   code: string | Buffer,
   plugins: ParserPlugin[] = []
 ): any {

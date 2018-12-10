@@ -2,7 +2,7 @@ import t = require('@babel/types');
 
 // accessSafe wraps memberExpressions in object/null checks
 // TODO: inject this as a function? this gets pretty repetitive
-export default function accessSafe(
+export function accessSafe(
   obj: t.Expression,
   member: string
 ): t.LogicalExpression {

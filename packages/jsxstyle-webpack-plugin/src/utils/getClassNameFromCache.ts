@@ -6,7 +6,7 @@ import {
 
 import { CacheObject } from '../types';
 
-export default function getClassNameFromCache(
+export function getClassNameFromCache(
   styleObject: CSSProperties,
   cacheObject: CacheObject,
   classNameFormat?: 'hash'

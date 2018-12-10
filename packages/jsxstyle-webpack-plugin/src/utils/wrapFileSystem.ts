@@ -24,7 +24,7 @@ const handledMethods = {
   writeFileSync: true,
 };
 
-export default function wrapFileSystem(
+export function wrapFileSystem(
   fs: InputFileSystem,
   memoryFS: MemoryOutputFileSystem
 ): InputFileSystem {

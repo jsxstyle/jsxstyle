@@ -9,13 +9,13 @@ import util = require('util');
 import vm = require('vm');
 
 import { CacheObject } from '../../types';
-import getStylesByClassName from '../getStylesByClassName';
-import evaluateAstNode from './evaluateAstNode';
-import extractStaticTernaries, { Ternary } from './extractStaticTernaries';
-import generateUid from './generatedUid';
-import getPropValueFromAttributes from './getPropValueFromAttributes';
-import getStaticBindingsForScope from './getStaticBindingsForScope';
-import parse, { ParserPlugin } from './parse';
+import { getStylesByClassName } from '../getStylesByClassName';
+import { evaluateAstNode } from './evaluateAstNode';
+import { extractStaticTernaries, Ternary } from './extractStaticTernaries';
+import { generateUid } from './generatedUid';
+import { getPropValueFromAttributes } from './getPropValueFromAttributes';
+import { getStaticBindingsForScope } from './getStaticBindingsForScope';
+import { parse, ParserPlugin } from './parse';
 
 // tslint:disable-next-line no-var-requires
 const loaderSchema = require('../../../schema/loader.json');
@@ -115,7 +115,7 @@ for (const componentName in componentStyles) {
   defaultStyleAttributes[componentName] = styleProps;
 }
 
-export default function extractStyles(
+export function extractStyles(
   src: string | Buffer,
   sourceFileName: string,
   /** non-user-configurable options */

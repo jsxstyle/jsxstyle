@@ -3,8 +3,8 @@ import traverse from '@babel/traverse';
 import t = require('@babel/types');
 import path = require('path');
 
-import getStaticBindingsForScope from '../../packages/jsxstyle-webpack-plugin/lib/utils/ast/getStaticBindingsForScope';
-import parse from '../../packages/jsxstyle-webpack-plugin/lib/utils/ast/parse';
+import { getStaticBindingsForScope } from '../../packages/jsxstyle-webpack-plugin/lib/utils/ast/getStaticBindingsForScope';
+import { parse } from '../../packages/jsxstyle-webpack-plugin/lib/utils/ast/parse';
 
 const whitelistedModules = [require.resolve('./mock/LC')];
 

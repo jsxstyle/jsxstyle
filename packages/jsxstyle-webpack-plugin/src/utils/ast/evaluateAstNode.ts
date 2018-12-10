@@ -1,6 +1,6 @@
 import t = require('@babel/types');
 
-export default function evaluateAstNode(
+export function evaluateAstNode(
   exprNode: t.Node,
   evalFn?: (node: t.Node) => any
 ): any {

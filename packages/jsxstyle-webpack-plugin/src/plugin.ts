@@ -4,7 +4,7 @@ import fs = require('fs');
 import webpack = require('webpack');
 import MemoryFileSystem = require('webpack/lib/MemoryOutputFileSystem');
 import NodeWatchFileSystem = require('webpack/lib/node/NodeWatchFileSystem');
-import wrapFileSystem from './utils/wrapFileSystem';
+import { wrapFileSystem } from './utils/wrapFileSystem';
 
 import Compiler = webpack.Compiler;
 import Compilation = webpack.compilation.Compilation;

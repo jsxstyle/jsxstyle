@@ -1,6 +1,6 @@
 import generate from '@babel/generator';
 
-import parse from '../../packages/jsxstyle-webpack-plugin/lib/utils/ast/parse';
+import { parse } from '../../packages/jsxstyle-webpack-plugin/lib/utils/ast/parse';
 
 // parse helper
 const p = (code, ...plugins) => generate(parse(code, plugins)).code;

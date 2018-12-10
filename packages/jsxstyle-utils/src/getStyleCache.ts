@@ -1,6 +1,6 @@
-import addStyleToHead from './addStyleToHead';
-import getStyleKeysForProps from './getStyleKeysForProps';
-import stringHash from './stringHash';
+import { addStyleToHead } from './addStyleToHead';
+import { getStyleKeysForProps } from './getStyleKeysForProps';
+import { stringHash } from './stringHash';
 
 type InsertRuleCallback = (rule: string, props?: {}) => boolean | void;
 
@@ -20,7 +20,7 @@ function getStringHash(key: string, props?: any): string {
   return '_' + stringHash(key).toString(36);
 }
 
-export default function getStyleCache() {
+export function getStyleCache() {
   let _classNameCache: Record<string, string> = {};
   let getClassNameForKey = getStringHash;
   let onInsertRule: InsertRuleCallback;
