@@ -28,7 +28,24 @@
       "description": "array of plugins that should be passed to @babel/parser. You can see a full list of available plugins here: https://new.babeljs.io/docs/en/next/babel-parser.html#plugins",
       "type": "array",
       "items": {
-        "type": "string"
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "object"
+              }
+            ]
+          }
+        ]
       }
     },
     "classNameFormat": {
