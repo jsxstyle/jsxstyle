@@ -87,7 +87,7 @@ interface JsxstyleDefaultProps extends SharedProps {
   props?: JSX.IntrinsicElements['div'];
 }
 
-type JsxstyleProps<C extends ValidComponentPropValue> =
+export type JsxstyleProps<C extends ValidComponentPropValue> =
   | JsxstyleDefaultProps
   | JsxstylePropsWithComponent<C>;
 
