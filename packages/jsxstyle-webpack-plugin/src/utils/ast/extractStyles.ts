@@ -10,6 +10,7 @@ import vm = require('vm');
 
 import { CacheObject } from '../../types';
 import { getStylesByClassName } from '../getStylesByClassName';
+
 import { evaluateAstNode } from './evaluateAstNode';
 import { extractStaticTernaries, Ternary } from './extractStaticTernaries';
 import { generateUid } from './generatedUid';

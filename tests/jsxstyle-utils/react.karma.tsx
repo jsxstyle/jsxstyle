@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import { Block, Col, InlineBlock, Row, cache } from '../../packages/jsxstyle';
+import { Block, cache, Col, InlineBlock, Row } from '../../packages/jsxstyle';
 
 import './polyfills';
 
