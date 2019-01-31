@@ -123,10 +123,10 @@ function factory(displayName: JsxstyleComponentName) {
       // In React 16.3+, deprecated lifecycles will not be called if getDerivedStateFromProps is defined.
       // This boolean prevents React from logging the presence of these functions as an error in strict mode.
       // See https://github.com/reactjs/react-lifecycles-compat/blob/0a02b80/index.js#L47
-      componentWillReceiveProps.__suppressDeprecationWarning = true;
       componentWillMount.__suppressDeprecationWarning = true;
+      componentWillReceiveProps.__suppressDeprecationWarning = true;
 
-      this.componentDidMount = componentWillMount;
+      this.componentWillMount = componentWillMount;
       this.componentWillReceiveProps = componentWillReceiveProps;
     }
 
