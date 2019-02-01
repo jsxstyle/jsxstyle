@@ -21,7 +21,7 @@
       "type": "array",
       "items": {
         "type": "string",
-        "pattern": "^/"
+        "pattern": "(^/|^[a-zA-Z]:\\\\)"
       }
     },
     "parserPlugins": {
@@ -66,7 +66,7 @@
     "cacheFile": {
       "description": "absolute path to a file that contains a list of CSS strings. If cacheFile is set, the file will be created if it does not exist will be overwritten every time jsxstyle-webpack-plugin runs.",
       "type": "string",
-      "pattern": "^/"
+      "pattern": "(^/|^[a-zA-Z]:\\\\)"
     }
   }
 }
