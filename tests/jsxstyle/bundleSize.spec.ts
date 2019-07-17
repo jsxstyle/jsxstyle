@@ -1,16 +1,16 @@
 import path = require('path');
-import { OutputOptions, rollup } from 'rollup';
-import rollupNodeResolve = require('rollup-plugin-node-resolve');
-import rollupReplace = require('rollup-plugin-replace');
+import { OutputOptions, rollup, RollupOptions } from 'rollup';
+import rollupNodeResolve from 'rollup-plugin-node-resolve';
+import rollupReplace from 'rollup-plugin-replace';
 import { uglify as rollupUglify } from 'rollup-plugin-uglify';
 import zlib = require('zlib');
 
 const entry = 'bundleSize entrypoint';
 
 it('has a runtime size of less than 3KB', async () => {
-  expect.assertions(3);
+  expect.assertions(4);
 
-  const inputOptions = {
+  const inputOptions: RollupOptions = {
     external: ['react', 'preact'],
     input: entry,
     plugins: [
@@ -44,32 +44,40 @@ it('has a runtime size of less than 3KB', async () => {
   const bundle = await rollup(inputOptions);
   const result = await bundle.generate(outputOptions);
 
-  // TODO: narrow this correctly
-  const code = (result as any).code;
+  expect(result.output.length).toEqual(1);
 
-  return new Promise((resolve, reject) =>
-    zlib.deflate(code, (err, buf) => {
+  // TODO: narrow this correctly
+  const code = result.output[0].code;
+
+  if (!code) {
+    throw new Error('Generated bundle resulted in a falsey value');
+  }
+
+  const buf = await new Promise<Buffer>((resolve, reject) => {
+    return zlib.deflate(code, (err, buf) => {
       if (err) {
-        return reject(err);
+        reject(err);
+      } else {
+        resolve(buf);
       }
-      const strLen = Buffer.byteLength(code);
-      const gzipLen = buf.byteLength;
-      console.warn(
-        'jsxstyle bundle size: %s bytes (%skb)',
-        strLen,
-        (strLen / 1024).toFixed(4)
-      );
-      console.warn(
-        'jsxstyle bundle size (gzip): %s bytes (%skb)',
-        gzipLen,
-        (gzipLen / 1024).toFixed(4)
-      );
-      // ensure jsxstyle and jsxstyle-utils are bundled
-      expect(code).not.toMatch(/require\(['"]jsxstyle['"]\)/);
-      expect(code).not.toMatch(/require\(['"]jsxstyle-utils['"]\)/);
-      // check file size
-      expect(gzipLen).toBeLessThan(1024 * 3);
-      resolve();
-    })
+    });
+  });
+
+  const strLen = Buffer.byteLength(code);
+  const gzipLen = buf.byteLength;
+  console.warn(
+    'jsxstyle bundle size: %s bytes (%skb)',
+    strLen,
+    (strLen / 1024).toFixed(4)
   );
+  console.warn(
+    'jsxstyle bundle size (gzip): %s bytes (%skb)',
+    gzipLen,
+    (gzipLen / 1024).toFixed(4)
+  );
+  // ensure jsxstyle and jsxstyle-utils are bundled
+  expect(code).not.toMatch(/require\(['"]jsxstyle['"]\)/);
+  expect(code).not.toMatch(/require\(['"]jsxstyle-utils['"]\)/);
+  // check file size
+  expect(gzipLen).toBeLessThan(1024 * 3);
 });

@@ -3,22 +3,23 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "start": "ts-node ./node_modules/.bin/webpack-serve --config=webpack.config.ts"
+    "start": "webpack-dev-server"
   },
   "dependencies": {
-    "@babel/core": "^7.0.0",
-    "@babel/preset-env": "^7.0.0",
-    "babel-loader": "^8.0.0",
-    "css-loader": "^1.0.0",
-    "file-loader": "^2.0.0",
-    "react": "^16.5.2",
-    "react-dom": "^16.5.2",
+    "@babel/core": "^7.5.4",
+    "@babel/preset-env": "^7.5.4",
+    "babel-loader": "^8.0.6",
+    "css-loader": "^3.0.0",
+    "file-loader": "^4.0.0",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
     "style-loader": "^0.23.0",
-    "ts-loader": "^5.1.1",
-    "typescript": "~2.9",
-    "url-loader": "^1.1.1",
-    "webpack": "^4.19.1",
-    "webpack-serve": "^2.0.2"
+    "ts-loader": "^6.0.4",
+    "typescript": "~3.0",
+    "url-loader": "^2.0.1",
+    "webpack": "^4.36.1",
+    "webpack-cli": "^3.3.6",
+    "webpack-dev-server": "^3.7.2"
   },
   "devDependencies": {
     "@types/node": "*",

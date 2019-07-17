@@ -54,7 +54,7 @@ function factory(displayName: JsxstyleComponentName): JsxstyleComponent {
     public static displayName = displayName;
 
     public className: string | null;
-    public component: AnyComponent<P>;
+    public component: any;
 
     public componentWillReceiveProps(props: JsxstyleProps<P>) {
       this.component = props.component || tagName;

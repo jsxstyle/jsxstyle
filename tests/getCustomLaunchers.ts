@@ -1,7 +1,7 @@
-import * as fs from 'fs';
-import * as invariant from 'invariant';
+import fs = require('fs');
+import invariant from 'invariant';
 import { flattenDeep, groupBy, sample, uniqBy } from 'lodash';
-import * as path from 'path';
+import path = require('path');
 
 const mobilePlatforms = {
   android: 'Android',

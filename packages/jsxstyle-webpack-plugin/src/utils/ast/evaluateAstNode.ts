@@ -14,7 +14,7 @@ export function evaluateAstNode(
         throw new Error('evaluateAstNode can only evaluate object properties');
       }
 
-      let key: any = null;
+      let key: string | number | null | undefined | boolean;
       if (value.computed) {
         if (typeof evalFn !== 'function') {
           throw new Error(
@@ -24,10 +24,18 @@ export function evaluateAstNode(
         key = evaluateAstNode(value.key, evalFn);
       } else if (t.isIdentifier(value.key)) {
         key = value.key.name;
-      } else if (t.isLiteral(value.key)) {
+      } else if (
+        t.isStringLiteral(value.key) ||
+        t.isNumberLiteral(value.key) ||
+        t.isNumericLiteral(value.key)
+      ) {
         key = value.key.value;
       } else {
         throw new Error('Unsupported key type: ' + value.key.type);
+      }
+
+      if (typeof key !== 'string' && typeof key !== 'number') {
+        throw new Error('key must be either a string or a number');
       }
 
       ret[key] = evaluateAstNode(value.value);

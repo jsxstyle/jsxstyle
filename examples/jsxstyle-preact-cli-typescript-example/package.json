@@ -9,8 +9,10 @@
     "start": "preact watch"
   },
   "devDependencies": {
-    "preact-cli": "^2.2.1",
-    "ts-loader": "^3.5.0",
-    "typescript": "~2.9"
+    "@types/node": "*",
+    "ejs-loader": "^0.3.3",
+    "preact-cli": "^3.0.0-0",
+    "ts-loader": "^6.0.4",
+    "typescript": "~3.0"
   }
 }

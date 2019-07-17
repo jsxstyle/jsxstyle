@@ -1,22 +1,19 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`throws type errors for invalid component/prop types 1`] = `
-"jsxstyle/typescript/demo.tsx(14,51): error TS2326: Types of property 'props' are incompatible.
-  Type '{ value: string; typeError: boolean; }' is not assignable to type 'DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | DetailedHTMLProps<InputHTMLAt...'.
-    Object literal may only specify known properties, and 'typeError' does not exist in type 'DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | DetailedHTMLProps<InputHTMLAt...'.
-jsxstyle/typescript/demo.tsx(17,44): error TS2322: Type '{ props: { typeError: boolean; }; }' is not assignable to type '(IntrinsicAttributes & IntrinsicClassAttributes<{ render(): Element; setState<K extends \\"classNam...'.
-  Type '{ props: { typeError: boolean; }; }' is not assignable to type 'IntrinsicAttributes & IntrinsicClassAttributes<{ render(): Element; setState<K extends \\"className...'.
-    Type '{ props: { typeError: boolean; }; }' is not assignable to type 'Readonly<JsxstylePropsWithComponent<ValidComponentPropValue>>'.
-      Property 'component' is missing in type '{ props: { typeError: boolean; }; }'.
-jsxstyle/typescript/demo.tsx(20,30): error TS2326: Types of property 'props' are incompatible.
-  Type '{ typeError: boolean; }' is not assignable to type 'DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | EmptyProps'.
-    Type '{ typeError: boolean; }' is not assignable to type 'EmptyProps'.
-      Property 'typeError' is incompatible with index signature.
-        Type 'boolean' is not assignable to type 'never'.
-jsxstyle/typescript/demo.tsx(24,41): error TS2326: Types of property 'props' are incompatible.
-  Type '{ typeError: boolean; }' is not assignable to type 'DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | EmptyProps'.
-    Type '{ typeError: boolean; }' is not assignable to type 'EmptyProps'.
-      Property 'typeError' is incompatible with index signature.
-        Type 'boolean' is not assignable to type 'never'.
+"../node_modules/@types/bluebird/index.d.ts(44,20): error TS2339: Property 'toStringTag' does not exist on type 'SymbolConstructor'.
+jsxstyle/typescript/demo.tsx(14,51): error TS2322: Type '{ value: string; typeError: boolean; }' is not assignable to type 'DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>'.
+  Object literal may only specify known properties, and 'typeError' does not exist in type 'DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>'.
+jsxstyle/typescript/demo.tsx(17,44): error TS2322: Type '{ props: { typeError: boolean; }; }' is not assignable to type '(IntrinsicAttributes & IntrinsicClassAttributes<{ render(): Element; context: any; setState<K extends \\"className\\">(state: JsxstyleComponentState | Pick<JsxstyleComponentState, K> | ((prevState: Readonly<JsxstyleComponentState>, props: Readonly<...> | Readonly<...>) => JsxstyleComponentState | Pick<...>), callback?: ...'.
+  Type '{ props: { typeError: boolean; }; }' is not assignable to type 'Pick<Readonly<JsxstylePropsWithComponent<ValidComponentPropValue>> & Readonly<{ children?: ReactNode; }>, \\"all\\" | \\"alignContent\\" | \\"alignItems\\" | \\"alignSelf\\" | \\"alignmentBaseline\\" | ... 751 more ... | \\"mediaQueries\\">'.
+    Property 'component' is missing in type '{ props: { typeError: boolean; }; }'.
+jsxstyle/typescript/demo.tsx(20,30): error TS2322: Type '{ typeError: boolean; }' is not assignable to type 'DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | EmptyProps'.
+  Type '{ typeError: boolean; }' is not assignable to type 'EmptyProps'.
+    Property 'typeError' is incompatible with index signature.
+      Type 'boolean' is not assignable to type 'never'.
+jsxstyle/typescript/demo.tsx(24,41): error TS2322: Type '{ typeError: boolean; }' is not assignable to type 'DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | EmptyProps'.
+  Type '{ typeError: boolean; }' is not assignable to type 'EmptyProps'.
+    Property 'typeError' is incompatible with index signature.
+      Type 'boolean' is not assignable to type 'never'.
 "
 `;

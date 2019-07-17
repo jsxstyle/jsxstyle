@@ -1,5 +1,5 @@
 import generate from '@babel/generator';
-import traverse, { VisitNodeObject } from '@babel/traverse';
+import traverse, { TraverseOptions, NodePath } from '@babel/traverse';
 import t = require('@babel/types');
 import Ajv = require('ajv');
 import invariant = require('invariant');
@@ -39,12 +39,10 @@ export interface Options {
   warnCallback?: (str: string, ...args: any[]) => void;
 }
 
-interface TraversePath<TNode = any> {
-  node: TNode;
-  scope: {}; // TODO
-  _complexComponentProp?: any; // t.VariableDeclarator;
-  parentPath: TraversePath<any>;
-  insertBefore: (arg: t.Node) => void;
+declare module '@babel/traverse' {
+  export interface NodePath<T = t.Node, TNode = any> {
+    _complexComponentProp?: t.VariableDeclarator[] | null;
+  }
 }
 
 // props that will be passed through as-is
@@ -207,79 +205,75 @@ export function extractStyles(
   // Find jsxstyle require in program root
   ast.program.body = ast.program.body.filter((item: t.Node) => {
     if (t.isVariableDeclaration(item)) {
-      item.declarations = item.declarations.filter(
-        (dec): boolean => {
+      item.declarations = item.declarations.filter((dec): boolean => {
+        if (
+          // var ...
+          !t.isVariableDeclarator(dec) ||
+          // var {...}
+          !t.isObjectPattern(dec.id) ||
+          dec.init == null ||
+          // var {x} = require(...)
+          !t.isCallExpression(dec.init) ||
+          !t.isIdentifier(dec.init.callee) ||
+          dec.init.callee.name !== 'require' ||
+          // var {x} = require('one-thing')
+          dec.init.arguments.length !== 1
+        ) {
+          return true;
+        }
+
+        const firstArg = dec.init.arguments[0];
+        if (!t.isStringLiteral(firstArg)) {
+          return true;
+        }
+
+        // var {x} = require('jsxstyle')
+        if (!JSXSTYLE_SOURCES.hasOwnProperty(firstArg.value)) {
+          return true;
+        }
+
+        if (jsxstyleSrc) {
+          invariant(
+            jsxstyleSrc === firstArg.value,
+            'Expected duplicate `require` to be from "%s", received "%s"',
+            jsxstyleSrc,
+            firstArg.value
+          );
+        }
+
+        dec.id.properties = dec.id.properties.filter((prop): boolean => {
+          // if it's funky, keep it
           if (
-            // var ...
-            !t.isVariableDeclarator(dec) ||
-            // var {...}
-            !t.isObjectPattern(dec.id) ||
-            dec.init == null ||
-            // var {x} = require(...)
-            !t.isCallExpression(dec.init) ||
-            !t.isIdentifier(dec.init.callee) ||
-            dec.init.callee.name !== 'require' ||
-            // var {x} = require('one-thing')
-            dec.init.arguments.length !== 1
+            !t.isObjectProperty(prop) ||
+            !t.isIdentifier(prop.key) ||
+            !t.isIdentifier(prop.value)
           ) {
             return true;
           }
 
-          const firstArg = dec.init.arguments[0];
-          if (!t.isStringLiteral(firstArg)) {
+          // only add uppercase identifiers to validComponents
+          if (
+            !componentStyles.hasOwnProperty(prop.key.name) ||
+            prop.value.name[0] !== prop.value.name[0].toUpperCase()
+          ) {
             return true;
           }
 
-          // var {x} = require('jsxstyle')
-          if (!JSXSTYLE_SOURCES.hasOwnProperty(firstArg.value)) {
-            return true;
-          }
+          // map imported name to source component name
+          validComponents[prop.value.name] = prop.key.name;
+          hasValidComponents = true;
 
-          if (jsxstyleSrc) {
-            invariant(
-              jsxstyleSrc === firstArg.value,
-              'Expected duplicate `require` to be from "%s", received "%s"',
-              jsxstyleSrc,
-              firstArg.value
-            );
-          }
-
-          dec.id.properties = dec.id.properties.filter(
-            (prop): boolean => {
-              // if it's funky, keep it
-              if (
-                !t.isObjectProperty(prop) ||
-                !t.isIdentifier(prop.key) ||
-                !t.isIdentifier(prop.value)
-              ) {
-                return true;
-              }
-
-              // only add uppercase identifiers to validComponents
-              if (
-                !componentStyles.hasOwnProperty(prop.key.name) ||
-                prop.value.name[0] !== prop.value.name[0].toUpperCase()
-              ) {
-                return true;
-              }
-
-              // map imported name to source component name
-              validComponents[prop.value.name] = prop.key.name;
-              hasValidComponents = true;
-
-              jsxstyleSrc = firstArg.value;
-              return false;
-            }
-          );
-
-          if (dec.id.properties.length > 0) {
-            return true;
-          }
-
-          // if all props on the variable declaration have been handled, filter it out
+          jsxstyleSrc = firstArg.value;
           return false;
+        });
+
+        if (dec.id.properties.length > 0) {
+          return true;
         }
-      );
+
+        // if all props on the variable declaration have been handled, filter it out
+        return false;
+      });
 
       if (item.declarations.length === 0) {
         return false;
@@ -353,7 +347,7 @@ export function extractStyles(
   // Generate a UID that's unique in the program scope
   let boxComponentName: string | undefined;
   traverse(ast, {
-    Program(traversePath: TraversePath) {
+    Program(traversePath) {
       boxComponentName = generateUid(traversePath.scope, 'Box');
     },
   });
@@ -361,9 +355,9 @@ export function extractStyles(
   // per-file cache of evaluated bindings
   const bindingCache = {};
 
-  const traverseOptions: { JSXElement: VisitNodeObject<t.JSXElement> } = {
+  const traverseOptions: TraverseOptions<t.JSXElement> = {
     JSXElement: {
-      enter(traversePath: TraversePath<t.JSXElement>) {
+      enter(traversePath) {
         const node = traversePath.node.openingElement;
 
         if (
@@ -806,12 +800,14 @@ export function extractStyles(
                   generate(componentPropValue).code
                 );
               }
-              traversePath._complexComponentProp = t.variableDeclarator(
-                t.identifier(node.name.name),
-                t.isJSXEmptyExpression(componentPropValue)
-                  ? t.nullLiteral()
-                  : componentPropValue
-              );
+              traversePath._complexComponentProp = [
+                t.variableDeclarator(
+                  t.identifier(node.name.name),
+                  t.isJSXEmptyExpression(componentPropValue)
+                    ? t.nullLiteral()
+                    : componentPropValue
+                ),
+              ];
             }
 
             // remove component prop from attributes
@@ -1020,17 +1016,17 @@ export function extractStyles(
           }
         }
       },
-      exit(traversePath: TraversePath<t.JSXElement>) {
+      exit(traversePath) {
         if (traversePath._complexComponentProp) {
           if (t.isJSXElement(traversePath.parentPath)) {
             // bump
-            traversePath.parentPath._complexComponentProp = [].concat(
-              traversePath.parentPath._complexComponentProp || [],
-              traversePath._complexComponentProp
-            );
+            traversePath.parentPath._complexComponentProp = [
+              ...(traversePath.parentPath._complexComponentProp || []),
+              ...traversePath._complexComponentProp,
+            ];
           } else {
             // find nearest Statement
-            let statementPath = traversePath;
+            let statementPath: NodePath<t.JSXElement | t.Node> = traversePath;
             do {
               statementPath = statementPath.parentPath;
             } while (!t.isStatement(statementPath));
@@ -1040,10 +1036,9 @@ export function extractStyles(
               'Could not find a statement'
             );
 
-            const decs = t.variableDeclaration(
-              'var',
-              [].concat(traversePath._complexComponentProp)
-            );
+            const decs = t.variableDeclaration('var', [
+              ...traversePath._complexComponentProp,
+            ]);
 
             statementPath.insertBefore(decs);
           }
