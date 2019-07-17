@@ -1,6 +1,6 @@
 {
   "name": "jsxstyle",
-  "version": "2.1.5",
+  "version": "2.1.6",
   "description": "Inline style system for React and Preact",
   "repository": "git@github.com:jsxstyle/jsxstyle.git",
   "author": "Pete Hunt",
