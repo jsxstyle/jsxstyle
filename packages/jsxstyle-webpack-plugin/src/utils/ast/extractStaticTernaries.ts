@@ -29,7 +29,7 @@ export function extractStaticTernaries(
     'extractStaticTernaries expects param 1 to be an array of ternaries'
   );
   invariant(
-    typeof cacheObject === 'object' && cacheObject !== null,
+    cacheObject != null,
     'extractStaticTernaries expects param 3 to be an object'
   );
 

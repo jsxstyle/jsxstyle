@@ -1,5 +1,5 @@
 import generate from '@babel/generator';
-import traverse, { TraverseOptions, NodePath } from '@babel/traverse';
+import traverse, { NodePath, TraverseOptions } from '@babel/traverse';
 import t = require('@babel/types');
 import Ajv = require('ajv');
 import invariant = require('invariant');
@@ -10,7 +10,6 @@ import vm = require('vm');
 
 import { CacheObject } from '../../types';
 import { getStylesByClassName } from '../getStylesByClassName';
-
 import { evaluateAstNode } from './evaluateAstNode';
 import { extractStaticTernaries, Ternary } from './extractStaticTernaries';
 import { generateUid } from './generatedUid';
@@ -20,8 +19,7 @@ import { parse } from './parse';
 
 type ParserPlugin = import('@babel/parser').ParserPlugin;
 
-// tslint:disable-next-line no-var-requires
-const loaderSchema = require('../../../schema/loader.json');
+import loaderSchema = require('../../loaderSchema.json');
 
 export interface ExtractStylesOptions {
   classNameFormat?: 'hash';
@@ -52,13 +50,11 @@ const UNTOUCHED_PROPS = {
 };
 
 // props that cannot appear in the props prop (so meta)
-const ALL_SPECIAL_PROPS = Object.assign(
-  {
-    className: true,
-    component: true,
-  },
-  UNTOUCHED_PROPS
-);
+const ALL_SPECIAL_PROPS = {
+  className: true,
+  component: true,
+  ...UNTOUCHED_PROPS,
+};
 
 const JSXSTYLE_SOURCES = {
   jsxstyle: true,
@@ -68,14 +64,15 @@ const JSXSTYLE_SOURCES = {
 const defaultStyleAttributes = {};
 
 for (const componentName in componentStyles) {
-  const styleObj = componentStyles[componentName];
+  const styleObj =
+    componentStyles[componentName as keyof typeof componentStyles];
 
   // skip `Box`
   if (!styleObj) {
     continue;
   }
 
-  const propKeys: string[] = Object.keys(styleObj);
+  const propKeys = Object.keys(styleObj);
   const styleProps: t.JSXAttribute[] = [];
 
   for (let idx = -1, len = propKeys.length; ++idx < len; ) {
@@ -128,10 +125,7 @@ export function extractStyles(
     '`sourceFileName` must be an absolute path to a .js file'
   );
 
-  invariant(
-    typeof cacheObject === 'object' && cacheObject !== null,
-    '`cacheObject` must be an object'
-  );
+  invariant(cacheObject != null, '`cacheObject` must be an object');
 
   let logWarning = console.warn;
   if (typeof warnCallback !== 'undefined') {
@@ -203,7 +197,7 @@ export function extractStyles(
   let needsRuntimeJsxstyle = false;
 
   // Find jsxstyle require in program root
-  ast.program.body = ast.program.body.filter((item: t.Node) => {
+  ast.program.body = ast.program.body.filter(item => {
     if (t.isVariableDeclaration(item)) {
       item.declarations = item.declarations.filter((dec): boolean => {
         if (
@@ -345,7 +339,7 @@ export function extractStyles(
     jsxstyleSrc === 'jsxstyle/preact' ? 'class' : 'className';
 
   // Generate a UID that's unique in the program scope
-  let boxComponentName: string | undefined;
+  let boxComponentName: string = '';
   traverse(ast, {
     Program(traversePath) {
       boxComponentName = generateUid(traversePath.scope, 'Box');
@@ -373,7 +367,7 @@ export function extractStyles(
         const originalNodeName = node.name.name;
         const srcKey = validComponents[originalNodeName];
 
-        node.name.name = boxComponentName!;
+        node.name.name = boxComponentName;
 
         // prepend initial styles
         const initialStyles = defaultStyleAttributes[srcKey];
@@ -419,7 +413,7 @@ export function extractStyles(
             try {
               const spreadValue = attemptEval(attr.argument);
 
-              if (typeof spreadValue !== 'object' || spreadValue == null) {
+              if (spreadValue == null) {
                 lastSpreadIndex = flattenedAttributes.push(attr) - 1;
               } else {
                 for (const k in spreadValue) {
@@ -1065,7 +1059,7 @@ export function extractStyles(
         t.importDeclaration(
           [
             t.importSpecifier(
-              t.identifier(boxComponentName!),
+              t.identifier(boxComponentName),
               t.identifier('Box')
             ),
           ],
@@ -1076,7 +1070,7 @@ export function extractStyles(
       ast.program.body.unshift(
         t.variableDeclaration('var', [
           t.variableDeclarator(
-            t.identifier(boxComponentName!),
+            t.identifier(boxComponentName),
             t.memberExpression(
               t.callExpression(t.identifier('require'), [
                 t.stringLiteral(jsxstyleSrc),

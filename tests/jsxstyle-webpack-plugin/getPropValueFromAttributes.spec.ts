@@ -28,7 +28,7 @@ describe('getPropValueFromAttributes', () => {
       node.attributes
     );
     expect(generate(componentPropValue).code).toEqual(
-      'typeof spread === "object" && spread !== null && spread.thing || Wow'
+      'spread != null && spread.thing || Wow'
     );
   });
 
@@ -42,8 +42,7 @@ describe('getPropValueFromAttributes', () => {
       node.attributes
     );
     expect(generate(componentPropValue).code).toEqual(
-      'typeof two === "object" && two !== null && two.thing || ' +
-        'typeof one === "object" && one !== null && one.thing || Wow'
+      'two != null && two.thing || one != null && one.thing || Wow'
     );
   });
 
@@ -58,9 +57,7 @@ describe('getPropValueFromAttributes', () => {
       node.attributes
     );
     expect(generate(componentPropValue).code).toEqual(
-      'typeof three === "object" && three !== null && three.className || ' +
-        'typeof two === "object" && two !== null && two.className || ' +
-        'typeof one === "object" && one !== null && one.className || Wow'
+      'three != null && three.className || two != null && two.className || one != null && one.className || Wow'
     );
   });
 
@@ -74,8 +71,7 @@ describe('getPropValueFromAttributes', () => {
       node.attributes
     );
     expect(generate(componentPropValue).code).toEqual(
-      'typeof three === "object" && three !== null && three.className || ' +
-        'typeof two === "object" && two !== null && two.className || Wow'
+      'three != null && three.className || two != null && two.className || Wow'
     );
   });
 

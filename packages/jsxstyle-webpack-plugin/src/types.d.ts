@@ -11,6 +11,6 @@ export interface LoaderOptions extends ExtractStylesOptions {
 export interface PluginContext {
   cacheFile: string | null;
   cacheObject: CacheObject;
-  memoryFS: any;
+  memoryFS: import('webpack/lib/MemoryOutputFileSystem');
   fileList: Set<string>;
 }

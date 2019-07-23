@@ -8,17 +8,8 @@ export function accessSafe(
 ): t.LogicalExpression {
   return t.logicalExpression(
     '&&',
-    t.logicalExpression(
-      '&&',
-      // typeof obj === 'object
-      t.binaryExpression(
-        '===',
-        t.unaryExpression('typeof', obj),
-        t.stringLiteral('object')
-      ),
-      // obj !== null
-      t.binaryExpression('!==', obj, t.nullLiteral())
-    ),
+    // obj != null
+    t.binaryExpression('!=', obj, t.nullLiteral()),
     // obj.member
     t.memberExpression(obj, t.identifier(member), false)
   );

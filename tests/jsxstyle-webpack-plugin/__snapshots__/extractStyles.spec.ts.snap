@@ -291,7 +291,7 @@ exports[`spread operators handles reserved props before the spread operators 1`]
 import { Box } from \\"jsxstyle\\";
 <Box display=\\"block\\" component=\\"wow\\" props={{
   test: 4
-}} key={test} ref={test} style={{}} {...spread} color={null} className={(typeof spread === \\"object\\" && spread !== null && spread.className || wow || \\"\\") + \\" _x0\\"} />;"
+}} key={test} ref={test} style={{}} {...spread} color={null} className={(spread != null && spread.className || wow || \\"\\") + \\" _x0\\"} />;"
 `;
 
 exports[`spread operators handles reserved props before the spread operators 2`] = `

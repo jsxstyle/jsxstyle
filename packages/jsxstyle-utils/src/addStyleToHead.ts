@@ -10,21 +10,23 @@ interface HotData {
   styleElement: typeof styleElement;
 }
 
-interface ModuleHot<T = HotData> {
+interface NodeModule {
   hot: {
-    data: T;
-    addDisposeHandler: (handler: (data: T) => void) => void;
+    data: HotData;
+    addDisposeHandler: (handler: (data: HotData) => void) => void;
   };
 }
 
+declare var module: NodeModule;
+
 if (
   typeof module !== 'undefined' &&
-  (module as any).hot &&
-  typeof (module as any).hot.addDisposeHandler === 'function'
+  module.hot &&
+  typeof module.hot.addDisposeHandler === 'function'
 ) {
   // gross
-  const { hot } = (module as any) as ModuleHot;
-  if (typeof hot.data === 'object') {
+  const { hot } = module;
+  if (hot.data != null) {
     styleElement = hot.data.styleElement;
   }
 
@@ -41,7 +43,7 @@ if (canUseDOM && !styleElement) {
 }
 
 export function addStyleToHead(rule: string): void {
-  if (styleElement) {
+  if (styleElement && styleElement.sheet) {
     const sheet = styleElement.sheet as CSSStyleSheet;
     try {
       sheet.insertRule(rule, sheet.cssRules.length);

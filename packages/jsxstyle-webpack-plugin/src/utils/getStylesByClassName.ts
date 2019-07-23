@@ -21,7 +21,7 @@ export interface StylesByClassName {
 }
 
 export function getStylesByClassName(
-  styleGroups: CSSProperties[] = [],
+  styleGroups: Array<Record<string, any>> = [],
   namedStyleGroups: Record<string, CSSProperties> = {},
   staticAttributes: Record<string, any>,
   cacheObject: CacheObject,
@@ -39,8 +39,10 @@ export function getStylesByClassName(
     );
   }
 
+  const stylesByClassName: StylesByClassName = {};
+
   let hasItems = false;
-  const styleProps = {};
+  const styleProps: Record<string, any> = {};
   for (const item in staticAttributes) {
     if (
       nonStyleProps.hasOwnProperty(item) ||
@@ -53,10 +55,8 @@ export function getStylesByClassName(
   }
 
   if (!hasItems) {
-    return {};
+    return stylesByClassName;
   }
-
-  const stylesByClassName: StylesByClassName = {};
 
   // Feature: Style groups! if you want a bit more control over how classNames are generated,
   //   you can specify an object of style objects keyed by the className that should represent that group of styles.

@@ -14,25 +14,25 @@ export type Falsey<T> = { [P in keyof T]?: T[P] | false | null };
  * Support for these props can be added as needed with module augmentation. Example:
  *
 ```typescript
-import { CSSProperties } from 'jsxstyle';
+  import { CSSProperties } from 'jsxstyle';
 
-declare module 'jsxstyle' {
-  interface CSSProperties {
-    hoverBackgroundColor: CSSProperties['backgroundColor'];
+  declare module 'jsxstyle' {
+    interface CSSProperties {
+      hoverBackgroundColor: CSSProperties['backgroundColor'];
+    }
   }
-}
 ```
 
  * or if you’re feeling adventurous:
 
 ```typescript
-import { CSSProperties } from 'jsxstyle';
+  import { CSSProperties } from 'jsxstyle';
 
-declare module 'jsxstyle' {
-  interface CSSProperties {
-    [key: string]: any;
+  declare module 'jsxstyle' {
+    interface CSSProperties {
+      [key: string]: any;
+    }
   }
-}
 ```
  * For further reading, see the TypeScript docs: https://www.typescriptlang.org/docs/handbook/declaration-merging.html#module-augmentation
  */

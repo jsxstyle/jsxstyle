@@ -2,7 +2,10 @@ import { addStyleToHead } from './addStyleToHead';
 import { getStyleKeysForProps } from './getStyleKeysForProps';
 import { stringHash } from './stringHash';
 
-type InsertRuleCallback = (rule: string, props?: {}) => boolean | void;
+type InsertRuleCallback = (
+  rule: string,
+  props?: Record<string, any>
+) => boolean | void;
 
 function cannotInject() {
   throw new Error(
@@ -57,7 +60,7 @@ export function getStyleCache() {
       styleCache.injectOptions = cannotInject;
 
       const styleObj = getStyleKeysForProps(props, pretty);
-      if (typeof styleObj !== 'object' || styleObj === null) {
+      if (styleObj == null) {
         return classNameProp || null;
       }
 

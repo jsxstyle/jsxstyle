@@ -11,6 +11,13 @@ import Compilation = webpack.compilation.Compilation;
 
 const counterKey = Symbol.for('counter');
 
+// TODO submit PR to DefinitelyTyped
+declare module 'webpack' {
+  interface Compiler {
+    watchFileSystem: import('webpack/lib/node/NodeWatchFileSystem');
+  }
+}
+
 class JsxstyleWebpackPlugin implements webpack.Plugin {
   constructor() {
     this.memoryFS = new MemoryFileSystem();
@@ -61,8 +68,7 @@ class JsxstyleWebpackPlugin implements webpack.Plugin {
     const environmentPlugin = (): void => {
       const wrappedFS = wrapFileSystem(compiler.inputFileSystem, this.memoryFS);
       compiler.inputFileSystem = wrappedFS;
-      // TODO submit PR to DefinitelyTyped
-      (compiler as any).watchFileSystem = new NodeWatchFileSystem(wrappedFS);
+      compiler.watchFileSystem = new NodeWatchFileSystem(wrappedFS);
     };
 
     if (compiler.hooks) {

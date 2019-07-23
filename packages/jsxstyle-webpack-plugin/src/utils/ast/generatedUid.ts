@@ -9,7 +9,7 @@ declare module '@babel/types' {
 // A clone of path.scope.generateUid that doesn't prepend underscores
 export function generateUid(scope: any, name: string): string {
   invariant(
-    typeof scope === 'object',
+    scope != null,
     'generateUid expects a scope object as its first parameter'
   );
   invariant(

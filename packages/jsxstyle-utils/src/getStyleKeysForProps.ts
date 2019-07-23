@@ -62,7 +62,6 @@ export function getStyleKeysForProps(
   }
 
   const mediaQueries = props.mediaQueries;
-  const hasMediaQueries = typeof mediaQueries === 'object';
   let usesMediaQueries = false;
 
   const styleKeyObj = {} as StyleKeyObj;
@@ -71,9 +70,9 @@ export function getStyleKeysForProps(
   const seenMQs: Record<string, string> = {};
 
   const mqSortKeys: Record<string, string> = {};
-  if (hasMediaQueries) {
+  if (mediaQueries != null) {
     let idx = -1;
-    for (const k in mediaQueries!) {
+    for (const k in mediaQueries) {
       mqSortKeys[k] = `@${1000 + ++idx}`;
     }
   }
@@ -103,7 +102,7 @@ export function getStyleKeysForProps(
       originalPropName.slice(0, capRegex.lastIndex - 1);
 
     // check for media query prefix
-    if (prefix && hasMediaQueries && mediaQueries!.hasOwnProperty(prefix)) {
+    if (prefix && mediaQueries != null && mediaQueries.hasOwnProperty(prefix)) {
       usesMediaQueries = true;
       mqKey = prefix;
       splitIndex = capRegex.lastIndex - 1;

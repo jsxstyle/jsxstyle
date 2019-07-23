@@ -67,14 +67,11 @@ jsxstyle-webpack-plugin
 - lib/loader.d.ts.map
 - lib/loader.js
 - lib/loader.js.map
+- lib/loaderSchema.json
 - lib/plugin.d.ts
 - lib/plugin.d.ts.map
 - lib/plugin.js
 - lib/plugin.js.map
-- lib/types.d.ts
-- lib/types.d.ts.map
-- lib/types.js
-- lib/types.js.map
 - lib/utils/ast/accessSafe.d.ts
 - lib/utils/ast/accessSafe.d.ts.map
 - lib/utils/ast/accessSafe.js
@@ -123,7 +120,6 @@ jsxstyle-webpack-plugin
 - lib/utils/wrapFileSystem.d.ts.map
 - lib/utils/wrapFileSystem.js
 - lib/utils/wrapFileSystem.js.map
-- schema/loader.json
 ",
 ]
 `;

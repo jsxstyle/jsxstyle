@@ -4,7 +4,10 @@
     "declaration": true,
     "declarationMap": true,
     "forceConsistentCasingInFileNames": true,
-    "lib": ["es6", "dom"],
+    "lib": [
+      "es6",
+      "dom"
+    ],
     "module": "commonjs",
     "moduleResolution": "node",
     "noImplicitAny": false,
@@ -12,12 +15,19 @@
     "noImplicitThis": true,
     "noUnusedLocals": true,
     "outDir": "lib",
+    "resolveJsonModule": true,
     "sourceMap": true,
     "strictNullChecks": true,
     "suppressImplicitAnyIndexErrors": true,
     "target": "es6",
-    "types": ["node"]
+    "types": [
+      "node"
+    ]
   },
-  "exclude": ["**/node_modules/**/*"],
-  "include": ["src/**/*.ts"]
+  "exclude": [
+    "**/node_modules/**/*"
+  ],
+  "include": [
+    "src/**/*.ts"
+  ]
 }
