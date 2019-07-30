@@ -4,6 +4,8 @@ import fs = require('fs');
 import webpack = require('webpack');
 import MemoryFileSystem = require('webpack/lib/MemoryOutputFileSystem');
 import NodeWatchFileSystem = require('webpack/lib/node/NodeWatchFileSystem');
+import RuleSet = require('webpack/lib/RuleSet');
+import SingleEntryPlugin = require('webpack/lib/SingleEntryPlugin');
 import { wrapFileSystem } from './utils/wrapFileSystem';
 
 import Compiler = webpack.Compiler;
@@ -15,6 +17,7 @@ const counterKey = Symbol.for('counter');
 declare module 'webpack' {
   interface Compiler {
     watchFileSystem: import('webpack/lib/node/NodeWatchFileSystem');
+    options: webpack.Configuration;
   }
 }
 
@@ -32,6 +35,7 @@ class JsxstyleWebpackPlugin implements webpack.Plugin {
     this.ctx = {
       cacheFile: null,
       cacheObject: this.cacheObject,
+      compiledWhitelistedModules: {},
       fileList: new Set(),
       memoryFS: this.memoryFS,
     };
@@ -43,6 +47,7 @@ class JsxstyleWebpackPlugin implements webpack.Plugin {
   private memoryFS: MemoryFileSystem;
   private cacheObject: CacheObject;
   private ctx: PluginContext;
+  private whitelistedModules: string[] = [];
 
   private nmlPlugin = (loaderContext: any): void => {
     loaderContext[Symbol.for('jsxstyle-webpack-plugin')] = this.ctx;
@@ -64,6 +69,14 @@ class JsxstyleWebpackPlugin implements webpack.Plugin {
     }
   };
 
+  // do not output modules in whitelistedModules to disk
+  private cleanPlugin = (compilation, callback): void => {
+    this.whitelistedModules.forEach(mod => {
+      delete compilation.assets[mod];
+    });
+    callback();
+  };
+
   public apply(compiler: Compiler) {
     const environmentPlugin = (): void => {
       const wrappedFS = wrapFileSystem(compiler.inputFileSystem, this.memoryFS);
@@ -71,12 +84,54 @@ class JsxstyleWebpackPlugin implements webpack.Plugin {
       compiler.watchFileSystem = new NodeWatchFileSystem(wrappedFS);
     };
 
+    const compileWhitelistedModulesPlugin = (compilation, callback): void => {
+      const { rules } = new RuleSet(
+        (compiler.options.module && compiler.options.module.rules) || []
+      );
+      for (const rule of rules) {
+        for (const use of rule.use) {
+          if (use.loader.includes('jsxstyle-webpack-plugin')) {
+            this.whitelistedModules = use.options.whitelistedModules;
+            break;
+          }
+        }
+      }
+      const childCompiler = compilation.createChildCompiler(this.pluginName, {
+        ...compiler.options.output,
+        filename: '[name]', // do not apply hash
+      });
+      childCompiler.context = compiler.context;
+      this.whitelistedModules.forEach(entry => {
+        new SingleEntryPlugin(childCompiler.context, entry, entry).apply(
+          childCompiler
+        );
+      });
+      childCompiler.runAsChild((err, entries, childCompilation) => {
+        if (!err) {
+          this.whitelistedModules.forEach(mod => {
+            this.ctx.compiledWhitelistedModules[mod] = childCompilation.assets[
+              mod
+            ].source();
+          });
+          callback();
+        } else {
+          callback(err);
+        }
+      });
+    };
+
     if (compiler.hooks) {
       // webpack 4+
       compiler.hooks.environment.tap(this.pluginName, environmentPlugin);
+      compiler.hooks.make.tapAsync(
+        this.pluginName,
+        compileWhitelistedModulesPlugin
+      );
       compiler.hooks.compilation.tap(this.pluginName, this.compilationPlugin);
+      compiler.hooks.emit.tapAsync(this.pluginName, this.cleanPlugin);
       compiler.hooks.done.tap(this.pluginName, this.donePlugin);
     } else {
+      // TODO compile whitelistedModules for webpack 1-3
       // webpack 1-3
       compiler.plugin('environment', environmentPlugin);
       compiler.plugin('compilation', this.compilationPlugin);

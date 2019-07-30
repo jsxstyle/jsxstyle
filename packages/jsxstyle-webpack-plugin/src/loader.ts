@@ -58,13 +58,13 @@ const jsxstyleLoader: webpack.loader.Loader = function(content) {
     pluginContext.cacheFile = options.cacheFile;
   }
 
-  const { memoryFS, cacheObject } = pluginContext;
-
+  const { memoryFS, cacheObject, compiledWhitelistedModules } = pluginContext; 
   const rv = extractStyles(
     content,
     this.resourcePath,
     {
       cacheObject,
+      compiledWhitelistedModules,
       errorCallback: (str: string, ...args: any[]) =>
         this.emitError(new Error(util.format(str, ...args))),
       warnCallback: (str: string, ...args: any[]) =>

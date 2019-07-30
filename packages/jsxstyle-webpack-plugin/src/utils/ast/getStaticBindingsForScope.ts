@@ -1,5 +1,6 @@
 import t = require('@babel/types');
 import path = require('path');
+// import requireFromString = require('require-from-string');
 
 import { evaluateAstNode } from './evaluateAstNode';
 import { getSourceModule } from './getSourceModule';
@@ -30,6 +31,7 @@ interface Binding {
 export function getStaticBindingsForScope(
   scope: any,
   whitelist: string[] = [],
+  compiledWhitelistedModules: object,
   sourceFileName: string,
   bindingCache: BindingCache
 ): Record<string, any> {
@@ -63,6 +65,7 @@ export function getStaticBindingsForScope(
       }
 
       if (whitelist.indexOf(moduleName) > -1) {
+        // TODO require transpiled module from compiledWhitelistedModules
         const src = require(moduleName);
         if (sourceModule.destructured) {
           if (sourceModule.imported) {

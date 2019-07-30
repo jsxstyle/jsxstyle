@@ -13,4 +13,5 @@ export interface PluginContext {
   cacheObject: CacheObject;
   memoryFS: import('webpack/lib/MemoryOutputFileSystem');
   fileList: Set<string>;
+  compiledWhitelistedModules: object;
 }
