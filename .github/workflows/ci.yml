@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push: {}
+  pull_request: {}
+  schedule:
+    # run every day at midnight UTC
+    - cron: "0 0 * * *"
+
+jobs:
+  build:
+    name: Run tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout jsxstyle
+        uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+      - name: Use Node 12
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+      - name: Install dependencies
+        run: yarn
+      - name: Run jest
+        run: yarn run jest
+      - name: Run karma
+        run: yarn --cwd "tests" run karma-headless-chrome
+        env:
+          CI: true
+          TZ: "America/Los_Angeles"
