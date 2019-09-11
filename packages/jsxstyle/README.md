@@ -241,11 +241,9 @@ jsxstyle only manages styles written on jsxstyle components. Where you put globa
 
 # Browser support
 
-jsxstyle is tested [on every push][travis] in [a wide array of browsers, both old and new][sauce]. Shout out to **Sauce Labs** for making cross browser testing _free_ for open source projects. Sauce Labs is _shockingly easy_ to integrate with other services. I’m not gonna say it’s simple to get set up, because it’s not, but once it’s up and running, damn, it’s easy. They even make an SVG test matrix you can drop into your README:
+jsxstyle is tested [on every push][github-actions] in [a wide array of browsers, both old and new][sauce]. Shout out to **Sauce Labs** for making cross browser testing _free_ for open source projects. Sauce Labs is _shockingly easy_ to integrate with other services. I’m not gonna say it’s simple to get set up, because it’s not, but once it’s up and running, damn, it’s easy. They even make an SVG test matrix you can drop into your README:
 
 [![Sauce Test Status](https://saucelabs.com/browser-matrix/jsxstyle.svg)](https://saucelabs.com/u/jsxstyle)
-
-Another shout out to **Travis CI** for 1. making dope software and 2. making their open source plan free as well. The plan doesn’t have a cool, punny name like _Open Sauce_ but whatever. Gotta play with the hand you’re dealt I suppose.
 
 # Contributing
 
@@ -274,4 +272,4 @@ Sorting through the myriad CSS-in-JS solutions out there can get tiring, but the
 [scalable css]: http://mrmrs.github.io/writing/2016/03/24/scalable-css/
 [styled-components]: https://www.styled-components.com
 [tachyons]: http://tachyons.io
-[travis]: https://travis-ci.org/jsxstyle/jsxstyle
+[github-actions]: https://github.com/jsxstyle/jsxstyle/actions
