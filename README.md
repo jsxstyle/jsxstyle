@@ -17,7 +17,7 @@ This repository is the monorepo for runtime versions jsxstyle as well as a few t
 
 # jsxstyle
 
-jsxstyle is an inline style system for React and Preact. It provides a best-in-class developer experience without sacrificing performance, and has little regard for [existing CSS orthodoxy](#why-use-jsxstyle-instead-of-bemsmacssoocssetc).
+jsxstyle is an inline style system for React and Preact. It provides a best-in-class developer experience without sacrificing performance.
 
 Styles are written _inline_ on a special set of components exported by jsxstyle. Inline styles on these components are converted to CSS rules and added to the document right as they’re needed.
 
