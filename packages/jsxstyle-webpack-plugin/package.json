@@ -10,11 +10,11 @@
     "node": ">=6.0.0"
   },
   "dependencies": {
-    "@babel/core": "^7.5.4",
-    "@babel/generator": "^7.5.0",
-    "@babel/parser": "^7.5.0",
-    "@babel/traverse": "^7.5.0",
-    "@babel/types": "^7.5.0",
+    "@babel/core": "^7.7.4",
+    "@babel/generator": "^7.7.4",
+    "@babel/parser": "^7.7.4",
+    "@babel/traverse": "^7.7.4",
+    "@babel/types": "^7.7.4",
     "ajv": "^6.10.2",
     "invariant": "^2.2.1",
     "jsxstyle": "^2.1.6",

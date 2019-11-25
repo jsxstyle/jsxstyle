@@ -1106,7 +1106,6 @@ export function extractStyles(
       compact: 'auto',
       concise: false,
       filename: sourceFileName,
-      quotes: 'single',
       retainLines: false,
       sourceFileName,
       sourceMaps: true,

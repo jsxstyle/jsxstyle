@@ -10,9 +10,9 @@
   },
   "devDependencies": {
     "@types/node": "*",
-    "ejs-loader": "^0.3.3",
+    "ejs-loader": "^0.3.5",
     "preact-cli": "^3.0.0-0",
     "ts-loader": "^6.0.4",
-    "typescript": "~3.0"
+    "typescript": "~3.7.2"
   }
 }

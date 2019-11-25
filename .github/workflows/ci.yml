@@ -24,7 +24,7 @@ jobs:
       - name: Install dependencies
         run: yarn
       - name: Run jest
-        run: yarn run jest
+        run: yarn run test
       - name: Run karma
         run: yarn --cwd "tests" run karma-headless-chrome
         env:

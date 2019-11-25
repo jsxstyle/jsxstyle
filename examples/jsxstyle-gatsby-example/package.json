@@ -8,9 +8,9 @@
     "start": "gatsby develop"
   },
   "dependencies": {
-    "gatsby": "^2.13.27",
-    "gatsby-cli": "^2.7.15",
-    "gatsby-plugin-react-helmet": "^3.1.2",
+    "gatsby": "^2.18.3",
+    "gatsby-cli": "^2.8.13",
+    "gatsby-plugin-react-helmet": "^3.1.15",
     "react-helmet": "^5.2.1"
   }
 }
