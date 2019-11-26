@@ -2,6 +2,24 @@ import { getPackages } from '@lerna/project';
 import fs = require('fs');
 import packlist = require('npm-packlist');
 import path = require('path');
+import glob = require('glob');
+import * as child_process from 'child_process';
+
+const execAsync = async (
+  command: string,
+  options: child_process.ExecOptions
+) => {
+  return new Promise<true>((resolve, reject) => {
+    console.info('Running `%s` in `%s`', command, options.cwd);
+    child_process.exec(command, options, (err, _stdout, _stderr) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(true);
+      }
+    });
+  });
+};
 
 // NOTE: this interface is incomplete
 // See: @lerna/package
@@ -61,4 +79,17 @@ describe('yarn.lock', () => {
     const lockfileContents = fs.readFileSync('../yarn.lock', 'utf8');
     expect(lockfileContents.includes('twitter.biz')).toEqual(false);
   });
+});
+
+describe('examples', () => {
+  const exampleDir = path.resolve(__dirname, '..', 'examples');
+  const examples = glob.sync('jsxstyle-*-example', { cwd: exampleDir });
+
+  for (const example of examples) {
+    it(`\`${example}\` builds correctly`, async () => {
+      const cwd = path.join(exampleDir, example);
+      expect.assertions(1);
+      return expect(execAsync('yarn build', { cwd })).resolves.toEqual(true);
+    }, 30000);
+  }
 });

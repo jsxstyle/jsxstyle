@@ -16,7 +16,7 @@ export interface StylableComponentProps {
 }
 
 export type AnyComponent<Props extends StylableComponentProps> =
-  | keyof JSX.IntrinsicElements
+  | keyof preact.JSX.IntrinsicElements
   | preact.ComponentConstructor<Props, any>
   // this isn't covered by preact.FunctionalComponent for some reason
   // see: https://github.com/developit/preact-router/blob/eb0206b/src/match.d.ts#L13
