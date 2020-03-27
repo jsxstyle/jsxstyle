@@ -10,7 +10,7 @@ import { extractStyles } from './utils/ast/extractStyles';
 
 const counter: any = Symbol.for('counter');
 
-const jsxstyleLoader: webpack.loader.Loader = function(content) {
+const jsxstyleLoader: webpack.loader.Loader = function (content) {
   if (this.cacheable) {
     this.cacheable();
   }
@@ -36,7 +36,7 @@ const jsxstyleLoader: webpack.loader.Loader = function(content) {
         // create mapping of unique CSS strings to class names
         const lines = new Set<string>(cacheFileContents.trim().split('\n'));
         let lineCount = 0;
-        lines.forEach(line => {
+        lines.forEach((line) => {
           const className = '_x' + (lineCount++).toString(36);
           newCacheObject[line] = className;
         });

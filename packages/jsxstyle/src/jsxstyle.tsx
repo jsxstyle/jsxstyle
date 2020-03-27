@@ -44,12 +44,16 @@ type ExtractProps<T extends ValidComponentPropValue> = T extends
   | undefined
   ? JSX.IntrinsicElements['div']
   : T extends IntrinsicElement
-    ? JSX.IntrinsicElements[T]
-    : T extends React.StatelessComponent<infer SFCProps>
-      ? keyof SFCProps extends never ? EmptyProps : SFCProps
-      : T extends React.ComponentClass<infer ClassProps>
-        ? keyof ClassProps extends never ? EmptyProps : ClassProps
-        : EmptyProps;
+  ? JSX.IntrinsicElements[T]
+  : T extends React.StatelessComponent<infer SFCProps>
+  ? keyof SFCProps extends never
+    ? EmptyProps
+    : SFCProps
+  : T extends React.ComponentClass<infer ClassProps>
+  ? keyof ClassProps extends never
+    ? EmptyProps
+    : ClassProps
+  : EmptyProps;
 
 export { CSSProperties };
 

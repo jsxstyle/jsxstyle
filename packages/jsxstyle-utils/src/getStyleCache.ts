@@ -70,7 +70,7 @@ export function getStyleCache() {
         delete styleObj.classNameKey;
         Object.keys(styleObj)
           .sort()
-          .forEach(k => {
+          .forEach((k) => {
             const selector = '.' + _classNameCache[key];
             // prettier-ignore
             const { pseudoclass, pseudoelement, mediaQuery, styles } = styleObj[k];

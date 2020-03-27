@@ -1,5 +1,5 @@
 import JsxstylePlugin from 'jsxstyle-webpack-plugin';
-export default function(config) {
+export default function (config) {
   // add plugin
   config.plugins.push(new JsxstylePlugin());
 

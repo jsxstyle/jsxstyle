@@ -13,7 +13,7 @@ interface LogoProps {
   height: number;
 }
 
-const Logo: React.SFC<LogoProps> = props => (
+const Logo: React.SFC<LogoProps> = (props) => (
   <InlineBlock
     component="img"
     props={{ src: logo, alt: 'logo' }}

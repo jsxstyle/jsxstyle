@@ -155,7 +155,7 @@ export function extractStyles(
     const msg =
       'jsxstyle-webpack-plugin is incorrectly configured:\n' +
       (ajv.errors || [])
-        .map(err => util.format(' - options%s %s', err.dataPath, err.message))
+        .map((err) => util.format(' - options%s %s', err.dataPath, err.message))
         .join('\n');
     logError(msg);
     throw new Error(msg);
@@ -197,7 +197,7 @@ export function extractStyles(
   let needsRuntimeJsxstyle = false;
 
   // Find jsxstyle require in program root
-  ast.program.body = ast.program.body.filter(item => {
+  ast.program.body = ast.program.body.filter((item) => {
     if (t.isVariableDeclaration(item)) {
       item.declarations = item.declarations.filter((dec): boolean => {
         if (
@@ -292,7 +292,7 @@ export function extractStyles(
       jsxstyleSrc = item.source.value;
       useImportSyntax = true;
 
-      item.specifiers = item.specifiers.filter(specifier => {
+      item.specifiers = item.specifiers.filter((specifier) => {
         // keep the weird stuff
         if (
           !t.isImportSpecifier(specifier) ||
@@ -408,7 +408,7 @@ export function extractStyles(
         const flattenedAttributes: Array<
           t.JSXAttribute | t.JSXSpreadAttribute
         > = [];
-        node.attributes.forEach(attr => {
+        node.attributes.forEach((attr) => {
           if (t.isJSXSpreadAttribute(attr)) {
             try {
               const spreadValue = attemptEval(attr.argument);
@@ -700,7 +700,7 @@ export function extractStyles(
 
         let classNamePropValue: t.Expression | null = null;
         const classNamePropIndex = node.attributes.findIndex(
-          attr =>
+          (attr) =>
             !t.isJSXSpreadAttribute(attr) &&
             attr.name &&
             attr.name.name === classPropName
@@ -720,7 +720,7 @@ export function extractStyles(
         // converted to a div or the specified component
         if (inlinePropCount === 0) {
           const propsPropIndex = node.attributes.findIndex(
-            attr =>
+            (attr) =>
               !t.isJSXSpreadAttribute(attr) &&
               attr.name &&
               attr.name.name === 'props'
@@ -728,7 +728,7 @@ export function extractStyles(
           // deal with props prop
           if (propsPropIndex > -1) {
             if (propsAttributes.length > 0) {
-              propsAttributes.forEach(a => node.attributes.push(a));
+              propsAttributes.forEach((a) => node.attributes.push(a));
             }
             // delete props prop
             node.attributes.splice(propsPropIndex, 1);
@@ -814,7 +814,7 @@ export function extractStyles(
           if (lastSpreadIndex > -1) {
             // if only some style props were extracted AND additional props are spread onto the component,
             // add the props back with null values to prevent spread props from incorrectly overwriting the extracted prop value
-            Object.keys(staticAttributes).forEach(attr => {
+            Object.keys(staticAttributes).forEach((attr) => {
               node.attributes.push(
                 t.jsxAttribute(
                   t.jsxIdentifier(attr),
@@ -1044,7 +1044,7 @@ export function extractStyles(
   traverse(ast, traverseOptions);
 
   const resultCSS = Array.from(cssMap.values())
-    .map(n => n.commentTexts.map(txt => `${txt}\n`).join('') + n.css)
+    .map((n) => n.commentTexts.map((txt) => `${txt}\n`).join('') + n.css)
     .join('');
   // path.parse doesn't exist in the webpack'd bundle but path.dirname and path.basename do.
   const extName = path.extname(sourceFileName);

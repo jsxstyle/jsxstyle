@@ -30,7 +30,7 @@ if (
     styleElement = hot.data.styleElement;
   }
 
-  hot.addDisposeHandler(data => {
+  hot.addDisposeHandler((data) => {
     data.styleElement = styleElement;
   });
 }

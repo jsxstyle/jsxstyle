@@ -33,7 +33,7 @@ export function wrapFileSystem(
       const value = target[key];
 
       if (handledMethods.hasOwnProperty(key)) {
-        return function(this: any, filePath: string, ...args: string[]) {
+        return function (this: any, filePath: string, ...args: string[]) {
           if (filePath.endsWith('__jsxstyle.css')) {
             return memoryFS[key](filePath, ...args);
           }

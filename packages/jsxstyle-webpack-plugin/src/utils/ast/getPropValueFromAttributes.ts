@@ -80,7 +80,7 @@ export function getPropValueFromAttributes(
         return false;
       }
     )
-    .map(attr => attr.argument);
+    .map((attr) => attr.argument);
 
   // if spread operators occur after propValue, create a binary expression for each operator
   // i.e. before1.propValue || before2.propValue || propValue

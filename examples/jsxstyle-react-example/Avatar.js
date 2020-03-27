@@ -23,9 +23,7 @@ export default function Avatar(props) {
     >
       <Block
         style={{
-          backgroundImage: `url("http://graph.facebook.com/${
-            props.username
-          }/picture?type=large")`,
+          backgroundImage: `url("http://graph.facebook.com/${props.username}/picture?type=large")`,
         }}
         backgroundSize="contain"
         width={LayoutConstants.gridUnit * 6}

@@ -3,7 +3,7 @@ const React = require('react');
 
 let css = '';
 cache.injectOptions({
-  onInsertRule: rule => {
+  onInsertRule: (rule) => {
     css += rule;
   },
 });

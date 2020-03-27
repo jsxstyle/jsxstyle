@@ -40,7 +40,7 @@ Just because styles are _written_ inline doesn’t mean they _stay_ inline. jsxs
 Naming components is hard enough, and there are only so many synonyms for “wrapper”. jsxstyle provides a set of stylable components, each with a few default styles set. These primitive stylable components form a set of _building blocks_ that you can reuse throughout your application. You can still create named stylable components if you wish, by utilizing a paradigm you’re already familiar with: composition. No funky syntax necessary:
 
 ```jsx
-const RedBlock = props => <Block {...props} color="red" />;
+const RedBlock = (props) => <Block {...props} color="red" />;
 ```
 
 ## 🍱 Scoped styles right out the box.
@@ -215,7 +215,7 @@ cache.injectOptions({
 });
 
 const app = new Koa();
-app.use(async ctx => {
+app.use(async (ctx) => {
   // Reset cache and style string before each call to `renderToString`
   cache.reset();
   styles = '';

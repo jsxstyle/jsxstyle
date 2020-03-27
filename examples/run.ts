@@ -27,7 +27,7 @@ const npmCommand = (example: string, ...args: string[]) =>
       process.exit();
     });
 
-    childProcess.on('close', code => {
+    childProcess.on('close', (code) => {
       if (code === 0) {
         resolve();
       } else {
@@ -39,10 +39,13 @@ const npmCommand = (example: string, ...args: string[]) =>
     });
   });
 
-(async searchString => {
+(async (searchString) => {
   const packages: Package[] = await getPackages(JSXSTYLE_ROOT);
-  const examplePkgs = packages.filter(f => f.name.endsWith('-example'));
-  const choices = examplePkgs.map(pkg => ({ name: pkg.name, value: pkg.name }));
+  const examplePkgs = packages.filter((f) => f.name.endsWith('-example'));
+  const choices = examplePkgs.map((pkg) => ({
+    name: pkg.name,
+    value: pkg.name,
+  }));
 
   if (!searchString) {
     const { example } = await inquirer.prompt([
@@ -55,7 +58,9 @@ const npmCommand = (example: string, ...args: string[]) =>
     ]);
     return npmCommand(example, 'start');
   } else {
-    const examplePkg = examplePkgs.find(pkg => pkg.name.includes(searchString));
+    const examplePkg = examplePkgs.find((pkg) =>
+      pkg.name.includes(searchString)
+    );
     if (!examplePkg) {
       throw new Error('Could not find example matching "' + searchString + '"');
     }

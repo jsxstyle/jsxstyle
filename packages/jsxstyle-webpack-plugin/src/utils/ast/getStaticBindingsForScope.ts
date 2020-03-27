@@ -89,7 +89,7 @@ export function getStaticBindingsForScope(
 
     // pick out the right variable declarator
     const dec = parent.declarations.find(
-      d => t.isIdentifier(d.id) && d.id.name === k
+      (d) => t.isIdentifier(d.id) && d.id.name === k
     );
 
     // if init is not set, there's nothing to evaluate
