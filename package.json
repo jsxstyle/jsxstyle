@@ -9,7 +9,7 @@
     "clean": "find . -name 'node_modules' -type d -prune -exec echo {} \\; -exec rm -rf {} \\;",
     "example": "ts-node examples/run.ts",
     "test": "yarn build && yarn --cwd \"tests\" run jest",
-    "prettier": "prettier --write \"{packages/**/*,examples/**/*}.{js,ts,tsx,css,md}\"",
+    "prettier": "prettier --write \"**/*.{js,ts,tsx,css,md}\"",
     "release": "yarn test && lerna publish",
     "reset": "rimraf packages/{*,*/*}/lib/",
     "tsc": "tsc -p packages/jsxstyle-webpack-plugin/tsconfig.json",

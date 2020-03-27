@@ -21,7 +21,7 @@ const staticNamespace = {
 };
 
 const ctx = vm.createContext(staticNamespace);
-const evalFn = n => vm.runInContext('(' + generate(n).code + ')', ctx);
+const evalFn = (n) => vm.runInContext('(' + generate(n).code + ')', ctx);
 
 describe('evaluateAstNode', () => {
   it('does not evaluate dynamic props', () => {
@@ -38,7 +38,7 @@ describe('evaluateAstNode', () => {
     const errors = [];
     const statement = ast.program.body[0] as t.ExpressionStatement;
     const jsxElement = statement.expression as t.JSXElement;
-    jsxElement.openingElement.attributes.forEach(attr => {
+    jsxElement.openingElement.attributes.forEach((attr) => {
       try {
         if (!t.isJSXSpreadAttribute(attr)) {
           evaluateAstNode(attr.value, evalFn);
@@ -68,7 +68,7 @@ describe('evaluateAstNode', () => {
     const errors = [];
     const statement = ast.program.body[0] as t.ExpressionStatement;
     const jsxElement = statement.expression as t.JSXElement;
-    jsxElement.openingElement.attributes.forEach(attr => {
+    jsxElement.openingElement.attributes.forEach((attr) => {
       if (!t.isJSXSpreadAttribute(attr)) {
         try {
           evaluateAstNode(
@@ -99,7 +99,7 @@ describe('evaluateAstNode', () => {
     );
 
     const jestFn = jest.fn();
-    const cb = n => {
+    const cb = (n) => {
       jestFn(n);
       return n;
     };
@@ -107,7 +107,7 @@ describe('evaluateAstNode', () => {
     const errors = [];
     const statement = ast.program.body[0] as t.ExpressionStatement;
     const jsxElement = statement.expression as t.JSXElement;
-    jsxElement.openingElement.attributes.forEach(attr => {
+    jsxElement.openingElement.attributes.forEach((attr) => {
       if (!t.isJSXSpreadAttribute(attr)) {
         try {
           evaluateAstNode(

@@ -54,7 +54,7 @@ describe('styleCache', () => {
     const styleCache = getStyleCache();
     const styles = [];
     styleCache.injectOptions({
-      onInsertRule: css => {
+      onInsertRule: (css) => {
         styles.push(css);
       },
     });
@@ -79,7 +79,7 @@ describe('styleCache', () => {
     let allCSS = '\n';
     const styleCache = getStyleCache();
     styleCache.injectOptions({
-      onInsertRule: css => {
+      onInsertRule: (css) => {
         allCSS += css + '\n';
       },
     });
@@ -106,7 +106,7 @@ describe('styleCache', () => {
     let allCSS = '\n';
     const styleCache = getStyleCache();
     styleCache.injectOptions({
-      onInsertRule: css => {
+      onInsertRule: (css) => {
         allCSS += css + '\n';
       },
     });

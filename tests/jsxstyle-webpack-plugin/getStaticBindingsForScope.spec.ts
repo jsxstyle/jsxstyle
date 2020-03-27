@@ -52,7 +52,7 @@ function outerFunction(innerParam1, innerParam2) {
         scope: traversePath.scope,
       };
 
-      node.attributes.forEach(attr => {
+      node.attributes.forEach((attr) => {
         if (
           !t.isJSXAttribute(attr) ||
           typeof attr.name.name !== 'string' ||

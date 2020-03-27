@@ -3,4 +3,4 @@ import 'core-js/es6/set';
 
 (global as any).requestAnimationFrame =
   (window != null && window.requestAnimationFrame) ||
-  (callback => setTimeout(callback, 0));
+  ((callback) => setTimeout(callback, 0));

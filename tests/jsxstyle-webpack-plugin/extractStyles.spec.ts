@@ -4,7 +4,7 @@ import { extractStyles } from '../../packages/jsxstyle-webpack-plugin/lib/utils/
 
 const whitelistedModules = [require.resolve('./mock/LC')];
 
-const pathTo = thing => path.resolve(__dirname, thing);
+const pathTo = (thing) => path.resolve(__dirname, thing);
 
 describe('the basics', () => {
   it('only extracts styles from valid jsxstyle components', () => {

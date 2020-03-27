@@ -54,17 +54,17 @@ describe('npm publish', () => {
     const packages: Package[] = await getPackages(JSXSTYLE_ROOT);
     const packagePromises = packages
       // exclude private packages
-      .filter(pkg => !pkg.private)
+      .filter((pkg) => !pkg.private)
       .sort((a, b) => a.name.localeCompare(b.name))
-      .map(pkg =>
+      .map((pkg) =>
         // fetch file list and format it into something
         packlist({ path: pkg.location }).then(
-          fileList => `
+          (fileList) => `
 ${pkg.name}
 ${pkg.name.replace(/./g, '=')}
 ${fileList
   .sort(legacySort)
-  .map(f => `- ${f}`)
+  .map((f) => `- ${f}`)
   .join('\n')}
 `
         )

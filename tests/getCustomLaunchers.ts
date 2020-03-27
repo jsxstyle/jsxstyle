@@ -79,10 +79,7 @@ const padNum = (num: string): string => {
 
 /** Turns each segment of a semver number into a left-padded number */
 const semverToSortString = (str: string): string =>
-  str
-    .split('.')
-    .map(padNum)
-    .join('.');
+  str.split('.').map(padNum).join('.');
 
 /** Sorts SauceBase objects by semver */
 const semverSort = (a: string, b: string) =>
@@ -101,22 +98,22 @@ export function getCustomLaunchers(): Record<string, Launcher> {
   const dataByApiName = groupBy(sauceData, 'api_name');
 
   const devices = flattenDeep<AppiumDevice>(
-    Object.keys(dataByApiName).map(apiName => {
+    Object.keys(dataByApiName).map((apiName) => {
       const groupedByOsVersion = groupBy(
         dataByApiName[apiName],
         'short_version'
       );
 
       const osVersions = Object.keys(groupedByOsVersion)
-        .filter(f => !isNaN(parseInt(f, 10)))
+        .filter((f) => !isNaN(parseInt(f, 10)))
         .sort(semverSort)
         // reversing so that uniqBy sees the largest number first
         .reverse();
-      const latestOSVersions = uniqBy(osVersions, v => parseInt(v, 10));
+      const latestOSVersions = uniqBy(osVersions, (v) => parseInt(v, 10));
 
       const sauceObjs = latestOSVersions
         .slice(0, 4)
-        .map(v => sample(groupedByOsVersion[v])!);
+        .map((v) => sample(groupedByOsVersion[v])!);
 
       return sauceObjs;
     })
@@ -125,7 +122,7 @@ export function getCustomLaunchers(): Record<string, Launcher> {
   const customLaunchers: Record<string, Launcher> = {};
 
   // mobile devices
-  devices.forEach(data => {
+  devices.forEach((data) => {
     const key = `sl_${data.api_name}_${data.short_version}`;
 
     // make sure there aren't any key collisions
@@ -164,7 +161,7 @@ export function getCustomLaunchers(): Record<string, Launcher> {
   });
 
   // IE 9-11
-  [11, 10, 9].forEach(v => {
+  [11, 10, 9].forEach((v) => {
     customLaunchers[`sl_ie_${v}`] = {
       base: 'SauceLabs',
       browserName: 'Internet Explorer',
@@ -174,7 +171,7 @@ export function getCustomLaunchers(): Record<string, Launcher> {
   });
 
   // browsers that support the `latest` field
-  ['MicrosoftEdge', 'Safari', 'Firefox', 'Chrome'].forEach(b => {
+  ['MicrosoftEdge', 'Safari', 'Firefox', 'Chrome'].forEach((b) => {
     const niceName = b === 'MicrosoftEdge' ? 'Edge' : b;
     for (let idx = -1; ++idx < 4; ) {
       const k = `sl_${b}_latest${idx > 0 ? `-${idx}` : ''}`.toLowerCase();
