@@ -3,9 +3,40 @@ import { Properties } from 'csstype';
 /**
  * Make all properties in `T` potentially `null` or `false`.
  *
- * Note: `Falsey` is not the best name, as jsxstyle considers zero values are considered valid.
+ * Note: `Falsey` is not the best name, as jsxstyle considers zero to be truthy.
  */
 export type Falsey<T> = { [P in keyof T]?: T[P] | false | null };
+
+type BaseCSSProperties = Properties<string | number>;
+
+interface CSSPropsInternal extends BaseCSSProperties {
+  // commonly used pseudo-prefixed style names
+  activeOpacity?: BaseCSSProperties['opacity'];
+  disabledOpacity?: BaseCSSProperties['opacity'];
+  focusOpacity?: BaseCSSProperties['opacity'];
+  hoverOpacity?: BaseCSSProperties['opacity'];
+
+  activeColor?: BaseCSSProperties['color'];
+  hoverColor?: BaseCSSProperties['color'];
+
+  activeBackgroundColor?: BaseCSSProperties['backgroundColor'];
+  focusBackgroundColor?: BaseCSSProperties['backgroundColor'];
+  hoverBackgroundColor?: BaseCSSProperties['backgroundColor'];
+
+  hoverTextDecoration?: BaseCSSProperties['textDecoration'];
+  hoverTextDecorationColor?: BaseCSSProperties['textDecorationColor'];
+
+  activeBoxShadow?: BaseCSSProperties['boxShadow'];
+  focusBoxShadow?: BaseCSSProperties['boxShadow'];
+  hoverBoxShadow?: BaseCSSProperties['boxShadow'];
+
+  placeholderColor?: BaseCSSProperties['color'];
+  disabledPlaceholderColor?: BaseCSSProperties['color'];
+  focusPlaceholderColor?: BaseCSSProperties['color'];
+
+  selectionColor?: BaseCSSProperties['color'];
+  selectionBackgroundColor?: BaseCSSProperties['backgroundColor'];
+}
 
 /**
  * jsxstyle-compatible CSS properties interface provided by `csstype`.
@@ -36,4 +67,4 @@ export type Falsey<T> = { [P in keyof T]?: T[P] | false | null };
 ```
  * For further reading, see the TypeScript docs: https://www.typescriptlang.org/docs/handbook/declaration-merging.html#module-augmentation
  */
-export interface CSSProperties extends Falsey<Properties<string | number>> {}
+export interface CSSProperties extends Falsey<CSSPropsInternal> {}
