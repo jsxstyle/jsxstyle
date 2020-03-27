@@ -25,12 +25,12 @@ const NavLink: FunctionalComponent<NavLinkProps> = ({
       padding="0 15px"
       minWidth={50}
       textAlign="center"
-      background="rgba(255,255,255,0)"
+      backgroundColor="rgba(255,255,255,0)"
       textDecoration="none"
       color="#FFF"
       willChange="background-color"
-      hoverBackground="rgba(0,0,0,0.2)"
-      activeBackground="rgba(0,0,0,0.2)"
+      hoverBackgroundColor="rgba(0,0,0,0.2)"
+      activeBackgroundColor="rgba(0,0,0,0.2)"
     >
       {children}
     </InlineBlock>
