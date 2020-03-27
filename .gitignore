@@ -3,3 +3,4 @@
 /.vscode
 /tests/saucelabs-data.json
 node_modules
+size-plugin.json

@@ -3,13 +3,7 @@
 exports[`throws type errors for invalid component/prop types 1`] = `
 "jsxstyle/typescript/demo.tsx(14,51): error TS2322: Type '{ value: string; typeError: boolean; }' is not assignable to type 'DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>'.
   Object literal may only specify known properties, and 'typeError' does not exist in type 'DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>'.
-jsxstyle/typescript/demo.tsx(20,30): error TS2322: Type '{ typeError: boolean; }' is not assignable to type 'DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | EmptyProps'.
-  Type '{ typeError: boolean; }' is not assignable to type 'EmptyProps'.
-    Property 'typeError' is incompatible with index signature.
-      Type 'boolean' is not assignable to type 'never'.
-jsxstyle/typescript/demo.tsx(24,41): error TS2322: Type '{ typeError: boolean; }' is not assignable to type 'DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | EmptyProps'.
-  Type '{ typeError: boolean; }' is not assignable to type 'EmptyProps'.
-    Property 'typeError' is incompatible with index signature.
-      Type 'boolean' is not assignable to type 'never'.
+jsxstyle/typescript/demo.tsx(20,39): error TS2322: Type 'true' is not assignable to type 'never'.
+jsxstyle/typescript/demo.tsx(24,50): error TS2322: Type 'true' is not assignable to type 'never'.
 "
 `;

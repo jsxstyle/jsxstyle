@@ -86,10 +86,17 @@ describe('examples', () => {
   const examples = glob.sync('jsxstyle-*-example', { cwd: exampleDir });
 
   for (const example of examples) {
-    it(`\`${example}\` builds correctly`, async () => {
-      const cwd = path.join(exampleDir, example);
-      expect.assertions(1);
-      return expect(execAsync('yarn build', { cwd })).resolves.toEqual(true);
-    }, 30000);
+    // TODO(meyer) re-enable when this error is fixed: https://github.com/preactjs/preact-cli/issues/1043
+    const itFn = example.includes('-preact-cli-') ? it.skip : it;
+
+    itFn(
+      `\`${example}\` builds correctly`,
+      async () => {
+        const cwd = path.join(exampleDir, example);
+        expect.assertions(1);
+        return expect(execAsync('yarn build', { cwd })).resolves.toEqual(true);
+      },
+      30000
+    );
   }
 });
