@@ -110,6 +110,52 @@ describe('getStyleKeysForProps', () => {
     expect(keyObj2.classNameKey).toEqual('color:red;@test mq2~color:blue;');
   });
 
+  it('expands horizontal/vertical margin/padding shorthand props', () => {
+    const keyObj1 = getStyleKeysForProps({
+      margin: 1, // least specific
+      marginH: 2, // expands to marginLeft + marginRight
+      marginLeft: 3, // most specific
+    });
+
+    expect(keyObj1.classNameKey).toEqual(
+      'margin:1px;marginLeft:3px;marginRight:2px;'
+    );
+  });
+
+  it('does not support pseudo-prefixed horizontal/vertical margin/padding shorthand props', () => {
+    const keyObj1 = getStyleKeysForProps({
+      mediaQueries: { sm: 'test' },
+      margin: 1,
+      marginH: 2,
+      marginLeft: 3,
+      // unsupported
+      hoverMarginLeft: 4,
+      activeMarginV: 5,
+      // should be supported
+      smMarginH: 6,
+    });
+
+    expect(keyObj1).toEqual({
+      '.': {
+        styles: 'margin:1px;margin-left:3px;margin-right:2px;',
+      },
+      '.:active': {
+        pseudoclass: 'active',
+        styles: 'margin-v:5px;',
+      },
+      '.:hover': {
+        pseudoclass: 'hover',
+        styles: 'margin-left:4px;',
+      },
+      '.@1000': {
+        mediaQuery: 'test',
+        styles: 'margin-h:6px;',
+      },
+      classNameKey:
+        'activeMarginV:5px;hoverMarginLeft:4px;margin:1px;marginLeft:3px;marginRight:2px;@test~marginH:6px;',
+    });
+  });
+
   it.skip('generates identical classNameKeys for style objects with duplicate media queries', () => {
     const mediaQueries = { foo: 'test mq', bar: 'test mq' };
 

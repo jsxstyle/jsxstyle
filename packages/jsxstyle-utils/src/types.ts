@@ -10,6 +10,12 @@ export type Falsey<T> = { [P in keyof T]?: T[P] | false | null };
 type BaseCSSProperties = Properties<string | number>;
 
 interface CSSPropsInternal extends BaseCSSProperties {
+  // jsxstyle-only shorthand props
+  marginH?: BaseCSSProperties['margin'];
+  marginV?: BaseCSSProperties['margin'];
+  paddingH?: BaseCSSProperties['padding'];
+  paddingV?: BaseCSSProperties['padding'];
+
   // commonly used pseudo-prefixed style names
   activeOpacity?: BaseCSSProperties['opacity'];
   disabledOpacity?: BaseCSSProperties['opacity'];

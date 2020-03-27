@@ -1,6 +1,6 @@
 # jsxstyle
 
-jsxstyle is an inline style system for React and Preact. It provides a best-in-class developer experience without sacrificing performance, and has little regard for [existing CSS orthodoxy](#why-use-jsxstyle-instead-of-bemsmacssoocssetc).
+jsxstyle is an inline style system for React and Preact. It provides a best-in-class developer experience without sacrificing performance.
 
 Styles are written _inline_ on a special set of components exported by jsxstyle. Inline styles on these components are converted to CSS rules and added to the document right as they’re needed.
 
@@ -124,6 +124,18 @@ Define a `mediaQueries` property with an object of media queries keyed by whatev
   lgColor="green"
 />
 ```
+
+<br>
+
+### ⚠️ Experimental: Shorthand properties for same-axis `padding` and `margin`
+
+You can set margin or padding on the same axis—either horizontal or vertical—by setting `marginH`/`marginV` or `paddingH`/`paddingV`. Styles are resolved from least specific to most specific:
+
+1. `padding`
+2. `paddingH` and `paddingV`
+3. `paddingTop`, `paddingRight`, `paddingBottom`, and `paddingLeft`
+
+Note that pseudo-prefixed properties (for example, `hoverPaddingH`) are not supported at this time.
 
 <br>
 

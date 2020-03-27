@@ -54,6 +54,34 @@ export function getStyleKeysForProps(
     return null;
   }
 
+  const marginH = props.marginH;
+  if (marginH != null) {
+    props.marginLeft == null && (props.marginLeft = marginH);
+    props.marginRight == null && (props.marginRight = marginH);
+    delete props.marginH;
+  }
+
+  const marginV = props.marginV;
+  if (marginV != null) {
+    props.marginTop == null && (props.marginTop = marginV);
+    props.marginBottom == null && (props.marginBottom = marginV);
+    delete props.marginV;
+  }
+
+  const paddingH = props.paddingH;
+  if (paddingH != null) {
+    props.paddingLeft == null && (props.paddingLeft = paddingH);
+    props.paddingRight == null && (props.paddingRight = paddingH);
+    delete props.paddingH;
+  }
+
+  const paddingV = props.paddingV;
+  if (paddingV != null) {
+    props.paddingTop == null && (props.paddingTop = paddingV);
+    props.paddingBottom == null && (props.paddingBottom = paddingV);
+    delete props.paddingV;
+  }
+
   const propKeys = Object.keys(props).sort();
   const keyCount = propKeys.length;
 

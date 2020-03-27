@@ -2,7 +2,7 @@ import path = require('path');
 import { OutputOptions, rollup, RollupOptions } from 'rollup';
 import rollupNodeResolve from 'rollup-plugin-node-resolve';
 import rollupReplace from 'rollup-plugin-replace';
-import { uglify as rollupUglify } from 'rollup-plugin-uglify';
+import { terser as rollupTerser } from 'rollup-plugin-terser';
 import zlib = require('zlib');
 
 const entry = 'bundleSize entrypoint';
@@ -20,11 +20,12 @@ it('has a runtime size of less than 3KB', async () => {
         },
         jail: path.resolve(__dirname, '../../'),
       }),
-      rollupUglify(),
+      rollupTerser({ output: { comments: false } }),
       rollupReplace({
         'process.env.NODE_ENV': JSON.stringify('production'),
       }),
       {
+        name: 'custom resolve plugin',
         resolveId(id) {
           if (id === entry) {
             return entry;
