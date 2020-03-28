@@ -1,13 +1,13 @@
-name: CI
+name: Canary
 
 on:
-  schedule:
-    # run every day at midnight UTC
-    - cron: '0 0 * * *'
+  push:
+    branches:
+      - master
 
 jobs:
-  build:
-    name: Run tests
+  canary:
+    name: Publish canary to NPM
     runs-on: ubuntu-latest
 
     steps:
@@ -28,3 +28,12 @@ jobs:
         env:
           CI: true
           TZ: 'America/Los_Angeles'
+      - name: Configure NPM
+        run: |
+          npm set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }}
+          npm set username ${{ secrets.NPM_USERNAME }}
+          npm set email ${{ secrets.NPM_EMAIL }}
+      - name: Publish
+        run: npx lerna publish --canary --preid canary --dist-tag next --yes --no-git-reset --force-publish "*"
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
