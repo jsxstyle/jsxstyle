@@ -10,6 +10,9 @@ jobs:
     name: Publish canary to NPM
     runs-on: ubuntu-latest
 
+    # ignore publish commits
+    if: "!startsWith(github.event.head_commit.message, 'Publish')"
+
     steps:
       - name: Checkout jsxstyle
         uses: actions/checkout@v1
