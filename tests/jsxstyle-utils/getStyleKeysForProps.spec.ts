@@ -112,17 +112,19 @@ describe('getStyleKeysForProps', () => {
 
   it('expands horizontal/vertical margin/padding shorthand props', () => {
     const keyObj1 = getStyleKeysForProps({
+      aaa: 123,
+      zzz: 123,
       margin: 1, // least specific
       marginH: 2, // expands to marginLeft + marginRight
       marginLeft: 3, // most specific
     });
 
     expect(keyObj1.classNameKey).toEqual(
-      'margin:1px;marginLeft:3px;marginRight:2px;'
+      'marginH:2px;margin:1px;aaa:123px;marginLeft:3px;zzz:123px;'
     );
   });
 
-  it('does not support pseudo-prefixed horizontal/vertical margin/padding shorthand props', () => {
+  it('supports pseudo-prefixed horizontal/vertical margin/padding shorthand props', () => {
     const keyObj1 = getStyleKeysForProps({
       mediaQueries: { sm: 'test' },
       margin: 1,
@@ -137,11 +139,11 @@ describe('getStyleKeysForProps', () => {
 
     expect(keyObj1).toEqual({
       '.': {
-        styles: 'margin:1px;margin-left:3px;margin-right:2px;',
+        styles: 'margin-left:2px;margin-right:2px;margin:1px;margin-left:3px;',
       },
       '.:active': {
         pseudoclass: 'active',
-        styles: 'margin-v:5px;',
+        styles: 'margin-top:5px;margin-bottom:5px;',
       },
       '.:hover': {
         pseudoclass: 'hover',
@@ -149,10 +151,10 @@ describe('getStyleKeysForProps', () => {
       },
       '.@1000': {
         mediaQuery: 'test',
-        styles: 'margin-h:6px;',
+        styles: 'margin-left:6px;margin-right:6px;',
       },
       classNameKey:
-        'activeMarginV:5px;hoverMarginLeft:4px;margin:1px;marginLeft:3px;marginRight:2px;@test~marginH:6px;',
+        'activeMarginV:5px;hoverMarginLeft:4px;marginH:2px;margin:1px;marginLeft:3px;@test~marginH:6px;',
     });
   });
 

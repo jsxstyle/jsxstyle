@@ -36,6 +36,36 @@ const specialCaseProps = {
   style: true,
 };
 
+const customSortedProps: Record<string, number> = {
+  padding: 4,
+  paddingH: 5,
+  paddingV: 6,
+  margin: 7,
+  marginH: 8,
+  marginV: 9,
+};
+
+const sameAxisPropNames: Record<string, [string, string]> = {
+  paddingH: ['paddingLeft', 'paddingRight'],
+  paddingV: ['paddingTop', 'paddingBottom'],
+  marginH: ['marginLeft', 'marginRight'],
+  marginV: ['marginTop', 'marginBottom'],
+};
+
+const sortProps = (a: string, b: string): number => {
+  const customSort = customSortedProps[b];
+  if (customSort) {
+    return customSort;
+  }
+  if (a < b) {
+    return -1;
+  }
+  if (a > b) {
+    return 1;
+  }
+  return 0;
+};
+
 export type StyleKeyObj = Record<
   string,
   {
@@ -54,35 +84,7 @@ export function getStyleKeysForProps(
     return null;
   }
 
-  const marginH = props.marginH;
-  if (marginH != null) {
-    props.marginLeft == null && (props.marginLeft = marginH);
-    props.marginRight == null && (props.marginRight = marginH);
-    delete props.marginH;
-  }
-
-  const marginV = props.marginV;
-  if (marginV != null) {
-    props.marginTop == null && (props.marginTop = marginV);
-    props.marginBottom == null && (props.marginBottom = marginV);
-    delete props.marginV;
-  }
-
-  const paddingH = props.paddingH;
-  if (paddingH != null) {
-    props.paddingLeft == null && (props.paddingLeft = paddingH);
-    props.paddingRight == null && (props.paddingRight = paddingH);
-    delete props.paddingH;
-  }
-
-  const paddingV = props.paddingV;
-  if (paddingV != null) {
-    props.paddingTop == null && (props.paddingTop = paddingV);
-    props.paddingBottom == null && (props.paddingBottom = paddingV);
-    delete props.paddingV;
-  }
-
-  const propKeys = Object.keys(props).sort();
+  const propKeys = Object.keys(props).sort(sortProps);
   const keyCount = propKeys.length;
 
   if (keyCount === 0) {
@@ -201,12 +203,21 @@ export function getStyleKeysForProps(
       classNameKey += originalPropName + ':' + styleValue + ';';
     }
 
-    styleKeyObj[key].styles +=
-      (pretty ? '  ' : '') +
-      hyphenateStyleName(propName) +
-      (pretty ? ': ' : ':') +
-      styleValue +
-      (pretty ? ';\n' : ';');
+    const value = (pretty ? ': ' : ':') + styleValue + (pretty ? ';\n' : ';');
+    const indent = pretty ? '  ' : '';
+
+    const propArray = sameAxisPropNames[propName];
+    if (propArray) {
+      styleKeyObj[key].styles +=
+        indent +
+        hyphenateStyleName(propArray[0]) +
+        value +
+        indent +
+        hyphenateStyleName(propArray[1]) +
+        value;
+    } else {
+      styleKeyObj[key].styles += indent + hyphenateStyleName(propName) + value;
+    }
   }
 
   // append media query key

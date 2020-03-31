@@ -152,7 +152,7 @@ You can set margin or padding on the same axisâ€”either horizontal or verticalâ€
 2. `paddingH` and `paddingV`
 3. `paddingTop`, `paddingRight`, `paddingBottom`, and `paddingLeft`
 
-Note that pseudo-prefixed properties (for example, `hoverPaddingH`) are not supported at this time.
+Note that pseudo-prefixed properties (for example, `hoverPaddingH`) are not fully supported at this time.
 
 <br>
 
