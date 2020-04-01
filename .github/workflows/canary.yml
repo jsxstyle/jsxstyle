@@ -17,7 +17,8 @@ jobs:
       - name: Checkout jsxstyle
         uses: actions/checkout@v1
         with:
-          fetch-depth: 1
+          # fetch everything so that lerna can properly calculate what needs to be published
+          fetch-depth: 0
       - name: Use Node 10
         uses: actions/setup-node@v1
         with:
@@ -30,7 +31,7 @@ jobs:
         run: yarn --cwd "tests" run karma-headless-chrome
         env:
           CI: true
-          TZ: "America/Los_Angeles"
+          TZ: 'America/Los_Angeles'
       - name: Configure NPM
         run: |
           npm set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }}
