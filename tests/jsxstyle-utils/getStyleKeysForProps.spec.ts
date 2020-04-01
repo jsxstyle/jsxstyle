@@ -120,7 +120,7 @@ describe('getStyleKeysForProps', () => {
     });
 
     expect(keyObj1.classNameKey).toEqual(
-      'marginH:2px;margin:1px;aaa:123px;marginLeft:3px;zzz:123px;'
+      'aaa:123px;margin:1px;marginH:2px;marginLeft:3px;zzz:123px;'
     );
   });
 
@@ -139,7 +139,7 @@ describe('getStyleKeysForProps', () => {
 
     expect(keyObj1).toEqual({
       '.': {
-        styles: 'margin-left:2px;margin-right:2px;margin:1px;margin-left:3px;',
+        styles: 'margin:1px;margin-left:2px;margin-right:2px;margin-left:3px;',
       },
       '.:active': {
         pseudoclass: 'active',
@@ -154,7 +154,7 @@ describe('getStyleKeysForProps', () => {
         styles: 'margin-left:6px;margin-right:6px;',
       },
       classNameKey:
-        'activeMarginV:5px;hoverMarginLeft:4px;marginH:2px;margin:1px;marginLeft:3px;@test~marginH:6px;',
+        'activeMarginV:5px;hoverMarginLeft:4px;margin:1px;marginH:2px;marginLeft:3px;@test~marginH:6px;',
     });
   });
 

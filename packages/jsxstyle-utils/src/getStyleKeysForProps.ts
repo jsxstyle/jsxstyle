@@ -36,34 +36,11 @@ const specialCaseProps = {
   style: true,
 };
 
-const customSortedProps: Record<string, number> = {
-  padding: 4,
-  paddingH: 5,
-  paddingV: 6,
-  margin: 7,
-  marginH: 8,
-  marginV: 9,
-};
-
 const sameAxisPropNames: Record<string, [string, string]> = {
   paddingH: ['paddingLeft', 'paddingRight'],
   paddingV: ['paddingTop', 'paddingBottom'],
   marginH: ['marginLeft', 'marginRight'],
   marginV: ['marginTop', 'marginBottom'],
-};
-
-const sortProps = (a: string, b: string): number => {
-  const customSort = customSortedProps[b];
-  if (customSort) {
-    return customSort;
-  }
-  if (a < b) {
-    return -1;
-  }
-  if (a > b) {
-    return 1;
-  }
-  return 0;
 };
 
 export type StyleKeyObj = Record<
@@ -84,7 +61,7 @@ export function getStyleKeysForProps(
     return null;
   }
 
-  const propKeys = Object.keys(props).sort(sortProps);
+  const propKeys = Object.keys(props).sort();
   const keyCount = propKeys.length;
 
   if (keyCount === 0) {

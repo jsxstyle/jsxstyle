@@ -146,13 +146,7 @@ Define a `mediaQueries` property with an object of media queries keyed by whatev
 
 ### ⚠️ Experimental: Shorthand properties for same-axis `padding` and `margin`
 
-You can set margin or padding on the same axis—either horizontal or vertical—by setting `marginH`/`marginV` or `paddingH`/`paddingV`. Styles are resolved from least specific to most specific:
-
-1. `padding`
-2. `paddingH` and `paddingV`
-3. `paddingTop`, `paddingRight`, `paddingBottom`, and `paddingLeft`
-
-Note that pseudo-prefixed properties (for example, `hoverPaddingH`) are not fully supported at this time.
+You can set margin or padding on the same axis—either horizontal or vertical—by setting `marginH`/`marginV` or `paddingH`/`paddingV`. Note that shortcut props should not be used with in combination with `top`/`right`/`bottom`/`left` props. Prop names are sorted alphabetically before the styles are stringified which means that styles will be applied alphabetically.
 
 <br>
 
