@@ -1,9 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`throws type errors for invalid component/prop types 1`] = `
-"jsxstyle/typescript/demo.tsx(14,51): error TS2322: Type '{ value: string; typeError: boolean; }' is not assignable to type 'DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>'.
+"jsxstyle/typescript/demo.tsx(18,51): error TS2322: Type '{ value: string; typeError: boolean; }' is not assignable to type 'DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>'.
   Object literal may only specify known properties, and 'typeError' does not exist in type 'DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>'.
-jsxstyle/typescript/demo.tsx(20,39): error TS2322: Type 'true' is not assignable to type 'never'.
-jsxstyle/typescript/demo.tsx(24,50): error TS2322: Type 'true' is not assignable to type 'never'.
+jsxstyle/typescript/demo.tsx(23,21): error TS2322: Type '{ typeError: boolean; }' is not assignable to type 'DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>'.
+  Object literal may only specify known properties, and 'typeError' does not exist in type 'DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>'.
+jsxstyle/typescript/demo.tsx(24,21): error TS2322: Type 'string' is not assignable to type 'number'.
+jsxstyle/typescript/demo.tsx(30,40): error TS2322: Type '{ typeError: boolean; }' is not assignable to type 'DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | DemoProps'.
+  Object literal may only specify known properties, and 'typeError' does not exist in type 'DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | DemoProps'.
+jsxstyle/typescript/demo.tsx(33,40): error TS2322: Type 'string' is not assignable to type 'boolean'.
+jsxstyle/typescript/demo.tsx(38,50): error TS2322: Type '{ typeError: boolean; }' is not assignable to type 'DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | DemoProps'.
+  Object literal may only specify known properties, and 'typeError' does not exist in type 'DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> | DemoProps'.
 "
 `;
