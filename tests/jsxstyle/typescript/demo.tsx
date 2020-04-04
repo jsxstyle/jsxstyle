@@ -2,9 +2,13 @@ import * as React from 'react';
 
 import { Block } from '../../../packages/jsxstyle';
 
-const DemoSFC: React.SFC = (props) => <div {...props} />;
+interface DemoProps {
+  demoProp?: boolean;
+}
 
-class DemoClassComponent extends React.Component {
+const DemoFC: React.FC<DemoProps> = (props) => <div {...props} />;
+
+class DemoClassComponent extends React.Component<DemoProps> {
   public render() {
     return null;
   }
@@ -14,10 +18,20 @@ export const ValidInputComponent = () => (
   <Block component="input" props={{ value: 'wow', typeError: true }} />
 );
 
-export const ImplicitDivComponent = () => <Block props={{ typeError: true }} />;
+export const ImplicitDivComponent = () => (
+  <>
+    <Block props={{ typeError: true }} />
+    <Block props={{ tabIndex: 'type error' }} />
+  </>
+);
 
-export const SFCWithoutProps = () => (
-  <Block component={DemoSFC} props={{ typeError: true }} />
+export const FCWithoutProps = () => (
+  <>
+    <Block component={DemoFC} props={{ typeError: true }} />
+    {/* not a type error, just a sanity check */}
+    <Block component={DemoFC} props={{ demoProp: true }} />
+    <Block component={DemoFC} props={{ demoProp: 'invalid' }} />
+  </>
 );
 
 export const ClassComponentWithoutProps = () => (

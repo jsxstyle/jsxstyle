@@ -12,48 +12,35 @@ import * as React from 'react';
 type IntrinsicElement = keyof JSX.IntrinsicElements;
 
 type ValidComponentPropValue =
-  | undefined
   | false
   | null
+  | undefined
   | IntrinsicElement
-  | React.StatelessComponent<any>
+  | React.FunctionComponent<any>
   | React.ComponentClass<any>;
-
-/**
- * A silly way of typing an object with no keys.
- *
- * Empty interfaces in TypeScript seem to be unexpectedly funky.
- * This is the predictable alternative.
- */
-interface EmptyProps {
-  [propName: string]: never;
-}
 
 /**
  * Generic that returns either the extracted props type for a React component
  * or the props type for an IntrinsicElement.
- *
- * If a React component has an empty interface specified as its props type,
- * `ExtractProps` will return an `EmptyProps` interface.
  */
 // shout out to https://git.io/fxMvl
 // modified to add detection for empty interfaces
 type ExtractProps<T extends ValidComponentPropValue> = T extends
-  | null
   | false
+  | null
   | undefined
   ? JSX.IntrinsicElements['div']
   : T extends IntrinsicElement
   ? JSX.IntrinsicElements[T]
-  : T extends React.StatelessComponent<infer SFCProps>
-  ? keyof SFCProps extends never
-    ? EmptyProps
-    : SFCProps
+  : T extends React.FunctionComponent<infer FCProps>
+  ? keyof FCProps extends never
+    ? {}
+    : FCProps
   : T extends React.ComponentClass<infer ClassProps>
   ? keyof ClassProps extends never
-    ? EmptyProps
+    ? {}
     : ClassProps
-  : EmptyProps;
+  : {};
 
 export { CSSProperties };
 
@@ -95,97 +82,65 @@ export type JsxstyleProps<C extends ValidComponentPropValue> =
   | JsxstyleDefaultProps
   | JsxstylePropsWithComponent<C>;
 
-interface JsxstyleComponentState {
-  className: string | null;
-}
-
-const getDerivedStateFromProps = (props: any) => ({
-  className: cache.getClassName(props, props.className),
-});
-
-function factory(displayName: JsxstyleComponentName) {
+function factory(
+  displayName: JsxstyleComponentName | DeprecatedJsxstyleComponentName
+) {
   const tagName = 'div';
   const defaultProps = componentStyles[displayName];
 
-  return class<T extends ValidComponentPropValue> extends React.Component<
-    JsxstyleProps<T>,
-    JsxstyleComponentState
-  > {
-    constructor(props: JsxstyleProps<T>) {
-      super(props);
-      // className will be set before initial render with either getDerivedStateFromProps or componentWillMount
-      this.state = { className: null };
+  const component = <T extends ValidComponentPropValue = 'div'>(
+    props: React.PropsWithChildren<JsxstyleProps<T>>
+  ): React.ReactElement => {
+    const Component: any = props.component || tagName;
+    const className = cache.getClassName(props, props.className);
+    const componentProps: Record<string, any> = { ...props.props, className };
 
-      const componentWillMount: any = () => {
-        this.setState(getDerivedStateFromProps(this.props));
-      };
-
-      const componentWillReceiveProps: any = (nextProps: JsxstyleProps<T>) => {
-        this.setState(getDerivedStateFromProps(nextProps));
-      };
-
-      // In React 16.3+, deprecated lifecycles will not be called if getDerivedStateFromProps is defined.
-      // This boolean prevents React from logging the presence of these functions as an error in strict mode.
-      // See https://github.com/reactjs/react-lifecycles-compat/blob/0a02b80/index.js#L47
-      componentWillMount.__suppressDeprecationWarning = true;
-      componentWillReceiveProps.__suppressDeprecationWarning = true;
-
-      this.componentWillMount = componentWillMount;
-      this.componentWillReceiveProps = componentWillReceiveProps;
+    if (className) {
+      componentProps.className = className;
     }
 
-    public static defaultProps = defaultProps;
-    public static displayName = displayName;
-    public static getDerivedStateFromProps = getDerivedStateFromProps;
-
-    public render() {
-      const { props, style, children } = this.props;
-      const Component: any = this.props.component || tagName;
-
-      return (
-        <Component
-          {...props}
-          className={this.state.className || undefined}
-          style={style || undefined}
-        >
-          {children}
-        </Component>
-      );
+    if (props.style) {
+      componentProps.style = props.style;
     }
+
+    return <Component {...componentProps}>{props.children}</Component>;
   };
+
+  component.displayName = displayName;
+  component.defaultProps = defaultProps;
+
+  return component;
 }
 
-function depFactory(displayName: DeprecatedJsxstyleComponentName) {
-  const defaultProps = componentStyles[displayName];
-  let hasWarned = false;
-  return class<T extends ValidComponentPropValue> extends React.Component<
-    JsxstyleProps<T>
-  > {
-    constructor(props: JsxstyleProps<T>) {
-      super(props);
-      if (process.env.NODE_ENV !== 'production') {
-        if (!hasWarned) {
-          hasWarned = true;
-          console.error(
-            'jsxstyle\u2019s `%s` component is deprecated and will be removed in future versions of jsxstyle.',
-            displayName
-          );
-        }
+let depFactory = factory;
+
+if (process.env.NODE_ENV !== 'production') {
+  depFactory = function (displayName: DeprecatedJsxstyleComponentName) {
+    const defaultProps = componentStyles[displayName];
+    let hasWarned = false;
+
+    const component = <T extends ValidComponentPropValue = 'div'>(
+      props: React.PropsWithChildren<JsxstyleProps<T>>
+    ): React.ReactElement => {
+      if (!hasWarned) {
+        hasWarned = true;
+        console.error(
+          'jsxstyle\u2019s `%s` component is deprecated and will be removed in future versions of jsxstyle.',
+          displayName
+        );
       }
-    }
+      return <Box {...props} />;
+    };
 
-    public static displayName = displayName;
-    public static defaultProps = defaultProps;
+    component.displayName = displayName;
+    component.defaultProps = defaultProps;
 
-    public render() {
-      return <Box {...this.props} />;
-    }
+    return component;
   };
 }
 
 // Using ReturnType + explicit typing to prevent Hella Dupes in the generated types
 type JsxstyleComponent = ReturnType<typeof factory>;
-type DeprecatedJsxstyleComponent = ReturnType<typeof depFactory>;
 
 export const Box: JsxstyleComponent = factory('Box');
 export const Block: JsxstyleComponent = factory('Block');
@@ -200,9 +155,9 @@ export const InlineCol: JsxstyleComponent = factory('InlineCol');
 export const Grid: JsxstyleComponent = factory('Grid');
 
 // <Box component="table" />
-export const Table: DeprecatedJsxstyleComponent = depFactory('Table');
-export const TableRow: DeprecatedJsxstyleComponent = depFactory('TableRow');
-export const TableCell: DeprecatedJsxstyleComponent = depFactory('TableCell');
+export const Table: JsxstyleComponent = depFactory('Table');
+export const TableRow: JsxstyleComponent = depFactory('TableRow');
+export const TableCell: JsxstyleComponent = depFactory('TableCell');
 // <Row display="inline-flex" />
-export const Flex: DeprecatedJsxstyleComponent = depFactory('Flex');
-export const InlineFlex: DeprecatedJsxstyleComponent = depFactory('InlineFlex');
+export const Flex: JsxstyleComponent = depFactory('Flex');
+export const InlineFlex: JsxstyleComponent = depFactory('InlineFlex');
