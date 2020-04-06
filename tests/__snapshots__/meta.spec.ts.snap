@@ -22,6 +22,8 @@ jsxstyle
 - lib/jsxstyle.d.ts.map
 - lib/jsxstyle.es.js
 - lib/jsxstyle.js
+- lib/useMatchMedia.d.ts
+- lib/useMatchMedia.d.ts.map
 - preact/lib/jsxstyle-preact.cjs.js
 - preact/lib/jsxstyle-preact.d.ts
 - preact/lib/jsxstyle-preact.d.ts.map

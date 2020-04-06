@@ -161,3 +161,5 @@ export const TableCell: JsxstyleComponent = depFactory('TableCell');
 // <Row display="inline-flex" />
 export const Flex: JsxstyleComponent = depFactory('Flex');
 export const InlineFlex: JsxstyleComponent = depFactory('InlineFlex');
+
+export { useMatchMedia } from './useMatchMedia';

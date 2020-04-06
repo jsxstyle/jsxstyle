@@ -18,5 +18,5 @@
     "target": "es5",
     "types": ["node", "react"]
   },
-  "files": ["jsxstyle.tsx"]
+  "files": ["jsxstyle.tsx", "useMatchMedia.ts"]
 }
