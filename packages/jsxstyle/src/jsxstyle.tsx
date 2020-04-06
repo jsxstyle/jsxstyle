@@ -93,7 +93,7 @@ function factory(
   ): React.ReactElement => {
     const Component: any = props.component || tagName;
     const className = cache.getClassName(props, props.className);
-    const componentProps: Record<string, any> = { ...props.props, className };
+    const componentProps: Record<string, any> = { ...props.props };
 
     if (className) {
       componentProps.className = className;
@@ -103,7 +103,7 @@ function factory(
       componentProps.style = props.style;
     }
 
-    return <Component {...componentProps}>{props.children}</Component>;
+    return React.createElement(Component, componentProps, props.children);
   };
 
   component.displayName = displayName;
@@ -129,7 +129,7 @@ if (process.env.NODE_ENV !== 'production') {
           displayName
         );
       }
-      return <Box {...props} />;
+      return React.createElement(Box as any, props as any);
     };
 
     component.displayName = displayName;
