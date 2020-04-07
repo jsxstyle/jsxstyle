@@ -538,3 +538,49 @@ exports[`the basics puts spaces between each class name 1`] = `
 "import \\"./classname-spaces__jsxstyle.css\\";
 <div className={\\"orange \\" + ((thing1 ? \\"_x1\\" : \\"_x2\\") + (\\" \\" + (thing2 ? \\"_x3\\" : \\"_x4\\"))) + \\" _x0\\"} />;"
 `;
+
+exports[`useMatchMedia logs a warning when a \`mediaQueries\` prop is encountered 1`] = `
+"import \\"./mediaqueries-plus-useMatchMedia__jsxstyle.css\\";
+import { useMatchMedia } from 'jsxstyle';
+import React from 'react';
+export const MyComponent = () => {
+  const useMatchMedia_matchesMQ = /*#__PURE__*/useMatchMedia('matchMedia media query');
+  return <>
+        <div className={(useMatchMedia_matchesMQ ? \\"_x1\\" : \\"_x2\\") + \\" _x0\\"} />
+        <div className={(useMatchMedia_matchesMQ ? \\"_x1\\" : \\"_x2\\") + \\" _x0\\"} />
+      </>;
+};"
+`;
+
+exports[`useMatchMedia logs a warning when a \`mediaQueries\` prop is encountered 2`] = `
+"/* ./jsxstyle-webpack-plugin/mock/mediaqueries-plus-useMatchMedia.js:8-11 (Block) */
+/* ./jsxstyle-webpack-plugin/mock/mediaqueries-plus-useMatchMedia.js:12-15 (Block) */
+._x0 {
+  display: block;
+}
+/* ./jsxstyle-webpack-plugin/mock/mediaqueries-plus-useMatchMedia.js:8-11 (Block) */
+/* ./jsxstyle-webpack-plugin/mock/mediaqueries-plus-useMatchMedia.js:12-15 (Block) */
+._x1 {
+  should-remain-inline: consequent;
+}
+/* ./jsxstyle-webpack-plugin/mock/mediaqueries-plus-useMatchMedia.js:8-11 (Block) */
+/* ./jsxstyle-webpack-plugin/mock/mediaqueries-plus-useMatchMedia.js:12-15 (Block) */
+._x2 {
+  should-remain-inline: alternate;
+}
+"
+`;
+
+exports[`useMatchMedia removes unused hook calls that are marked as "pure" 1`] = `
+"import { useMatchMedia, Block } from \\"jsxstyle\\";
+
+import React from \\"react\\";
+
+export const MyComponent = () => {
+    useMatchMedia(\\"this call stays\\");
+    const usedThing = useMatchMedia(\\"this call stays as well\\");
+    return React.createElement(Block, {
+        usedThing: usedThing
+    });
+};"
+`;

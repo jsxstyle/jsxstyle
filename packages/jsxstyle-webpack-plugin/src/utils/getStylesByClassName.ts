@@ -91,8 +91,7 @@ export function getStylesByClassName(
   }
 
   if (styleGroups) {
-    arrayLoop: for (let idx = -1, len = styleGroups.length; ++idx < len; ) {
-      const styleObject = styleGroups[idx];
+    arrayLoop: for (const styleObject of styleGroups) {
       for (const prop in styleObject) {
         if (
           !styleProps.hasOwnProperty(prop) ||

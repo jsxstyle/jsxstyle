@@ -4,10 +4,6 @@ import path = require('path');
 import { evaluateAstNode } from './evaluateAstNode';
 import { getSourceModule } from './getSourceModule';
 
-export interface BindingCache {
-  [key: string]: string | null;
-}
-
 interface Binding {
   identifier: any;
   scope: any;
@@ -31,7 +27,7 @@ export function getStaticBindingsForScope(
   scope: any,
   whitelist: string[] = [],
   sourceFileName: string,
-  bindingCache: BindingCache
+  bindingCache: Record<string, string | null>
 ): Record<string, any> {
   const bindings: Record<string, Binding> = scope.getAllBindings();
   const ret: Record<string, any> = {};

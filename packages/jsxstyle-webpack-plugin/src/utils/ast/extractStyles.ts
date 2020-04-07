@@ -61,7 +61,9 @@ const JSXSTYLE_SOURCES = {
   'jsxstyle/preact': true,
 };
 
-const defaultStyleAttributes = {};
+const matchMediaHookName = 'useMatchMedia';
+
+const defaultStyleAttributes: Record<string, t.JSXAttribute[]> = {};
 
 for (const componentName in componentStyles) {
   const styleObj =
@@ -195,6 +197,7 @@ export function extractStyles(
   let useImportSyntax = false;
   let hasValidComponents = false;
   let needsRuntimeJsxstyle = false;
+  let matchMediaImportName: string | undefined;
 
   // Find jsxstyle require in program root
   ast.program.body = ast.program.body.filter((item) => {
@@ -242,6 +245,12 @@ export function extractStyles(
             !t.isIdentifier(prop.key) ||
             !t.isIdentifier(prop.value)
           ) {
+            return true;
+          }
+
+          if (prop.key.name === matchMediaHookName) {
+            matchMediaImportName = prop.value.name;
+            // retain the import
             return true;
           }
 
@@ -302,6 +311,11 @@ export function extractStyles(
           return true;
         }
 
+        if (specifier.imported.name === matchMediaHookName) {
+          matchMediaImportName = specifier.local.name;
+          return true;
+        }
+
         if (
           !componentStyles.hasOwnProperty(specifier.imported.name) ||
           specifier.local.name[0] !== specifier.local.name[0].toUpperCase()
@@ -346,8 +360,55 @@ export function extractStyles(
     },
   });
 
+  /** A mapping of binding name to media query string */
+  const mediaQueriesByKey: Record<string, string> = {};
+
+  if (matchMediaImportName) {
+    // Extract useMatchMedia calls
+    // This needs to be done before JSXElement traversal
+    const matchMediaTraverseOptions: TraverseOptions<any> = {
+      CallExpression(traversePath) {
+        const { node } = traversePath;
+        if (
+          !t.isIdentifier(node.callee) ||
+          node.callee.name !== matchMediaImportName ||
+          node.arguments.length !== 1
+        ) {
+          return;
+        }
+
+        const firstArg = node.arguments[0];
+        // only handling inline string literals for now
+        if (!t.isStringLiteral(firstArg)) {
+          return;
+        }
+
+        const parent = traversePath.parentPath.node;
+        if (!t.isVariableDeclarator(parent) || !t.isIdentifier(parent.id)) {
+          return;
+        }
+
+        // generate a unique ID for this hook call
+        // this saves us from having to do scope shenanigans later on
+        const uid = generateUid(
+          traversePath.parentPath.scope,
+          'useMatchMedia_' + parent.id.name
+        );
+        // rename the hook variable to our generated name
+        traversePath.parentPath.scope.rename(parent.id.name, uid);
+
+        mediaQueriesByKey[uid] = firstArg.value;
+
+        // mark hook call as pure so it can be removed if unused
+        t.addComment(node, 'leading', '#__PURE__');
+      },
+    };
+
+    traverse(ast, matchMediaTraverseOptions);
+  }
+
   // per-file cache of evaluated bindings
-  const bindingCache = {};
+  const bindingCache: Record<string, string | null> = {};
 
   const traverseOptions: TraverseOptions<t.JSXElement> = {
     JSXElement: {
@@ -366,6 +427,8 @@ export function extractStyles(
         // Remember the source component
         const originalNodeName = node.name.name;
         const srcKey = validComponents[originalNodeName];
+
+        let shouldExtractMatchMedia = !!matchMediaImportName;
 
         node.name.name = boxComponentName;
 
@@ -409,6 +472,19 @@ export function extractStyles(
           t.JSXAttribute | t.JSXSpreadAttribute
         > = [];
         node.attributes.forEach((attr) => {
+          if (
+            shouldExtractMatchMedia &&
+            t.isJSXAttribute(attr) &&
+            typeof attr.name.name === 'string' &&
+            attr.name.name === 'mediaQueries'
+          ) {
+            // the assumption here is that the same file should not contain two different methods of writing media queries
+            logWarning(
+              'useMatchMedia and the mediaQueries prop should not be mixed. useMatchMedia query extraction will be disabled.'
+            );
+            shouldExtractMatchMedia = false;
+          }
+
           if (t.isJSXSpreadAttribute(attr)) {
             try {
               const spreadValue = attemptEval(attr.argument);
@@ -458,6 +534,10 @@ export function extractStyles(
 
         let propsAttributes: Array<t.JSXSpreadAttribute | t.JSXAttribute> = [];
         const staticAttributes: Record<string, any> = {};
+        const staticAttributesByMediaQuery: Record<
+          string,
+          Record<string, any>
+        > = {};
         let inlinePropCount = 0;
 
         const staticTernaries: Ternary[] = [];
@@ -657,6 +737,29 @@ export function extractStyles(
           }
 
           if (t.isConditionalExpression(value)) {
+            if (shouldExtractMatchMedia && t.isIdentifier(value.test)) {
+              const idName = value.test.name;
+
+              // check to see if this identifier is a media query key
+              if (idName && mediaQueriesByKey.hasOwnProperty(idName)) {
+                try {
+                  const mediaQuery = mediaQueriesByKey[idName];
+                  let consequentValue: any;
+                  consequentValue = attemptEval(value.consequent);
+                  staticAttributes[name] = attemptEval(value.alternate);
+
+                  const mqStyles = (staticAttributesByMediaQuery[mediaQuery] =
+                    staticAttributesByMediaQuery[mediaQuery] || {});
+
+                  mqStyles[name] = consequentValue;
+
+                  return false;
+                } catch (e) {
+                  //
+                }
+              }
+            }
+
             // if both sides of the ternary can be evaluated, extract them
             try {
               const consequent = attemptEval(value.consequent);
@@ -832,6 +935,27 @@ export function extractStyles(
             return;
           }
           traversePath.node.closingElement.name.name = node.name.name;
+        }
+
+        if (shouldExtractMatchMedia) {
+          // transform into old MQ syntax (gross)
+          const mediaQueries = Object.keys(staticAttributesByMediaQuery);
+          if (mediaQueries.length > 0) {
+            const mediaQueriesProp: Record<string, string> = {};
+            let idx = 0;
+            for (const mq of mediaQueries) {
+              const propObj = staticAttributesByMediaQuery[mq];
+              const key = `generatedmediaquery${++idx}`;
+              mediaQueriesProp[key] = mq;
+              for (const propName in propObj) {
+                // propName --> generatedmediaquery1PropName
+                const prefixedPropName =
+                  key + propName[0].toUpperCase() + propName.slice(1);
+                staticAttributes[prefixedPropName] = propObj[propName];
+              }
+            }
+            staticAttributes.mediaQueries = mediaQueriesProp;
+          }
         }
 
         const stylesByClassName = getStylesByClassName(

@@ -555,6 +555,133 @@ const blue = "blueberry";
   });
 });
 
+describe('useMatchMedia', () => {
+  it('marks useMatchMedia calls as pure', () => {
+    const rv1 = extractStyles(
+      `import { Block, useMatchMedia } from 'jsxstyle';
+
+export const MyComponent = () => {
+  const matchesThing = useMatchMedia('thing');
+  return <Block width={matchesThing ? 100 : 200} />;
+};`,
+      pathTo('mock/useMatchMedia-import.js'),
+      { cacheObject: {} },
+      { classNameFormat: 'hash' }
+    );
+    expect(rv1.js).toContain('/*#__PURE__*/useMatchMedia(');
+
+    const rv2 = extractStyles(
+      `import { Block, useMatchMedia as useMM } from 'jsxstyle';
+
+export const MyComponent = () => {
+  const matchesThing = useMM('thing');
+  return <Block width={matchesThing ? 100 : 200} />;
+};`,
+      pathTo('mock/useMatchMedia-import-renamed.js'),
+      { cacheObject: {} },
+      { classNameFormat: 'hash' }
+    );
+    expect(rv2.js).toContain('/*#__PURE__*/useMM(');
+
+    const rv3 = extractStyles(
+      `const { Block, useMatchMedia } = require('jsxstyle');
+
+const MyComponent = () => {
+  const matchesThing = useMatchMedia('thing');
+  return <Block width={matchesThing ? 100 : 200} />;
+};
+
+module.exports = MyComponent;`,
+      pathTo('mock/useMatchMedia-required.js'),
+      { cacheObject: {} },
+      { classNameFormat: 'hash' }
+    );
+    expect(rv3.js).toContain('/*#__PURE__*/useMatchMedia(');
+
+    const rv4 = extractStyles(
+      `const { Block, useMatchMedia: useMM } = require('jsxstyle');
+
+const MyComponent = () => {
+  const matchesThing = useMM('thing');
+  return <Block width={matchesThing ? 100 : 200} />;
+};
+
+module.exports = MyComponent;`,
+      pathTo('mock/useMatchMedia-required-renamed.js'),
+      { cacheObject: {} },
+      { classNameFormat: 'hash' }
+    );
+    expect(rv4.js).toContain('/*#__PURE__*/useMM(');
+  });
+
+  it('removes unused hook calls that are marked as "pure"', async () => {
+    const source = `
+import { useMatchMedia, Block } from 'jsxstyle';
+import React from 'react';
+
+export const MyComponent = () => {
+  const unusedThing1 = /* #__PURE__ */ useMatchMedia('this call gets minified out');
+  const unusedThing2 = useMatchMedia('this call stays');
+  const usedThing = /* #__PURE__ */ useMatchMedia('this call stays as well');
+
+  return React.createElement(Block, { usedThing });
+};
+`;
+
+    const terser = await import('terser');
+
+    const minifyOutput = terser.minify(source, {
+      compress: {
+        // remove dead code
+        dead_code: true,
+      },
+      // don't rename vars
+      mangle: false,
+      output: {
+        // format output nicely
+        beautify: true,
+      },
+    });
+
+    expect(minifyOutput.code).toMatchSnapshot();
+  });
+
+  it('logs a warning when a `mediaQueries` prop is encountered', () => {
+    const source = `
+    import { useMatchMedia, Block } from 'jsxstyle';
+    import React from 'react';
+
+    export const MyComponent = () => {
+      const matchesMQ = useMatchMedia('matchMedia media query');
+      return <>
+        <Block
+          shouldRemainInline={matchesMQ ? 'consequent' : 'alternate'}
+          mediaQueries={{ example: 'inline media query' }}
+        />
+        <Block
+          mediaQueries={{ example: 'inline media query' }}
+          shouldRemainInline={matchesMQ ? 'consequent' : 'alternate'}
+        />
+      </>;
+    };
+    `;
+
+    const warnCallback = jest.fn();
+
+    const rv = extractStyles(
+      source,
+      pathTo('mock/mediaqueries-plus-useMatchMedia.js'),
+      { cacheObject: {}, warnCallback }
+    );
+
+    expect(warnCallback).toHaveBeenCalledWith(
+      'useMatchMedia and the mediaQueries prop should not be mixed. useMatchMedia query extraction will be disabled.'
+    );
+    expect(rv.js).toMatchSnapshot();
+    expect(rv.css).toMatchSnapshot();
+  });
+});
+
 describe('deterministic rendering', () => {
   it('generates deterministic class names when classNameFormat is set to `hash`', () => {
     const rv = extractStyles(
