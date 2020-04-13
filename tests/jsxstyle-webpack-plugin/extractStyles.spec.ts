@@ -656,10 +656,13 @@ export const MyComponent = () => {
       return <>
         <Block
           shouldRemainInline={matchesMQ ? 'consequent' : 'alternate'}
+          exampleColor="red"
           mediaQueries={{ example: 'inline media query' }}
         />
         <Block
           mediaQueries={{ example: 'inline media query' }}
+          exampleColor="red"
+          color="blue"
           shouldRemainInline={matchesMQ ? 'consequent' : 'alternate'}
         />
       </>;
@@ -674,7 +677,8 @@ export const MyComponent = () => {
       { cacheObject: {}, warnCallback }
     );
 
-    expect(warnCallback).toHaveBeenCalledWith(
+    expect(warnCallback).toHaveBeenCalledTimes(2);
+    expect(warnCallback).toHaveBeenLastCalledWith(
       'useMatchMedia and the mediaQueries prop should not be mixed. useMatchMedia query extraction will be disabled.'
     );
     expect(rv.js).toMatchSnapshot();

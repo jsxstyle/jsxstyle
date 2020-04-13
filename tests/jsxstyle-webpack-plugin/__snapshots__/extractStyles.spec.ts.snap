@@ -547,27 +547,37 @@ export const MyComponent = () => {
   const useMatchMedia_matchesMQ = /*#__PURE__*/useMatchMedia('matchMedia media query');
   return <>
         <div className={(useMatchMedia_matchesMQ ? \\"_x1\\" : \\"_x2\\") + \\" _x0\\"} />
-        <div className={(useMatchMedia_matchesMQ ? \\"_x1\\" : \\"_x2\\") + \\" _x0\\"} />
+        <div className={(useMatchMedia_matchesMQ ? \\"_x1\\" : \\"_x2\\") + \\" _x3\\"} />
       </>;
 };"
 `;
 
 exports[`useMatchMedia logs a warning when a \`mediaQueries\` prop is encountered 2`] = `
-"/* ./jsxstyle-webpack-plugin/mock/mediaqueries-plus-useMatchMedia.js:8-11 (Block) */
-/* ./jsxstyle-webpack-plugin/mock/mediaqueries-plus-useMatchMedia.js:12-15 (Block) */
+"/* ./jsxstyle-webpack-plugin/mock/mediaqueries-plus-useMatchMedia.js:8-12 (Block) */
 ._x0 {
   display: block;
 }
-/* ./jsxstyle-webpack-plugin/mock/mediaqueries-plus-useMatchMedia.js:8-11 (Block) */
-/* ./jsxstyle-webpack-plugin/mock/mediaqueries-plus-useMatchMedia.js:12-15 (Block) */
+@media inline media query { ._x0 {
+  color: red;
+} }
+/* ./jsxstyle-webpack-plugin/mock/mediaqueries-plus-useMatchMedia.js:8-12 (Block) */
+/* ./jsxstyle-webpack-plugin/mock/mediaqueries-plus-useMatchMedia.js:13-18 (Block) */
 ._x1 {
   should-remain-inline: consequent;
 }
-/* ./jsxstyle-webpack-plugin/mock/mediaqueries-plus-useMatchMedia.js:8-11 (Block) */
-/* ./jsxstyle-webpack-plugin/mock/mediaqueries-plus-useMatchMedia.js:12-15 (Block) */
+/* ./jsxstyle-webpack-plugin/mock/mediaqueries-plus-useMatchMedia.js:8-12 (Block) */
+/* ./jsxstyle-webpack-plugin/mock/mediaqueries-plus-useMatchMedia.js:13-18 (Block) */
 ._x2 {
   should-remain-inline: alternate;
 }
+/* ./jsxstyle-webpack-plugin/mock/mediaqueries-plus-useMatchMedia.js:13-18 (Block) */
+._x3 {
+  color: blue;
+  display: block;
+}
+@media inline media query { ._x3 {
+  color: red;
+} }
 "
 `;
 

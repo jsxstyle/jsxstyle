@@ -125,10 +125,9 @@ Define a `mediaQueries` property with an object of media queries keyed by whatev
 />
 ```
 
----
+#### `useMatchMedia`
 
-A replacement for the prefix-based media query API is in the works and is currently available in `jsxstyle@next`.
-Here’s what this hook looks like in action:
+jsxstyle exports a hook, `useMatchMedia`, that enables the developer to subscribe to media query change events and react accordingly. Here’s the hook in action:
 
 ```jsx
 import { Block, useMatchMedia } from 'jsxstyle';
@@ -141,7 +140,7 @@ export const RedOrBlueComponent = ({ children }) => {
 };
 ```
 
-When used in combination with `jsxstyle-webpack-plugin`, prop values will be extracted if both the `useMatchMedia` call and the alternate and consequent values are static.
+When this hook is used in combination with `jsxstyle-webpack-plugin`, prop values will be extracted if the prop passed to the component is a ternary and if the alternate and consequent values of the ternary are both [static][].
 
 <br>
 
@@ -296,6 +295,7 @@ Sorting through the myriad CSS-in-JS solutions out there can get tiring, but the
 [rebass]: https://github.com/jxnblk/rebass
 [sauce]: https://saucelabs.com/u/jsxstyle
 [scalable css]: http://mrmrs.github.io/writing/2016/03/24/scalable-css/
+[static]: https://github.com/jsxstyle/jsxstyle/blob/master/packages/jsxstyle-webpack-plugin/#what-are-static-style-props
 [styled-components]: https://www.styled-components.com
 [tachyons]: http://tachyons.io
 [github-actions]: https://github.com/jsxstyle/jsxstyle/actions
