@@ -539,6 +539,38 @@ exports[`the basics puts spaces between each class name 1`] = `
 <div className={\\"orange \\" + ((thing1 ? \\"_x1\\" : \\"_x2\\") + (\\" \\" + (thing2 ? \\"_x3\\" : \\"_x4\\"))) + \\" _x0\\"} />;"
 `;
 
+exports[`useMatchMedia extracts ternaries and conditional statements 1`] = `
+"import \\"./useMatchMedia-extraction__jsxstyle.css\\";
+import { useMatchMedia } from 'jsxstyle';
+import React from 'react';
+export const MyComponent = () => {
+  const useMatchMedia_matchesMQ = /*#__PURE__*/useMatchMedia('matchMedia media query');
+  return <>
+        <div className=\\"_x0\\" />
+        <div className=\\"_x1\\" />
+      </>;
+};"
+`;
+
+exports[`useMatchMedia extracts ternaries and conditional statements 2`] = `
+"/* ./jsxstyle-webpack-plugin/mock/useMatchMedia-extraction.js:8-10 (Block) */
+._x0 {
+  display: block;
+}
+@media matchMedia media query { ._x0 {
+  color: red;
+} }
+/* ./jsxstyle-webpack-plugin/mock/useMatchMedia-extraction.js:11-13 (Block) */
+._x1 {
+  color: blue;
+  display: block;
+}
+@media matchMedia media query { ._x1 {
+  color: red;
+} }
+"
+`;
+
 exports[`useMatchMedia logs a warning when a \`mediaQueries\` prop is encountered 1`] = `
 "import \\"./mediaqueries-plus-useMatchMedia__jsxstyle.css\\";
 import { useMatchMedia } from 'jsxstyle';

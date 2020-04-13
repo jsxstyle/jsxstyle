@@ -737,33 +737,27 @@ export function extractStyles(
           }
 
           if (t.isConditionalExpression(value)) {
-            if (shouldExtractMatchMedia && t.isIdentifier(value.test)) {
-              const idName = value.test.name;
-
-              // check to see if this identifier is a media query key
-              if (idName && mediaQueriesByKey.hasOwnProperty(idName)) {
-                try {
-                  const mediaQuery = mediaQueriesByKey[idName];
-                  let consequentValue: any;
-                  consequentValue = attemptEval(value.consequent);
-                  staticAttributes[name] = attemptEval(value.alternate);
-
-                  const mqStyles = (staticAttributesByMediaQuery[mediaQuery] =
-                    staticAttributesByMediaQuery[mediaQuery] || {});
-
-                  mqStyles[name] = consequentValue;
-
-                  return false;
-                } catch (e) {
-                  //
-                }
-              }
-            }
-
             // if both sides of the ternary can be evaluated, extract them
             try {
               const consequent = attemptEval(value.consequent);
               const alternate = attemptEval(value.alternate);
+
+              // check to see if the test is a media query key
+              if (shouldExtractMatchMedia && t.isIdentifier(value.test)) {
+                const idName = value.test.name;
+
+                if (idName && mediaQueriesByKey.hasOwnProperty(idName)) {
+                  const mediaQuery = mediaQueriesByKey[idName];
+                  const mqStyles = (staticAttributesByMediaQuery[mediaQuery] =
+                    staticAttributesByMediaQuery[mediaQuery] || {});
+
+                  // mediaQueryMatches ? consequent : alternate
+                  mqStyles[name] = consequent;
+                  staticAttributes[name] = alternate;
+
+                  return false;
+                }
+              }
 
               staticTernaries.push({
                 alternate,
@@ -782,6 +776,22 @@ export function extractStyles(
             if (value.operator === '&&') {
               try {
                 const consequent = attemptEval(value.right);
+
+                // check to see if the left-hand side is a media query key
+                if (shouldExtractMatchMedia && t.isIdentifier(value.left)) {
+                  const idName = value.left.name;
+
+                  if (idName && mediaQueriesByKey.hasOwnProperty(idName)) {
+                    const mediaQuery = mediaQueriesByKey[idName];
+                    const mqStyles = (staticAttributesByMediaQuery[mediaQuery] =
+                      staticAttributesByMediaQuery[mediaQuery] || {});
+
+                    mqStyles[name] = consequent;
+
+                    return false;
+                  }
+                }
+
                 staticTernaries.push({
                   alternate: null,
                   consequent,

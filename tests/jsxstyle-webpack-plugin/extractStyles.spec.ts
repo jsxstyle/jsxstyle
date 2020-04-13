@@ -646,6 +646,34 @@ export const MyComponent = () => {
     expect(minifyOutput.code).toMatchSnapshot();
   });
 
+  it('extracts ternaries and conditional statements', () => {
+    const source = `
+    import { useMatchMedia, Block } from 'jsxstyle';
+    import React from 'react';
+
+    export const MyComponent = () => {
+      const matchesMQ = useMatchMedia('matchMedia media query');
+      return <>
+        <Block
+          color={matchesMQ && 'red'}
+        />
+        <Block
+          color={matchesMQ ? 'red' : 'blue'}
+        />
+      </>;
+    };
+    `;
+
+    const rv = extractStyles(
+      source,
+      pathTo('mock/useMatchMedia-extraction.js'),
+      { cacheObject: {} }
+    );
+
+    expect(rv.js).toMatchSnapshot();
+    expect(rv.css).toMatchSnapshot();
+  });
+
   it('logs a warning when a `mediaQueries` prop is encountered', () => {
     const source = `
     import { useMatchMedia, Block } from 'jsxstyle';
