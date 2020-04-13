@@ -142,11 +142,31 @@ Define a `mediaQueries` property with an object of media queries keyed by whatev
 />
 ```
 
+---
+
+A replacement for the prefix-based media query API is in the works and is currently available in `jsxstyle@next`.
+Here’s what this hook looks like in action:
+
+```jsx
+import { Block, useMatchMedia } from 'jsxstyle';
+
+export const RedOrBlueComponent = ({ children }) => {
+  const isSmallScreen = useMatchMedia('screen and (max-width: 800px)');
+
+  // text color is red when viewport <= 800px, blue when viewport > 800px
+  return <Block color={isSmallScreen ? 'red' : 'blue'}>{children}</Block>;
+};
+```
+
+When used in combination with `jsxstyle-webpack-plugin`, prop values will be extracted if both the `useMatchMedia` call and the alternate and consequent values are static.
+
 <br>
 
-### ⚠️ Experimental: Shorthand properties for same-axis `padding` and `margin`
+### Shorthand properties for same-axis `padding` and `margin`
 
-You can set margin or padding on the same axis—either horizontal or vertical—by setting `marginH`/`marginV` or `paddingH`/`paddingV`. Note that shortcut props should not be used with in combination with `top`/`right`/`bottom`/`left` props. Prop names are sorted alphabetically before the styles are stringified which means that styles will be applied alphabetically.
+You can set margin or padding on the same axis—either horizontal or vertical—by setting `marginH`/`marginV` or `paddingH`/`paddingV`.
+
+Note: shortcut props should not be used with in combination with -Top/Left/Bottom/Right variants. Prop names on jsxstyle components are sorted alphabetically before the styles are stringified, which means that styles will be applied alphabetically.
 
 <br>
 
