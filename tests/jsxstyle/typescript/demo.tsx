@@ -37,3 +37,14 @@ export const FCWithoutProps = () => (
 export const ClassComponentWithoutProps = () => (
   <Block component={DemoClassComponent} props={{ typeError: true }} />
 );
+
+export const ComponentWithAnimation: React.FC = () => (
+  <Block
+    animation={{
+      from: { opacity: 0 },
+      to: { opacity: 1, paddingH: 123 },
+    }}
+    paddingH={30}
+    paddingV={60}
+  />
+);

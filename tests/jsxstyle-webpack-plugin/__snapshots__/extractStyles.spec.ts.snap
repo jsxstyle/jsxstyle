@@ -22,6 +22,30 @@ export const Thing: React.SFC<ThingProps> = props => <div className=\\"_x0\\" />
 ReactDOM.render(<Thing />, (document.getElementById('root') as HTMLElement));"
 `;
 
+exports[`animation prop properly extracts object-type animation props 1`] = `
+"import \\"./animation-prop__jsxstyle.css\\";
+<div className=\\"_x0\\" />;"
+`;
+
+exports[`animation prop properly extracts object-type animation props 2`] = `
+"/* ./jsxstyle-webpack-plugin/mock/animation-prop.js:2-7 (Block) */
+._x0 {
+  animation-name: jsxstyle_nqjahi;
+  display: block;
+}
+@keyframes jsxstyle_nqjahi {
+0%, 50% {
+  opacity: 0;
+  padding-left: 30px;
+}
+100% {
+  opacity: 1;
+  padding-h: 50px;
+}
+}
+"
+`;
+
 exports[`deterministic rendering generates a classname hash of \`_d3bqdr\` for the specified style object 1`] = `
 "import \\"./consistent-hashes__jsxstyle.css\\";
 <div className=\\"_d3bqdr\\" />;"

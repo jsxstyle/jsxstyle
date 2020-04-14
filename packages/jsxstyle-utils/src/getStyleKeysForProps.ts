@@ -1,5 +1,6 @@
 import { dangerousStyleValue } from './dangerousStyleValue';
 import { hyphenateStyleName } from './hyphenateStyleName';
+import { stringHash } from './stringHash';
 
 // global flag makes subsequent calls of capRegex.test advance to the next match
 const capRegex = /[A-Z]/g;
@@ -43,15 +44,19 @@ const sameAxisPropNames: Record<string, [string, string]> = {
   marginV: ['marginTop', 'marginBottom'],
 };
 
-export type StyleKeyObj = Record<
-  string,
-  {
-    styles: string;
-    mediaQuery?: string;
-    pseudoclass?: string;
-    pseudoelement?: string;
-  }
-> & { classNameKey: string };
+interface StyleObj {
+  styles: string;
+  mediaQuery?: string;
+  pseudoclass?: string;
+  pseudoelement?: string;
+}
+
+export interface StyleKeyObj {
+  stylesByKey: Record<string, StyleObj>;
+  classNameKey: string;
+  /** An object of stringified keyframe styles keyed by animation name */
+  animations?: Record<string, string>;
+}
 
 export function getStyleKeysForProps(
   props: Record<string, any> & { mediaQueries?: Record<string, string> },
@@ -71,9 +76,15 @@ export function getStyleKeysForProps(
   const mediaQueries = props.mediaQueries;
   let usesMediaQueries = false;
 
-  const styleKeyObj = {} as StyleKeyObj;
+  const stylesByKey: Record<string, StyleObj> = {};
+
+  const styleKeyObj: StyleKeyObj = {
+    classNameKey: '',
+    stylesByKey,
+  };
 
   let classNameKey = '';
+  let animations: Record<string, string> | undefined;
   const seenMQs: Record<string, string> = {};
 
   const mqSortKeys: Record<string, string> = {};
@@ -146,9 +157,43 @@ export function getStyleKeysForProps(
         originalPropName.slice(splitIndex + 1);
     }
 
-    const styleValue = dangerousStyleValue(propName, props[originalPropName]);
-    if (styleValue === '') {
-      continue;
+    let styleValue: any = props[originalPropName];
+    const space = pretty ? ' ' : '';
+    const colon = ':' + space;
+    const newline = pretty ? '\n' : '';
+    const semicolon = ';' + newline;
+    const indent = pretty ? '  ' : '';
+    if (
+      propName === 'animation' &&
+      styleValue &&
+      typeof styleValue === 'object'
+    ) {
+      let animationValue = newline;
+      for (const k in styleValue) {
+        const obj = styleValue[k];
+        animationValue += k + space + '{' + newline;
+        for (const childPropName in obj) {
+          const value = dangerousStyleValue(childPropName, obj[childPropName]);
+          animationValue +=
+            indent +
+            hyphenateStyleName(childPropName) +
+            colon +
+            value +
+            semicolon;
+        }
+        animationValue += '}' + newline;
+      }
+      const animationKey =
+        'jsxstyle_' + stringHash(animationValue).toString(36);
+      propName = 'animationName';
+      styleValue = animationKey;
+      animations = animations || {};
+      animations[animationKey] = animationValue;
+    } else {
+      styleValue = dangerousStyleValue(propName, props[originalPropName]);
+      if (styleValue === '') {
+        continue;
+      }
     }
 
     const mediaQuery = mqKey && mediaQueries![mqKey];
@@ -160,16 +205,16 @@ export function getStyleKeysForProps(
       (pseudoclass ? ':' + pseudoclass : '') +
       (pseudoelement ? '::' + pseudoelement : '');
 
-    if (!styleKeyObj.hasOwnProperty(key)) {
-      styleKeyObj[key] = { styles: pretty ? '\n' : '' };
+    if (!stylesByKey.hasOwnProperty(key)) {
+      stylesByKey[key] = { styles: newline };
       if (mediaQuery) {
-        styleKeyObj[key].mediaQuery = mediaQuery;
+        stylesByKey[key].mediaQuery = mediaQuery;
       }
       if (pseudoclass) {
-        styleKeyObj[key].pseudoclass = pseudoclass;
+        stylesByKey[key].pseudoclass = pseudoclass;
       }
       if (pseudoelement) {
-        styleKeyObj[key].pseudoelement = pseudoelement;
+        stylesByKey[key].pseudoelement = pseudoelement;
       }
     }
 
@@ -180,12 +225,11 @@ export function getStyleKeysForProps(
       classNameKey += originalPropName + ':' + styleValue + ';';
     }
 
-    const value = (pretty ? ': ' : ':') + styleValue + (pretty ? ';\n' : ';');
-    const indent = pretty ? '  ' : '';
+    const value = colon + styleValue + semicolon;
 
     const propArray = sameAxisPropNames[propName];
     if (propArray) {
-      styleKeyObj[key].styles +=
+      stylesByKey[key].styles +=
         indent +
         hyphenateStyleName(propArray[0]) +
         value +
@@ -193,7 +237,7 @@ export function getStyleKeysForProps(
         hyphenateStyleName(propArray[1]) +
         value;
     } else {
-      styleKeyObj[key].styles += indent + hyphenateStyleName(propName) + value;
+      stylesByKey[key].styles += indent + hyphenateStyleName(propName) + value;
     }
   }
 
@@ -208,6 +252,10 @@ export function getStyleKeysForProps(
 
   if (classNameKey === '') {
     return null;
+  }
+
+  if (animations) {
+    styleKeyObj.animations = animations;
   }
 
   styleKeyObj.classNameKey = classNameKey;

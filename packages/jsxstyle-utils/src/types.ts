@@ -9,7 +9,15 @@ export type Falsey<T> = { [P in keyof T]?: T[P] | false | null };
 
 type BaseCSSProperties = Properties<string | number>;
 
-interface CSSPropsInternal extends BaseCSSProperties {
+interface JsxstyleAnimation {
+  // Prefixes on animation styles are not currently supported
+  [key: string]: BaseCSSProperties;
+}
+
+interface CSSPropsInternal extends Omit<BaseCSSProperties, 'animation'> {
+  // custom animation prop
+  animation?: BaseCSSProperties['animation'] | JsxstyleAnimation;
+
   // jsxstyle-only shorthand props
   marginH?: BaseCSSProperties['margin'];
   marginV?: BaseCSSProperties['margin'];

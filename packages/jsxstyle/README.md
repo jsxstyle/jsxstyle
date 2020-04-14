@@ -125,7 +125,9 @@ Define a `mediaQueries` property with an object of media queries keyed by whatev
 />
 ```
 
-#### `useMatchMedia`
+#### `useMatchMedia` hook
+
+> Experimental, available in `jsxstyle@next`
 
 jsxstyle exports a hook, `useMatchMedia`, that enables the developer to subscribe to media query change events and react accordingly. Here’s the hook in action:
 
@@ -143,6 +145,23 @@ export const RedOrBlueComponent = ({ children }) => {
 When this hook is used in combination with `jsxstyle-webpack-plugin`, prop values will be extracted if the prop passed to the component is a ternary and if the alternate and consequent values of the ternary are both [static][].
 
 <br>
+
+### Convenient animation support
+
+> Experimental, available in `jsxstyle@next`
+
+You can define an animation inline using object syntax, where the key is the specific keyframe name and the value is an object of styles:
+
+```tsx
+<Block
+  animation={{
+    from: { opacity: 0 },
+    to: { opacity: 1 },
+  }}
+  animationDuration="600ms"
+  animationDirection="alternate"
+/>
+```
 
 ### Shorthand properties for same-axis `padding` and `margin`
 
