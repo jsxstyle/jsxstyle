@@ -747,6 +747,25 @@ describe('deterministic rendering', () => {
   });
 });
 
+describe('animation prop', () => {
+  it('properly extracts object-type animation props', () => {
+    const rv = extractStyles(
+      `import { Block } from "jsxstyle";
+<Block
+  animation={{
+    '0%, 50%': { opacity: 0, paddingLeft: 30 },
+    '100%': { opacity: 1, paddingH: 50 },
+  }}
+/>`,
+      pathTo('mock/animation-prop.js'),
+      { cacheObject: {} }
+    );
+
+    expect(rv.js).toMatchSnapshot();
+    expect(rv.css).toMatchSnapshot();
+  });
+});
+
 describe('Typescript support', () => {
   it('enables the `typescript` parser plugin for ts/tsx files', () => {
     const src = `import * as React from 'react';

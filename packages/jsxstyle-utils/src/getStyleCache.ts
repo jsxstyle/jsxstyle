@@ -67,13 +67,12 @@ export function getStyleCache() {
       const key = styleObj.classNameKey;
       if (key && !_classNameCache.hasOwnProperty(key)) {
         _classNameCache[key] = getClassNameForKey(key, props);
-        delete styleObj.classNameKey;
-        Object.keys(styleObj)
+        Object.keys(styleObj.stylesByKey)
           .sort()
           .forEach((k) => {
             const selector = '.' + _classNameCache[key];
             // prettier-ignore
-            const { pseudoclass, pseudoelement, mediaQuery, styles } = styleObj[k];
+            const { pseudoclass, pseudoelement, mediaQuery, styles } = styleObj.stylesByKey[k];
 
             let rule =
               selector +
@@ -94,6 +93,16 @@ export function getStyleCache() {
             }
             addStyleToHead(rule);
           });
+      }
+
+      const animations = styleObj.animations;
+      if (animations) {
+        for (const animationKey in animations) {
+          const rule = `@keyframes ${animationKey} {${animations[animationKey]}}`;
+          if (!onInsertRule || onInsertRule(rule, props) !== false) {
+            addStyleToHead(rule);
+          }
+        }
       }
 
       return _classNameCache[key] && classNameProp

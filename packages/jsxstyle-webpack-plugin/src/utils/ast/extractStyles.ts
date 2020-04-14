@@ -1121,12 +1121,12 @@ export function extractStyles(
             if (styleObjects == null) {
               continue;
             }
-            delete styleObjects.classNameKey;
-            const styleObjectKeys = Object.keys(styleObjects).sort();
+            const styleObjectKeys = Object.keys(
+              styleObjects.stylesByKey
+            ).sort();
 
-            for (let idx = -1, len = styleObjectKeys.length; ++idx < len; ) {
-              const k = styleObjectKeys[idx];
-              const item = styleObjects[k];
+            for (const k of styleObjectKeys) {
+              const item = styleObjects.stylesByKey[k];
               let itemCSS =
                 (cssModules ? ':global ' : '') +
                 `.${className}` +
@@ -1138,6 +1138,13 @@ export function extractStyles(
                 itemCSS = `@media ${item.mediaQuery} { ${itemCSS} }`;
               }
               css += itemCSS + '\n';
+            }
+
+            if (styleObjects.animations) {
+              for (const animationKey in styleObjects.animations) {
+                const value = styleObjects.animations[animationKey];
+                css += `@keyframes ${animationKey} {${value}}\n`;
+              }
             }
 
             cssMap.set(className, { css, commentTexts: [comment] });

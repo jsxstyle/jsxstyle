@@ -1,4 +1,7 @@
-import { getStyleKeysForProps } from '../../packages/jsxstyle-utils';
+import {
+  getStyleKeysForProps,
+  CSSProperties,
+} from '../../packages/jsxstyle-utils';
 
 describe('getStyleKeysForProps', () => {
   it('returns null when given an empty style object', () => {
@@ -34,17 +37,21 @@ describe('getStyleKeysForProps', () => {
       true
     );
 
-    expect(keyObj).toEqual({
-      '.': {
-        styles: `
-  prop1: string;
-  prop2: 1234px;
-  prop3: 0;
-  prop4: wow;
-`,
-      },
-      classNameKey: 'prop1:string;prop2:1234px;prop3:0;prop4:wow;',
-    });
+    expect(keyObj).toMatchInlineSnapshot(`
+      Object {
+        "classNameKey": "prop1:string;prop2:1234px;prop3:0;prop4:wow;",
+        "stylesByKey": Object {
+          ".": Object {
+            "styles": "
+        prop1: string;
+        prop2: 1234px;
+        prop3: 0;
+        prop4: wow;
+      ",
+          },
+        },
+      }
+    `);
   });
 
   it('splits out pseudoelements and pseudoclasses', () => {
@@ -58,26 +65,29 @@ describe('getStyleKeysForProps', () => {
       false
     );
 
-    expect(keyObj).toEqual({
-      '.::placeholder': {
-        pseudoelement: 'placeholder',
-        styles: 'color:blue;',
-      },
-      '.::selection': {
-        pseudoelement: 'selection',
-        styles: 'background-color:red;',
-      },
-      '.:active': {
-        pseudoclass: 'active',
-        styles: 'color:purple;',
-      },
-      '.:hover': {
-        pseudoclass: 'hover',
-        styles: 'color:orange;',
-      },
-      classNameKey:
-        'activeColor:purple;hoverColor:orange;placeholderColor:blue;selectionBackgroundColor:red;',
-    });
+    expect(keyObj).toMatchInlineSnapshot(`
+      Object {
+        "classNameKey": "activeColor:purple;hoverColor:orange;placeholderColor:blue;selectionBackgroundColor:red;",
+        "stylesByKey": Object {
+          ".::placeholder": Object {
+            "pseudoelement": "placeholder",
+            "styles": "color:blue;",
+          },
+          ".::selection": Object {
+            "pseudoelement": "selection",
+            "styles": "background-color:red;",
+          },
+          ".:active": Object {
+            "pseudoclass": "active",
+            "styles": "color:purple;",
+          },
+          ".:hover": Object {
+            "pseudoclass": "hover",
+            "styles": "color:orange;",
+          },
+        },
+      }
+    `);
   });
 
   it('generates identical classNameKeys for identical styles objects', () => {
@@ -137,25 +147,28 @@ describe('getStyleKeysForProps', () => {
       smMarginH: 6,
     });
 
-    expect(keyObj1).toEqual({
-      '.': {
-        styles: 'margin:1px;margin-left:2px;margin-right:2px;margin-left:3px;',
-      },
-      '.:active': {
-        pseudoclass: 'active',
-        styles: 'margin-top:5px;margin-bottom:5px;',
-      },
-      '.:hover': {
-        pseudoclass: 'hover',
-        styles: 'margin-left:4px;',
-      },
-      '.@1000': {
-        mediaQuery: 'test',
-        styles: 'margin-left:6px;margin-right:6px;',
-      },
-      classNameKey:
-        'activeMarginV:5px;hoverMarginLeft:4px;margin:1px;marginH:2px;marginLeft:3px;@test~marginH:6px;',
-    });
+    expect(keyObj1).toMatchInlineSnapshot(`
+      Object {
+        "classNameKey": "activeMarginV:5px;hoverMarginLeft:4px;margin:1px;marginH:2px;marginLeft:3px;@test~marginH:6px;",
+        "stylesByKey": Object {
+          ".": Object {
+            "styles": "margin:1px;margin-left:2px;margin-right:2px;margin-left:3px;",
+          },
+          ".:active": Object {
+            "pseudoclass": "active",
+            "styles": "margin-top:5px;margin-bottom:5px;",
+          },
+          ".:hover": Object {
+            "pseudoclass": "hover",
+            "styles": "margin-left:4px;",
+          },
+          ".@1000": Object {
+            "mediaQuery": "test",
+            "styles": "margin-left:6px;margin-right:6px;",
+          },
+        },
+      }
+    `);
   });
 
   it.skip('generates identical classNameKeys for style objects with duplicate media queries', () => {
@@ -173,5 +186,56 @@ describe('getStyleKeysForProps', () => {
 
     expect(keyObj1.classNameKey).toEqual('@test mq~prop2:red;prop1:blue;');
     expect(keyObj1.classNameKey).toEqual(keyObj2.classNameKey);
+  });
+
+  it('supports object-type animation syntax', () => {
+    const styleObj = {
+      color: 'red',
+      animation: {
+        from: { opacity: 0 },
+        to: { padding: 123 },
+      },
+    };
+
+    const keyObj1 = getStyleKeysForProps(styleObj, true);
+    const keyObj2 = getStyleKeysForProps(styleObj, false);
+
+    expect(keyObj1).toMatchInlineSnapshot(`
+      Object {
+        "animations": Object {
+          "jsxstyle_14kipeq": "
+      from {
+        opacity: 0;
+      }
+      to {
+        padding: 123px;
+      }
+      ",
+        },
+        "classNameKey": "animation:jsxstyle_14kipeq;color:red;",
+        "stylesByKey": Object {
+          ".": Object {
+            "styles": "
+        animation-name: jsxstyle_14kipeq;
+        color: red;
+      ",
+          },
+        },
+      }
+    `);
+
+    expect(keyObj2).toMatchInlineSnapshot(`
+      Object {
+        "animations": Object {
+          "jsxstyle_q1qr48": "from{opacity:0;}to{padding:123px;}",
+        },
+        "classNameKey": "animation:jsxstyle_q1qr48;color:red;",
+        "stylesByKey": Object {
+          ".": Object {
+            "styles": "animation-name:jsxstyle_q1qr48;color:red;",
+          },
+        },
+      }
+    `);
   });
 });
