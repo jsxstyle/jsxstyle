@@ -16,6 +16,7 @@ export function parse(
       'objectRestSpread',
       'optionalCatchBinding',
       'optionalChaining',
+      ['decorators', { decoratorsBeforeExport: true }],
       ...plugins,
     ],
     sourceType: 'module',

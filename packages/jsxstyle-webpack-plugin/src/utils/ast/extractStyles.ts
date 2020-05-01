@@ -178,15 +178,12 @@ export function extractStyles(
   // Using a map for (officially supported) guaranteed insertion order
   const cssMap = new Map<string, { css: string; commentTexts: string[] }>();
 
-  const parserPlugins = _parserPlugins ? [..._parserPlugins] : [];
-  // modify parserPlugins only if the user hasn't specified any plugins
-  if (!_parserPlugins) {
-    if (/\.tsx?$/.test(sourceFileName)) {
-      parserPlugins.push('typescript');
-    } else {
-      // TODO: is this a bad idea
-      parserPlugins.push('flow');
-    }
+  const parserPlugins = _parserPlugins ? _parserPlugins.slice() : [];
+  if (/\.tsx?$/.test(sourceFileName)) {
+    parserPlugins.push('typescript');
+  } else {
+    // TODO: is this a bad idea
+    parserPlugins.push('flow');
   }
 
   const ast = parse(src, parserPlugins);
