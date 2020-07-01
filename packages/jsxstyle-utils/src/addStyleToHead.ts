@@ -17,7 +17,8 @@ interface NodeModule {
   };
 }
 
-declare var module: NodeModule;
+declare const __webpack_nonce__: string | undefined;
+declare const module: NodeModule;
 
 if (
   typeof module !== 'undefined' &&
@@ -38,6 +39,9 @@ if (
 if (canUseDOM && !styleElement) {
   styleElement = document.createElement('style');
   styleElement.type = 'text/css';
+  if (typeof __webpack_nonce__ !== 'undefined') {
+    styleElement.nonce = __webpack_nonce__;
+  }
   styleElement.appendChild(document.createTextNode('/* jsxstyle */'));
   document.head!.appendChild(styleElement);
 }
