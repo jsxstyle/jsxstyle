@@ -10,10 +10,10 @@ const height = () => 150;
 
 interface LogoProps {
   width: number;
-  height: number;
+  height?: number;
 }
 
-const Logo: React.SFC<LogoProps> = (props) => (
+const Logo: React.FC<LogoProps> = (props) => (
   <InlineBlock
     component="img"
     props={{ src: logo, alt: 'logo' }}

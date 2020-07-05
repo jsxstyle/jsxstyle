@@ -39,7 +39,7 @@
     "terser": "^4.6.11",
     "ts-jest": "^25.2.1",
     "ts-loader": "^6.0.4",
-    "typescript": "~3.8.3",
+    "typescript": "~3.9.6",
     "webpack": "^4.36.1"
   },
   "jest": {
