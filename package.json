@@ -55,7 +55,7 @@
     "tslint": "^6.1.0",
     "tslint-config-prettier": "^1.18.0",
     "tslint-react": "^4.1.0",
-    "typescript": "~3.8.3"
+    "typescript": "~3.9.6"
   },
   "prettier": {
     "singleQuote": true

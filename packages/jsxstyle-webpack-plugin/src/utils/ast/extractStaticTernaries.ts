@@ -9,7 +9,7 @@ import { StylesByClassName } from '../getStylesByClassName';
 
 export interface Ternary {
   name: string;
-  test: t.Expression;
+  test: t.Expression | t.ExpressionStatement;
   consequent: string | null;
   alternate: string | null;
 }

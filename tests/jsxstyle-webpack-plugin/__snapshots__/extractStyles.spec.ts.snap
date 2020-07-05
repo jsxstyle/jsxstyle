@@ -7,7 +7,7 @@ export interface ThingProps {
   thing1: string;
   thing2?: boolean;
 }
-export const Thing: React.SFC<ThingProps> = props => <div className=\\"_x0\\" />;
+export const Thing: React.FC<ThingProps> = props => <div className=\\"_x0\\" />;
 ReactDOM.render(<Thing />, (document.getElementById('root') as HTMLElement));"
 `;
 
@@ -18,7 +18,7 @@ export interface ThingProps {
   thing1: string;
   thing2?: boolean;
 }
-export const Thing: React.SFC<ThingProps> = props => <div className=\\"_x0\\" />;
+export const Thing: React.FC<ThingProps> = props => <div className=\\"_x0\\" />;
 ReactDOM.render(<Thing />, (document.getElementById('root') as HTMLElement));"
 `;
 

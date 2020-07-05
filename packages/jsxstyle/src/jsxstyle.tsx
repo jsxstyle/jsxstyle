@@ -48,22 +48,24 @@ export { CSSProperties };
 export const cache = getStyleCache();
 
 /** Props that will be passed through to whatever component is specified */
-export interface StylableComponentProps {
+export interface StylableComponentProps<T extends ValidComponentPropValue> {
   /** passed as-is through to the underlying component */
   className?: string | null | false;
   /** passed as-is through to the underlying component */
-  style?: React.CSSProperties | null | false;
+  style?: ExtractProps<T>['style'] | null | false;
 }
 
 /** Common props */
-interface SharedProps extends StylableComponentProps, CSSProperties {
+interface SharedProps<T extends ValidComponentPropValue>
+  extends StylableComponentProps<T>,
+    CSSProperties {
   /** An object of media query values keyed by the desired style prop prefix */
   mediaQueries?: Record<string, string>;
 }
 
 /** Props for jsxstyle components that have a `component` prop set */
 interface JsxstylePropsWithComponent<C extends ValidComponentPropValue>
-  extends SharedProps {
+  extends SharedProps<C> {
   /** Component value can be either a React component or a tag name string. Defaults to `div`. */
   component: C;
   /** Object of props that will be passed down to the component specified in the `component` prop */
@@ -71,7 +73,7 @@ interface JsxstylePropsWithComponent<C extends ValidComponentPropValue>
 }
 
 /** Props for jsxstyle components that have no `component` prop set */
-interface JsxstyleDefaultProps extends SharedProps {
+interface JsxstyleDefaultProps extends SharedProps<'div'> {
   /** Component value can be either a React component or a tag name string. Defaults to `div`. */
   component?: undefined;
   /** Object of props that will be passed down to the underlying div */
