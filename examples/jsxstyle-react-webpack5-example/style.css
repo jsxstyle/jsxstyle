@@ -1,0 +1,13 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+body {
+  font-family: -webkit-system, BlinkMacSystemFont, sans-serif;
+  font-size: 16px;
+  line-height: 20px;
+}

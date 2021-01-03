@@ -1,10 +1,10 @@
 {
-  "name": "jsxstyle-react-example",
+  "name": "jsxstyle-react-webpack5-example",
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "build": "rimraf build/*; webpack -p",
-    "start": "webpack-dev-server"
+    "build": "rimraf build/* && webpack --mode=production",
+    "start": "webpack serve --mode=development"
   },
   "devDependencies": {
     "@babel/core": "^7.7.4",
@@ -14,9 +14,9 @@
     "css-loader": "^3.2.0",
     "rimraf": "^3.0.0",
     "style-loader": "^1.0.0",
-    "webpack": "^4.36.1",
-    "webpack-cli": "^3.3.6",
-    "webpack-dev-server": "^3.7.2"
+    "webpack": "^5.11.1",
+    "webpack-cli": "^4.3.1",
+    "webpack-dev-server": "^3.11.1"
   },
   "dependencies": {
     "react": "^16.12.0",

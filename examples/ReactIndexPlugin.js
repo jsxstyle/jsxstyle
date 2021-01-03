@@ -1,30 +1,23 @@
 'use strict';
 
-const path = require('path');
-
 function emitPlugin(compilation, callback) {
-  const statsObj = compilation.getStats().toJson();
-
-  for (const entryName in statsObj.assetsByChunkName) {
-    const bundleFile = path.join(
-      statsObj.publicPath,
-      Array.isArray(statsObj.assetsByChunkName[entryName])
-        ? statsObj.assetsByChunkName[entryName][0]
-        : statsObj.assetsByChunkName[entryName]
-    );
-
-    const indexFileContents = `<!doctype html>
+  const indexFileContents = `<!doctype html>
 <title>jsxstyle demo</title>
 <div id=".jsxstyle-demo"></div>
-<script src="${bundleFile}"></script>
+<script src="/bundle.js"></script>
 `;
 
-    const fileName = (entryName === 'main' ? 'index' : entryName) + '.html';
+  const fileName = 'index.html';
 
-    compilation.assets[fileName] = {
-      source: () => indexFileContents,
-      size: () => indexFileContents.length,
-    };
+  const source = {
+    source: () => indexFileContents,
+    size: () => indexFileContents.length,
+  };
+
+  if (compilation.emitAsset) {
+    compilation.emitAsset(fileName, source);
+  } else {
+    compilation.assets[fileName] = source;
   }
 
   if (callback) {
@@ -35,8 +28,15 @@ function emitPlugin(compilation, callback) {
 class ReactIndexPlugin {
   apply(compiler) {
     if (compiler.hooks) {
-      compiler.hooks.emit.tap('ReactIndexPlugin', emitPlugin);
+      if (compiler.hooks.processAssets) {
+        // webpack 5
+        compiler.hooks.processAssets.tap('ReactIndexPlugin', emitPlugin);
+      } else {
+        // webpack 4
+        compiler.hooks.emit.tap('ReactIndexPlugin', emitPlugin);
+      }
     } else {
+      // webpack 1-3
       compiler.plugin('emit', emitPlugin);
     }
   }
