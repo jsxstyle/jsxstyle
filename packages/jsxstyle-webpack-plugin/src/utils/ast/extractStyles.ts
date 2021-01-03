@@ -1158,7 +1158,7 @@ export function extractStyles(
             ];
           } else {
             // find nearest Statement
-            let statementPath: NodePath<t.JSXElement | t.Node> = traversePath;
+            let statementPath: NodePath<any> = traversePath;
             do {
               statementPath = statementPath.parentPath;
             } while (!t.isStatement(statementPath));

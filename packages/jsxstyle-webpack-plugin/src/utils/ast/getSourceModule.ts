@@ -39,7 +39,12 @@ export function getSourceModule(
       local = itemNode.local.name;
       usesImportSyntax = true;
       if (t.isImportSpecifier(itemNode)) {
-        imported = itemNode.imported.name;
+        if (t.isIdentifier(itemNode.imported)) {
+          imported = itemNode.imported.name;
+        } else {
+          // TODO(meyer) handle StringLiteral case
+          return null;
+        }
         destructured = true;
       } else {
         imported = itemNode.local.name;
@@ -68,6 +73,7 @@ export function getSourceModule(
       for (const objProp of itemNode.id.properties) {
         if (
           t.isObjectProperty(objProp) &&
+          t.isIdentifier(objProp.key) &&
           t.isIdentifier(objProp.value) &&
           objProp.value.name === itemName
         ) {

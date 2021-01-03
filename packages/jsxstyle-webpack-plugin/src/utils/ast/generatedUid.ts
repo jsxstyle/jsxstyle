@@ -1,11 +1,6 @@
 import t = require('@babel/types');
 import invariant = require('invariant');
 
-// TODO: open a PR upstream
-declare module '@babel/types' {
-  export function toIdentifier(input: string): string;
-}
-
 // A clone of path.scope.generateUid that doesn't prepend underscores
 export function generateUid(scope: any, name: string): string {
   invariant(
