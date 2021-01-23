@@ -118,9 +118,7 @@ export function extractStyles(
   ast: t.File;
   map: any; // RawSourceMap from 'source-map'
 } {
-  if (typeof src !== 'string') {
-    throw new Error('`src` must be a string of javascript');
-  }
+  invariant(typeof src === 'string', '`src` must be a string of javascript');
 
   invariant(
     typeof sourceFileName === 'string' && path.isAbsolute(sourceFileName),

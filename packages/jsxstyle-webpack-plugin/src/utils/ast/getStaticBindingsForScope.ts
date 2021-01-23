@@ -1,5 +1,6 @@
 import t = require('@babel/types');
 import path = require('path');
+import invariant = require('invariant');
 
 import { evaluateAstNode } from './evaluateAstNode';
 import { getSourceModule } from './getSourceModule';
@@ -33,9 +34,7 @@ export function getStaticBindingsForScope(
   const ret: Record<string, any> = {};
   const sourceDir = path.dirname(sourceFileName);
 
-  if (!bindingCache) {
-    throw new Error('bindingCache is a required param');
-  }
+  invariant(bindingCache, 'bindingCache is a required param');
 
   for (const k in bindings) {
     const binding = bindings[k];

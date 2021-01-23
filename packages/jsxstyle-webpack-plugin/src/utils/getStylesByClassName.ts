@@ -1,3 +1,4 @@
+import invariant = require('invariant');
 import { CSSProperties } from 'jsxstyle-utils';
 
 import { CacheObject } from '../types';
@@ -27,17 +28,17 @@ export function getStylesByClassName(
   cacheObject: CacheObject,
   classNameFormat?: 'hash'
 ): StylesByClassName {
-  if (typeof staticAttributes !== 'undefined' && staticAttributes == null) {
-    throw new Error(
+  if (typeof staticAttributes !== 'undefined') {
+    invariant(
+      staticAttributes != null,
       'getStylesByClassName expects an object as its second parameter'
     );
   }
 
-  if (cacheObject == null) {
-    throw new Error(
-      'getStylesByClassName expects an object as its third parameter'
-    );
-  }
+  invariant(
+    cacheObject != null,
+    'getStylesByClassName expects an object as its third parameter'
+  );
 
   const stylesByClassName: StylesByClassName = {};
 

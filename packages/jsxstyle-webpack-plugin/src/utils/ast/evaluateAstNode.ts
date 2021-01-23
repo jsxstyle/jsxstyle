@@ -1,4 +1,5 @@
 import t = require('@babel/types');
+import invariant = require('invariant');
 
 export function evaluateAstNode(
   exprNode: t.Node,
@@ -10,17 +11,18 @@ export function evaluateAstNode(
     for (let idx = -1, len = exprNode.properties.length; ++idx < len; ) {
       const value = exprNode.properties[idx];
 
-      if (!t.isObjectProperty(value)) {
-        throw new Error('evaluateAstNode can only evaluate object properties');
-      }
+      invariant(
+        t.isObjectProperty(value),
+        'evaluateAstNode can only evaluate object properties'
+      );
 
       let key: string | number | null | undefined | boolean;
       if (value.computed) {
-        if (typeof evalFn !== 'function') {
-          throw new Error(
-            'evaluateAstNode does not support computed keys unless an eval function is provided'
-          );
-        }
+        invariant(
+          typeof evalFn === 'function',
+          'evaluateAstNode does not support computed keys unless an eval function is provided'
+        );
+
         key = evaluateAstNode(value.key, evalFn);
       } else if (t.isIdentifier(value.key)) {
         key = value.key.name;
@@ -33,9 +35,10 @@ export function evaluateAstNode(
         throw new Error('Unsupported key type: ' + value.key.type);
       }
 
-      if (typeof key !== 'string' && typeof key !== 'number') {
-        throw new Error('key must be either a string or a number');
-      }
+      invariant(
+        typeof key === 'string' || typeof key === 'number',
+        'key must be either a string or a number'
+      );
 
       ret[key] = evaluateAstNode(value.value);
     }
@@ -51,11 +54,10 @@ export function evaluateAstNode(
   }
 
   if (t.isTemplateLiteral(exprNode)) {
-    if (typeof evalFn !== 'function') {
-      throw new Error(
-        'evaluateAstNode does not support template literals unless an eval function is provided'
-      );
-    }
+    invariant(
+      typeof evalFn === 'function',
+      'evaluateAstNode does not support template literals unless an eval function is provided'
+    );
 
     let ret: string = '';
     for (let idx = -1, len = exprNode.quasis.length; ++idx < len; ) {
@@ -69,50 +71,30 @@ export function evaluateAstNode(
     return ret;
   }
 
-  // In the interest of representing the "evaluated" prop
-  // as the user intended, we support negative null. Why not.
   if (t.isNullLiteral(exprNode)) {
     return null;
   }
 
   if (t.isNumericLiteral(exprNode) || t.isStringLiteral(exprNode)) {
-    // In the interest of representing the "evaluated" prop
-    // as the user intended, we support negative null. Why not.
     return exprNode.value;
   }
 
   if (t.isBinaryExpression(exprNode)) {
-    if (exprNode.operator === '+') {
-      return (
-        evaluateAstNode(exprNode.left, evalFn) +
-        evaluateAstNode(exprNode.right, evalFn)
-      );
-    } else if (exprNode.operator === '-') {
-      return (
-        evaluateAstNode(exprNode.left, evalFn) -
-        evaluateAstNode(exprNode.right, evalFn)
-      );
-    } else if (exprNode.operator === '*') {
-      return (
-        evaluateAstNode(exprNode.left, evalFn) *
-        evaluateAstNode(exprNode.right, evalFn)
-      );
-    } else if (exprNode.operator === '/') {
-      return (
-        evaluateAstNode(exprNode.left, evalFn) /
-        evaluateAstNode(exprNode.right, evalFn)
-      );
-    }
+    const left = evaluateAstNode(exprNode.left, evalFn);
+    const right = evaluateAstNode(exprNode.right, evalFn);
+    if (exprNode.operator === '+') return left + right;
+    if (exprNode.operator === '-') return left - right;
+    if (exprNode.operator === '*') return left * right;
+    if (exprNode.operator === '/') return left / right;
   }
 
   // TODO: member expression?
 
   // if we've made it this far, the value has to be evaluated
-  if (typeof evalFn !== 'function') {
-    throw new Error(
-      'evaluateAstNode does not support non-literal values unless an eval function is provided'
-    );
-  }
+  invariant(
+    typeof evalFn === 'function',
+    'evaluateAstNode does not support non-literal values unless an eval function is provided'
+  );
 
   return evalFn(exprNode);
 }

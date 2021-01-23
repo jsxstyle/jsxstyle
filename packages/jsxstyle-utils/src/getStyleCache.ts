@@ -7,6 +7,8 @@ type InsertRuleCallback = (
   props?: Record<string, any>
 ) => boolean | void;
 
+type GetClassNameFn = (key: string, props?: Record<string, any>) => string;
+
 function cannotInject() {
   throw new Error(
     'jsxstyle error: `injectOptions` must be called before any jsxstyle components mount.'
@@ -19,13 +21,13 @@ function alreadyInjected() {
   );
 }
 
-function getStringHash(key: string, props?: any): string {
+const getStringHash: GetClassNameFn = (key) => {
   return '_' + stringHash(key).toString(36);
-}
+};
 
 export function getStyleCache() {
   let _classNameCache: Record<string, string> = {};
-  let getClassNameForKey = getStringHash;
+  let getClassNameForKey: GetClassNameFn = getStringHash;
   let onInsertRule: InsertRuleCallback;
   let pretty = false;
 
@@ -37,7 +39,7 @@ export function getStyleCache() {
     injectOptions(options?: {
       onInsertRule?: InsertRuleCallback;
       pretty?: boolean;
-      getClassName?: (key: string, props?: {}) => string;
+      getClassName?: GetClassNameFn;
     }) {
       if (options) {
         if (options.getClassName) {

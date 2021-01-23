@@ -30,7 +30,7 @@ export function extractStaticTernaries(
   );
   invariant(
     cacheObject != null,
-    'extractStaticTernaries expects param 3 to be an object'
+    'extractStaticTernaries expects param 2 to be an object'
   );
 
   if (ternaries.length === 0) {
