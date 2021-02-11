@@ -9,8 +9,8 @@
  */
 
 //  A hearty blend of the following two files:
-// https://github.com/facebook/react/blob/master/src/renderers/dom/shared/CSSProperty.js
-// https://github.com/facebook/react/blob/master/src/renderers/dom/shared/dangerousStyleValue.js
+// https://github.com/facebook/react/blob/master/packages/react-dom/src/shared/CSSProperty.js
+// https://github.com/facebook/react/blob/master/packages/react-dom/src/shared/dangerousStyleValue.js
 
 const isUnitlessNumber: Record<string, true> = {
   animationIterationCount: true,
@@ -29,6 +29,7 @@ const isUnitlessNumber: Record<string, true> = {
   flexPositive: true,
   flexShrink: true,
   fontWeight: true,
+  gridArea: true,
   gridColumn: true,
   gridColumnEnd: true,
   gridColumnSpan: true,

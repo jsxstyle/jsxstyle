@@ -9,6 +9,7 @@
   "module": "lib/jsxstyle.es.js",
   "jsnext:main": "lib/jsxstyle.es.js",
   "types": "lib/jsxstyle.d.ts",
+  "sideEffects": false,
   "dependencies": {
     "jsxstyle-utils": "^2.4.0"
   },

@@ -8,6 +8,7 @@
   "module": "lib/jsxstyle-utils.es.js",
   "jsnext:main": "lib/jsxstyle-utils.es.js",
   "types": "lib/jsxstyle-utils.d.ts",
+  "sideEffects": false,
   "keywords": [
     "jsxstyle"
   ],

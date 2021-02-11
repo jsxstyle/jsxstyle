@@ -15,7 +15,7 @@ This repository is the monorepo for runtime versions jsxstyle as well as a few t
 
 ---
 
-# jsxstyle
+# jsxstyle [<img src="https://badgen.net/bundlephobia/minzip/jsxstyle">](https://npmjs.com/package/jsxstyle)
 
 jsxstyle is an inline style system for React and Preact. It provides a best-in-class developer experience without sacrificing performance.
 
