@@ -1,4 +1,6 @@
-import typescript from 'rollup-plugin-typescript2';
+import rollupPluginTypescript from 'rollup-plugin-typescript2';
+import rollupPluginBabel from '@rollup/plugin-babel';
+import { DEFAULT_EXTENSIONS } from '@babel/core';
 
 export default [
   ['jsxstyle-utils', 'ts'],
@@ -18,9 +20,21 @@ export default [
       { format: 'es', file: `packages/${pkg}/lib/${filename}.es.js` },
     ],
     plugins: [
-      typescript({
+      rollupPluginTypescript({
         tsconfig: `packages/${pkg}/src/tsconfig.json`,
         useTsconfigDeclarationDir: true,
+        tsconfigOverride: {
+          compilerOptions: {
+            // transpile as little as possible
+            target: 'ESNext',
+          },
+        },
+      }),
+      rollupPluginBabel({
+        cwd: `packages/${pkg}`,
+        babelHelpers: 'bundled',
+        extensions: [...DEFAULT_EXTENSIONS, '.ts', '.tsx'],
+        presets: [['@babel/preset-env', { loose: true }]],
       }),
     ],
     external: [

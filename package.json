@@ -30,12 +30,17 @@
       "jsxstyle-preact-cli-typescript-example"
     ]
   },
+  "prettier": {
+    "singleQuote": true
+  },
+  "browserslist": ["ie 11", "Firefox ESR", "> 0.5%"],
   "dependencies": {
     "@babel/core": "^7.7.4",
     "@babel/plugin-proposal-object-rest-spread": "^7.7.4",
     "@babel/plugin-transform-object-assign": "^7.7.4",
     "@babel/preset-env": "^7.7.4",
     "@babel/preset-react": "^7.7.4",
+    "@rollup/plugin-babel": "^5.2.3",
     "@types/invariant": "*",
     "@types/lodash": "*",
     "@types/node": "*",
@@ -56,8 +61,5 @@
     "tslint-config-prettier": "^1.18.0",
     "tslint-react": "^4.1.0",
     "typescript": "~3.9.6"
-  },
-  "prettier": {
-    "singleQuote": true
   }
 }
