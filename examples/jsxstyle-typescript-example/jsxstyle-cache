@@ -1,3 +1,4 @@
 display:block;textAlign:center;
 backgroundColor:#222;color:white;display:block;padding:20px;
 display:block;fontSize:large;
+animation:jsxstyle_qyaey5;animationDuration:20s;animationIterationCount:infinite;animationTimingFunction:linear;display:inline-block;

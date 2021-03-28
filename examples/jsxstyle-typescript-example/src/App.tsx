@@ -1,10 +1,8 @@
 import { Block, InlineBlock } from 'jsxstyle';
 import * as React from 'react';
-
-import './App.css';
+import logo from './logo.svg';
 
 // tslint:disable-next-line no-var-requires
-const logo = require('./logo.svg');
 const width = '100%';
 const height = () => 150;
 
@@ -13,13 +11,23 @@ interface LogoProps {
   height?: number;
 }
 
-const Logo: React.FC<LogoProps> = (props) => (
+const Logo: React.FC<LogoProps> = ({ width, height }) => (
   <InlineBlock
     component="img"
     props={{ src: logo, alt: 'logo' }}
-    animation="App-logo-spin infinite 20s linear"
-    height={80}
-    {...props}
+    animation={{
+      from: {
+        transform: 'rotate(0deg)',
+      },
+      to: {
+        transform: 'rotate(360deg)',
+      },
+    }}
+    animationDuration="20s"
+    animationIterationCount="infinite"
+    animationTimingFunction="linear"
+    height={height || 80}
+    width={width}
   />
 );
 
