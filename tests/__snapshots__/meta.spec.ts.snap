@@ -19,9 +19,9 @@ jsxstyle
 - README.md
 - lib/componentFactory.d.ts
 - lib/componentFactory.d.ts.map
+- lib/index.d.ts
+- lib/index.d.ts.map
 - lib/jsxstyle.cjs.js
-- lib/jsxstyle.d.ts
-- lib/jsxstyle.d.ts.map
 - lib/jsxstyle.es.js
 - lib/jsxstyle.js
 - lib/styleCache.d.ts
@@ -30,12 +30,11 @@ jsxstyle
 - lib/types.d.ts.map
 - lib/useMatchMedia.d.ts
 - lib/useMatchMedia.d.ts.map
+- preact/lib/index.d.ts
+- preact/lib/index.d.ts.map
 - preact/lib/jsxstyle-preact.cjs.js
-- preact/lib/jsxstyle-preact.d.ts
-- preact/lib/jsxstyle-preact.d.ts.map
 - preact/lib/jsxstyle-preact.es.js
 - preact/lib/jsxstyle-preact.js
-- preact/package.json
 ",
   "
 jsxstyle-utils
@@ -55,9 +54,9 @@ jsxstyle-utils
 - lib/getStyleKeysForProps.d.ts.map
 - lib/hyphenateStyleName.d.ts
 - lib/hyphenateStyleName.d.ts.map
+- lib/index.d.ts
+- lib/index.d.ts.map
 - lib/jsxstyle-utils.cjs.js
-- lib/jsxstyle-utils.d.ts
-- lib/jsxstyle-utils.d.ts.map
 - lib/jsxstyle-utils.es.js
 - lib/jsxstyle-utils.js
 - lib/stringHash.d.ts

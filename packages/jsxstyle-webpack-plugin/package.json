@@ -6,6 +6,7 @@
   "license": "Apache-2.0",
   "main": "lib/plugin.js",
   "types": "lib/plugin.d.ts",
+  "files": ["lib"],
   "engines": {
     "node": ">=6.0.0"
   },

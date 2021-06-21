@@ -1,21 +1,18 @@
 {
   "extends": "../../misc/tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "lib",
+    "declarationDir": "lib",
     "lib": [
       "es6",
       "dom"
     ],
-    "module": "commonjs",
-    "target": "es6",
+    "module": "esnext",
+    "target": "es5",
     "types": [
       "node"
     ]
   },
   "include": [
     "src"
-  ],
-  "exclude": [
-    "**/node_modules/**/*"
   ]
 }

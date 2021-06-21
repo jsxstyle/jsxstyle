@@ -8,7 +8,8 @@
   "main": "lib/jsxstyle.cjs.js",
   "module": "lib/jsxstyle.es.js",
   "jsnext:main": "lib/jsxstyle.es.js",
-  "types": "lib/jsxstyle.d.ts",
+  "types": "lib/index.d.ts",
+  "files": ["lib", "preact/lib"],
   "sideEffects": false,
   "dependencies": {
     "jsxstyle-utils": "^2.4.0"

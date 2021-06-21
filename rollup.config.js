@@ -4,12 +4,12 @@ import { DEFAULT_EXTENSIONS } from '@babel/core';
 
 export default [
   ['jsxstyle-utils', 'ts'],
-  ['jsxstyle', 'tsx'],
+  ['jsxstyle', 'ts'],
   ['jsxstyle/preact', 'tsx'],
 ].map(([pkg, ext]) => {
   const filename = pkg.replace(/[^a-z-]/g, '-');
   return {
-    input: `packages/${pkg}/src/${filename}.${ext}`,
+    input: `packages/${pkg}/src/index.${ext}`,
     output: [
       {
         format: 'amd',
@@ -21,7 +21,7 @@ export default [
     ],
     plugins: [
       rollupPluginTypescript({
-        tsconfig: `packages/${pkg}/src/tsconfig.json`,
+        tsconfig: `packages/${pkg}/tsconfig.json`,
         useTsconfigDeclarationDir: true,
         tsconfigOverride: {
           compilerOptions: {

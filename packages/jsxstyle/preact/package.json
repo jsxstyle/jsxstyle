@@ -3,5 +3,5 @@
   "main": "lib/jsxstyle-preact.cjs.js",
   "module": "lib/jsxstyle-preact.es.js",
   "jsnext:main": "lib/jsxstyle-preact.es.js",
-  "types": "lib/jsxstyle-preact.d.ts"
+  "types": "lib/index.d.ts"
 }

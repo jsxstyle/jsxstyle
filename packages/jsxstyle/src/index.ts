@@ -13,7 +13,7 @@ export { StylableComponentProps } from './types';
 export { styleCache as cache };
 export { useMatchMedia } from './useMatchMedia';
 
-let depFactory = componentFactory;
+let depFactory: any = componentFactory;
 
 if (process.env.NODE_ENV !== 'production') {
   depFactory = function (displayName: DeprecatedJsxstyleComponentName) {

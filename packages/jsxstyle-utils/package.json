@@ -7,7 +7,8 @@
   "main": "lib/jsxstyle-utils.cjs.js",
   "module": "lib/jsxstyle-utils.es.js",
   "jsnext:main": "lib/jsxstyle-utils.es.js",
-  "types": "lib/jsxstyle-utils.d.ts",
+  "types": "lib/index.d.ts",
+  "files": ["lib"],
   "sideEffects": false,
   "keywords": [
     "jsxstyle"

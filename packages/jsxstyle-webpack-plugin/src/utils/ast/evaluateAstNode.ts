@@ -8,9 +8,7 @@ export function evaluateAstNode(
   // loop through ObjectExpression keys
   if (t.isObjectExpression(exprNode)) {
     const ret: Record<string, any> = {};
-    for (let idx = -1, len = exprNode.properties.length; ++idx < len; ) {
-      const value = exprNode.properties[idx];
-
+    for (const value of exprNode.properties) {
       invariant(
         t.isObjectProperty(value),
         'evaluateAstNode can only evaluate object properties'
