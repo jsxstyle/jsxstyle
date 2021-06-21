@@ -1,4 +1,5 @@
 import t = require('@babel/types');
+import type { Binding } from '@babel/traverse';
 
 export interface SourceModule {
   sourceModule?: string;
@@ -10,10 +11,7 @@ export interface SourceModule {
 
 export function getSourceModule(
   itemName: string,
-  itemBinding: {
-    constant?: boolean;
-    path: { node: t.Node; parent: any };
-  }
+  itemBinding: Binding
 ): SourceModule | null {
   // TODO: deal with reassignment
   if (!itemBinding.constant) {

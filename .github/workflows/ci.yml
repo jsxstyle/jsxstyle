@@ -26,7 +26,7 @@ jobs:
       - name: Run jest
         run: yarn run test
       - name: Run karma
-        run: yarn --cwd "tests" run karma-headless-chrome
+        run: yarn run karma-headless-chrome
         env:
           CI: true
           TZ: 'America/Los_Angeles'

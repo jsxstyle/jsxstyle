@@ -1,5 +1,5 @@
 {
-  "extends": "../../misc/tsconfig.base.json",
+  "extends": "../../config/tsconfig.base.json",
   "compilerOptions": {
     "outDir": "lib",
     "lib": [
@@ -16,6 +16,7 @@
     "src"
   ],
   "exclude": [
-    "**/node_modules/**/*"
+    "lib",
+    "**/__tests__"
   ]
 }

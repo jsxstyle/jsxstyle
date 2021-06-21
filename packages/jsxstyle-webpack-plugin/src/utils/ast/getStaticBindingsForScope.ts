@@ -1,36 +1,18 @@
 import t = require('@babel/types');
 import path = require('path');
 import invariant = require('invariant');
+import type { Scope, Binding } from '@babel/traverse';
 
 import { evaluateAstNode } from './evaluateAstNode';
 import { getSourceModule } from './getSourceModule';
 
-interface Binding {
-  identifier: any;
-  scope: any;
-  path: any;
-  // this list is incomplete
-  kind: 'module' | 'let' | 'const' | 'var' | 'param' | 'hoisted' | 'local';
-
-  constantViolations: any[];
-  constant: boolean;
-
-  referencePaths: any[]; // NodePath[]
-  referenced: boolean;
-  references: number;
-
-  hasDeoptedValue: boolean;
-  hasValue: boolean;
-  value: any;
-}
-
 export function getStaticBindingsForScope(
-  scope: any,
+  scope: Scope,
   whitelist: string[] = [],
   sourceFileName: string,
   bindingCache: Record<string, string | null>
 ): Record<string, any> {
-  const bindings: Record<string, Binding> = scope.getAllBindings();
+  const bindings: Record<string, Binding> = scope.getAllBindings() as any;
   const ret: Record<string, any> = {};
   const sourceDir = path.dirname(sourceFileName);
 
