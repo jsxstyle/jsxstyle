@@ -17,11 +17,17 @@ jsxstyle
 - package.json
 - LICENSE
 - README.md
+- lib/componentFactory.d.ts
+- lib/componentFactory.d.ts.map
 - lib/jsxstyle.cjs.js
 - lib/jsxstyle.d.ts
 - lib/jsxstyle.d.ts.map
 - lib/jsxstyle.es.js
 - lib/jsxstyle.js
+- lib/styleCache.d.ts
+- lib/styleCache.d.ts.map
+- lib/types.d.ts
+- lib/types.d.ts.map
 - lib/useMatchMedia.d.ts
 - lib/useMatchMedia.d.ts.map
 - preact/lib/jsxstyle-preact.cjs.js

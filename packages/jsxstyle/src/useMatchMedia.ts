@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo, useState, useEffect } from 'react';
 
 /**
  * Hook that returns the `true` if the provided media query matches.
@@ -11,10 +11,10 @@ export const useMatchMedia = (mediaQuery: string): boolean => {
   }
 
   const deps = [mediaQuery];
-  const mqList = React.useMemo(() => window.matchMedia(mediaQuery), deps);
-  const [matches, setMatches] = React.useState(mqList.matches);
+  const mqList = useMemo(() => window.matchMedia(mediaQuery), deps);
+  const [matches, setMatches] = useState(mqList.matches);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const changeEventListener = (e: MediaQueryListEvent): void => {
       setMatches(e.matches);
     };
