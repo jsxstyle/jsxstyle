@@ -5,7 +5,8 @@
     "module": "commonjs",
     "target": "es2015",
     "types": [
-      "jest"
+      "jest",
+      "node"
     ]
   },
   "include": [

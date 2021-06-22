@@ -14,5 +14,8 @@
     "sourceMap": true,
     "strictNullChecks": true,
     "suppressImplicitAnyIndexErrors": true,
-  }
+  },
+  "exclude": [
+    "node_modules"
+  ]
 }
