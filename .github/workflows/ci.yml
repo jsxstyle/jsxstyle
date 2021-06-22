@@ -26,7 +26,9 @@ jobs:
       - name: Run jest
         run: yarn run test
       - name: Run karma
-        run: yarn run karma-headless-chrome
+        run: yarn run karma
         env:
           CI: true
           TZ: 'America/Los_Angeles'
+          SAUCE_USERNAME: jsxstyle
+          SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}

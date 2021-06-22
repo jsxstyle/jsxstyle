@@ -1,6 +1,7 @@
 *.log
 /.rpt2_cache
 /.vscode
-/tests/saucelabs-data.json
 node_modules
 size-plugin.json
+.env
+misc/saucelabs-data.json

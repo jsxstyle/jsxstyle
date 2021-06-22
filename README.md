@@ -15,7 +15,7 @@ This repository is the monorepo for runtime versions jsxstyle as well as a few t
 
 ---
 
-# jsxstyle [<img src="https://badgen.net/bundlephobia/minzip/jsxstyle">](https://npmjs.com/package/jsxstyle)
+# jsxstyle [<img src="https://badgen.net/bundlephobia/minzip/jsxstyle">](https://npmjs.com/package/jsxstyle) [![Sauce Test Status](https://app.saucelabs.com/buildstatus/jsxstyle)](https://app.saucelabs.com/u/jsxstyle)
 
 jsxstyle is an inline style system for React and Preact. It provides a best-in-class developer experience without sacrificing performance.
 
@@ -304,7 +304,7 @@ jsxstyle only manages styles written on jsxstyle components. Where you put globa
 
 jsxstyle is tested [on every push][github-actions] in [a wide array of browsers, both old and new][sauce]. Shout out to **Sauce Labs** for making cross browser testing _free_ for open source projects. Sauce Labs is _shockingly easy_ to integrate with other services. I’m not gonna say it’s simple to get set up, because it’s not, but once it’s up and running, damn, it’s easy. They even make an SVG test matrix you can drop into your README:
 
-[![Sauce Test Status](https://saucelabs.com/browser-matrix/jsxstyle.svg)](https://saucelabs.com/u/jsxstyle)
+[![Sauce Test Status](https://app.saucelabs.com/browser-matrix/jsxstyle.svg)](https://saucelabs.com/u/jsxstyle)
 
 # Contributing
 
