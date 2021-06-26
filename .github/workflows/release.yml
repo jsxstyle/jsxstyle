@@ -17,27 +17,51 @@ jobs:
       - name: Checkout jsxstyle
         uses: actions/checkout@v2
         with:
-          # fetch everything so that lerna can properly calculate what needs to be published
+          # fetch everything so that we can properly calculate what needs to be published
           fetch-depth: 0
+
       - name: Use Node 12
         uses: actions/setup-node@v2
         with:
           node-version: 12.x
+
       - name: Install dependencies
         run: yarn install --frozen-lockfile
+
       - name: Run jest
         run: yarn run test
+
       - name: Run karma
-        run: yarn --cwd "tests" run karma-headless-chrome
+        run: yarn run karma
         env:
           CI: true
           TZ: 'America/Los_Angeles'
+          SAUCE_USERNAME: jsxstyle
+          SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
+
       - name: Configure NPM
         run: |
           npm set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }}
           npm set username ${{ secrets.NPM_USERNAME }}
           npm set email ${{ secrets.NPM_EMAIL }}
-      - name: Publish
-        run: npx lerna publish --canary --preid canary --dist-tag next --yes --no-git-reset --force-publish "*"
+
+      - name: Create release PR or publish to npm
+        id: changesets
+        uses: changesets/action@master
+        with:
+          commit: Bump versions
+          title: Bump versions
+          publish: yarn release
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publishing canary release
+        if: steps.changesets.outputs.published != 'true'
+        run: |
+          git checkout master
+          yarn version:canary
+          yarn release:canary
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
