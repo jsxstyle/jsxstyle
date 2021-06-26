@@ -1,22 +1,22 @@
-import { getPackages } from '@lerna/project';
-import { spawn } from 'child_process';
-import * as inquirer from 'inquirer';
-import * as path from 'path';
+// @ts-check
+
+const { getPackages } = require('@lerna/project');
+const { spawn } = require('child_process');
+const inquirer = require('inquirer');
+const path = require('path');
 
 // NOTE: this interface is incomplete
 // See: @lerna/package
-interface Package {
-  name: string;
-  location: string;
-  private: boolean;
-  toJSON: () => string;
-}
+/**
+ * @typedef {{ name: string; location: string; private: boolean; toJSON: () => string; }} Package
+ */
 
 const JSXSTYLE_ROOT = path.resolve(__dirname, '..');
 
 // TODO: use @lerna/run
-const npmCommand = (example: string, ...args: string[]) =>
-  new Promise<void>((resolve, reject) => {
+/** @type {(example: string, ...args: any[]) => Promise<void>} */
+const npmCommand = (example, ...args) =>
+  new Promise((resolve, reject) => {
     const childProcess = spawn('npm', args, {
       cwd: path.resolve(__dirname, example),
       stdio: 'inherit',
@@ -40,12 +40,14 @@ const npmCommand = (example: string, ...args: string[]) =>
   });
 
 (async (searchString) => {
-  const packages: Package[] = await getPackages(JSXSTYLE_ROOT);
+  const packages = await getPackages(JSXSTYLE_ROOT);
   const examplePkgs = packages.filter((f) => f.name.endsWith('-example'));
   const choices = examplePkgs.map((pkg) => ({
     name: pkg.name,
     value: pkg.name,
   }));
+
+  console.log({});
 
   if (!searchString) {
     const { example } = await inquirer.prompt([
@@ -66,6 +68,4 @@ const npmCommand = (example: string, ...args: string[]) =>
     }
     return npmCommand(examplePkg.name, 'start');
   }
-})
-  .apply(null, process.argv.slice(2))
-  .catch(console.error);
+})(process.argv.slice(2).join(' ')).catch(console.error);

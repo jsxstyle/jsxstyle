@@ -7,7 +7,7 @@
   "scripts": {
     "build": "yarn reset && rollup -c && yarn tsc && prettier --write \"packages/{*,*/*}/lib/**/*.{js,ts}\"",
     "clean": "find . -name 'node_modules' -type d -prune -exec echo {} \\; -exec rm -rf {} \\;",
-    "example": "ts-node examples/run.ts",
+    "example": "node examples/run.js",
     "test": "yarn build && yarn jest",
     "prettier": "prettier --write \"**/*.{js,ts,tsx,css,md}\"",
     "release": "yarn test && lerna publish",
@@ -25,8 +25,7 @@
   "workspaces": {
     "packages": [
       "packages/*",
-      "examples/*",
-      "tests"
+      "examples/*"
     ],
     "nohoist": [
       "jsxstyle-preact-cli-example",
