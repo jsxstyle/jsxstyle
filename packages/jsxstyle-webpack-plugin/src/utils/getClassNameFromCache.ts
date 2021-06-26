@@ -4,7 +4,7 @@ import {
   stringHash,
 } from 'jsxstyle-utils';
 
-import { CacheObject } from '../types';
+import type { CacheObject } from '../types';
 
 export function getClassNameFromCache(
   styleObject: CSSProperties,

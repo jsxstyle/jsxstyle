@@ -1,4 +1,4 @@
-type CSSProperties = import('./types').CSSProperties;
+import type { CSSProperties } from './types';
 
 export type JsxstyleComponentName =
   | 'Block'

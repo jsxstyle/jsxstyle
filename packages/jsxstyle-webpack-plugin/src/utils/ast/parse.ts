@@ -1,9 +1,10 @@
 import babelParser = require('@babel/parser');
+import type { File } from '@babel/types';
 
 export function parse(
   code: string | Buffer,
   plugins: babelParser.ParserPlugin[] = []
-): import('@babel/types').File {
+): File {
   return babelParser.parse(code.toString(), {
     plugins: [
       'asyncGenerators',

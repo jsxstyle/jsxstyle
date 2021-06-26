@@ -1,4 +1,5 @@
 import generate from '@babel/generator';
+import type { ParserPlugin } from '@babel/parser';
 import traverse, { NodePath, TraverseOptions } from '@babel/traverse';
 import t = require('@babel/types');
 import Ajv = require('ajv');
@@ -16,8 +17,6 @@ import { generateUid } from './generatedUid';
 import { getPropValueFromAttributes } from './getPropValueFromAttributes';
 import { getStaticBindingsForScope } from './getStaticBindingsForScope';
 import { parse } from './parse';
-
-type ParserPlugin = import('@babel/parser').ParserPlugin;
 
 import loaderSchema = require('../../loaderSchema.json');
 

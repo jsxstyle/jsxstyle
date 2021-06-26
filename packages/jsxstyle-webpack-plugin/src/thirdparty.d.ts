@@ -4,8 +4,3 @@ declare module 'webpack/lib/node/NodeWatchFileSystem' {
   }
   export = NodeWatchFileSystem;
 }
-
-declare module 'webpack/lib/MemoryOutputFileSystem' {
-  import MemoryFS = require('memory-fs');
-  export = MemoryFS;
-}

@@ -6,7 +6,9 @@
   "license": "Apache-2.0",
   "main": "lib/plugin.js",
   "types": "lib/plugin.d.ts",
-  "files": ["lib"],
+  "files": [
+    "lib"
+  ],
   "engines": {
     "node": ">=6.0.0"
   },
@@ -20,7 +22,8 @@
     "invariant": "^2.2.1",
     "jsxstyle": "^2.4.0",
     "jsxstyle-utils": "^2.4.0",
-    "loader-utils": "^1.2.3"
+    "loader-utils": "^1.2.3",
+    "memfs": "^3.2.2"
   },
   "devDependencies": {
     "@types/babel__generator": "*",

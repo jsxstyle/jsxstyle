@@ -1,5 +1,5 @@
-type MemoryOutputFileSystem = import('webpack/lib/MemoryOutputFileSystem');
-type InputFileSystem = import('webpack').InputFileSystem;
+import type { InputFileSystem } from 'webpack';
+import type { MemoryFS } from '../types';
 
 const handledMethods = {
   // exists: true,
@@ -26,7 +26,7 @@ const handledMethods = {
 
 export function wrapFileSystem(
   fs: InputFileSystem,
-  memoryFS: MemoryOutputFileSystem
+  memoryFS: MemoryFS
 ): InputFileSystem {
   return new Proxy(fs, {
     get: (target, key) => {

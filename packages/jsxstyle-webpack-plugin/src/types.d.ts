@@ -1,4 +1,5 @@
 import { ExtractStylesOptions } from './utils/ast/extractStyles';
+import type { Volume } from 'memfs';
 
 export interface CacheObject {
   [key: string]: any;
@@ -11,6 +12,8 @@ export interface LoaderOptions extends ExtractStylesOptions {
 export interface PluginContext {
   cacheFile: string | null;
   cacheObject: CacheObject;
-  memoryFS: import('webpack/lib/MemoryOutputFileSystem');
+  memoryFS: MemoryFS;
   fileList: Set<string>;
 }
+
+export type MemoryFS = InstanceType<typeof Volume>;
