@@ -2,35 +2,8 @@ import fs = require('fs');
 import packlist = require('npm-packlist');
 import path = require('path');
 import glob = require('glob');
-import * as child_process from 'child_process';
-
-// untyped
-const { getPackages } = require('@lerna/project');
-
-const execAsync = async (
-  command: string,
-  options: child_process.ExecOptions
-) => {
-  return new Promise<true>((resolve, reject) => {
-    console.info('Running `%s` in `%s`', command, options.cwd);
-    child_process.exec(command, options, (err, _stdout, _stderr) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(true);
-      }
-    });
-  });
-};
-
-// NOTE: this interface is incomplete
-// See: @lerna/package
-interface Package {
-  name: string;
-  location: string;
-  private: boolean;
-  toJSON: () => string;
-}
+import { execSync } from 'child_process';
+import { getPackages } from '@manypkg/get-packages';
 
 const JSXSTYLE_ROOT = path.resolve(__dirname, '..');
 
@@ -53,17 +26,17 @@ const legacySort = (a: string, b: string) =>
 
 describe('npm publish', () => {
   it('only publishes the intended files', async () => {
-    const packages: Package[] = await getPackages(JSXSTYLE_ROOT);
-    const packagePromises = packages
+    const packages = await getPackages(JSXSTYLE_ROOT);
+    const packagePromises = packages.packages
       // exclude private packages
-      .filter((pkg) => !pkg.private)
-      .sort((a, b) => a.name.localeCompare(b.name))
+      .filter((pkg) => !pkg.packageJson.private)
+      .sort((a, b) => a.packageJson.name.localeCompare(b.packageJson.name))
       .map((pkg) =>
         // fetch file list and format it into something
-        packlist({ path: pkg.location }).then(
+        packlist({ path: pkg.dir }).then(
           (fileList) => `
-${pkg.name}
-${pkg.name.replace(/./g, '=')}
+${pkg.packageJson.name}
+${pkg.packageJson.name.replace(/./g, '=')}
 ${fileList
   .sort(legacySort)
   .map((f) => `- ${f}`)
@@ -86,20 +59,26 @@ describe('yarn.lock', () => {
   });
 });
 
+const skippedExamples = ['preact-cli', 'preact-cli-typescript'].map(
+  (name) => `jsxstyle-${name}-example`
+);
+
 describe('examples', () => {
   const exampleDir = path.resolve(__dirname, '..', 'examples');
   const examples = glob.sync('jsxstyle-*-example', { cwd: exampleDir });
 
   for (const example of examples) {
     // TODO(meyer) re-enable when this error is fixed: https://github.com/preactjs/preact-cli/issues/1043
-    const itFn = example.includes('-preact-cli-') ? it.skip : it;
+    const itFn = skippedExamples.includes(example) ? it.skip : it;
 
     itFn(
       `\`${example}\` builds correctly`,
       async () => {
         const cwd = path.join(exampleDir, example);
         expect.assertions(1);
-        return expect(execAsync('yarn build', { cwd })).resolves.toEqual(true);
+        return expect(() =>
+          execSync('yarn build', { cwd }).toString('utf-8')
+        ).not.toThrow();
       },
       30000
     );

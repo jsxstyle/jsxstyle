@@ -22,16 +22,10 @@
     "karma-headless-chrome": "karma start",
     "update-sauce-data": "curl https://saucelabs.com/rest/v1/info/platforms/all > misc/saucelabs-data.json"
   },
-  "workspaces": {
-    "packages": [
-      "packages/*",
-      "examples/*"
-    ],
-    "nohoist": [
-      "jsxstyle-preact-cli-example",
-      "jsxstyle-preact-cli-typescript-example"
-    ]
-  },
+  "workspaces": [
+    "packages/*",
+    "examples/*"
+  ],
   "prettier": {
     "singleQuote": true
   },
@@ -49,6 +43,7 @@
     "@babel/preset-react": "^7.7.4",
     "@babel/traverse": "^7.7.4",
     "@babel/types": "^7.7.4",
+    "@manypkg/get-packages": "^1.1.1",
     "@rollup/plugin-babel": "^5.2.3",
     "@types/invariant": "*",
     "@types/jest": "*",
