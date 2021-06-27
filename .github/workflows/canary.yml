@@ -15,14 +15,14 @@ jobs:
 
     steps:
       - name: Checkout jsxstyle
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
         with:
           # fetch everything so that lerna can properly calculate what needs to be published
           fetch-depth: 0
-      - name: Use Node 10
-        uses: actions/setup-node@v1
+      - name: Use Node 12
+        uses: actions/setup-node@v2
         with:
-          node-version: 10.x
+          node-version: 12.x
       - name: Install dependencies
         run: yarn install --frozen-lockfile
       - name: Run jest
