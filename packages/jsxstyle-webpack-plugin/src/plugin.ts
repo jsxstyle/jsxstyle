@@ -11,7 +11,7 @@ import Compilation = webpack.compilation.Compilation;
 
 const counterKey = Symbol.for('counter');
 
-class JsxstyleWebpackPlugin implements webpack.Plugin {
+class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
   constructor() {
     this.memoryFS = new Volume();
 
