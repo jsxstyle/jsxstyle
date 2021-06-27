@@ -1,4 +1,4 @@
-name: Canary
+name: Release
 
 on:
   push:
@@ -7,11 +7,8 @@ on:
 
 jobs:
   canary:
-    name: Publish canary to NPM
+    name: Create and publish a new release
     runs-on: ubuntu-latest
-
-    # ignore publish commits
-    if: "!startsWith(github.event.head_commit.message, 'Publish')"
 
     steps:
       - name: Checkout jsxstyle
@@ -59,7 +56,7 @@ jobs:
       - name: Publishing canary release
         if: steps.changesets.outputs.published != 'true'
         run: |
-          git checkout master
+          git checkout main
           yarn version:canary
           yarn release:canary
         env:
