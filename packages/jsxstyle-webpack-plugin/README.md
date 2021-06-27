@@ -218,10 +218,10 @@ CSS class names are reused across components but they are not de-duplicated. Any
 
 Got an idea for `jsxstyle-webpack-plugin`? Did you encounter a bug? [Open an issue][new issue] and let’s talk it through. [PRs welcome too][pr]!
 
-[jsxstyle readme]: https://github.com/jsxstyle/jsxstyle/tree/master/packages/jsxstyle#readme
-[jsxstyle faqs]: https://github.com/jsxstyle/jsxstyle/tree/master/packages/jsxstyle#faqs
+[jsxstyle readme]: https://github.com/jsxstyle/jsxstyle/tree/main/packages/jsxstyle#readme
+[jsxstyle faqs]: https://github.com/jsxstyle/jsxstyle/tree/main/packages/jsxstyle#faqs
 [parser plugins]: https://new.babeljs.io/docs/en/next/babel-parser.html#plugins
 [new issue]: https://github.com/jsxstyle/jsxstyle/issues/new
 [pr]: https://github.com/jsxstyle/jsxstyle/pulls
-[ts example]: https://github.com/jsxstyle/jsxstyle/tree/master/examples/jsxstyle-typescript-example
+[ts example]: https://github.com/jsxstyle/jsxstyle/tree/main/examples/jsxstyle-typescript-example
 [issue 82]: https://github.com/jsxstyle/jsxstyle/issues/82#issuecomment-355141948

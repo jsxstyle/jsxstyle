@@ -3,7 +3,7 @@ name: Canary
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   canary:

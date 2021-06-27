@@ -17,7 +17,7 @@
   ],
   "command": {
     "publish": {
-      "allowBranch": "master"
+      "allowBranch": "main"
     }
   }
 }

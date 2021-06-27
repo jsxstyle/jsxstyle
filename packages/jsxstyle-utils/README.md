@@ -58,10 +58,10 @@ An object of styles keyed by component name. This is the object representation o
 | `Box`         | `null`                                         |
 
 [string-hash]: https://github.com/darkskyapp/string-hash
-[addstyletohead]: https://github.com/jsxstyle/jsxstyle/blob/master/packages/jsxstyle-utils/src/addStyleToHead.js
-[componentstyles]: https://github.com/jsxstyle/jsxstyle/blob/master/packages/jsxstyle-utils/src/componentStyles.js
-[dangerousstylevalue]: https://github.com/jsxstyle/jsxstyle/blob/master/packages/jsxstyle-utils/src/dangerousStyleValue.js
-[getstylecache]: https://github.com/jsxstyle/jsxstyle/blob/master/packages/jsxstyle-utils/src/getStyleCache.js
-[getstylekeysforprops]: https://github.com/jsxstyle/jsxstyle/blob/master/packages/jsxstyle-utils/src/getStyleKeysForProps.js
-[hyphenatestylenames]: https://github.com/jsxstyle/jsxstyle/blob/master/packages/jsxstyle-utils/src/hyphenateStyleName.js
-[stringhash]: https://github.com/jsxstyle/jsxstyle/blob/master/packages/jsxstyle-utils/src/stringHash.js
+[addstyletohead]: https://github.com/jsxstyle/jsxstyle/blob/main/packages/jsxstyle-utils/src/addStyleToHead.js
+[componentstyles]: https://github.com/jsxstyle/jsxstyle/blob/main/packages/jsxstyle-utils/src/componentStyles.js
+[dangerousstylevalue]: https://github.com/jsxstyle/jsxstyle/blob/main/packages/jsxstyle-utils/src/dangerousStyleValue.js
+[getstylecache]: https://github.com/jsxstyle/jsxstyle/blob/main/packages/jsxstyle-utils/src/getStyleCache.js
+[getstylekeysforprops]: https://github.com/jsxstyle/jsxstyle/blob/main/packages/jsxstyle-utils/src/getStyleKeysForProps.js
+[hyphenatestylenames]: https://github.com/jsxstyle/jsxstyle/blob/main/packages/jsxstyle-utils/src/hyphenateStyleName.js
+[stringhash]: https://github.com/jsxstyle/jsxstyle/blob/main/packages/jsxstyle-utils/src/stringHash.js

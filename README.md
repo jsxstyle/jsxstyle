@@ -9,9 +9,9 @@ This repository is the monorepo for runtime versions jsxstyle as well as a few t
 | [`jsxstyle-webpack-plugin`][jsxstyle-webpack-plugin] | `webpack` plugin that extracts static styles from jsxstyle components at build time |
 | [`jsxstyle-utils`][jsxstyle-utils] | utility functions used by `jsxstyle-webpack-plugin` and runtime jsxstyle |
 
-[jsxstyle]: https://github.com/jsxstyle/jsxstyle/tree/master/packages/jsxstyle
-[jsxstyle-webpack-plugin]: https://github.com/jsxstyle/jsxstyle/tree/master/packages/jsxstyle-webpack-plugin
-[jsxstyle-utils]: https://github.com/jsxstyle/jsxstyle/tree/master/packages/jsxstyle-utils
+[jsxstyle]: https://github.com/jsxstyle/jsxstyle/tree/main/packages/jsxstyle
+[jsxstyle-webpack-plugin]: https://github.com/jsxstyle/jsxstyle/tree/main/packages/jsxstyle-webpack-plugin
+[jsxstyle-utils]: https://github.com/jsxstyle/jsxstyle/tree/main/packages/jsxstyle-utils
 
 ---
 
@@ -323,7 +323,7 @@ Sorting through the myriad CSS-in-JS solutions out there can get tiring, but the
 [`styled-components`][styled-components] and (more recently) [`emotion`][emotion] have both gained serious traction in the frontend JS community. I can’t do either system justice in a single sentence and I’ve never used either system, but they both seem like reasonable jsxstyle alternatives that embrace the funky things you can do with tagged template literals.
 
 [emotion]: https://github.com/emotion-js/emotion
-[jsxstyle-webpack-plugin]: https://github.com/jsxstyle/jsxstyle/tree/master/packages/jsxstyle-webpack-plugin
+[jsxstyle-webpack-plugin]: https://github.com/jsxstyle/jsxstyle/tree/main/packages/jsxstyle-webpack-plugin
 [jxnblk]: https://github.com/jxnblk
 [mrmrs]: https://github.com/mrmrs
 [new issue]: https://github.com/jsxstyle/jsxstyle/issues/new
@@ -331,7 +331,7 @@ Sorting through the myriad CSS-in-JS solutions out there can get tiring, but the
 [rebass]: https://github.com/jxnblk/rebass
 [sauce]: https://saucelabs.com/u/jsxstyle
 [scalable css]: http://mrmrs.github.io/writing/2016/03/24/scalable-css/
-[static]: https://github.com/jsxstyle/jsxstyle/blob/master/packages/jsxstyle-webpack-plugin/#what-are-static-style-props
+[static]: https://github.com/jsxstyle/jsxstyle/blob/main/packages/jsxstyle-webpack-plugin/#what-are-static-style-props
 [styled-components]: https://www.styled-components.com
 [tachyons]: http://tachyons.io
 [github-actions]: https://github.com/jsxstyle/jsxstyle/actions
