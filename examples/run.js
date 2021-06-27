@@ -1,19 +1,12 @@
 // @ts-check
 
-const { getPackages } = require('@lerna/project');
+const { getPackages } = require('@manypkg/get-packages');
 const { spawn } = require('child_process');
 const inquirer = require('inquirer');
 const path = require('path');
 
-// NOTE: this interface is incomplete
-// See: @lerna/package
-/**
- * @typedef {{ name: string; location: string; private: boolean; toJSON: () => string; }} Package
- */
-
 const JSXSTYLE_ROOT = path.resolve(__dirname, '..');
 
-// TODO: use @lerna/run
 /** @type {(example: string, ...args: any[]) => Promise<void>} */
 const npmCommand = (example, ...args) =>
   new Promise((resolve, reject) => {
@@ -40,14 +33,14 @@ const npmCommand = (example, ...args) =>
   });
 
 (async (searchString) => {
-  const packages = await getPackages(JSXSTYLE_ROOT);
-  const examplePkgs = packages.filter((f) => f.name.endsWith('-example'));
+  const { packages, tool } = await getPackages(JSXSTYLE_ROOT);
+  const examplePkgs = packages.filter((f) =>
+    f.packageJson.name.endsWith('-example')
+  );
   const choices = examplePkgs.map((pkg) => ({
-    name: pkg.name,
-    value: pkg.name,
+    name: pkg.packageJson.name,
+    value: pkg.packageJson.name,
   }));
-
-  console.log({});
 
   if (!searchString) {
     const { example } = await inquirer.prompt([
@@ -61,11 +54,11 @@ const npmCommand = (example, ...args) =>
     return npmCommand(example, 'start');
   } else {
     const examplePkg = examplePkgs.find((pkg) =>
-      pkg.name.includes(searchString)
+      pkg.packageJson.name.includes(searchString)
     );
     if (!examplePkg) {
       throw new Error('Could not find example matching "' + searchString + '"');
     }
-    return npmCommand(examplePkg.name, 'start');
+    return npmCommand(examplePkg.packageJson.name, 'start');
   }
 })(process.argv.slice(2).join(' ')).catch(console.error);
