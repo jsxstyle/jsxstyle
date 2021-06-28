@@ -15,6 +15,7 @@ gatsby-plugin-jsxstyle
 jsxstyle
 ========
 - package.json
+- CHANGELOG.md
 - LICENSE
 - README.md
 - lib/componentFactory.d.ts
@@ -40,6 +41,7 @@ jsxstyle
 jsxstyle-utils
 ==============
 - package.json
+- CHANGELOG.md
 - LICENSE
 - README.md
 - lib/addStyleToHead.d.ts
@@ -68,6 +70,7 @@ jsxstyle-utils
 jsxstyle-webpack-plugin
 =======================
 - package.json
+- CHANGELOG.md
 - LICENSE
 - README.md
 - lib/loader.d.ts
