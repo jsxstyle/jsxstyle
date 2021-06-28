@@ -1,6 +1,6 @@
 {
   "name": "jsxstyle-utils",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "description": "Utilities used by jsxstyle and tooling built for jsxstyle",
   "author": "Pete Hunt",
   "license": "Apache-2.0",
@@ -8,7 +8,9 @@
   "module": "lib/jsxstyle-utils.es.js",
   "jsnext:main": "lib/jsxstyle-utils.es.js",
   "types": "lib/index.d.ts",
-  "files": ["lib"],
+  "files": [
+    "lib"
+  ],
   "sideEffects": false,
   "keywords": [
     "jsxstyle"
