@@ -32,6 +32,8 @@ export interface JsxstyleProps<ComponentProps>
   mediaQueries?: Record<string, string>;
   /** Object of props that will be passed down to the component specified in the `component` prop */
   props?: ComponentProps;
+  /** Used by Preact to keep track of which components represent which DOM nodes */
+  key?: preact.Key;
 }
 
 type JsxstyleComponent = preact.ComponentConstructor<
