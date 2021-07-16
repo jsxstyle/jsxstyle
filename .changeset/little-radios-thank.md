@@ -2,4 +2,4 @@
 'jsxstyle': patch
 ---
 
-Add `key` prop to jsxstyle/preact's JsxstyleProps
+Added a `key` prop to the `JsxstyleProps` interface in `jsxstyle/preact`
