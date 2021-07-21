@@ -2,4 +2,4 @@
 'jsxstyle-utils': major
 ---
 
-Remove `getClassName` method from style cache, add `getComponentProps` method that returns a filtered object of component props.
+Replaced `getClassName` method with `getComponentProps`—it generates a className as before but now adds it to a filtered object of component props.
