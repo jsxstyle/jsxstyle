@@ -5,6 +5,21 @@ import { stringHash } from './stringHash';
 // global flag makes subsequent calls of capRegex.test advance to the next match
 const capRegex = /[A-Z]/g;
 
+export type ComponentProp = keyof typeof componentProps;
+
+export const componentProps = {
+  // class (preact) and className (React) are handled separately
+  checked: true,
+  children: true,
+  href: true,
+  id: true,
+  name: true,
+  placeholder: true,
+  style: true,
+  type: true,
+  value: true,
+};
+
 export const pseudoelements = {
   after: true,
   before: true,
@@ -27,14 +42,11 @@ export const pseudoclasses = {
   valid: true,
 };
 
-const specialCaseProps = {
-  children: true,
-  class: true,
-  className: true,
+/** Props that are used internally and not passed on to the underlying component */
+const skippedProps = {
   component: true,
   mediaQueries: true,
   props: true,
-  style: true,
 };
 
 const sameAxisPropNames: Record<string, [string, string]> = {
@@ -53,13 +65,16 @@ interface StyleObj {
 
 export interface StyleKeyObj {
   stylesByKey: Record<string, StyleObj>;
-  classNameKey: string;
+  classNameKey: string | null;
   /** An object of stringified keyframe styles keyed by animation name */
   animations?: Record<string, string>;
+  /** Component props separated from style props */
+  props: Record<string, any> | null;
 }
 
 export function getStyleKeysForProps(
   props: Record<string, any> & { mediaQueries?: Record<string, string> },
+  classNamePropKey: string,
   pretty = false
 ): StyleKeyObj | null {
   if (typeof props !== 'object' || props === null) {
@@ -81,6 +96,7 @@ export function getStyleKeysForProps(
   const styleKeyObj: StyleKeyObj = {
     classNameKey: '',
     stylesByKey,
+    props: typeof props.props === 'object' ? { ...props.props } : null,
   };
 
   let classNameKey = '';
@@ -98,8 +114,16 @@ export function getStyleKeysForProps(
   for (let idx = -1; ++idx < keyCount; ) {
     const originalPropName = propKeys[idx];
 
+    // separate known component props from style props
+    if (componentProps.hasOwnProperty(originalPropName)) {
+      (styleKeyObj.props = styleKeyObj.props || {})[originalPropName] =
+        props[originalPropName];
+      continue;
+    }
+
     if (
-      specialCaseProps.hasOwnProperty(originalPropName) ||
+      skippedProps.hasOwnProperty(originalPropName) ||
+      originalPropName === classNamePropKey ||
       !props.hasOwnProperty(originalPropName)
     ) {
       continue;
@@ -250,15 +274,11 @@ export function getStyleKeysForProps(
     }
   }
 
-  if (classNameKey === '') {
-    return null;
-  }
-
   if (animations) {
     styleKeyObj.animations = animations;
   }
 
-  styleKeyObj.classNameKey = classNameKey;
+  styleKeyObj.classNameKey = classNameKey || null;
 
   return styleKeyObj;
 }

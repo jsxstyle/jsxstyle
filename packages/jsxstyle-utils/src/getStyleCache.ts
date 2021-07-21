@@ -55,15 +55,15 @@ export function getStyleCache() {
       styleCache.injectOptions = alreadyInjected;
     },
 
-    getClassName(
+    getComponentProps(
       props: Record<string, any>,
-      classNameProp?: string | null | false
-    ): string | null {
+      classNamePropKey = 'className'
+    ): Record<string, any> | null {
       styleCache.injectOptions = cannotInject;
 
-      const styleObj = getStyleKeysForProps(props, pretty);
+      const styleObj = getStyleKeysForProps(props, classNamePropKey, pretty);
       if (styleObj == null) {
-        return classNameProp || null;
+        return null;
       }
 
       const key = styleObj.classNameKey;
@@ -107,9 +107,21 @@ export function getStyleCache() {
         }
       }
 
-      return _classNameCache[key] && classNameProp
-        ? classNameProp + ' ' + _classNameCache[key]
-        : _classNameCache[key] || classNameProp || null;
+      const classNameProp = props[classNamePropKey];
+
+      const classNameForKey = key && _classNameCache[key];
+
+      const className =
+        classNameForKey && classNameProp
+          ? classNameProp + ' ' + classNameForKey
+          : classNameForKey || classNameProp || null;
+
+      const finalProps = { ...styleObj.props };
+      if (className) {
+        finalProps[classNamePropKey] = className;
+      }
+
+      return finalProps;
     },
   };
 

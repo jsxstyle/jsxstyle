@@ -81,11 +81,21 @@ export const FCWithoutProps = () => (
 export const FCWithStyleProps = () => (
   <>
     <Block component={StyleNumberFC} style={1234} />
-    {/* @ts-expect-error */}
-    <Block component={StyleNumberFC} style={{ width: 1234 }} />
+    <Block
+      component={StyleNumberFC}
+      // @ts-expect-error style is a number
+      style={{ width: 1234 }}
+    />
+    <Block component={StyleNumberFC} style={123} />
     {React.createElement(Block, {
       component: StyleNumberFC,
+      // @ts-expect-error style is a number
       style: 'banana',
+    })}
+    {React.createElement(Block, {
+      component: StyleNumberFC,
+      // @ts-expect-error this appears to be a limitation of createElement typing. Hmmmm.
+      style: 1234,
     })}
     <Block
       component={StyleNeverFC}
@@ -94,7 +104,7 @@ export const FCWithStyleProps = () => (
     />
     <Block
       component={NoStyleFC}
-      // ideally this would be a type error
+      // @ts-expect-error
       style="hmmmm"
     />
   </>

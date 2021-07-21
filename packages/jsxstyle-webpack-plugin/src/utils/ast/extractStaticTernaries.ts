@@ -17,6 +17,7 @@ export interface Ternary {
 export function extractStaticTernaries(
   ternaries: Ternary[],
   cacheObject: CacheObject,
+  classNamePropKey: string,
   classNameFormat?: 'hash'
 ): {
   /** styles to be extracted */
@@ -90,11 +91,19 @@ export function extractStaticTernaries(
     .map((key, idx) => {
       const { test, consequentStyles, alternateStyles } = ternariesByKey[key];
       const consequentClassName =
-        getClassNameFromCache(consequentStyles, cacheObject, classNameFormat) ||
-        '';
+        getClassNameFromCache(
+          consequentStyles,
+          cacheObject,
+          classNamePropKey,
+          classNameFormat
+        ) || '';
       const alternateClassName =
-        getClassNameFromCache(alternateStyles, cacheObject, classNameFormat) ||
-        '';
+        getClassNameFromCache(
+          alternateStyles,
+          cacheObject,
+          classNamePropKey,
+          classNameFormat
+        ) || '';
 
       if (!consequentClassName && !alternateClassName) {
         return null;

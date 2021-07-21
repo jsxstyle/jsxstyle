@@ -9,6 +9,7 @@ import type { CacheObject } from '../types';
 export function getClassNameFromCache(
   styleObject: CSSProperties,
   cacheObject: CacheObject,
+  classNamePropKey: string,
   classNameFormat?: 'hash'
 ): string | null {
   if (cacheObject == null) {
@@ -28,12 +29,16 @@ export function getClassNameFromCache(
     return null;
   }
 
-  const styleObjects = getStyleKeysForProps(styleObject);
+  const styleObjects = getStyleKeysForProps(styleObject, classNamePropKey);
   if (!styleObjects) {
     return null;
   }
 
   const classNameKey = styleObjects.classNameKey;
+  if (classNameKey === null) {
+    return null;
+  }
+
   const counterKey: any = Symbol.for('counter');
   cacheObject[counterKey] = cacheObject[counterKey] || 0;
 

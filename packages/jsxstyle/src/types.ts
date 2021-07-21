@@ -1,4 +1,4 @@
-import { CSSProperties } from 'jsxstyle-utils';
+import { CSSProperties, ComponentProp } from 'jsxstyle-utils';
 
 export type IntrinsicElement = keyof JSX.IntrinsicElements;
 
@@ -34,24 +34,20 @@ export type ExtractProps<T extends ValidComponentPropValue> = T extends
   : {};
 
 /** Props that will be passed through to whatever component is specified */
-export interface StylableComponentProps<T extends ValidComponentPropValue> {
-  /** passed as-is through to the underlying component */
-  className?: string | null | false;
-  /** passed as-is through to the underlying component */
-  style?: ExtractProps<T>['style'] | null | false;
-}
+export type StylableComponentProps<T extends ValidComponentPropValue> = Pick<
+  ExtractProps<T>,
+  Extract<keyof ExtractProps<T>, ComponentProp>
+>;
 
 /** Common props */
-interface SharedProps<T extends ValidComponentPropValue>
-  extends StylableComponentProps<T>,
-    CSSProperties {
+interface SharedProps extends CSSProperties {
   /** An object of media query values keyed by the desired style prop prefix */
   mediaQueries?: Record<string, string>;
 }
 
 /** Props for jsxstyle components that have a `component` prop set */
 interface JsxstylePropsWithComponent<C extends ValidComponentPropValue>
-  extends SharedProps<C> {
+  extends SharedProps {
   /** Component value can be either a React component or a tag name string. Defaults to `div`. */
   component: C;
   /** Object of props that will be passed down to the component specified in the `component` prop */
@@ -59,13 +55,15 @@ interface JsxstylePropsWithComponent<C extends ValidComponentPropValue>
 }
 
 /** Props for jsxstyle components that have no `component` prop set */
-interface JsxstyleDefaultProps extends SharedProps<'div'> {
+interface JsxstyleDefaultProps extends SharedProps {
   /** Component value can be either a React component or a tag name string. Defaults to `div`. */
   component?: undefined;
   /** Object of props that will be passed down to the underlying div */
   props?: JSX.IntrinsicElements['div'];
 }
 
-export type JsxstyleProps<C extends ValidComponentPropValue> =
+export type JsxstyleProps<T extends ValidComponentPropValue = 'div'> = (
   | JsxstyleDefaultProps
-  | JsxstylePropsWithComponent<C>;
+  | JsxstylePropsWithComponent<T>
+) &
+  StylableComponentProps<T>;

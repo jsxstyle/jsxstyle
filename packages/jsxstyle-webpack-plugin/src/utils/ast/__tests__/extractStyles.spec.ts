@@ -738,6 +738,22 @@ const blue = \\"blueberry\\";
 "import \\"./ternary-with-classname__jsxstyle.css\\";
 <div className={\\"cool \\" + (dynamic ? \\"_x1\\" : \\"_x2\\") + \\" _x0\\"} />;"
 `);
+
+    expect(rv.css).toMatchInlineSnapshot(`
+"/* ./packages/jsxstyle-webpack-plugin/src/utils/ast/__tests__/mock/ternary-with-classname.js:2 (Block) */
+._x0 {
+  display: block;
+}
+/* ./packages/jsxstyle-webpack-plugin/src/utils/ast/__tests__/mock/ternary-with-classname.js:2 (Block) */
+._x1 {
+  color: red;
+}
+/* ./packages/jsxstyle-webpack-plugin/src/utils/ast/__tests__/mock/ternary-with-classname.js:2 (Block) */
+._x2 {
+  color: blue;
+}
+"
+`);
   });
 
   it('extracts a ternary expression from a component that has a spread operator specified', () => {

@@ -967,6 +967,7 @@ export function extractStyles(
           namedStyleGroups,
           staticAttributes,
           cacheObject,
+          classPropName,
           classNameFormat
         );
 
@@ -989,6 +990,7 @@ export function extractStyles(
           const ternaryObj = extractStaticTernaries(
             staticTernaries,
             cacheObject,
+            classPropName,
             classNameFormat
           );
 
@@ -1111,7 +1113,11 @@ export function extractStyles(
             const styleProps = stylesByClassName[className];
 
             // get object of style objects
-            const styleObjects = getStyleKeysForProps(styleProps, true);
+            const styleObjects = getStyleKeysForProps(
+              styleProps,
+              classPropName,
+              true
+            );
             if (styleObjects == null) {
               continue;
             }
