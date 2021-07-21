@@ -12,14 +12,15 @@ body:
   - type: textarea
     id: what-happened
     attributes:
-      label: What happened?
-      description: You did a thing with jsxstyle but something unexpected occurred. Tell us about it!
+      label: What’s happening?
+      placeholder: "example: When I set the `color` prop to `red`, the text turns blue."
     validations:
       required: true
   - type: textarea
     id: expected-behaviour
     attributes:
-      label: What should have happened instead?
+      label: What should be happening instead?
+      placeholder: "example: The text should be red."
     validations:
       required: true
   - type: input
@@ -47,7 +48,8 @@ body:
     validations:
       required: false
     attributes:
-      label: What browser(s) are you seeing the problem on? Feel free to skip this question if it’s not applicable.
+      label: What browser(s) are you seeing the problem on?
+      description: Feel free to skip this question if it’s not applicable.
       multiple: true
       options:
         - Firefox

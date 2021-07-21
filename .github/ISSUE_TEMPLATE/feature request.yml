@@ -9,7 +9,6 @@ body:
     id: feature-request
     attributes:
       label: Feature request
-      description: Got an idea for jsxstyle that you think would make a great addition? Tell us about it!
       placeholder: Your idea goes here
     validations:
       required: true
