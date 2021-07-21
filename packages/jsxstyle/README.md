@@ -25,8 +25,6 @@ With `jsxstyle`, your component code looks like this:
 </Row>
 ```
 
-<!-- yeah we’ve got mf emoji -->
-
 ## ⚡️ Style as fast as you can think.
 
 Jumping between JS and CSS in your editor is no longer necessary. Since style are inline, you can determine at a glance exactly how an element is styled. jsxstyle frees you up to do what you do best—write styles.
@@ -74,16 +72,28 @@ jsxstyle provides the following seven components:
 | `Box`         | _No default styles_                             |
 
 All props passed to these components are assumed to be CSS properties.
-There are five exceptions to this rule:
+There are some exceptions to this rule:
 
 <!-- prettier-ignore -->
 | Property | Type | Description |
 | :-- | :-- | :-- |
-| `component`    | `string`,&nbsp;`function`,&nbsp;or&nbsp;`object` | the underlying HTML tag or component to render. Defaults&nbsp;to&nbsp;`'div'` |
+| `component`    | `string` or class/function component | the underlying HTML tag or component to render. Defaults&nbsp;to&nbsp;`'div'` |
 | `props`        | `object` | additional props to pass directly to the underlying tag&nbsp;or&nbsp;component. |
 | `mediaQueries` | `object` | an object of media query strings keyed by prefix. More&nbsp;on&nbsp;that&nbsp;[below](#media-queries). |
 | `className`    | `string` | Class name to be passed through to the underlying tag&nbsp;or&nbsp;component. |
 | `style`        | `any`    | _Passed through untouched_ |
+
+The following component props can also be set at the top level if the `component` you specify supports those props:
+
+- `checked`
+- `href`
+- `id`
+- `name`
+- `placeholder`
+- `type`
+- `value`
+
+This list is fairly arbitrary. If there’s a prop that you think is missing, feel free to [request an addition to this list][request-new-component-prop].
 
 ## Features
 
@@ -127,8 +137,6 @@ Define a `mediaQueries` property with an object of media queries keyed by whatev
 
 #### `useMatchMedia` hook
 
-> Experimental, available in `jsxstyle@next`
-
 jsxstyle exports a hook, `useMatchMedia`, that enables the developer to subscribe to media query change events and react accordingly. Here’s the hook in action:
 
 ```jsx
@@ -147,8 +155,6 @@ When this hook is used in combination with `jsxstyle-webpack-plugin`, prop value
 <br>
 
 ### Convenient animation support
-
-> Experimental, available in `jsxstyle@next`
 
 You can define an animation inline using object syntax, where the key is the specific keyframe name and the value is an object of styles:
 
@@ -318,3 +324,4 @@ Sorting through the myriad CSS-in-JS solutions out there can get tiring, but the
 [styled-components]: https://www.styled-components.com
 [tachyons]: http://tachyons.io
 [github-actions]: https://github.com/jsxstyle/jsxstyle/actions
+[request-new-component-prop]: https://github.com/jsxstyle/jsxstyle/issues/new?assignees=meyer&labels=enhancement&template=component+prop+allowlist+addition.yml&title=New+top-level+component+prop%3A+
