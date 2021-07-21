@@ -1,4 +1,4 @@
-name: Bug Report
+name: Bug report
 description: File a bug report
 title: "Bug: "
 labels: [bug]
@@ -9,10 +9,12 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking the time to fill out this bug report! Feel free to provide as much context as you can, as it will make tracking down the bug a whole lot easier.
+        Thanks for taking the time to report a bug! Feel free to provide as much information as you can so that we can find the bug and fix it.
+
+        If you’re not 100% sure what’s causing the bug, you can paste error messages and/or a stack trace in the “Additional context” text box and we’ll start from there.
 
   - type: textarea
-    id: what-happened
+    id: bug-description
     attributes:
       label: What’s happening?
       placeholder: "example: When I set the `color` prop to `red`, the text turns blue."
@@ -28,7 +30,7 @@ body:
       required: true
 
   - type: input
-    id: github-link
+    id: repro-link
     attributes:
       label: Link to repro
       description: If it’s a weird enough bug, a minimal reproduction would be super helpful. In most cases a repro isn’t necessary though.
@@ -37,9 +39,9 @@ body:
       required: false
 
   - type: dropdown
-    id: version
+    id: buggy-package
     attributes:
-      label: What package is causing this issue?
+      label: Which package is causing this issue?
       options:
         - jsxstyle
         - jsxstyle-webpack-plugin
@@ -48,18 +50,13 @@ body:
     validations:
       required: true
 
-  - type: markdown
-    attributes:
-      value: |
-        ### Optional fields
-        Feel free to skip these questions if they’re not applicable.
-
   - type: dropdown
     id: browsers
     validations:
       required: false
     attributes:
       label: Which browser(s) are exhibiting this issue?
+      description: You can skip this question if the issue is being caused by jsxstyle-webpack-plugin.
       multiple: true
       options:
         - Firefox
@@ -69,9 +66,11 @@ body:
         - Safari on iOS
         - Chrome on Android
         - A browser not listed here (please provide more information below)
+
   - type: textarea
     id: additional-context
     attributes:
       label: Additional context
+      description: Anything you can provide that would make debugging this issue a bit easier would be super helpful!
     validations:
       required: false

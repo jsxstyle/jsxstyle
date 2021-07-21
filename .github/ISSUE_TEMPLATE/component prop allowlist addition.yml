@@ -6,10 +6,17 @@ assignees:
   - meyer
 
 body:
+  - type: markdown
+    attributes:
+      value: |
+        If you’re looking to add support for a new top-level component prop to jsxstyle components, you’ve come to the right place.
+
+        We’re looking for props that are either present on a **large number of components** or are present on **frequently-used components** (router components and common HTML elements like links and form controls).
+
   - type: input
     id: prop-name
     attributes:
-      label: Prop name(s)
+      label: Props to add
       placeholder: "example: prop1, prop2"
     validations:
       required: true
@@ -17,9 +24,9 @@ body:
   - type: input
     id: component-name
     attributes:
-      label: Components that use this prop
+      label: Components that use these props
       description: HTML element names or React/Preact components
-      placeholder: "example: li, input, Router"
+      placeholder: "example: li, input, Router from react-router"
     validations:
       required: true
 
@@ -27,6 +34,9 @@ body:
     id: additional-context
     attributes:
       label: Additional context
-      description: What’s your use case for the prop/props you’re suggesting? Feel free to skip this section if you feel like it’s pretty self-explanatory.
+      description: |
+        What’s the use case for the prop/props you’re suggesting?
+
+        Feel free to skip this section if you feel like it’s pretty self-explanatory.
     validations:
       required: false

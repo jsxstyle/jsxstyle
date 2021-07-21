@@ -10,6 +10,6 @@ body:
     id: feature-request
     attributes:
       label: Feature request
-      placeholder: Your idea goes here
+      placeholder: Your idea goes here! I know blank spaces can be a bit intimidating so I added this placeholder.
     validations:
       required: true
