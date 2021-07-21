@@ -17,7 +17,7 @@ body:
     attributes:
       label: Components that use this prop
       description: HTML element names or React/Preact components
-      value: "example: li, input, Router"
+      placeholder: "example: li, input, Router"
     validations:
       required: true
   - type: textarea

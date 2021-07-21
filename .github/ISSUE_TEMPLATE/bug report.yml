@@ -1,6 +1,6 @@
 name: Bug Report
 description: File a bug report
-title: "[Bug]: "
+title: "Bug: "
 labels: [bug]
 assignees:
   - meyer
@@ -14,16 +14,12 @@ body:
     attributes:
       label: What happened?
       description: You did a thing with jsxstyle but something unexpected occurred. Tell us about it!
-      placeholder: ""
-      value: ""
     validations:
       required: true
   - type: textarea
     id: expected-behaviour
     attributes:
       label: What should have happened instead?
-      placeholder: ""
-      value: ""
     validations:
       required: true
   - type: input
@@ -32,7 +28,6 @@ body:
       label: Link to repro
       description: If it’s a weird enough bug, a minimal reproduction would be super helpful. In most cases a repro isn’t necessary though.
       placeholder: "https://github.com/your-github-username/jsxstyle-bug-repro"
-      value: ""
     validations:
       required: false
   - type: dropdown
@@ -62,3 +57,9 @@ body:
         - Safari on iOS
         - Chrome on Android
         - A browser not listed here (please provide more information below)
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+    validations:
+      required: false
