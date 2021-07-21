@@ -1,0 +1,29 @@
+name: Request a new top-level component prop
+description: Add support for a new top-level component prop to jsxstyle
+title: "New top-level component prop: "
+labels: [enhancement]
+assignees:
+  - meyer
+body:
+  - type: input
+    id: prop-name
+    attributes:
+      label: Prop name(s)
+      placeholder: example: prop1, prop2
+    validations:
+      required: true
+  - type: input
+    id: component-name
+    attributes:
+      label: Components that use this prop
+      description: HTML element names or React/Preact components
+      value: example: li, input, Router
+    validations:
+      required: true
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+      description: What’s your use case for the prop/props you’re suggesting? Feel free to skip this section if you feel like it’s pretty self-explanatory.
+    validations:
+      required: false
