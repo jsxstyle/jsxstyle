@@ -4,6 +4,7 @@ title: "New top-level component prop: "
 labels: [enhancement]
 assignees:
   - meyer
+
 body:
   - type: input
     id: prop-name
@@ -12,6 +13,7 @@ body:
       placeholder: "example: prop1, prop2"
     validations:
       required: true
+
   - type: input
     id: component-name
     attributes:
@@ -20,6 +22,7 @@ body:
       placeholder: "example: li, input, Router"
     validations:
       required: true
+
   - type: textarea
     id: additional-context
     attributes:

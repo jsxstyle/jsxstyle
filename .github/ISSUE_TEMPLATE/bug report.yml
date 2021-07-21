@@ -4,11 +4,13 @@ title: "Bug: "
 labels: [bug]
 assignees:
   - meyer
+
 body:
   - type: markdown
     attributes:
       value: |
         Thanks for taking the time to fill out this bug report! Feel free to provide as much context as you can, as it will make tracking down the bug a whole lot easier.
+
   - type: textarea
     id: what-happened
     attributes:
@@ -16,6 +18,7 @@ body:
       placeholder: "example: When I set the `color` prop to `red`, the text turns blue."
     validations:
       required: true
+
   - type: textarea
     id: expected-behaviour
     attributes:
@@ -23,6 +26,7 @@ body:
       placeholder: "example: The text should be red."
     validations:
       required: true
+
   - type: input
     id: github-link
     attributes:
@@ -31,11 +35,11 @@ body:
       placeholder: "https://github.com/your-github-username/jsxstyle-bug-repro"
     validations:
       required: false
+
   - type: dropdown
     id: version
     attributes:
-      label: Version
-      description: What package is causing this issue?
+      label: What package is causing this issue?
       options:
         - jsxstyle
         - jsxstyle-webpack-plugin
@@ -43,13 +47,19 @@ body:
         - jsxstyle-utils
     validations:
       required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ### Optional fields
+        Feel free to skip these questions if they’re not applicable.
+
   - type: dropdown
     id: browsers
     validations:
       required: false
     attributes:
-      label: What browser(s) are you seeing the problem on?
-      description: Feel free to skip this question if it’s not applicable.
+      label: Which browser(s) are exhibiting this issue?
       multiple: true
       options:
         - Firefox
