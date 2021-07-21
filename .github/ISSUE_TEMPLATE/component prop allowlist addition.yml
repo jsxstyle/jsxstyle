@@ -9,7 +9,7 @@ body:
     id: prop-name
     attributes:
       label: Prop name(s)
-      placeholder: example: prop1, prop2
+      placeholder: "example: prop1, prop2"
     validations:
       required: true
   - type: input
@@ -17,7 +17,7 @@ body:
     attributes:
       label: Components that use this prop
       description: HTML element names or React/Preact components
-      value: example: li, input, Router
+      value: "example: li, input, Router"
     validations:
       required: true
   - type: textarea
