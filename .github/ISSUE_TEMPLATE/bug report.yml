@@ -1,0 +1,64 @@
+name: Bug Report
+description: File a bug report
+title: "[Bug]: "
+labels: [bug]
+assignees:
+  - meyer
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report! Feel free to provide as much context as you can, as it will make tracking down the bug a whole lot easier.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: You did a thing with jsxstyle but something unexpected occurred. Tell us about it!
+      placeholder: ""
+      value: ""
+    validations:
+      required: true
+  - type: textarea
+    id: expected-behaviour
+    attributes:
+      label: What should have happened instead?
+      placeholder: ""
+      value: ""
+    validations:
+      required: true
+  - type: input
+    id: github-link
+    attributes:
+      label: Link to repro
+      description: If it’s a weird enough bug, a minimal reproduction would be super helpful. In most cases a repro isn’t necessary though.
+      placeholder: "https://github.com/your-github-username/jsxstyle-bug-repro"
+      value: ""
+    validations:
+      required: false
+  - type: dropdown
+    id: version
+    attributes:
+      label: Version
+      description: What package is causing this issue?
+      options:
+        - jsxstyle
+        - jsxstyle-webpack-plugin
+        - gatsby-plugin-jsxstyle
+        - jsxstyle-utils
+    validations:
+      required: true
+  - type: dropdown
+    id: browsers
+    validations:
+      required: false
+    attributes:
+      label: What browser(s) are you seeing the problem on? Feel free to skip this question if it’s not applicable.
+      multiple: true
+      options:
+        - Firefox
+        - Chrome
+        - Safari
+        - Microsoft Edge
+        - Safari on iOS
+        - Chrome on Android
+        - A browser not listed here (please provide more information below)
