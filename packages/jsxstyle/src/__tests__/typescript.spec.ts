@@ -1,5 +1,6 @@
 import * as path from 'path';
 import * as ts from 'typescript';
+import glob from 'glob';
 
 const typecheckFiles = (filenames: string[]): string => {
   const options: ts.CompilerOptions = {
@@ -19,7 +20,10 @@ const typecheckFiles = (filenames: string[]): string => {
 };
 
 it('throws type errors for invalid component/prop types', () => {
-  const demoFile = path.resolve(__dirname, './typescript/demo.tsx');
-  const report = typecheckFiles([demoFile]);
-  expect(report).toMatchInlineSnapshot(`""`);
+  const filePaths = glob.sync('*.tsx', {
+    absolute: true,
+    cwd: path.resolve(__dirname, 'typescript'),
+  });
+  const report = typecheckFiles(filePaths);
+  expect(report).toEqual('');
 });

@@ -19,18 +19,8 @@ export function componentFactory(
     props: React.PropsWithChildren<JsxstyleProps<T>>
   ): React.ReactElement => {
     const Component: any = props.component || tagName;
-    const className = styleCache.getClassName(props, props.className);
-    const componentProps: Record<string, any> = { ...props.props };
-
-    if (className) {
-      componentProps.className = className;
-    }
-
-    if (props.style) {
-      componentProps.style = props.style;
-    }
-
-    return React.createElement(Component, componentProps, props.children);
+    const extractedProps = styleCache.getComponentProps(props);
+    return React.createElement(Component, extractedProps);
   };
 
   component.displayName = displayName;

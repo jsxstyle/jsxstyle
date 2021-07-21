@@ -39,7 +39,7 @@ export default [
           [
             require.resolve('./misc/babel-plugin-pure-annotation'),
             {
-              functionNames: ['factory', 'depFactory'],
+              functionNames: ['factory', 'depFactory', 'componentFactory'],
             },
           ],
         ],

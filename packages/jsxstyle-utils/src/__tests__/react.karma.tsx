@@ -29,7 +29,8 @@ describe('jsxstyle', () => {
           <Row>
             <Block
               component="a"
-              props={{ id, href: '#wow' }}
+              href="#wow"
+              id={id}
               color="blue"
               placeholderColor="red"
               hoverColor="orange"
@@ -47,7 +48,12 @@ describe('jsxstyle', () => {
         node,
         () => {
           const item = document.getElementById(id);
+          if (!item) {
+            throw new Error('Could not find an element with ID `' + id + '`');
+          }
           expect(item.getAttribute('class')).toEqual('_1fc5o');
+          expect(item.getAttribute('href')).toEqual('#wow');
+          expect(item.children.length).toEqual(1);
 
           const style = window.getComputedStyle(item);
           const styleObj: Record<string, string> = {};

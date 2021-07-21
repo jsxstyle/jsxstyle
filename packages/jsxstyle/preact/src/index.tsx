@@ -49,7 +49,7 @@ function factory(displayName: JsxstyleComponentName): JsxstyleComponent {
     constructor(props: JsxstyleProps<P>) {
       super(props);
       this.component = props.component || tagName;
-      this.className = cache.getClassName(props, props.class);
+      this.calculatedProps = cache.getComponentProps(props, 'class');
     }
 
     public static defaultProps = defaultProps;
@@ -57,18 +57,15 @@ function factory(displayName: JsxstyleComponentName): JsxstyleComponent {
 
     public className: string | null;
     public component: any;
+    private calculatedProps: Record<string, any> | null;
 
     public componentWillReceiveProps(props: JsxstyleProps<P>) {
       this.component = props.component || tagName;
-      this.className = cache.getClassName(props, props.class);
+      this.calculatedProps = cache.getComponentProps(props, 'class');
     }
 
-    public render({ props, style, children }: JsxstyleProps<P>) {
-      return (
-        <this.component {...props} class={this.className} style={style}>
-          {children}
-        </this.component>
-      );
+    public render() {
+      return <this.component {...this.calculatedProps} />;
     }
   };
 }

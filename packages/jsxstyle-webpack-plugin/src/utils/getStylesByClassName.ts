@@ -26,6 +26,7 @@ export function getStylesByClassName(
   namedStyleGroups: Record<string, CSSProperties> = {},
   staticAttributes: Record<string, any>,
   cacheObject: CacheObject,
+  classNamePropKey: string,
   classNameFormat?: 'hash'
 ): StylesByClassName {
   if (typeof staticAttributes !== 'undefined') {
@@ -106,6 +107,7 @@ export function getStylesByClassName(
       const className = getClassNameFromCache(
         styleObject,
         cacheObject,
+        classNamePropKey,
         classNameFormat
       );
       if (!className) {
@@ -131,6 +133,7 @@ export function getStylesByClassName(
     const className = getClassNameFromCache(
       styleProps,
       cacheObject,
+      classNamePropKey,
       classNameFormat
     );
     if (className) {
