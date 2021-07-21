@@ -1,0 +1,16 @@
+name: Feature request
+description: Got an idea for jsxstyle that you think would make a great addition? Tell us about it!
+title: "Feature request: "
+labels: [enhancement]
+assignees:
+  - meyer
+body:
+  - type: textarea
+    id: feature-request
+    attributes:
+      label: Feature request
+      description: Got an idea for jsxstyle that you think would make a great addition? Tell us about it!
+      placeholder: Your idea goes here
+      value: ""
+    validations:
+      required: true
