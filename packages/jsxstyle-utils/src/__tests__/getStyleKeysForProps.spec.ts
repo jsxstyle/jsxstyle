@@ -88,6 +88,62 @@ Object {
 `);
   });
 
+  it('splits out allowlisted props', () => {
+    const keyObj = getStyleKeysForProps(
+      {
+        name: 'name prop',
+        id: 'id prop',
+        href: 'https://jsx.style',
+      },
+      'className',
+      false
+    );
+
+    expect(keyObj).toMatchInlineSnapshot(`
+Object {
+  "classNameKey": null,
+  "props": Object {
+    "href": "https://jsx.style",
+    "id": "id prop",
+    "name": "name prop",
+  },
+  "stylesByKey": Object {},
+}
+`);
+  });
+
+  it('splits out props starting with `on`', () => {
+    const keyObj = getStyleKeysForProps(
+      {
+        // these props will be passed through as component props
+        onBanana: 'purple',
+        onClick: () => null,
+        onNonExistentEventHandler: 123,
+
+        // this should be considered a style
+        ontological: 456,
+      },
+      'className',
+      false
+    );
+
+    expect(keyObj).toMatchInlineSnapshot(`
+Object {
+  "classNameKey": "ontological:456px;",
+  "props": Object {
+    "onBanana": "purple",
+    "onClick": [Function],
+    "onNonExistentEventHandler": 123,
+  },
+  "stylesByKey": Object {
+    ".": Object {
+      "styles": "ontological:456px;",
+    },
+  },
+}
+`);
+  });
+
   it('generates identical classNameKeys for identical styles objects', () => {
     const keyObj1 = getStyleKeysForProps(
       { color: 'red', fooColor: 'blue', mediaQueries: { foo: 'test mq' } },

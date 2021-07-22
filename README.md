@@ -88,27 +88,25 @@ jsxstyle provides the following seven components:
 | `Grid`        | `display: grid;`                                |
 | `Box`         | _No default styles_                             |
 
-All props passed to these components are assumed to be CSS properties.
+Most props passed to these components are assumed to be CSS properties.
 There are some exceptions to this rule:
 
-<!-- prettier-ignore -->
-| Property | Type | Description |
-| :-- | :-- | :-- |
-| `component`    | `string` or class/function component | the underlying HTML tag or component to render. Defaults&nbsp;to&nbsp;`'div'` |
-| `props`        | `object` | additional props to pass directly to the underlying tag&nbsp;or&nbsp;component. |
-| `mediaQueries` | `object` | an object of media query strings keyed by prefix. More&nbsp;on&nbsp;that&nbsp;[below](#media-queries). |
-| `className`    | `string` | Class name to be passed through to the underlying tag&nbsp;or&nbsp;component. |
-| `style`        | `any`    | _Passed through untouched_ |
+- `component`: the underlying HTML tag or component to render. Defaults&nbsp;to&nbsp;`'div'`.
+- `props`: an object of props to pass directly to the underlying tag&nbsp;or&nbsp;component.
+- `mediaQueries`: an object of media query strings keyed by prefix. More&nbsp;on&nbsp;that&nbsp;[below](#media-queries).
 
-The following component props can also be set at the top level if the `component` you specify supports those props:
+Additionally, the following component props can also be set at the top level if the `component` you specify supports these props:
 
 - `checked`
+- `className`
 - `href`
 - `id`
 - `name`
 - `placeholder`
+- `style`
 - `type`
 - `value`
+- Any event handler prop starting with `on`
 
 This list is fairly arbitrary. If there’s a prop that you think is missing, feel free to [request an addition to this list][request-new-component-prop].
 

@@ -143,6 +143,13 @@ export function getStyleKeysForProps(
       capRegex.lastIndex > 1 &&
       originalPropName.slice(0, capRegex.lastIndex - 1);
 
+    // all /^on[A-Z]/ props get passed through to the underlying component
+    if (prefix === 'on') {
+      (styleKeyObj.props = styleKeyObj.props || {})[originalPropName] =
+        props[originalPropName];
+      continue;
+    }
+
     // check for media query prefix
     if (prefix && mediaQueries != null && mediaQueries.hasOwnProperty(prefix)) {
       usesMediaQueries = true;
