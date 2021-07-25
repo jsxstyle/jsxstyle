@@ -1,7 +1,6 @@
 import invariant = require('invariant');
 import { CSSProperties } from 'jsxstyle-utils';
 
-import { CacheObject } from '../types';
 import { getClassNameFromCache } from './getClassNameFromCache';
 
 const nonStyleProps = {
@@ -25,9 +24,8 @@ export function getStylesByClassName(
   styleGroups: Array<Record<string, any>> = [],
   namedStyleGroups: Record<string, CSSProperties> = {},
   staticAttributes: Record<string, any>,
-  cacheObject: CacheObject,
   classNamePropKey: string,
-  classNameFormat?: 'hash'
+  getClassNameForKey: (key: string) => string
 ): StylesByClassName {
   if (typeof staticAttributes !== 'undefined') {
     invariant(
@@ -35,11 +33,6 @@ export function getStylesByClassName(
       'getStylesByClassName expects an object as its second parameter'
     );
   }
-
-  invariant(
-    cacheObject != null,
-    'getStylesByClassName expects an object as its third parameter'
-  );
 
   const stylesByClassName: StylesByClassName = {};
 
@@ -106,9 +99,8 @@ export function getStylesByClassName(
 
       const className = getClassNameFromCache(
         styleObject,
-        cacheObject,
         classNamePropKey,
-        classNameFormat
+        getClassNameForKey
       );
       if (!className) {
         continue arrayLoop;
@@ -132,9 +124,8 @@ export function getStylesByClassName(
   if (Object.keys(styleProps).length > 0) {
     const className = getClassNameFromCache(
       styleProps,
-      cacheObject,
       classNamePropKey,
-      classNameFormat
+      getClassNameForKey
     );
     if (className) {
       stylesByClassName[className] = styleProps;

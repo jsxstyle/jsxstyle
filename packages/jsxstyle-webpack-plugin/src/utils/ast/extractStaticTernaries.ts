@@ -3,7 +3,6 @@ import t = require('@babel/types');
 import invariant = require('invariant');
 import { CSSProperties } from 'jsxstyle-utils';
 
-import { CacheObject } from '../../types';
 import { getClassNameFromCache } from '../getClassNameFromCache';
 import { StylesByClassName } from '../getStylesByClassName';
 
@@ -16,9 +15,8 @@ export interface Ternary {
 
 export function extractStaticTernaries(
   ternaries: Ternary[],
-  cacheObject: CacheObject,
   classNamePropKey: string,
-  classNameFormat?: 'hash'
+  getClassNameForKey: (key: string) => string
 ): {
   /** styles to be extracted */
   stylesByClassName: StylesByClassName;
@@ -28,10 +26,6 @@ export function extractStaticTernaries(
   invariant(
     Array.isArray(ternaries),
     'extractStaticTernaries expects param 1 to be an array of ternaries'
-  );
-  invariant(
-    cacheObject != null,
-    'extractStaticTernaries expects param 2 to be an object'
   );
 
   if (ternaries.length === 0) {
@@ -93,16 +87,14 @@ export function extractStaticTernaries(
       const consequentClassName =
         getClassNameFromCache(
           consequentStyles,
-          cacheObject,
           classNamePropKey,
-          classNameFormat
+          getClassNameForKey
         ) || '';
       const alternateClassName =
         getClassNameFromCache(
           alternateStyles,
-          cacheObject,
           classNamePropKey,
-          classNameFormat
+          getClassNameForKey
         ) || '';
 
       if (!consequentClassName && !alternateClassName) {

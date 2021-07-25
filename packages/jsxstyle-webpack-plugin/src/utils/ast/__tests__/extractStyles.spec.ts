@@ -8,7 +8,7 @@ const modulesByAbsolutePath = {
 
 const pathTo = (thing: string) => path.resolve(__dirname, thing);
 
-process.chdir(path.join(__dirname));
+process.chdir(__dirname);
 
 describe('the basics', () => {
   it('only extracts styles from valid jsxstyle components', () => {

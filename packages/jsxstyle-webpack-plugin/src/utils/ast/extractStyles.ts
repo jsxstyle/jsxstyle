@@ -4,7 +4,11 @@ import traverse, { NodePath, TraverseOptions } from '@babel/traverse';
 import t = require('@babel/types');
 import Ajv = require('ajv');
 import invariant = require('invariant');
-import { componentStyles, getStyleKeysForProps } from 'jsxstyle-utils';
+import {
+  componentStyles,
+  getStyleKeysForProps,
+  stringHash,
+} from 'jsxstyle-utils';
 import path = require('path');
 import util = require('util');
 import vm = require('vm');
@@ -173,6 +177,24 @@ export function extractStyles(
     cssModules,
     evaluateVars = true,
   } = options;
+
+  const getClassNameForKey = (() => {
+    let getClassName: (key: string) => string;
+
+    if (classNameFormat === 'hash') {
+      // content hash
+      getClassName = (key: string) => '_' + stringHash(key).toString(36);
+    } else {
+      // incrementing integer
+      const counterKey: any = Symbol.for('counter');
+      cacheObject[counterKey] = cacheObject[counterKey] || 0;
+      getClassName = () => '_x' + (cacheObject[counterKey]++).toString(36);
+    }
+
+    return (key: string) => {
+      return (cacheObject[key] = cacheObject[key] || getClassName(key));
+    };
+  })();
 
   const sourceDir = path.dirname(sourceFileName);
 
@@ -970,9 +992,8 @@ export function extractStyles(
           styleGroups,
           namedStyleGroups,
           staticAttributes,
-          cacheObject,
           classPropName,
-          classNameFormat
+          getClassNameForKey
         );
 
         const extractedStyleClassNames = Object.keys(stylesByClassName).join(
@@ -993,9 +1014,8 @@ export function extractStyles(
         if (staticTernaries.length > 0) {
           const ternaryObj = extractStaticTernaries(
             staticTernaries,
-            cacheObject,
             classPropName,
-            classNameFormat
+            getClassNameForKey
           );
 
           // ternaryObj is null if all of the extracted ternaries have falsey consequents and alternates
