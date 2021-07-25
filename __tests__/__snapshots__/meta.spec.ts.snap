@@ -61,6 +61,10 @@ jsxstyle-utils
 - lib/jsxstyle-utils.cjs.js
 - lib/jsxstyle-utils.es.js
 - lib/jsxstyle-utils.js
+- lib/parseStyleProps.d.ts
+- lib/parseStyleProps.d.ts.map
+- lib/processProps.d.ts
+- lib/processProps.d.ts.map
 - lib/stringHash.d.ts
 - lib/stringHash.d.ts.map
 - lib/types.d.ts
