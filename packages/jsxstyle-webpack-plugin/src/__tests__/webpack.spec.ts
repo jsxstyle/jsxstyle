@@ -10,75 +10,66 @@ jest.setTimeout(60000);
 process.chdir(path.join(__dirname, 'webpack'));
 
 // TODO: evaluate webpack bundle
-it('builds without issue', () => {
+it('builds without issue', async () => {
   const compiler = webpack(webpackConfig);
   const fs = new MemoryFS();
   compiler.outputFileSystem = fs;
 
   expect.assertions(4);
-  return new Promise((resolve, reject) => {
-    compiler.run((err, stats) => {
-      if (err) {
-        console.error(err.stack || err);
-        if ((err as any).details) {
-          console.error((err as any).details);
+
+  const { redCSS, blueCSS } = await (() =>
+    new Promise<{ redCSS: string; blueCSS: string }>((resolve, reject) => {
+      compiler.run((err, stats) => {
+        if (err) {
+          console.error(err.stack || err);
+          if ((err as any).details) {
+            console.error((err as any).details);
+          }
+          return reject(err);
         }
-        return reject(err);
-      }
 
-      const info = stats.toJson();
-      if (stats.hasErrors()) {
-        return reject(info.errors);
-      }
-      if (stats.hasWarnings()) {
-        console.warn(info.warnings);
-      }
+        const info = stats.toJson();
+        if (stats.hasErrors()) {
+          return reject(info.errors);
+        }
+        if (stats.hasWarnings()) {
+          console.warn(info.warnings);
+        }
 
-      const outputPath = webpackConfig.output?.path || '';
+        const outputPath = webpackConfig.output?.path || '';
 
-      const redCSS = fs.readFileSync(
-        path.join(outputPath, 'bundle-red.css'),
-        'utf8'
-      );
-      const blueCSS = fs.readFileSync(
-        path.join(outputPath, 'bundle-blue.css'),
-        'utf8'
-      );
+        const redCSS = fs
+          .readFileSync(path.join(outputPath, 'bundle-red.css'), 'utf8')
+          .toString();
 
-      const sharedStyles = `
-/* ./test-app/Shared.js:8 (Block) */
-._1qb53c2 {
-  display: block;
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-  font-size: 18px;
-  line-height: 22px;
-}
-      `.trim();
+        const blueCSS = fs
+          .readFileSync(path.join(outputPath, 'bundle-blue.css'), 'utf8')
+          .toString();
 
-      expect(redCSS).toContain(
-        `
-/* ./test-app/RedApp.js:8 (Inline) */
-._1ioutjs {
-  color: red;
-  display: inline;
-}
-`.trim()
-      );
+        resolve({ redCSS, blueCSS });
+      });
+    }))();
 
-      expect(blueCSS).toContain(
-        `
-/* ./test-app/BlueApp.js:8 (Inline) */
-._1qr3dx1 {
-  color: blue;
-  display: inline;
-}
-`.trim()
-      );
+  const sharedStyles = `
+/* test-app/Shared.js:8 (Block) */
+._1jdyhuw._1jdyhuw { font-size:18px }
 
-      expect(redCSS).toContain(sharedStyles);
-      expect(blueCSS).toContain(sharedStyles);
+/* test-app/Shared.js:8 (Block) */
+._1n29hly { line-height:22px }
 
-      resolve();
-    });
-  });
+/* test-app/Shared.js:8 (Block) */
+._cmecz0 { display:block }
+
+/* test-app/Shared.js:8 (Block) */
+._uaq4md._uaq4md { font-family:-apple-system, BlinkMacSystemFont, sans-serif }
+`.trim();
+
+  expect(redCSS).toContain(`/* test-app/RedApp.js:8 (Inline) */
+._1jvcvsh { color:red }`);
+
+  expect(blueCSS).toContain(`/* test-app/BlueApp.js:8 (Inline) */
+._1mb383g { color:blue }`);
+
+  expect(redCSS).toContain(sharedStyles);
+  expect(blueCSS).toContain(sharedStyles);
 });

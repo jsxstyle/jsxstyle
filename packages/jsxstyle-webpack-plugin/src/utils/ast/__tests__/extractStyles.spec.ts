@@ -31,14 +31,45 @@ const {Col: TestCol, Row} = require("jsxstyle");
     expect(rv1.js).toMatchInlineSnapshot(`
 "import \\"./validate__jsxstyle.css\\";
 <Block extract=\\"nope\\" />;
-<div className=\\"_x0\\" />;
-<div className=\\"_x1\\" />;
+<div className=\\"_x0 _x1\\" />;
+<div className=\\"_x2 _x3 _x1\\" />;
 <Col extract=\\"nope\\" />;
 <InlineBlock extract=\\"nope\\" />;
-<div className=\\"_x2\\" />;
-<div className=\\"_x3\\" />;
-<div className=\\"_x4\\" />;
-<div className=\\"_x5\\" />;"
+<div className=\\"_x2 _x1\\" />;
+<div className=\\"_x4 _x3 _x1\\" />;
+<div className=\\"_x4 _x5 _x1\\" />;
+<div className=\\"_x2 _x5 _x1\\" />;"
+`);
+
+    expect(rv1.css).toMatchInlineSnapshot(`
+"/* mock/validate.js:4 (TestBlock) */
+._x0 { display:block }
+
+/* mock/validate.js:10 (InlineCol) */
+/* mock/validate.js:11 (TestCol) */
+/* mock/validate.js:4 (TestBlock) */
+/* mock/validate.js:5 (Row) */
+/* mock/validate.js:8 (Flex) */
+/* mock/validate.js:9 (InlineRow) */
+._x1 { extract:yep }
+
+/* mock/validate.js:11 (TestCol) */
+/* mock/validate.js:5 (Row) */
+/* mock/validate.js:8 (Flex) */
+._x2 { display:flex }
+
+/* mock/validate.js:5 (Row) */
+/* mock/validate.js:9 (InlineRow) */
+._x3._x3 { flex-direction:row }
+
+/* mock/validate.js:10 (InlineCol) */
+/* mock/validate.js:9 (InlineRow) */
+._x4 { display:inline-flex }
+
+/* mock/validate.js:10 (InlineCol) */
+/* mock/validate.js:11 (TestCol) */
+._x5._x5 { flex-direction:column }
+"
 `);
   });
 
@@ -79,19 +110,29 @@ const val = "thing";
 "import \\"./extract-static1__jsxstyle.css\\";
 import LC from \\"./LC\\";
 const val = \\"thing\\";
-<div className=\\"_x0\\" />;"
+<div className=\\"_x0 _x1 _x2 _x3 _x4 _x5 _x6\\" />;"
 `);
     expect(rv.css).toMatchInlineSnapshot(`
-"/* ./mock/extract-static1.js:4-11 (Block) */
-._x0 {
-  display: block;
-  static-float: 6.9px;
-  static-int: 69px;
-  static-member-expression: ok;
-  static-negative-int: -420px;
-  static-string: wow;
-  static-value: thing;
-}
+"/* mock/extract-static1.js:4-11 (Block) */
+._x0 { display:block }
+
+/* mock/extract-static1.js:4-11 (Block) */
+._x1 { static-string:wow }
+
+/* mock/extract-static1.js:4-11 (Block) */
+._x2 { static-int:69px }
+
+/* mock/extract-static1.js:4-11 (Block) */
+._x3 { static-float:6.9px }
+
+/* mock/extract-static1.js:4-11 (Block) */
+._x4 { static-negative-int:-420px }
+
+/* mock/extract-static1.js:4-11 (Block) */
+._x5 { static-value:thing }
+
+/* mock/extract-static1.js:4-11 (Block) */
+._x6 { static-member-expression:ok }
 "
 `);
   });
@@ -111,17 +152,23 @@ import LC from "./LC";
 import { Box } from \\"jsxstyle\\";
 const val = \\"thing\\";
 import LC from \\"./LC\\";
-<Box dynamicValue={notStatic} className=\\"_x0\\" />;"
+<Box dynamicValue={notStatic} className=\\"_x0 _x1 _x2 _x3 _x4\\" />;"
 `);
     expect(rv.css).toMatchInlineSnapshot(`
-"/* ./mock/extract-static2.js:4 (Block) */
-._x0 {
-  display: block;
-  static-int: 69px;
-  static-member-expression: ok;
-  static-string: wow;
-  static-value: thing;
-}
+"/* mock/extract-static2.js:4 (Block) */
+._x0 { display:block }
+
+/* mock/extract-static2.js:4 (Block) */
+._x1 { static-string:wow }
+
+/* mock/extract-static2.js:4 (Block) */
+._x2 { static-int:69px }
+
+/* mock/extract-static2.js:4 (Block) */
+._x3 { static-value:thing }
+
+/* mock/extract-static2.js:4 (Block) */
+._x4 { static-member-expression:ok }
 "
 `);
   });
@@ -167,10 +214,8 @@ import { Box } from \\"jsxstyle\\";
 <Box display=\\"block\\" doNotExtract=\\"no\\" {...spread} extract={null} className=\\"_x0\\" />;"
 `);
     expect(rv.css).toMatchInlineSnapshot(`
-"/* ./mock/spread.js:2 (Block) */
-._x0 {
-  extract: yep;
-}
+"/* mock/spread.js:2 (Block) */
+._x0 { extract:yep }
 "
 `);
   });
@@ -200,10 +245,8 @@ import { Box } from \\"jsxstyle\\";
 }} key={test} ref={test} style={{}} {...spread} color={null} className={(spread != null && spread.className || wow || \\"\\") + \\" _x0\\"} />;"
 `);
     expect(rv.css).toMatchInlineSnapshot(`
-"/* ./mock/spread.js:2-11 (Block) */
-._x0 {
-  color: red;
-}
+"/* mock/spread.js:2-11 (Block) */
+._x0 { color:red }
 "
 `);
   });
@@ -234,19 +277,27 @@ const staticSpread = {
 };
 
 function Thing(props) {
-  return <div className=\\"_x0\\" />;
+  return <div className=\\"_x0 _x1 _x2 _x3 _x4 _x5\\" />;
 }"
 `);
     expect(rv.css).toMatchInlineSnapshot(`
-"/* ./mock/trusted-spreads.js:9 (Block) */
-._x0 {
-  background-color: #FFF;
-  border-radius: 4px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.07);
-  color: #444;
-  display: block;
-  width: 420px;
-}
+"/* mock/trusted-spreads.js:9 (Block) */
+._x0 { display:block }
+
+/* mock/trusted-spreads.js:9 (Block) */
+._x1 { width:420px }
+
+/* mock/trusted-spreads.js:9 (Block) */
+._x2 { border-radius:4px }
+
+/* mock/trusted-spreads.js:9 (Block) */
+._x3 { box-shadow:0 1px 3px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.07) }
+
+/* mock/trusted-spreads.js:9 (Block) */
+._x4._x4 { background-color:#FFF }
+
+/* mock/trusted-spreads.js:9 (Block) */
+._x5 { color:#444 }
 "
 `);
   });
@@ -274,12 +325,14 @@ describe('cache object', () => {
       { cacheObject }
     );
 
-    expect(cacheObject).toEqual({
-      [Symbol.for('counter')]: 3,
-      'display:block;': '_x0',
-      'display:block;staticThing:wow;': '_x1',
-      'display:inline-block;': '_x2',
-    });
+    expect(cacheObject).toMatchInlineSnapshot(`
+Object {
+  "display:block": "_x0",
+  "display:inline-block": "_x2",
+  "staticThing:wow": "_x1",
+  Symbol(counter): 3,
+}
+`);
   });
 });
 
@@ -320,7 +373,7 @@ import { Box } from \\"jsxstyle\\";
   three,
   four: \\"five\\",
   ...six
-}} className=\\"_x1\\" />;
+}} className=\\"_x0 _x1\\" />;
 <div aria-hidden={true} className=\\"_x0\\" />;
 <Box props={{
   className: \\"test\\"
@@ -353,7 +406,7 @@ import { Box } from \\"jsxstyle\\";
     expect(rv.js).toMatchInlineSnapshot(`
 "import \\"./props-prop2__jsxstyle.css\\";
 import { Box } from \\"jsxstyle\\";
-<Box ref={this.cannotBeExtracted} className=\\"_x0\\" />;"
+<Box ref={this.cannotBeExtracted} className=\\"_x0 _x1\\" />;"
 `);
     expect(warnCallback).toHaveBeenCalledWith(
       'The `ref` prop cannot be extracted from a jsxstyle component. If you want to attach a ref to the underlying component or element, specify a `ref` property in the `props` object.'
@@ -379,7 +432,7 @@ import { Box } from \\"jsxstyle\\";
 <Thing className=\\"_x0\\" />;
 <thing.cool className=\\"_x0\\" />;
 <Box display=\\"block\\" component=\\"h1\\" {...spread} />;
-<Box component=\\"h1\\" dynamic={wow} className=\\"_x1\\" />;"
+<Box component=\\"h1\\" dynamic={wow} className=\\"_x0 _x1 _x2\\" />;"
 `);
 
     const warnCallback = jest.fn();
@@ -491,17 +544,17 @@ import { Box } from \\"jsxstyle\\";
 
     expect(rv.js).toMatchInlineSnapshot(`
 "import \\"./media-queries__jsxstyle.css\\";
-<div className=\\"_x0\\" />;"
+<div className=\\"_x0 _x1 _x2\\" />;"
 `);
     expect(rv.css).toMatchInlineSnapshot(`
-"/* ./mock/media-queries.js:2-6 (Block) */
-._x0 {
-  display: block;
-  width: 640px;
-}
-@media only screen and (min-width: 640px) { ._x0 {
-  width: 100%;
-} }
+"/* mock/media-queries.js:2-6 (Block) */
+._x0 { display:block }
+
+/* mock/media-queries.js:2-6 (Block) */
+._x1 { width:640px }
+
+/* mock/media-queries.js:2-6 (Block) */
+._x2 { sm-width:100% }
 "
 `);
   });
@@ -522,17 +575,17 @@ import LC from "./LC";
     expect(rv.js).toMatchInlineSnapshot(`
 "import \\"./media-queries__jsxstyle.css\\";
 import LC from \\"./LC\\";
-<div className=\\"_x0\\" />;"
+<div className=\\"_x0 _x1 _x2\\" />;"
 `);
     expect(rv.css).toMatchInlineSnapshot(`
-"/* ./mock/media-queries.js:3-7 (Block) */
-._x0 {
-  display: block;
-  width: 640px;
-}
-@media small media query { ._x0 {
-  width: 100%;
-} }
+"/* mock/media-queries.js:3-7 (Block) */
+._x0 { display:block }
+
+/* mock/media-queries.js:3-7 (Block) */
+._x1 { width:640px }
+
+/* mock/media-queries.js:3-7 (Block) */
+._x2 { sm-width:100% }
 "
 `);
   });
@@ -551,6 +604,18 @@ describe('ternaries', () => {
 "import \\"./ternary__jsxstyle.css\\";
 <div className={(dynamic ? \\"_x1\\" : \\"_x2\\") + \\" _x0\\"} />;"
 `);
+
+    expect(rv.css).toMatchInlineSnapshot(`
+"/* mock/ternary.js:2 (Block) */
+._x0 { display:block }
+
+/* mock/ternary.js:2 (Block) */
+._x1 { color:red }
+
+/* mock/ternary.js:2 (Block) */
+._x2 { color:blue }
+"
+`);
   });
 
   it('extracts a conditional expression with a static right side and an AND operator', () => {
@@ -566,14 +631,11 @@ describe('ternaries', () => {
 <div className={(dynamic ? \\"_x1\\" : \\"\\") + \\" _x0\\"} />;"
 `);
     expect(rv.css).toMatchInlineSnapshot(`
-"/* ./mock/ternary.js:2 (Block) */
-._x0 {
-  display: block;
-}
-/* ./mock/ternary.js:2 (Block) */
-._x1 {
-  color: red;
-}
+"/* mock/ternary.js:2 (Block) */
+._x0 { display:block }
+
+/* mock/ternary.js:2 (Block) */
+._x1 { color:red }
 "
 `);
   });
@@ -607,18 +669,14 @@ const blue = \\"blueberry\\";
 <div className={(dynamic ? \\"_x1\\" : \\"_x2\\") + \\" _x0\\"} />;"
 `);
     expect(rv.css).toMatchInlineSnapshot(`
-"/* ./mock/ternary.js:4 (Block) */
-._x0 {
-  display: block;
-}
-/* ./mock/ternary.js:4 (Block) */
-._x1 {
-  color: strawberry;
-}
-/* ./mock/ternary.js:4 (Block) */
-._x2 {
-  color: blueberry;
-}
+"/* mock/ternary.js:4 (Block) */
+._x0 { display:block }
+
+/* mock/ternary.js:4 (Block) */
+._x1 { color:strawberry }
+
+/* mock/ternary.js:4 (Block) */
+._x2 { color:blueberry }
 "
 `);
   });
@@ -637,18 +695,14 @@ const blue = \\"blueberry\\";
 `);
 
     expect(rv.css).toMatchInlineSnapshot(`
-"/* ./mock/ternary-with-classname.js:2 (Block) */
-._x0 {
-  display: block;
-}
-/* ./mock/ternary-with-classname.js:2 (Block) */
-._x1 {
-  color: red;
-}
-/* ./mock/ternary-with-classname.js:2 (Block) */
-._x2 {
-  color: blue;
-}
+"/* mock/ternary-with-classname.js:2 (Block) */
+._x0 { display:block }
+
+/* mock/ternary-with-classname.js:2 (Block) */
+._x1 { color:red }
+
+/* mock/ternary-with-classname.js:2 (Block) */
+._x2 { color:blue }
 "
 `);
   });
@@ -667,14 +721,11 @@ import { Box } from \\"jsxstyle\\";
 <Box display=\\"block\\" {...spread} color={null} className={dynamic ? \\"_x0\\" : \\"_x1\\"} />;"
 `);
     expect(rv.css).toMatchInlineSnapshot(`
-"/* ./mock/ternary-with-spread.js:2 (Block) */
-._x0 {
-  color: red;
-}
-/* ./mock/ternary-with-spread.js:2 (Block) */
-._x1 {
-  color: blue;
-}
+"/* mock/ternary-with-spread.js:2 (Block) */
+._x0 { color:red }
+
+/* mock/ternary-with-spread.js:2 (Block) */
+._x1 { color:blue }
 "
 `);
   });
@@ -706,30 +757,34 @@ import { Box } from \\"jsxstyle\\";
 
     expect(rv1.js).toMatchInlineSnapshot(`
 "import \\"./binary-expressions__jsxstyle.css\\";
-<div className={(dynamic === 4 ? \\"_x1\\" : \\"_x2\\") + \\" _x0\\"} />;"
+<div className={(dynamic === 4 ? \\"_x1 _x2 _x3\\" : \\"_x4 _x5 _x6\\") + \\" _x0\\"} />;"
 `);
     expect(rv2.js).toMatchInlineSnapshot(`
 "import \\"./binary-expressions__jsxstyle.css\\";
-<div className={(dynamic == 4 ? \\"_x1\\" : \\"_x2\\") + \\" _x0\\"} />;"
+<div className={(dynamic == 4 ? \\"_x1 _x2 _x3\\" : \\"_x4 _x5 _x6\\") + \\" _x0\\"} />;"
 `);
     expect(rv1.css).toEqual(rv2.css);
     expect(rv1.css).toMatchInlineSnapshot(`
-"/* ./mock/binary-expressions.js:2-7 (Block) */
-._x0 {
-  display: block;
-}
-/* ./mock/binary-expressions.js:2-7 (Block) */
-._x1 {
-  thing1: four;
-  thing3: four;
-  thing4: four;
-}
-/* ./mock/binary-expressions.js:2-7 (Block) */
-._x2 {
-  thing2: not four;
-  thing3: not four;
-  thing4: not four;
-}
+"/* mock/binary-expressions.js:2-7 (Block) */
+._x0 { display:block }
+
+/* mock/binary-expressions.js:2-7 (Block) */
+._x1 { thing1:four }
+
+/* mock/binary-expressions.js:2-7 (Block) */
+._x2 { thing3:four }
+
+/* mock/binary-expressions.js:2-7 (Block) */
+._x3 { thing4:four }
+
+/* mock/binary-expressions.js:2-7 (Block) */
+._x4 { thing2:not four }
+
+/* mock/binary-expressions.js:2-7 (Block) */
+._x5 { thing3:not four }
+
+/* mock/binary-expressions.js:2-7 (Block) */
+._x6 { thing4:not four }
 "
 `);
   });
@@ -749,25 +804,29 @@ import { Box } from \\"jsxstyle\\";
 
     expect(rv.js).toMatchInlineSnapshot(`
 "import \\"./unary-expressions__jsxstyle.css\\";
-<div className={(dynamic % 2 ? \\"_x1\\" : \\"_x2\\") + \\" _x0\\"} />;"
+<div className={(dynamic % 2 ? \\"_x1 _x2 _x3\\" : \\"_x4 _x5 _x6\\") + \\" _x0\\"} />;"
 `);
     expect(rv.css).toMatchInlineSnapshot(`
-"/* ./mock/unary-expressions.js:2-7 (Block) */
-._x0 {
-  display: block;
-}
-/* ./mock/unary-expressions.js:2-7 (Block) */
-._x1 {
-  thing1: mod 2;
-  thing3: mod 2;
-  thing4: mod 2;
-}
-/* ./mock/unary-expressions.js:2-7 (Block) */
-._x2 {
-  thing2: not mod 2;
-  thing3: not mod 2;
-  thing4: not mod 2;
-}
+"/* mock/unary-expressions.js:2-7 (Block) */
+._x0 { display:block }
+
+/* mock/unary-expressions.js:2-7 (Block) */
+._x1 { thing1:mod 2 }
+
+/* mock/unary-expressions.js:2-7 (Block) */
+._x2 { thing3:mod 2 }
+
+/* mock/unary-expressions.js:2-7 (Block) */
+._x3 { thing4:mod 2 }
+
+/* mock/unary-expressions.js:2-7 (Block) */
+._x4 { thing2:not mod 2 }
+
+/* mock/unary-expressions.js:2-7 (Block) */
+._x5 { thing3:not mod 2 }
+
+/* mock/unary-expressions.js:2-7 (Block) */
+._x6 { thing4:not mod 2 }
 "
 `);
   });
@@ -794,23 +853,23 @@ import { Box } from \\"jsxstyle\\";
 
     expect(rv.js).toMatchInlineSnapshot(`
 "import \\"./ternary-groups__jsxstyle.css\\";
-<div className={(dynamic ? \\"_x1\\" : \\"_x2\\") + \\" _x0\\"} />;"
+<div className={(dynamic ? \\"_x1 _x2\\" : \\"_x3 _x4\\") + \\" _x0\\"} />;"
 `);
     expect(rv.css).toMatchInlineSnapshot(`
-"/* ./mock/ternary-groups.js:2 (Block) */
-._x0 {
-  display: block;
-}
-/* ./mock/ternary-groups.js:2 (Block) */
-._x1 {
-  color: red;
-  width: 200px;
-}
-/* ./mock/ternary-groups.js:2 (Block) */
-._x2 {
-  color: blue;
-  width: 400px;
-}
+"/* mock/ternary-groups.js:2 (Block) */
+._x0 { display:block }
+
+/* mock/ternary-groups.js:2 (Block) */
+._x1 { color:red }
+
+/* mock/ternary-groups.js:2 (Block) */
+._x2 { width:200px }
+
+/* mock/ternary-groups.js:2 (Block) */
+._x3 { color:blue }
+
+/* mock/ternary-groups.js:2 (Block) */
+._x4 { width:400px }
 "
 `);
   });
@@ -828,14 +887,11 @@ import { Box } from \\"jsxstyle\\";
 <div className={(dynamic ? \\"\\" : \\"_x1\\") + \\" _x0\\"} />;"
 `);
     expect(rv.css).toMatchInlineSnapshot(`
-"/* ./mock/ternary-null-values.js:2 (Block) */
-._x0 {
-  display: block;
-}
-/* ./mock/ternary-null-values.js:2 (Block) */
-._x1 {
-  color: blue;
-}
+"/* mock/ternary-null-values.js:2 (Block) */
+._x0 { display:block }
+
+/* mock/ternary-null-values.js:2 (Block) */
+._x1 { color:blue }
 "
 `);
   });
@@ -944,6 +1000,62 @@ export const MyComponent = () => {
 `);
   });
 
+  it('extracts shorthand props', () => {
+    const source = `
+    import { useMatchMedia, Box } from 'jsxstyle';
+    import React from 'react';
+
+    export const MyComponent = () => {
+      const matchesMQ = useMatchMedia('matchMedia media query');
+      return <>
+        <Box
+          paddingH={matchesMQ && 10}
+          paddingLeft={matchesMQ && 20}
+        />
+        <Box
+          paddingH={matchesMQ ? 10 : 30}
+          paddingLeft={matchesMQ ? 20 : 40}
+        />
+      </>;
+    };
+    `;
+
+    const rv = extractStyles(
+      source,
+      pathTo('mock/useMatchMedia-shorthand-props.js'),
+      { cacheObject: {} }
+    );
+
+    expect(rv.js).toMatchInlineSnapshot(`
+"import \\"./useMatchMedia-shorthand-props__jsxstyle.css\\";
+import { useMatchMedia } from 'jsxstyle';
+import React from 'react';
+export const MyComponent = () => {
+  const useMatchMedia_matchesMQ = /*#__PURE__*/useMatchMedia('matchMedia media query');
+  return <>
+        <div className=\\"_x0 _x1\\" />
+        <div className=\\"_x0 _x1 _x2 _x3\\" />
+      </>;
+};"
+`);
+    expect(rv.css).toMatchInlineSnapshot(`
+"/* mock/useMatchMedia-shorthand-props.js:12-15 (Box) */
+._x2._x2 { padding-left:40px }
+
+/* mock/useMatchMedia-shorthand-props.js:12-15 (Box) */
+._x3._x3 { padding-right:30px }
+
+/* mock/useMatchMedia-shorthand-props.js:12-15 (Box) */
+/* mock/useMatchMedia-shorthand-props.js:8-11 (Box) */
+@media matchMedia media query { ._x0._x0._x0._x0 { padding-left:20px } }
+
+/* mock/useMatchMedia-shorthand-props.js:12-15 (Box) */
+/* mock/useMatchMedia-shorthand-props.js:8-11 (Box) */
+@media matchMedia media query { ._x1._x1._x1._x1 { padding-right:10px } }
+"
+`);
+  });
+
   it('extracts ternaries and conditional statements', () => {
     const source = `
     import { useMatchMedia, Block } from 'jsxstyle';
@@ -954,9 +1066,11 @@ export const MyComponent = () => {
       return <>
         <Block
           color={matchesMQ && 'red'}
+          fontFamily={matchesMQ && 'serif'}
         />
         <Block
           color={matchesMQ ? 'red' : 'blue'}
+          fontFamily={matchesMQ ? 'serif' : 'sans-serif'}
         />
       </>;
     };
@@ -975,27 +1089,29 @@ import React from 'react';
 export const MyComponent = () => {
   const useMatchMedia_matchesMQ = /*#__PURE__*/useMatchMedia('matchMedia media query');
   return <>
-        <div className=\\"_x0\\" />
-        <div className=\\"_x1\\" />
+        <div className=\\"_x0 _x1 _x2\\" />
+        <div className=\\"_x0 _x1 _x2 _x3 _x4\\" />
       </>;
 };"
 `);
     expect(rv.css).toMatchInlineSnapshot(`
-"/* ./mock/useMatchMedia-extraction.js:8-10 (Block) */
-._x0 {
-  display: block;
-}
-@media matchMedia media query { ._x0 {
-  color: red;
-} }
-/* ./mock/useMatchMedia-extraction.js:11-13 (Block) */
-._x1 {
-  color: blue;
-  display: block;
-}
-@media matchMedia media query { ._x1 {
-  color: red;
-} }
+"/* mock/useMatchMedia-extraction.js:12-15 (Block) */
+/* mock/useMatchMedia-extraction.js:8-11 (Block) */
+._x2 { display:block }
+
+/* mock/useMatchMedia-extraction.js:12-15 (Block) */
+._x3 { color:blue }
+
+/* mock/useMatchMedia-extraction.js:12-15 (Block) */
+._x4._x4 { font-family:sans-serif }
+
+/* mock/useMatchMedia-extraction.js:12-15 (Block) */
+/* mock/useMatchMedia-extraction.js:8-11 (Block) */
+@media matchMedia media query { ._x0._x0._x0 { color:red } }
+
+/* mock/useMatchMedia-extraction.js:12-15 (Block) */
+/* mock/useMatchMedia-extraction.js:8-11 (Block) */
+@media matchMedia media query { ._x1._x1._x1._x1 { font-family:serif } }
 "
 `);
   });
@@ -1042,37 +1158,30 @@ import React from 'react';
 export const MyComponent = () => {
   const useMatchMedia_matchesMQ = /*#__PURE__*/useMatchMedia('matchMedia media query');
   return <>
-        <div className={(useMatchMedia_matchesMQ ? \\"_x1\\" : \\"_x2\\") + \\" _x0\\"} />
-        <div className={(useMatchMedia_matchesMQ ? \\"_x1\\" : \\"_x2\\") + \\" _x3\\"} />
+        <div className={(useMatchMedia_matchesMQ ? \\"_x2\\" : \\"_x3\\") + \\" _x0 _x1\\"} />
+        <div className={(useMatchMedia_matchesMQ ? \\"_x2\\" : \\"_x3\\") + \\" _x0 _x1 _x4\\"} />
       </>;
 };"
 `);
     expect(rv.css).toMatchInlineSnapshot(`
-"/* ./mock/mediaqueries-plus-useMatchMedia.js:8-12 (Block) */
-._x0 {
-  display: block;
-}
-@media inline media query { ._x0 {
-  color: red;
-} }
-/* ./mock/mediaqueries-plus-useMatchMedia.js:8-12 (Block) */
-/* ./mock/mediaqueries-plus-useMatchMedia.js:13-18 (Block) */
-._x1 {
-  should-remain-inline: consequent;
-}
-/* ./mock/mediaqueries-plus-useMatchMedia.js:8-12 (Block) */
-/* ./mock/mediaqueries-plus-useMatchMedia.js:13-18 (Block) */
-._x2 {
-  should-remain-inline: alternate;
-}
-/* ./mock/mediaqueries-plus-useMatchMedia.js:13-18 (Block) */
-._x3 {
-  color: blue;
-  display: block;
-}
-@media inline media query { ._x3 {
-  color: red;
-} }
+"/* mock/mediaqueries-plus-useMatchMedia.js:13-18 (Block) */
+/* mock/mediaqueries-plus-useMatchMedia.js:8-12 (Block) */
+._x0 { display:block }
+
+/* mock/mediaqueries-plus-useMatchMedia.js:13-18 (Block) */
+/* mock/mediaqueries-plus-useMatchMedia.js:8-12 (Block) */
+._x1 { example-color:red }
+
+/* mock/mediaqueries-plus-useMatchMedia.js:13-18 (Block) */
+/* mock/mediaqueries-plus-useMatchMedia.js:8-12 (Block) */
+._x2 { should-remain-inline:consequent }
+
+/* mock/mediaqueries-plus-useMatchMedia.js:13-18 (Block) */
+/* mock/mediaqueries-plus-useMatchMedia.js:8-12 (Block) */
+._x3 { should-remain-inline:alternate }
+
+/* mock/mediaqueries-plus-useMatchMedia.js:13-18 (Block) */
+._x4 { color:blue }
 "
 `);
   });
@@ -1089,7 +1198,7 @@ describe('deterministic rendering', () => {
     );
     expect(rv.js).toMatchInlineSnapshot(`
 "import \\"./deteministic-classes__jsxstyle.css\\";
-<div className={(condition ? \\"_nevmzf\\" : \\"_1ctok8s\\") + \\" _sfd7x3\\"} />;"
+<div className={(condition ? \\"_o84axs\\" : \\"_jzempz\\") + \\" _cmecz0\\"} />;"
 `);
   });
 
@@ -1111,20 +1220,20 @@ describe('deterministic rendering', () => {
 
     expect(rv.js).toMatchInlineSnapshot(`
 "import \\"./consistent-hashes__jsxstyle.css\\";
-<div className=\\"_d3bqdr\\" />;"
+<div className=\\"_cmecz0 _1jvcvsh _hwodt1 _ubrqe\\" />;"
 `);
     expect(rv.css).toMatchInlineSnapshot(`
-"/* ./mock/consistent-hashes.js:2-9 (Block) */
-._d3bqdr {
-  color: red;
-  display: block;
-}
-._d3bqdr:hover {
-  color: green;
-}
-@media example media query { ._d3bqdr:active {
-  color: blue;
-} }
+"/* mock/consistent-hashes.js:2-9 (Block) */
+._1jvcvsh { color:red }
+
+/* mock/consistent-hashes.js:2-9 (Block) */
+._cmecz0 { display:block }
+
+/* mock/consistent-hashes.js:2-9 (Block) */
+._hwodt1:hover { color:green }
+
+/* mock/consistent-hashes.js:2-9 (Block) */
+._ubrqe { test-active-color:blue }
 "
 `);
   });
@@ -1146,24 +1255,17 @@ describe('animation prop', () => {
 
     expect(rv.js).toMatchInlineSnapshot(`
 "import \\"./animation-prop__jsxstyle.css\\";
-<div className=\\"_x0\\" />;"
+<div className=\\"_x0 _x1\\" />;"
 `);
     expect(rv.css).toMatchInlineSnapshot(`
-"/* ./mock/animation-prop.js:2-7 (Block) */
-._x0 {
-  animation-name: jsxstyle_nqjahi;
-  display: block;
-}
-@keyframes jsxstyle_nqjahi {
-0%, 50% {
-  opacity: 0;
-  padding-left: 30px;
-}
-100% {
-  opacity: 1;
-  padding-h: 50px;
-}
-}
+"/* mock/animation-prop.js:2-7 (Block) */
+._x0 { display:block }
+
+/* mock/animation-prop.js:2-7 (Block) */
+._x1._x1 { animation-name:_x1 }
+
+/* mock/animation-prop.js:2-7 (Block) */
+@keyframes _x1 { 0%, 50% { opacity:0; padding-left:30px } 100% { opacity:1; padding-left:50px; padding-right:50px } }
 "
 `);
   });
@@ -1236,13 +1338,13 @@ const staticProp = 'static';
     expect(evalVars.js).toMatchInlineSnapshot(`
 "import \\"./evaluateVars__jsxstyle.css\\";
 const staticProp = 'static';
-<div className=\\"_x0\\" />;"
+<div className=\\"_x0 _x1 _x2\\" />;"
 `);
     expect(noEvalVars.js).toMatchInlineSnapshot(`
 "import \\"./evaluateVars__jsxstyle.css\\";
 import { Box } from \\"jsxstyle\\";
 const staticProp = 'static';
-<Box thing1={staticProp} className=\\"_x0\\" />;"
+<Box thing1={staticProp} className=\\"_x0 _x1\\" />;"
 `);
   });
 });

@@ -1,5 +1,5 @@
 import { addStyleToHead } from './addStyleToHead';
-import { getStyleKeysForProps } from './getStyleKeysForProps';
+import { processProps } from './processProps';
 import { stringHash } from './stringHash';
 
 type InsertRuleCallback = (
@@ -29,7 +29,13 @@ export function getStyleCache() {
   let _classNameCache: Record<string, string> = {};
   let getClassNameForKey: GetClassNameFn = getStringHash;
   let onInsertRule: InsertRuleCallback;
-  let pretty = false;
+
+  const memoizedGetClassNameForKey = (key: string): string => {
+    if (!_classNameCache[key]) {
+      _classNameCache[key] = getClassNameForKey(key);
+    }
+    return _classNameCache[key];
+  };
 
   const styleCache = {
     reset() {
@@ -48,9 +54,6 @@ export function getStyleCache() {
         if (options.onInsertRule) {
           onInsertRule = options.onInsertRule;
         }
-        if (options.pretty) {
-          pretty = options.pretty;
-        }
       }
       styleCache.injectOptions = alreadyInjected;
     },
@@ -61,67 +64,27 @@ export function getStyleCache() {
     ): Record<string, any> | null {
       styleCache.injectOptions = cannotInject;
 
-      const styleObj = getStyleKeysForProps(props, classNamePropKey, pretty);
-      if (styleObj == null) {
+      const componentProps = processProps(
+        props,
+        classNamePropKey,
+        memoizedGetClassNameForKey
+      );
+      if (!componentProps) {
         return null;
       }
 
-      const key = styleObj.classNameKey;
-      if (key && !_classNameCache.hasOwnProperty(key)) {
-        _classNameCache[key] = getClassNameForKey(key, props);
-        Object.keys(styleObj.stylesByKey)
-          .sort()
-          .forEach((k) => {
-            const selector = '.' + _classNameCache[key];
-            // prettier-ignore
-            const { pseudoclass, pseudoelement, mediaQuery, styles } = styleObj.stylesByKey[k];
-
-            let rule =
-              selector +
-              (pseudoclass ? ':' + pseudoclass : '') +
-              (pseudoelement ? '::' + pseudoelement : '') +
-              ` {${styles}}`;
-
-            if (mediaQuery) {
-              rule = `@media ${mediaQuery} { ${rule} }`;
-            }
-
-            if (
-              onInsertRule &&
-              // if the function returns false, bail.
-              onInsertRule(rule, props) === false
-            ) {
-              return;
-            }
-            addStyleToHead(rule);
-          });
-      }
-
-      const animations = styleObj.animations;
-      if (animations) {
-        for (const animationKey in animations) {
-          const rule = `@keyframes ${animationKey} {${animations[animationKey]}}`;
-          if (!onInsertRule || onInsertRule(rule, props) !== false) {
-            addStyleToHead(rule);
-          }
+      componentProps.rules.forEach((rule) => {
+        if (
+          onInsertRule &&
+          // if the function returns false, bail.
+          onInsertRule(rule, props) === false
+        ) {
+          return;
         }
-      }
+        addStyleToHead(rule);
+      });
 
-      const classNameProp = props[classNamePropKey];
-
-      const classNameForKey = key && _classNameCache[key];
-
-      const className =
-        classNameForKey && classNameProp
-          ? classNameProp + ' ' + classNameForKey
-          : classNameForKey || classNameProp || null;
-
-      const finalProps = { ...styleObj.props };
-      if (className) {
-        finalProps[classNamePropKey] = className;
-      }
-
-      return finalProps;
+      return componentProps.props;
     },
   };
 

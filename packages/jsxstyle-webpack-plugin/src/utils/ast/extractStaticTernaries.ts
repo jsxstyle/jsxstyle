@@ -1,10 +1,7 @@
 import generate from '@babel/generator';
 import t = require('@babel/types');
 import invariant = require('invariant');
-import { CSSProperties } from 'jsxstyle-utils';
-
-import { getClassNameFromCache } from '../getClassNameFromCache';
-import { StylesByClassName } from '../getStylesByClassName';
+import { CSSProperties, processProps } from 'jsxstyle-utils';
 
 export interface Ternary {
   name: string;
@@ -15,11 +12,10 @@ export interface Ternary {
 
 export function extractStaticTernaries(
   ternaries: Ternary[],
-  classNamePropKey: string,
   getClassNameForKey: (key: string) => string
 ): {
-  /** styles to be extracted */
-  stylesByClassName: StylesByClassName;
+  /** style rules to be extracted */
+  ternaryRules: string[];
   /** ternaries grouped into one binary expression */
   ternaryExpression: t.BinaryExpression | t.ConditionalExpression;
 } | null {
@@ -40,6 +36,9 @@ export function extractStaticTernaries(
       alternateStyles: CSSProperties;
     }
   > = {};
+
+  const ternaryRules: string[] = [];
+
   for (let idx = -1, len = ternaries.length; ++idx < len; ) {
     const { name, test, consequent, alternate } = ternaries[idx];
 
@@ -79,35 +78,29 @@ export function extractStaticTernaries(
       : alternate;
   }
 
-  const stylesByClassName: StylesByClassName = {};
-
   const ternaryExpression = Object.keys(ternariesByKey)
     .map((key, idx) => {
       const { test, consequentStyles, alternateStyles } = ternariesByKey[key];
-      const consequentClassName =
-        getClassNameFromCache(
-          consequentStyles,
-          classNamePropKey,
-          getClassNameForKey
-        ) || '';
-      const alternateClassName =
-        getClassNameFromCache(
-          alternateStyles,
-          classNamePropKey,
-          getClassNameForKey
-        ) || '';
+      const { rules: consequentRules, props: consequentProps } = processProps(
+        consequentStyles,
+        'className',
+        getClassNameForKey
+      );
 
-      if (!consequentClassName && !alternateClassName) {
+      const { rules: alternateRules, props: alternateProps } = processProps(
+        alternateStyles,
+        'className',
+        getClassNameForKey
+      );
+
+      const alternateClassName: string = alternateProps?.className || '';
+      const consequentClassName: string = consequentProps?.className || '';
+
+      if (!alternateClassName && !consequentClassName) {
         return null;
       }
 
-      if (consequentClassName) {
-        stylesByClassName[consequentClassName] = consequentStyles;
-      }
-
-      if (alternateClassName) {
-        stylesByClassName[alternateClassName] = alternateStyles;
-      }
+      ternaryRules.push(...alternateRules, ...consequentRules);
 
       if (consequentClassName && alternateClassName) {
         if (idx > 0) {
@@ -151,5 +144,5 @@ export function extractStaticTernaries(
     return null;
   }
 
-  return { stylesByClassName, ternaryExpression };
+  return { ternaryRules, ternaryExpression };
 }

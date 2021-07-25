@@ -1,11 +1,12 @@
 import { processProps } from '../processProps';
+import { kitchenSink } from './kitchenSink';
 
 const createClassNameGetter = () => {
   let index = -1;
   const cache: Record<string, number> = {};
   return (key: string) => {
     cache[key] = cache[key] || ++index;
-    return '_x' + cache[key];
+    return '_x' + cache[key].toString(36);
   };
 };
 
@@ -18,151 +19,20 @@ describe('processProps', () => {
     });
   });
 
-  it('converts a style object to a style string that only contains valid styles', () => {
-    class Useless {
-      constructor(public stuff: string) {}
-      toString(): string {
-        return this.stuff;
-      }
-    }
-
-    function prototypeTest(stuff: string) {
-      return new Useless(stuff);
-    }
-
+  it('returns empty rules and a props object when only given known component props', () => {
+    const propsObject = { id: 'hello', onBanana: true };
     const keyObj = processProps(
-      {
-        prop1: 'string',
-        prop2: 1234,
-        prop3: 0,
-        prop4: prototypeTest('wow'),
-        prop5: null,
-        prop6: undefined,
-        prop7: false,
-      },
+      propsObject,
       'className',
       createClassNameGetter()
     );
-
-    expect(keyObj).toMatchInlineSnapshot(`
-Object {
-  "props": Object {
-    "className": "_x0 _x1 _x2 _x3",
-  },
-  "rules": Array [
-    "._x0 { prop1:string }",
-    "._x1 { prop2:1234px }",
-    "._x2 { prop3:0 }",
-    "._x3 { prop4:wow }",
-  ],
-}
-`);
+    expect(keyObj.props).toEqual(propsObject);
+    expect(keyObj.rules).toEqual([]);
   });
 
-  it('uses classNamePropKey to set className prop', () => {
-    const classNameKeyObj = processProps(
-      { color: 'purple' },
-      'className',
-      createClassNameGetter()
-    );
-
-    const bananaKeyObj = processProps(
-      { color: 'purple' },
-      'banana',
-      createClassNameGetter()
-    );
-
-    expect(Object.keys(classNameKeyObj?.props!)).toEqual(['className']);
-    expect(Object.keys(bananaKeyObj?.props!)).toEqual(['banana']);
-  });
-
-  it('splits out pseudoelements and pseudoclasses', () => {
-    const keyObj = processProps(
-      {
-        activeColor: 'purple',
-        hoverColor: 'orange',
-        placeholderColor: 'blue',
-        selectionBackgroundColor: 'red',
-      },
-      'className',
-      createClassNameGetter()
-    );
-
-    expect(keyObj).toMatchInlineSnapshot(`
-Object {
-  "props": Object {
-    "className": "_x0 _x1 _x2 _x3",
-  },
-  "rules": Array [
-    "._x0:active { color:purple }",
-    "._x1:hover { color:orange }",
-    "._x2::placeholder { color:blue }",
-    "._x3._x3::selection { background-color:red }",
-  ],
-}
-`);
-  });
-
-  it('splits out allowlisted props', () => {
-    const keyObj = processProps(
-      {
-        name: 'name prop',
-        id: 'id prop',
-        href: 'https://jsx.style',
-      },
-      'className',
-      createClassNameGetter()
-    );
-
-    expect(keyObj).toMatchInlineSnapshot(`
-Object {
-  "props": Object {
-    "href": "https://jsx.style",
-    "id": "id prop",
-    "name": "name prop",
-  },
-  "rules": Array [],
-}
-`);
-  });
-
-  it('splits out props starting with `on`', () => {
-    const keyObj = processProps(
-      {
-        // these props will be passed through as component props
-        onBanana: 'purple',
-        onClick: () => null,
-        onNonExistentEventHandler: 123,
-
-        // this should be considered a style
-        ontological: 456,
-      },
-      'className',
-      createClassNameGetter()
-    );
-
-    expect(keyObj).toMatchInlineSnapshot(`
-Object {
-  "props": Object {
-    "className": "_x0",
-    "onBanana": "purple",
-    "onClick": [Function],
-    "onNonExistentEventHandler": 123,
-  },
-  "rules": Array [
-    "._x0 { ontological:456px }",
-  ],
-}
-`);
-  });
-
-  it('expands horizontal/vertical margin/padding shorthand props', () => {
+  it('generates valid CSS rules', () => {
     const keyObj1 = processProps(
-      {
-        margin: 1,
-        marginH: 2,
-        marginLeft: 3,
-      },
+      kitchenSink,
       'className',
       createClassNameGetter()
     );
@@ -170,38 +40,7 @@ Object {
     expect(keyObj1).toMatchInlineSnapshot(`
 Object {
   "props": Object {
-    "className": "_x0 _x1 _x2",
-  },
-  "rules": Array [
-    "._x0 { margin:1px }",
-    "._x1._x1 { margin-left:3px }",
-    "._x2._x2 { margin-right:2px }",
-  ],
-}
-`);
-  });
-
-  it('supports pseudo-prefixed horizontal/vertical margin/padding shorthand props', () => {
-    const keyObj1 = processProps(
-      {
-        margin: 1,
-        marginH: 2,
-        marginLeft: 3,
-        hoverMarginLeft: 4,
-        activeMarginV: 5,
-        placeholderPaddingV: 6,
-        placeholderPadding: 7,
-        placeholderPaddingTop: 8,
-        placeholderHoverColor: 9,
-      },
-      'className',
-      createClassNameGetter()
-    );
-
-    expect(keyObj1).toMatchInlineSnapshot(`
-Object {
-  "props": Object {
-    "className": "_x0 _x1 _x2 _x3 _x4 _x5 _x6 _x7 _x8 _x9",
+    "className": "_x0 _x1 _x2 _x3 _x4 _x5 _x6 _x7 _x8 _x9 _xa _xb",
   },
   "rules": Array [
     "._x0 { margin:1px }",
@@ -214,6 +53,10 @@ Object {
     "._x7._x7::placeholder { padding-bottom:6px }",
     "._x8::placeholder { padding:7px }",
     "._x9:hover::placeholder { color:9px }",
+    "@keyframes _xa { from { color:red; padding-left:69px; padding-right:69px } to { margin-top:123px; margin-bottom:123px; margin:456px } }",
+    "._xa._xa { animation-name:_xa }",
+    "@keyframes _xb { test { margin:456px; margin-top:123px; margin-bottom:123px } }",
+    "._xb._xb:hover { animation-name:_xb }",
   ],
 }
 `);
@@ -244,30 +87,26 @@ Object {
 `);
   });
 
-  it('does not support pseudo-prefixed props in object-type animation syntax', () => {
+  it('ignores empty animation objects', () => {
     const styleObj = {
       color: 'red',
-      animation: {
-        from: { activePadding: 0 },
-        to: { padding: 123 },
-      },
+      animation: {},
     };
 
-    const keyObj = processProps(styleObj, 'className', createClassNameGetter());
+    const { rules } = processProps(
+      styleObj,
+      'className',
+      createClassNameGetter()
+    );
 
-    expect(keyObj).toMatchInlineSnapshot(`
-Object {
-  "props": Object {
-    "className": "_x0",
-  },
-  "rules": Array [
-    "._x0 { color:red }",
-  ],
-}
+    expect(rules).toMatchInlineSnapshot(`
+Array [
+  "._x0 { color:red }",
+]
 `);
   });
 
-  it('does not support pseudo-prefixed props in object-type animation syntax', () => {
+  it('logs an error when it encounters pseudo-prefixed props in object-type animation syntax', () => {
     const consoleSpy = jest.spyOn(console, 'error');
     const styleObj = {
       color: 'red',
@@ -359,5 +198,44 @@ Array [
 `);
 
     consoleSpy.mockRestore();
+  });
+
+  it('manages specificity', () => {
+    const styleObject = {
+      margin: 10,
+      marginLeft: 30,
+      activeMargin: 40,
+      activeMarginLeft: 50,
+      placeholderHoverMargin: 60,
+      placeholderHoverMarginLeft: 70,
+    };
+
+    const getClassName = createClassNameGetter();
+
+    const { rules } = processProps(styleObject, 'className', getClassName);
+
+    const { rules: mediaQueryRules } = processProps(
+      styleObject,
+      'className',
+      getClassName,
+      'example'
+    );
+
+    expect([...rules, ...mediaQueryRules]).toMatchInlineSnapshot(`
+Array [
+  "._x0 { margin:10px }",
+  "._x1._x1 { margin-left:30px }",
+  "._x2:active { margin:40px }",
+  "._x3._x3:active { margin-left:50px }",
+  "._x4:hover::placeholder { margin:60px }",
+  "._x5._x5:hover::placeholder { margin-left:70px }",
+  "@media example { ._x6._x6._x6 { margin:10px } }",
+  "@media example { ._x7._x7._x7._x7 { margin-left:30px } }",
+  "@media example { ._x8._x8._x8:active { margin:40px } }",
+  "@media example { ._x9._x9._x9._x9:active { margin-left:50px } }",
+  "@media example { ._xa._xa._xa:hover::placeholder { margin:60px } }",
+  "@media example { ._xb._xb._xb._xb:hover::placeholder { margin-left:70px } }",
+]
+`);
   });
 });

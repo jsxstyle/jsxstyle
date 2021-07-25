@@ -9,7 +9,7 @@ const formatParsedStyleProps = (
   );
 
 describe('parseStyleProps', () => {
-  it('returns null parsedStyleProps when given an empty props object', () => {
+  it('returns empty values when given an empty props object', () => {
     const results = parseStyleProps({}, 'className');
     expect(results).toEqual({
       componentProps: {},
@@ -91,8 +91,8 @@ describe('parseStyleProps', () => {
     `);
   });
 
-  it('splits out allowlisted props', () => {
-    const { componentProps } = parseStyleProps(
+  it('splits out known component props', () => {
+    const { componentProps, parsedStyleProps } = parseStyleProps(
       {
         name: 'name prop',
         id: 'id prop',
@@ -108,6 +108,8 @@ describe('parseStyleProps', () => {
         "name": "name prop",
       }
     `);
+
+    expect(parsedStyleProps).toEqual({});
   });
 
   it('splits out props starting with `on`', () => {

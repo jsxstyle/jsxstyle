@@ -1,4 +1,11 @@
-display:block;textAlign:center;
-backgroundColor:#222;color:white;display:block;padding:20px;
-display:block;fontSize:large;
-animation:jsxstyle_qyaey5;animationDuration:20s;animationIterationCount:infinite;animationTimingFunction:linear;display:inline-block;
+display:inline-block
+from { transform:rotate(0deg) } to { transform:rotate(360deg) } 
+animationDuration:20s
+animationIterationCount:infinite
+animationTimingFunction:linear
+display:block
+textAlign:center
+backgroundColor:#222
+padding:20px
+color:white
+fontSize:large
