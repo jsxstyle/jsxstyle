@@ -2,20 +2,6 @@
   "type": "object",
   "additionalProperties": false,
   "properties": {
-    "styleGroups": {
-      "description": "array of style prop objects",
-      "type": "array",
-      "items": {
-        "type": "object"
-      }
-    },
-    "namedStyleGroups": {
-      "description": "object of style prop objects keyed by className",
-      "type": "object",
-      "additionalProperties": {
-        "type": "object"
-      }
-    },
     "parserPlugins": {
       "description": "array of plugins that should be passed to @babel/parser. You can see a full list of available plugins here: https://new.babeljs.io/docs/en/next/babel-parser.html#plugins",
       "type": "array",
