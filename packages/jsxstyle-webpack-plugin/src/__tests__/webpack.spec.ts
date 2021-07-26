@@ -7,6 +7,8 @@ const webpackConfig: webpack.Configuration = require('./webpack/webpack.config')
 // one minute
 jest.setTimeout(60000);
 
+process.chdir(path.join(__dirname, 'webpack'));
+
 // TODO: evaluate webpack bundle
 it('builds without issue', () => {
   const compiler = webpack(webpackConfig);
@@ -44,7 +46,7 @@ it('builds without issue', () => {
       );
 
       const sharedStyles = `
-/* ./packages/jsxstyle-webpack-plugin/src/__tests__/webpack/test-app/Shared.js:8 (Block) */
+/* ./test-app/Shared.js:8 (Block) */
 ._1qb53c2 {
   display: block;
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
@@ -55,7 +57,7 @@ it('builds without issue', () => {
 
       expect(redCSS).toContain(
         `
-/* ./packages/jsxstyle-webpack-plugin/src/__tests__/webpack/test-app/RedApp.js:8 (Inline) */
+/* ./test-app/RedApp.js:8 (Inline) */
 ._1ioutjs {
   color: red;
   display: inline;
@@ -65,7 +67,7 @@ it('builds without issue', () => {
 
       expect(blueCSS).toContain(
         `
-/* ./packages/jsxstyle-webpack-plugin/src/__tests__/webpack/test-app/BlueApp.js:8 (Inline) */
+/* ./test-app/BlueApp.js:8 (Inline) */
 ._1qr3dx1 {
   color: blue;
   display: inline;
