@@ -126,6 +126,10 @@ jsxstyle-webpack-plugin
 - lib/utils/getStylesByClassName.d.ts.map
 - lib/utils/getStylesByClassName.js
 - lib/utils/getStylesByClassName.js.map
+- lib/utils/typePredicates.d.ts
+- lib/utils/typePredicates.d.ts.map
+- lib/utils/typePredicates.js
+- lib/utils/typePredicates.js.map
 - lib/utils/wrapFileSystem.d.ts
 - lib/utils/wrapFileSystem.d.ts.map
 - lib/utils/wrapFileSystem.js

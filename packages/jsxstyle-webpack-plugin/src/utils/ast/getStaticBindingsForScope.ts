@@ -5,10 +5,11 @@ import type { Scope, Binding } from '@babel/traverse';
 
 import { evaluateAstNode } from './evaluateAstNode';
 import { getSourceModule } from './getSourceModule';
+import { isObject } from '../typePredicates';
 
 export function getStaticBindingsForScope(
   scope: Scope,
-  whitelist: string[] = [],
+  modulesByAbsolutePath: Record<string, unknown>,
   sourceFileName: string,
   bindingCache: Record<string, string | null>
 ): Record<string, any> {
@@ -39,8 +40,11 @@ export function getStaticBindingsForScope(
         moduleName = path.resolve(sourceDir, moduleName);
       }
 
-      if (whitelist.indexOf(moduleName) > -1) {
-        const src = require(moduleName);
+      if (modulesByAbsolutePath.hasOwnProperty(moduleName)) {
+        const src = modulesByAbsolutePath[moduleName];
+        if (!isObject(src)) {
+          continue;
+        }
         if (sourceModule.destructured) {
           if (sourceModule.imported) {
             ret[k] = src[sourceModule.imported];

@@ -165,12 +165,19 @@ export function extractStyles(
     namedStyleGroups,
     parserPlugins: _parserPlugins,
     styleGroups,
-    whitelistedModules,
+    whitelistedModules = [],
     cssModules,
     evaluateVars = true,
   } = options;
 
   const sourceDir = path.dirname(sourceFileName);
+
+  const modulesByAbsolutePath = whitelistedModules.reduce<
+    Record<string, unknown>
+  >((prev, modulePath) => {
+    prev[modulePath] = require(modulePath);
+    return prev;
+  }, {});
 
   // Using a map for (officially supported) guaranteed insertion order
   const cssMap = new Map<string, { css: string; commentTexts: string[] }>();
@@ -438,7 +445,7 @@ export function extractStyles(
               // Generate scope object at this level
               const staticNamespace = getStaticBindingsForScope(
                 traversePath.scope,
-                whitelistedModules,
+                modulesByAbsolutePath,
                 sourceFileName,
                 bindingCache
               );

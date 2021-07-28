@@ -6,7 +6,9 @@ import path = require('path');
 import { getStaticBindingsForScope } from '../getStaticBindingsForScope';
 import { parse } from '../parse';
 
-const whitelistedModules = [require.resolve('./mock/LC')];
+const whitelistedModules = {
+  [require.resolve('./mock/LC')]: require('./mock/LC'),
+};
 
 describe('getStaticBindingsForScope', () => {
   const ast = parse(`
