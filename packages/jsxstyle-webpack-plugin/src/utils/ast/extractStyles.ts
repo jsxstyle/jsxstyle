@@ -175,7 +175,15 @@ export function extractStyles(
   const modulesByAbsolutePath = whitelistedModules.reduce<
     Record<string, unknown>
   >((prev, modulePath) => {
-    prev[modulePath] = require(modulePath);
+    try {
+      prev[modulePath] = require(modulePath);
+    } catch (err) {
+      logError(
+        'Could not require module `%s`:\n',
+        path.relative(process.cwd(), modulePath),
+        err
+      );
+    }
     return prev;
   }, {});
 
