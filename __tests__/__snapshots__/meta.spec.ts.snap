@@ -118,6 +118,10 @@ jsxstyle-webpack-plugin
 - lib/utils/ast/parse.d.ts.map
 - lib/utils/ast/parse.js
 - lib/utils/ast/parse.js.map
+- lib/utils/createModule.d.ts
+- lib/utils/createModule.d.ts.map
+- lib/utils/createModule.js
+- lib/utils/createModule.js.map
 - lib/utils/getClassNameFromCache.d.ts
 - lib/utils/getClassNameFromCache.d.ts.map
 - lib/utils/getClassNameFromCache.js

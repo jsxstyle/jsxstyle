@@ -65,6 +65,7 @@ const jsxstyleLoader: webpack.loader.Loader = function (content) {
     this.resourcePath,
     {
       cacheObject,
+      modulesByAbsolutePath: pluginContext.modulesByAbsolutePath,
       errorCallback: (str: string, ...args: any[]) =>
         this.emitError(new Error(util.format(str, ...args))),
       warnCallback: (str: string, ...args: any[]) =>

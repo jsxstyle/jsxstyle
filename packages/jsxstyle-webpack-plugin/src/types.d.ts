@@ -13,7 +13,7 @@ export interface PluginContext {
   cacheFile: string | null;
   cacheObject: CacheObject;
   memoryFS: MemoryFS;
-  fileList: Set<string>;
+  modulesByAbsolutePath: Record<string, unknown>;
 }
 
 export type MemoryFS = InstanceType<typeof Volume>;

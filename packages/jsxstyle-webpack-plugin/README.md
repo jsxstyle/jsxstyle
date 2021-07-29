@@ -35,9 +35,7 @@ module.exports = {
           },
 
           // companion loader goes at the end
-          {
-            loader: JsxstylePlugin.loader,
-          },
+          JsxstylePlugin.loader,
         ],
       },
       {
@@ -50,7 +48,23 @@ module.exports = {
 };
 ```
 
-## Loader Options
+## Plugin options
+
+Plugin options are passed in object format to `JsxstylePlugin`.
+
+### `staticModules`
+
+An array of _absolute_ paths to modules that should be treated as static. All modules in this list will be evaluated. Exports from these modules that are referenced in jsxstyle components will be inlined.
+
+For example, with the following plugin config, any prop on a jsxstyle component that references a value from `./LayoutConstants.js` will be extracted:
+
+```js
+new JsxstylePlugin({
+  staticModules: [require.resolve('./LayoutConstants')],
+}),
+```
+
+## Loader options
 
 ### `styleGroups`
 
@@ -121,23 +135,6 @@ The `namedStyleGroups` config option is just like the `styleGroups` config optio
   },
 }
 ```
-
-### `whitelistedModules`
-
-The `whitelistedModules` config option allows you to add modules to the evaluation context. For example, with the following loader config, any prop on a jsxstyle component that references a value from `./LayoutConstants.js` will be assumed to be evaluatable:
-
-```js
-{
-  loader: JsxstylePlugin.loader,
-  options: {
-    whitelistedModules: [
-      require.resolve('./LayoutConstants'),
-    ],
-  },
-}
-```
-
-> **Note**: the modules you specify as `whitelistedModules` _will not be transpiled_, so make sure they’re in a format that’s compatible with your version of node.
 
 ### `parserPlugins`
 
