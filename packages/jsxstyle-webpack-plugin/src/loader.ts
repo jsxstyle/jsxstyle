@@ -7,7 +7,6 @@ import webpack = require('webpack');
 
 import { CacheObject, LoaderOptions, PluginContext } from './types';
 import { extractStyles } from './utils/ast/extractStyles';
-import { childCompilerName } from './constants';
 
 const counter: any = Symbol.for('counter');
 
@@ -22,12 +21,6 @@ const jsxstyleLoader = async function (
 
   const callback = this.async();
   invariant(callback, 'Async callback is falsey');
-
-  // Ignore child compilations
-  if (this._compiler.name === childCompilerName) {
-    callback(null, content, sourceMap);
-    return;
-  }
 
   const pluginContext: PluginContext = this[
     Symbol.for('jsxstyle-webpack-plugin')

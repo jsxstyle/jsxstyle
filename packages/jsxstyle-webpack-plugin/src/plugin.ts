@@ -114,6 +114,24 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
       }
     });
 
+    childCompiler.hooks.normalModuleFactory.tap(
+      pluginName,
+      (normalModuleFactory) => {
+        normalModuleFactory.hooks.afterResolve.tap(
+          pluginName,
+          (resolveData: any) => {
+            if (!Array.isArray(resolveData.loaders)) {
+              throw new Error('Oh dear');
+            }
+            resolveData.loaders = resolveData.loaders.filter(
+              (loaderObj: any) =>
+                loaderObj.loader !== JsxstyleWebpackPlugin.loader
+            );
+          }
+        );
+      }
+    );
+
     (childCompiler as any).runAsChild(
       (err: any, entries: any, childCompilation: Compilation) => {
         if (!err) {
