@@ -33,8 +33,7 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
       [counterKey]: 0,
     };
 
-    this.entrypointCache = new EntrypointCache();
-    this.entrypointCache.addEntrypoint(staticModules);
+    this.entrypointCache = new EntrypointCache(staticModules);
 
     // context object that gets passed to each loader.
     // available in each loader as this[Symbol.for('jsxstyle-webpack-plugin')]

@@ -2,6 +2,7 @@ import invariant from 'invariant';
 import path = require('path');
 import { getExportsFromModuleSource } from './utils/getExportsFromModuleSource';
 import { assetPrefix } from './constants';
+import { makePromise } from './utils/makePromise';
 
 interface EntrypointMetadata {
   hash: string | null;
@@ -10,36 +11,46 @@ interface EntrypointMetadata {
   module: unknown | null;
 }
 
-interface PromiseObj<T> {
-  resolve: (value: T) => void;
-  reject: (reason?: any) => void;
-  promise: Promise<T>;
-}
-
-const makePromise = <T extends any>(): PromiseObj<T> => {
-  const result: PromiseObj<T> = {} as any;
-
-  result.promise = new Promise<T>((resolve, reject) => {
-    result.resolve = resolve;
-    result.reject = reject;
-  });
-
-  return result;
-};
-
 export class EntrypointCache {
+  constructor(modulePaths: string[]) {
+    let index = 0;
+
+    for (const modulePath of modulePaths) {
+      invariant(
+        path.isAbsolute(modulePath),
+        'Module path `%s` is expected to be an absolute path',
+        modulePath
+      );
+
+      if (this.entrypoints.hasOwnProperty(modulePath)) {
+        continue;
+      }
+
+      const key = assetPrefix + ++index;
+
+      this.entrypoints[modulePath] = {
+        key,
+        modulePath,
+        hash: null,
+        module: null,
+      };
+
+      this.modulesByKey[key] = this.entrypoints[modulePath];
+    }
+  }
+
   public entrypoints: Record<string, EntrypointMetadata> = {};
 
   private thingPromise = makePromise<Record<string, unknown>>();
   private modulesByKey: Record<string, EntrypointMetadata> = {};
 
-  public reset = () => {
+  public reset = (): void => {
     // close out the old promise just in case
     this.thingPromise.resolve({});
     this.thingPromise = makePromise();
   };
 
-  public reject = (err?: any) => {
+  public reject = (err?: any): void => {
     this.thingPromise.reject(err);
   };
 
@@ -74,32 +85,5 @@ export class EntrypointCache {
     }, {});
 
     this.thingPromise.resolve(modulesByAbsolutePath);
-  };
-
-  public addEntrypoint = (modulePaths: string[]): void => {
-    let index = 0;
-
-    for (const modulePath of modulePaths) {
-      invariant(
-        path.isAbsolute(modulePath),
-        'Module path `%s` is expected to be an absolute path',
-        modulePath
-      );
-
-      if (this.entrypoints.hasOwnProperty(modulePath)) {
-        return;
-      }
-
-      const key = assetPrefix + ++index;
-
-      this.entrypoints[modulePath] = {
-        key,
-        modulePath,
-        hash: null,
-        module: null,
-      };
-
-      this.modulesByKey[key] = this.entrypoints[modulePath];
-    }
   };
 }
