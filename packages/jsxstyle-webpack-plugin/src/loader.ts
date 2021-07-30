@@ -7,12 +7,26 @@ import webpack = require('webpack');
 
 import { CacheObject, LoaderOptions, PluginContext } from './types';
 import { extractStyles } from './utils/ast/extractStyles';
+import { childCompilerName } from './constants';
 
 const counter: any = Symbol.for('counter');
 
-const jsxstyleLoader: webpack.loader.Loader = function (content) {
+const jsxstyleLoader = async function (
+  this: webpack.loader.LoaderContext,
+  content: string | Buffer,
+  sourceMap?: any
+) {
   if (this.cacheable) {
     this.cacheable();
+  }
+
+  const callback = this.async();
+  invariant(callback, 'Async callback is falsey');
+
+  // Ignore child compilations
+  if (this._compiler.name === childCompilerName) {
+    callback(null, content, sourceMap);
+    return;
   }
 
   const pluginContext: PluginContext = this[
@@ -58,31 +72,37 @@ const jsxstyleLoader: webpack.loader.Loader = function (content) {
     pluginContext.cacheFile = options.cacheFile;
   }
 
-  const { memoryFS, cacheObject } = pluginContext;
+  const { memoryFS, cacheObject, entrypointCache } = pluginContext;
 
-  const rv = extractStyles(
-    content,
-    this.resourcePath,
-    {
-      cacheObject,
-      modulesByAbsolutePath: pluginContext.modulesByAbsolutePath,
-      errorCallback: (str: string, ...args: any[]) =>
-        this.emitError(new Error(util.format(str, ...args))),
-      warnCallback: (str: string, ...args: any[]) =>
-        this.emitWarning(new Error(util.format(str, ...args))),
-    },
-    options
-  );
+  try {
+    const modulesByAbsolutePath = await entrypointCache.getModules();
 
-  if (!rv.cssFileName || rv.css.length === 0) {
-    return content;
+    const rv = extractStyles(
+      content,
+      this.resourcePath,
+      {
+        cacheObject,
+        modulesByAbsolutePath,
+        errorCallback: (str: string, ...args: any[]) =>
+          this.emitError(new Error(util.format(str, ...args))),
+        warnCallback: (str: string, ...args: any[]) =>
+          this.emitWarning(new Error(util.format(str, ...args))),
+      },
+      options
+    );
+
+    if (!rv.cssFileName || rv.css.length === 0) {
+      callback(null, content, sourceMap);
+      return;
+    }
+
+    memoryFS.mkdirpSync(path.dirname(rv.cssFileName));
+    memoryFS.writeFileSync(rv.cssFileName, rv.css);
+
+    callback(null, rv.js, rv.map);
+  } catch (err) {
+    callback(err);
   }
-
-  memoryFS.mkdirpSync(path.dirname(rv.cssFileName));
-  memoryFS.writeFileSync(rv.cssFileName, rv.css);
-  this.callback(null, rv.js, rv.map);
-
-  return;
 };
 
 export = jsxstyleLoader;

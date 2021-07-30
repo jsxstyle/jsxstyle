@@ -1,5 +1,6 @@
 import { ExtractStylesOptions } from './utils/ast/extractStyles';
 import type { Volume } from 'memfs';
+import type { EntrypointCache } from './EntrypointCache';
 
 export interface CacheObject {
   [key: string]: any;
@@ -13,7 +14,7 @@ export interface PluginContext {
   cacheFile: string | null;
   cacheObject: CacheObject;
   memoryFS: MemoryFS;
-  modulesByAbsolutePath: Record<string, unknown>;
+  entrypointCache: EntrypointCache;
 }
 
 export type MemoryFS = InstanceType<typeof Volume>;

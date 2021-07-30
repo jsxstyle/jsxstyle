@@ -1,18 +1,21 @@
 import type { CacheObject, PluginContext, MemoryFS } from './types';
 import { wrapFileSystem } from './utils/wrapFileSystem';
+import { EntrypointCache } from './EntrypointCache';
 
 import fs = require('fs');
-import path = require('path');
 import webpack = require('webpack');
-import NodeWatchFileSystem = require('webpack/lib/node/NodeWatchFileSystem');
-import NodeTargetPlugin = require('webpack/lib/node/NodeTargetPlugin');
-import SingleEntryPlugin = require('webpack/lib/SingleEntryPlugin');
-import LibraryTemplatePlugin = require('webpack/lib/LibraryTemplatePlugin');
 import { Volume } from 'memfs';
+
+import LibraryTemplatePlugin = require('webpack/lib/LibraryTemplatePlugin');
+import LoaderTargetPlugin = require('webpack/lib/LoaderTargetPlugin');
+import NodeTargetPlugin = require('webpack/lib/node/NodeTargetPlugin');
+import NodeTemplatePlugin = require('webpack/lib/node/NodeTemplatePlugin');
+import NodeWatchFileSystem = require('webpack/lib/node/NodeWatchFileSystem');
+import SingleEntryPlugin = require('webpack/lib/SingleEntryPlugin');
 
 import Compiler = webpack.Compiler;
 import Compilation = webpack.compilation.Compilation;
-import { getExportsFromModuleSource } from './utils/createModule';
+import { pluginName, childCompilerName, assetPrefix } from './constants';
 
 const counterKey = Symbol.for('counter');
 
@@ -30,7 +33,8 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
       [counterKey]: 0,
     };
 
-    this.childCompilerEntrypoints = staticModules;
+    this.entrypointCache = new EntrypointCache();
+    this.entrypointCache.addEntrypoint(staticModules);
 
     // context object that gets passed to each loader.
     // available in each loader as this[Symbol.for('jsxstyle-webpack-plugin')]
@@ -38,19 +42,16 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
       cacheFile: null,
       cacheObject: this.cacheObject,
       memoryFS: this.memoryFS,
-      modulesByAbsolutePath: this.modulesByAbsolutePath,
+      entrypointCache: this.entrypointCache,
     };
   }
 
   public static loader = require.resolve('./loader');
 
-  private pluginName = 'JsxstylePlugin';
-
   private cacheObject: CacheObject;
   private ctx: PluginContext;
   private memoryFS: MemoryFS;
-  private modulesByAbsolutePath: Record<string, unknown> = {};
-  private childCompilerEntrypoints: string[] = [];
+  private entrypointCache: EntrypointCache;
 
   private nmlPlugin = (loaderContext: any): void => {
     loaderContext[Symbol.for('jsxstyle-webpack-plugin')] = this.ctx;
@@ -58,7 +59,7 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
 
   private compilationPlugin = (compilation: Compilation): void => {
     if (compilation.hooks) {
-      compilation.hooks.normalModuleLoader.tap(this.pluginName, this.nmlPlugin);
+      compilation.hooks.normalModuleLoader.tap(pluginName, this.nmlPlugin);
     } else {
       compilation.plugin('normal-module-loader', this.nmlPlugin);
     }
@@ -75,88 +76,57 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
 
   private makePlugin = (compiler: Compiler) => (
     compilation: Compilation,
-    callback: () => void
+    callback: (...args: any[]) => void
   ): void => {
-    const outputOptions = compiler.options;
-
     const childCompiler = (compilation as any).createChildCompiler(
-      this.pluginName + ' compiled modules',
+      childCompilerName,
       {
-        output: {
-          libraryTarget: 'commonjs2',
-          library: {
-            type: 'commonjs2',
-          },
-          filename: '[name].js',
+        filename: '[name].js',
+        libraryTarget: 'commonjs2',
+        library: {
+          type: 'commonjs2',
         },
-      }
+        scriptType: 'text/javascript',
+        iife: false,
+      },
+      [
+        new NodeTargetPlugin(),
+        new NodeTemplatePlugin(),
+        new LoaderTargetPlugin('node'),
+        new LibraryTemplatePlugin(undefined, 'commonjs2'),
+      ]
     );
 
     childCompiler.context = compiler.context;
-    childCompiler.options = Object.assign({}, outputOptions);
 
-    const moduleObj = this.childCompilerEntrypoints.reduce<
-      Record<string, string>
-    >((prev, moduleName, index) => {
-      const key = 'JSXSTYLE_MODULE_' + index;
-      prev[key] = moduleName;
-      return prev;
-    }, {});
-
-    childCompiler.options.entry = Object.entries(moduleObj).reduce<
-      Record<string, string>
-    >((prev, [moduleName, modulePath]) => {
-      prev[moduleName] = modulePath;
-      childCompiler.apply(
-        new SingleEntryPlugin(compiler.context, modulePath, moduleName)
-      );
-      childCompiler.apply(new LibraryTemplatePlugin(undefined, 'commonjs2'));
-      childCompiler.apply(new NodeTargetPlugin());
-      return prev;
-    }, {});
-
-    childCompiler.options.target = 'node';
-
-    childCompiler.options.output = {
-      ...childCompiler.options.output,
-      libraryTarget: 'commonjs2',
-      library: {
-        type: 'commonjs2',
-      },
-      filename: '[name].js',
-    };
-
-    childCompiler.options.output.filename = '[name].js';
+    Object.entries(this.entrypointCache.entrypoints).forEach(
+      ([modulePath, metadata]) => {
+        childCompiler.apply(
+          new SingleEntryPlugin(compiler.context, modulePath, metadata.key)
+        );
+      }
+    );
 
     childCompiler.runAsChild(
       (err: any, entries: any, childCompilation: Compilation) => {
-        if (!err) {
-          Object.entries(childCompilation.assets).forEach(([key, asset]) => {
-            const basename = path.basename(key, '.js');
-            if (!moduleObj.hasOwnProperty(basename)) {
-              console.log('Unexpected asset name: `%s`', key);
-              return;
-            }
-
-            const assetSource: string = (asset as any).source().toString();
-
-            const modulePath = moduleObj[basename];
-            const assetModule = getExportsFromModuleSource(
-              modulePath,
-              assetSource
-            );
-
-            this.modulesByAbsolutePath[basename] = assetModule;
-          });
-        } else {
+        if (err) {
           compilation.errors.push(err);
+          this.entrypointCache.reject(err);
+          callback(err);
+          return;
         }
+
+        this.entrypointCache.setModules(childCompilation.assets);
         callback();
       }
     );
   };
 
-  public apply(compiler: Compiler) {
+  private beforeCompilePlugin = (): void => {
+    this.entrypointCache.reset();
+  };
+
+  public apply(compiler: Compiler): void {
     const environmentPlugin = (): void => {
       const wrappedFS = wrapFileSystem(compiler.inputFileSystem, this.memoryFS);
       compiler.inputFileSystem = wrappedFS;
@@ -165,10 +135,20 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
 
     if (compiler.hooks) {
       // webpack 4+
-      compiler.hooks.environment.tap(this.pluginName, environmentPlugin);
-      compiler.hooks.compilation.tap(this.pluginName, this.compilationPlugin);
-      compiler.hooks.done.tap(this.pluginName, this.donePlugin);
-      compiler.hooks.make.tapAsync(this.pluginName, this.makePlugin(compiler));
+      compiler.hooks.beforeCompile.tap(pluginName, this.beforeCompilePlugin);
+      compiler.hooks.environment.tap(pluginName, environmentPlugin);
+      compiler.hooks.compilation.tap(pluginName, this.compilationPlugin);
+      compiler.hooks.done.tap(pluginName, this.donePlugin);
+      compiler.hooks.make.tapAsync(pluginName, this.makePlugin(compiler));
+
+      compiler.hooks.afterCompile.tap(pluginName, (compilation) => {
+        // this isn't working for some reason
+        for (const key in compilation.assets) {
+          if (key.startsWith(assetPrefix)) {
+            delete compilation[key];
+          }
+        }
+      });
     } else {
       // webpack 1-3
       compiler.plugin('environment', environmentPlugin);
