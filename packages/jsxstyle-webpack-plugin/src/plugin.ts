@@ -1,6 +1,6 @@
 import type { CacheObject, PluginContext, MemoryFS } from './types';
 import { wrapFileSystem } from './utils/wrapFileSystem';
-import { EntrypointCache } from './EntrypointCache';
+import { ModuleCache } from './utils/ModuleCache';
 
 import fs = require('fs');
 import webpack = require('webpack');
@@ -33,7 +33,7 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
       [counterKey]: 0,
     };
 
-    this.entrypointCache = new EntrypointCache(staticModules);
+    this.entrypointCache = new ModuleCache(staticModules);
 
     // context object that gets passed to each loader.
     // available in each loader as this[Symbol.for('jsxstyle-webpack-plugin')]
@@ -50,7 +50,7 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
   private cacheObject: CacheObject;
   private ctx: PluginContext;
   private memoryFS: MemoryFS;
-  private entrypointCache: EntrypointCache;
+  private entrypointCache: ModuleCache;
 
   private nmlPlugin = (loaderContext: any): void => {
     loaderContext[Symbol.for('jsxstyle-webpack-plugin')] = this.ctx;

@@ -1,6 +1,6 @@
 import { ExtractStylesOptions } from './utils/ast/extractStyles';
 import type { Volume } from 'memfs';
-import type { EntrypointCache } from './EntrypointCache';
+import type { ModuleCache } from './utils/ModuleCache';
 
 export interface CacheObject {
   [key: string]: any;

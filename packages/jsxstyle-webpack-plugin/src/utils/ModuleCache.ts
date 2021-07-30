@@ -1,7 +1,7 @@
 import invariant from 'invariant';
 import path = require('path');
-import { getExportsFromModuleSource } from './utils/getExportsFromModuleSource';
-import { makePromise } from './utils/makePromise';
+import { getExportsFromModuleSource } from './getExportsFromModuleSource';
+import { makePromise } from './makePromise';
 import { stringHash } from 'jsxstyle-utils';
 
 interface EntrypointMetadata {
@@ -11,7 +11,7 @@ interface EntrypointMetadata {
   module: unknown | null;
 }
 
-export class EntrypointCache {
+export class ModuleCache {
   constructor(modulePaths: string[]) {
     for (const modulePath of modulePaths) {
       invariant(
