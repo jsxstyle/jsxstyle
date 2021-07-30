@@ -47,22 +47,22 @@ export class EntrypointCache {
   }
 
   public entrypoints: Record<string, EntrypointMetadata> = {};
-
-  private thingPromise = makePromise<Record<string, unknown>>();
   private modulesByKey: Record<string, EntrypointMetadata> = {};
+
+  private moduleContentPromise = makePromise<Record<string, unknown>>();
 
   public reset = (): void => {
     // close out the old promise just in case
-    this.thingPromise.resolve({});
-    this.thingPromise = makePromise();
+    this.moduleContentPromise.resolve({});
+    this.moduleContentPromise = makePromise();
   };
 
   public reject = (err?: any): void => {
-    this.thingPromise.reject(err);
+    this.moduleContentPromise.reject(err);
   };
 
   public getModules = async (): Promise<Record<string, unknown>> => {
-    return this.thingPromise.promise;
+    return this.moduleContentPromise.promise;
   };
 
   public setModules = (
@@ -89,6 +89,6 @@ export class EntrypointCache {
       return prev;
     }, {});
 
-    this.thingPromise.resolve(modulesByAbsolutePath);
+    this.moduleContentPromise.resolve(modulesByAbsolutePath);
   };
 }
