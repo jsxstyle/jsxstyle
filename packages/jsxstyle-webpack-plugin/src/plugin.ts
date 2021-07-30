@@ -80,7 +80,7 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
     const childCompiler: Compiler = (compilation as any).createChildCompiler(
       childCompilerName,
       {
-        filename: '[name].js',
+        filename: '[name]',
         libraryTarget: 'commonjs2',
         library: {
           type: 'commonjs2',

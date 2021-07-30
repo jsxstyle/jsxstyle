@@ -1,8 +1,8 @@
 import invariant from 'invariant';
 import path = require('path');
 import { getExportsFromModuleSource } from './utils/getExportsFromModuleSource';
-import { assetPrefix } from './constants';
 import { makePromise } from './utils/makePromise';
+import { stringHash } from 'jsxstyle-utils';
 
 interface EntrypointMetadata {
   hash: string | null;
@@ -13,8 +13,6 @@ interface EntrypointMetadata {
 
 export class EntrypointCache {
   constructor(modulePaths: string[]) {
-    let index = 0;
-
     for (const modulePath of modulePaths) {
       invariant(
         path.isAbsolute(modulePath),
@@ -26,7 +24,16 @@ export class EntrypointCache {
         continue;
       }
 
-      const key = assetPrefix + ++index;
+      const ext = path.extname(modulePath);
+      const basename = path.basename(modulePath, ext);
+
+      const key =
+        basename +
+        (this.modulesByKey.hasOwnProperty(basename + ext)
+          ? // add a hash to duplicate keys
+            '-' + stringHash(modulePath).toString(36)
+          : '') +
+        ext;
 
       this.entrypoints[modulePath] = {
         key,
@@ -64,9 +71,7 @@ export class EntrypointCache {
   ) => {
     const modulesByAbsolutePath = Object.entries(assetObject).reduce<
       Record<string, unknown>
-    >((prev, [moduleFileName, asset]) => {
-      const key = path.basename(moduleFileName, '.js');
-
+    >((prev, [key, asset]) => {
       const moduleForKey = this.modulesByKey[key];
       if (!moduleForKey) {
         console.error('Unexpected asset name: `%s`', key);
