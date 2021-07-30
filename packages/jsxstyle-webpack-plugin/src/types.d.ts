@@ -14,7 +14,7 @@ export interface PluginContext {
   cacheFile: string | null;
   cacheObject: CacheObject;
   memoryFS: MemoryFS;
-  entrypointCache: EntrypointCache;
+  getModules: () => Promise<Record<string, unknown>>;
 }
 
 export type MemoryFS = InstanceType<typeof Volume>;

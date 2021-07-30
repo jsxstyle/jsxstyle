@@ -41,7 +41,7 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
       cacheFile: null,
       cacheObject: this.cacheObject,
       memoryFS: this.memoryFS,
-      entrypointCache: this.entrypointCache,
+      getModules: this.entrypointCache.getModules,
     };
   }
 

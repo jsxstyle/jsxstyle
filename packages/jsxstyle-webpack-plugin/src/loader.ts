@@ -72,10 +72,10 @@ const jsxstyleLoader = async function (
     pluginContext.cacheFile = options.cacheFile;
   }
 
-  const { memoryFS, cacheObject, entrypointCache } = pluginContext;
+  const { memoryFS, cacheObject, getModules } = pluginContext;
 
   try {
-    const modulesByAbsolutePath = await entrypointCache.getModules();
+    const modulesByAbsolutePath = await getModules();
 
     const rv = extractStyles(
       content,
