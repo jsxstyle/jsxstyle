@@ -15,7 +15,7 @@ import SingleEntryPlugin = require('webpack/lib/SingleEntryPlugin');
 
 import Compiler = webpack.Compiler;
 import Compilation = webpack.compilation.Compilation;
-import { pluginName, childCompilerName, assetPrefix } from './constants';
+import { pluginName, childCompilerName } from './constants';
 
 const counterKey = Symbol.for('counter');
 
@@ -77,7 +77,7 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
     compilation: Compilation,
     callback: (...args: any[]) => void
   ): void => {
-    const childCompiler = (compilation as any).createChildCompiler(
+    const childCompiler: Compiler = (compilation as any).createChildCompiler(
       childCompilerName,
       {
         filename: '[name].js',
@@ -106,17 +106,24 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
       }
     );
 
-    childCompiler.runAsChild(
+    // delete all emitted chunks
+    childCompiler.hooks.afterCompile.tap(pluginName, (compilation) => {
+      this.entrypointCache.setModules({ ...compilation.assets });
+      for (const key in compilation.assets) {
+        delete compilation.assets[key];
+      }
+    });
+
+    (childCompiler as any).runAsChild(
       (err: any, entries: any, childCompilation: Compilation) => {
-        if (err) {
-          compilation.errors.push(err);
-          this.entrypointCache.reject(err);
-          callback(err);
+        if (!err) {
+          callback();
           return;
         }
 
-        this.entrypointCache.setModules(childCompilation.assets);
-        callback();
+        compilation.errors.push(err);
+        this.entrypointCache.reject(err);
+        callback(err);
       }
     );
   };
@@ -139,15 +146,6 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
       compiler.hooks.compilation.tap(pluginName, this.compilationPlugin);
       compiler.hooks.done.tap(pluginName, this.donePlugin);
       compiler.hooks.make.tapAsync(pluginName, this.makePlugin(compiler));
-
-      compiler.hooks.afterCompile.tap(pluginName, (compilation) => {
-        // this isn't working for some reason
-        for (const key in compilation.assets) {
-          if (key.startsWith(assetPrefix)) {
-            delete compilation[key];
-          }
-        }
-      });
     } else {
       // webpack 1-3
       compiler.plugin('environment', environmentPlugin);
