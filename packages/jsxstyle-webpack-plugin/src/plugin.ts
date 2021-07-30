@@ -25,7 +25,7 @@ interface JsxstyleWebpackPluginOptions {
 }
 
 class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
-  constructor({ staticModules = [] }: JsxstyleWebpackPluginOptions = {}) {
+  constructor({ staticModules }: JsxstyleWebpackPluginOptions = {}) {
     this.memoryFS = new Volume();
 
     // the default cache object. can be overridden on a per-loader instance basis with the `cacheFile` option.
@@ -33,7 +33,12 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
       [counterKey]: 0,
     };
 
-    this.entrypointCache = new ModuleCache(staticModules);
+    if (staticModules) {
+      this.entrypointCache = new ModuleCache(staticModules);
+    }
+
+    const getModules =
+      this.entrypointCache?.getModules || (() => Promise.resolve({}));
 
     // context object that gets passed to each loader.
     // available in each loader as this[Symbol.for('jsxstyle-webpack-plugin')]
@@ -41,7 +46,7 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
       cacheFile: null,
       cacheObject: this.cacheObject,
       memoryFS: this.memoryFS,
-      getModules: this.entrypointCache.getModules,
+      getModules,
     };
   }
 
@@ -50,7 +55,7 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
   private cacheObject: CacheObject;
   private ctx: PluginContext;
   private memoryFS: MemoryFS;
-  private entrypointCache: ModuleCache;
+  private entrypointCache?: ModuleCache;
 
   private nmlPlugin = (loaderContext: any): void => {
     loaderContext[Symbol.for('jsxstyle-webpack-plugin')] = this.ctx;
@@ -73,7 +78,7 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
     }
   };
 
-  private makePlugin = (compiler: Compiler) => (
+  private makePlugin = (compiler: Compiler, moduleCache: ModuleCache) => (
     compilation: Compilation,
     callback: (...args: any[]) => void
   ): void => {
@@ -98,7 +103,7 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
 
     childCompiler.context = compiler.context;
 
-    Object.entries(this.entrypointCache.entrypoints).forEach(
+    Object.entries(moduleCache.entrypoints).forEach(
       ([modulePath, metadata]) => {
         childCompiler.apply(
           new SingleEntryPlugin(compiler.context, modulePath, metadata.key)
@@ -108,7 +113,7 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
 
     // delete all emitted chunks
     childCompiler.hooks.afterCompile.tap(pluginName, (compilation) => {
-      this.entrypointCache.setModules({ ...compilation.assets });
+      moduleCache.setModules({ ...compilation.assets });
       for (const key in compilation.assets) {
         delete compilation.assets[key];
       }
@@ -132,6 +137,10 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
       }
     );
 
+    childCompiler.hooks.beforeCompile.tap(pluginName, () => {
+      moduleCache.reset();
+    });
+
     (childCompiler as any).runAsChild(
       (err: any, entries: any, childCompilation: Compilation) => {
         if (!err) {
@@ -140,14 +149,10 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
         }
 
         compilation.errors.push(err);
-        this.entrypointCache.reject(err);
+        moduleCache.reject(err);
         callback(err);
       }
     );
-  };
-
-  private beforeCompilePlugin = (): void => {
-    this.entrypointCache.reset();
   };
 
   public apply(compiler: Compiler): void {
@@ -159,11 +164,16 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
 
     if (compiler.hooks) {
       // webpack 4+
-      compiler.hooks.beforeCompile.tap(pluginName, this.beforeCompilePlugin);
       compiler.hooks.environment.tap(pluginName, environmentPlugin);
       compiler.hooks.compilation.tap(pluginName, this.compilationPlugin);
       compiler.hooks.done.tap(pluginName, this.donePlugin);
-      compiler.hooks.make.tapAsync(pluginName, this.makePlugin(compiler));
+
+      if (this.entrypointCache) {
+        compiler.hooks.make.tapAsync(
+          pluginName,
+          this.makePlugin(compiler, this.entrypointCache)
+        );
+      }
     } else {
       // webpack 1-3
       compiler.plugin('environment', environmentPlugin);
