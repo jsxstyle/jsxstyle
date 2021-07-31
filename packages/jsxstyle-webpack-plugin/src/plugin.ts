@@ -69,13 +69,11 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
     }
   };
 
-  private donePlugin = (): void => {
-    if (this.ctx.cacheFile) {
-      // write contents of cache object as a newline-separated list of CSS strings
-      const cacheString =
-        Object.keys(this.ctx.cacheObject).filter(Boolean).join('\n') + '\n';
-      fs.writeFileSync(this.ctx.cacheFile, cacheString, 'utf8');
-    }
+  private donePlugin = (cacheFile: string) => (): void => {
+    // write contents of cache object as a newline-separated list of CSS strings
+    const cacheString =
+      Object.keys(this.ctx.cacheObject).filter(Boolean).join('\n') + '\n';
+    fs.writeFileSync(cacheFile, cacheString, 'utf8');
   };
 
   private makePlugin = (compiler: Compiler, moduleCache: ModuleCache) => (
@@ -190,7 +188,13 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
       // webpack 4+
       compiler.hooks.environment.tap(pluginName, environmentPlugin);
       compiler.hooks.compilation.tap(pluginName, this.compilationPlugin);
-      compiler.hooks.done.tap(pluginName, this.donePlugin);
+
+      if (this.ctx.cacheFile) {
+        compiler.hooks.done.tap(
+          pluginName,
+          this.donePlugin(this.ctx.cacheFile)
+        );
+      }
 
       if (this.entrypointCache) {
         compiler.hooks.make.tapPromise(
@@ -202,7 +206,9 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
       // webpack 1-3
       compiler.plugin('environment', environmentPlugin);
       compiler.plugin('compilation', this.compilationPlugin);
-      compiler.plugin('done', this.donePlugin);
+      if (this.ctx.cacheFile) {
+        compiler.plugin('done', this.donePlugin(this.ctx.cacheFile));
+      }
     }
   }
 }
