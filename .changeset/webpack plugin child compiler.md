@@ -2,4 +2,4 @@
 'jsxstyle-webpack-plugin': major
 ---
 
-Added initial support for compiling static modules using the parent webpack config. There’s only one breaking change: the array of modules that will be passed is now passed directly to the plugin rather than as a loader option.
+Renamed `whitelistedModules` option to `staticModules` and improved static module support. Modules specified in the `staticModules` array are now compiled using the parent webpack config, so they can contain any syntax that the webpack config can compile. The main breaking change: the `staticModules` option is now passed directly to the plugin rather than as a loader option.
