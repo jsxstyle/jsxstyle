@@ -79,100 +79,104 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
   };
 
   private makePlugin = (compiler: Compiler, moduleCache: ModuleCache) => (
-    compilation: Compilation,
-    callback: (...args: any[]) => void
-  ): void => {
-    const childCompiler: Compiler = (compilation as any).createChildCompiler(
-      childCompilerName,
-      {
-        filename: '[name]',
-        libraryTarget: 'commonjs2',
-        library: {
-          type: 'commonjs2',
-        },
-        scriptType: 'text/javascript',
-        iife: false,
-      },
-      [
-        new NodeTargetPlugin(),
-        new NodeTemplatePlugin(),
-        new LoaderTargetPlugin('node'),
-        new LibraryTemplatePlugin(undefined, 'commonjs2'),
-      ]
-    );
-
-    childCompiler.context = compiler.context;
-
-    Object.entries(moduleCache.entrypoints).forEach(
-      ([modulePath, metadata]) => {
-        new SingleEntryPlugin(compiler.context, modulePath, metadata.key).apply(
-          childCompiler
-        );
-      }
-    );
-
-    // delete all emitted chunks
-    childCompiler.hooks.thisCompilation.tap(pluginName, (compilation) => {
-      // webpack 5
-      if ('processAssets' in compilation.hooks) {
-        (compilation.hooks as any).processAssets.tap(
-          {
-            name: pluginName,
-            stage: (webpack as any).Compilation.PROCESS_ASSETS_STAGE_ADDITIONS,
+    compilation: Compilation
+  ): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      const childCompiler: Compiler = (compilation as any).createChildCompiler(
+        childCompilerName,
+        {
+          filename: '[name]',
+          libraryTarget: 'commonjs2',
+          library: {
+            type: 'commonjs2',
           },
-          (assets: Record<string, unknown>) => {
-            moduleCache.setModules({ ...compilation.assets });
-            Object.keys(assets).forEach((key) =>
-              (compilation as any).deleteAsset(key)
-            );
-          }
-        );
-      }
+          scriptType: 'text/javascript',
+          iife: false,
+        },
+        [
+          new NodeTargetPlugin(),
+          new NodeTemplatePlugin(),
+          new LoaderTargetPlugin('node'),
+          new LibraryTemplatePlugin(undefined, 'commonjs2'),
+        ]
+      );
 
-      // webpack 4
-      else {
-        childCompiler.hooks.afterCompile.tap(pluginName, (compilation) => {
-          moduleCache.setModules({ ...compilation.assets });
-          Object.keys(compilation.assets).forEach(
-            (key) => delete compilation.assets[key]
-          );
-        });
-      }
-    });
+      childCompiler.context = compiler.context;
 
-    childCompiler.hooks.normalModuleFactory.tap(
-      pluginName,
-      (normalModuleFactory) => {
-        normalModuleFactory.hooks.afterResolve.tap(
-          pluginName,
-          (resolveData: any) => {
-            if (!Array.isArray(resolveData.loaders)) {
-              throw new Error('Oh dear');
-            }
-            resolveData.loaders = resolveData.loaders.filter(
-              (loaderObj: any) =>
-                loaderObj.loader !== JsxstyleWebpackPlugin.loader
-            );
-          }
-        );
-      }
-    );
-
-    childCompiler.hooks.beforeCompile.tap(pluginName, () => {
-      moduleCache.reset();
-    });
-
-    (childCompiler as any).runAsChild(
-      (err: any, entries: any, childCompilation: Compilation) => {
-        if (err) {
-          compilation.errors.push(err);
-          moduleCache.reject(err);
-          callback(err);
-        } else {
-          callback();
+      Object.entries(moduleCache.entrypoints).forEach(
+        ([modulePath, metadata]) => {
+          new SingleEntryPlugin(
+            compiler.context,
+            modulePath,
+            metadata.key
+          ).apply(childCompiler);
         }
-      }
-    );
+      );
+
+      // delete all emitted chunks
+      childCompiler.hooks.thisCompilation.tap(pluginName, (compilation) => {
+        // webpack 5
+        if ('processAssets' in compilation.hooks) {
+          (compilation.hooks as any).processAssets.tap(
+            {
+              name: pluginName,
+              stage: (webpack as any).Compilation
+                .PROCESS_ASSETS_STAGE_ADDITIONS,
+            },
+            (assets: Record<string, unknown>) => {
+              moduleCache.setModules({ ...compilation.assets });
+              Object.keys(assets).forEach((key) =>
+                (compilation as any).deleteAsset(key)
+              );
+            }
+          );
+        }
+
+        // webpack 4
+        else {
+          childCompiler.hooks.afterCompile.tap(pluginName, (compilation) => {
+            moduleCache.setModules({ ...compilation.assets });
+            Object.keys(compilation.assets).forEach(
+              (key) => delete compilation.assets[key]
+            );
+          });
+        }
+      });
+
+      childCompiler.hooks.normalModuleFactory.tap(
+        pluginName,
+        (normalModuleFactory) => {
+          normalModuleFactory.hooks.afterResolve.tap(
+            pluginName,
+            (resolveData: any) => {
+              if (!Array.isArray(resolveData.loaders)) {
+                throw new Error('Oh dear');
+              }
+              resolveData.loaders = resolveData.loaders.filter(
+                (loaderObj: any) =>
+                  loaderObj.loader !== JsxstyleWebpackPlugin.loader
+              );
+            }
+          );
+        }
+      );
+
+      childCompiler.hooks.beforeCompile.tap(pluginName, () => {
+        moduleCache.reset();
+      });
+
+      (childCompiler as any).runAsChild(
+        (err: any, entries: any, childCompilation: Compilation) => {
+          if (err) {
+            compilation.errors.push(err);
+            moduleCache.reject(err);
+            reject(err);
+          } else {
+            resolve();
+          }
+        }
+      );
+    });
   };
 
   public apply(compiler: Compiler): void {
@@ -189,7 +193,7 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
       compiler.hooks.done.tap(pluginName, this.donePlugin);
 
       if (this.entrypointCache) {
-        compiler.hooks.make.tapAsync(
+        compiler.hooks.make.tapPromise(
           pluginName,
           this.makePlugin(compiler, this.entrypointCache)
         );
