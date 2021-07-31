@@ -77,7 +77,7 @@ describe('examples', () => {
         const cwd = path.join(exampleDir, example);
         expect.assertions(1);
         return expect(() =>
-          execSync('yarn build', { cwd, stdio: 'inherit' }).toString('utf-8')
+          execSync('yarn build', { cwd, stdio: 'inherit' })
         ).not.toThrow();
       },
       30000
