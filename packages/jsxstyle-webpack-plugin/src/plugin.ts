@@ -112,10 +112,31 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
     );
 
     // delete all emitted chunks
-    childCompiler.hooks.afterCompile.tap(pluginName, (compilation) => {
-      moduleCache.setModules({ ...compilation.assets });
-      for (const key in compilation.assets) {
-        delete compilation.assets[key];
+    childCompiler.hooks.thisCompilation.tap(pluginName, (compilation) => {
+      // webpack 5
+      if ('processAssets' in compilation.hooks) {
+        (compilation.hooks as any).processAssets.tap(
+          {
+            name: pluginName,
+            stage: (webpack as any).Compilation.PROCESS_ASSETS_STAGE_ADDITIONS,
+          },
+          (assets: Record<string, unknown>) => {
+            moduleCache.setModules({ ...compilation.assets });
+            Object.keys(assets).forEach((key) =>
+              (compilation as any).deleteAsset(key)
+            );
+          }
+        );
+      }
+
+      // webpack 4
+      else {
+        childCompiler.hooks.afterCompile.tap(pluginName, (compilation) => {
+          moduleCache.setModules({ ...compilation.assets });
+          Object.keys(compilation.assets).forEach(
+            (key) => delete compilation.assets[key]
+          );
+        });
       }
     });
 
@@ -143,14 +164,13 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
 
     (childCompiler as any).runAsChild(
       (err: any, entries: any, childCompilation: Compilation) => {
-        if (!err) {
+        if (err) {
+          compilation.errors.push(err);
+          moduleCache.reject(err);
+          callback(err);
+        } else {
           callback();
-          return;
         }
-
-        compilation.errors.push(err);
-        moduleCache.reject(err);
-        callback(err);
       }
     );
   };
