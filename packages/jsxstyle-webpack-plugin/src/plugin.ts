@@ -65,7 +65,12 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
   };
 
   private compilationPlugin = (compilation: Compilation): void => {
-    if (compilation.hooks) {
+    if ((webpack as any)?.NormalModule?.getCompilationHooks) {
+      const normalModuleLoader = (webpack as any).NormalModule.getCompilationHooks(
+        compilation
+      ).loader;
+      normalModuleLoader.tap(pluginName, this.nmlPlugin);
+    } else if (compilation.hooks) {
       compilation.hooks.normalModuleLoader.tap(pluginName, this.nmlPlugin);
     } else {
       compilation.plugin('normal-module-loader', this.nmlPlugin);
