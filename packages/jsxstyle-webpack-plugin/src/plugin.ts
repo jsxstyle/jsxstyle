@@ -105,8 +105,8 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
 
     Object.entries(moduleCache.entrypoints).forEach(
       ([modulePath, metadata]) => {
-        childCompiler.apply(
-          new SingleEntryPlugin(compiler.context, modulePath, metadata.key)
+        new SingleEntryPlugin(compiler.context, modulePath, metadata.key).apply(
+          childCompiler
         );
       }
     );
