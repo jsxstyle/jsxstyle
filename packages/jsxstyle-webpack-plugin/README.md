@@ -193,7 +193,7 @@ const bestNumber = 42;
 <Block fontSize={bestNumber}>hello</Block>;
 ```
 
-Any modules marked as whitelisted with the [`whitelistedModules`](#whitelistedmodules) config option will also be added to the evaluation context.
+Any modules marked as static with the [`staticModules`](#staticModules) plugin config option will also be added to the evaluation context.
 
 If the value of a style prop is a ternary and both sides can be evaluated, the prop will be extracted and the ternary condition will be moved to the `className`.
 

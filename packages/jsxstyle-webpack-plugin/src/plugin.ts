@@ -36,7 +36,7 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
       [counterKey]: 0,
     };
 
-    if (staticModules) {
+    if (Array.isArray(staticModules)) {
       this.entrypointCache = new ModuleCache(staticModules);
     }
 

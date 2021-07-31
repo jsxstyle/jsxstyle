@@ -692,7 +692,7 @@ describe('ternaries', () => {
     expect(rv.css).toMatchInlineSnapshot();
   });
 
-  it('extracts a ternary expression that has a whitelisted consequent and alternate', () => {
+  it('extracts a ternary expression that has a static consequent and alternate', () => {
     const rv = extractStyles(
       `import LC from "./LC";
 import {Block} from "jsxstyle";

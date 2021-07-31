@@ -6,7 +6,7 @@ import path = require('path');
 import { getStaticBindingsForScope } from '../getStaticBindingsForScope';
 import { parse } from '../parse';
 
-const whitelistedModules = {
+const modulesByAbsolutePath = {
   [require.resolve('./mock/LC')]: require('./mock/LC'),
 };
 
@@ -99,7 +99,7 @@ function outerFunction(innerParam1, innerParam2) {
 
     const blockBindings = getStaticBindingsForScope(
       testItems.Block.scope,
-      whitelistedModules,
+      modulesByAbsolutePath,
       path.resolve(__dirname, 'mock', 'demo.js'),
       proxiedCache
     );
