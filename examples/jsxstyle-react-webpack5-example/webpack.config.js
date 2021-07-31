@@ -1,24 +1,36 @@
+// @ts-check
+
 const JsxstyleWebpackPlugin = require('jsxstyle-webpack-plugin');
 const ReactIndexPlugin = require('../ReactIndexPlugin');
 
+/** @type {import('webpack').Configuration} */
 module.exports = {
   mode: 'production',
   entry: require.resolve('./entry'),
+
   output: {
     path: __dirname + '/build',
     filename: 'bundle.js',
   },
+
   plugins: [
     new ReactIndexPlugin(),
     new JsxstyleWebpackPlugin({
       staticModules: [require.resolve('./LayoutConstants')],
     }),
   ],
+
   resolve: {
     alias: {
       jsxstyle: require.resolve('jsxstyle'),
     },
   },
+
+  stats: {
+    // log information from child compilers as well
+    children: true,
+  },
+
   module: {
     rules: [
       {

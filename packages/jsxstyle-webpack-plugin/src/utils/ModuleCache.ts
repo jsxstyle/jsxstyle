@@ -66,19 +66,17 @@ export class ModuleCache {
   };
 
   public setModules = (
-    /** An object of webpack assets objects keyed by filename */
-    assetObject: Record<string, unknown>
+    /** An object of file contents keyed by filename */
+    assetObject: Record<string, string>
   ) => {
     const modulesByAbsolutePath = Object.entries(assetObject).reduce<
       Record<string, unknown>
-    >((prev, [key, asset]) => {
+    >((prev, [key, assetSource]) => {
       const moduleForKey = this.modulesByKey[key];
       if (!moduleForKey) {
         console.error('Unexpected asset name: `%s`', key);
         return prev;
       }
-
-      const assetSource: string = (asset as any).source().toString();
 
       const assetModule = getExportsFromModuleSource(
         moduleForKey.modulePath,

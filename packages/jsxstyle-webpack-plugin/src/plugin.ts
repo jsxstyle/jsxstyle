@@ -24,6 +24,9 @@ interface JsxstyleWebpackPluginOptions {
   staticModules?: string[];
 }
 
+const filterOutJsxstyleLoader = (loaderObj: any) =>
+  loaderObj.loader !== JsxstyleWebpackPlugin.loader;
+
 class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
   constructor({ staticModules }: JsxstyleWebpackPluginOptions = {}) {
     this.memoryFS = new Volume();
@@ -80,6 +83,8 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
     compilation: Compilation
   ): Promise<void> => {
     return new Promise((resolve, reject) => {
+      const resultObject: Record<string, string> = {};
+
       const childCompiler: Compiler = (compilation as any).createChildCompiler(
         childCompilerName,
         {
@@ -89,7 +94,7 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
             type: 'commonjs2',
           },
           scriptType: 'text/javascript',
-          iife: false,
+          iife: true,
         },
         [
           new NodeTargetPlugin(),
@@ -121,11 +126,11 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
               stage: (webpack as any).Compilation
                 .PROCESS_ASSETS_STAGE_ADDITIONS,
             },
-            (assets: Record<string, unknown>) => {
-              moduleCache.setModules({ ...compilation.assets });
-              Object.keys(assets).forEach((key) =>
-                (compilation as any).deleteAsset(key)
-              );
+            (assets: Record<string, { source: () => string | Buffer }>) => {
+              Object.keys(assets).forEach((key) => {
+                resultObject[key] = assets[key].source().toString();
+                (compilation as any).deleteAsset(key);
+              });
             }
           );
         }
@@ -133,10 +138,10 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
         // webpack 4
         else {
           childCompiler.hooks.afterCompile.tap(pluginName, (compilation) => {
-            moduleCache.setModules({ ...compilation.assets });
-            Object.keys(compilation.assets).forEach(
-              (key) => delete compilation.assets[key]
-            );
+            Object.keys(compilation.assets).forEach((key) => {
+              resultObject[key] = compilation.assets[key].source().toString();
+              delete compilation.assets[key];
+            });
           });
         }
       });
@@ -147,13 +152,15 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
           normalModuleFactory.hooks.afterResolve.tap(
             pluginName,
             (resolveData: any) => {
-              if (!Array.isArray(resolveData.loaders)) {
-                throw new Error('Oh dear');
+              if (Array.isArray(resolveData.loaders)) {
+                resolveData.loaders = resolveData.loaders.filter(
+                  filterOutJsxstyleLoader
+                );
+              } else if ('createData' in resolveData) {
+                resolveData.createData.loaders = resolveData.createData.loaders.filter(
+                  filterOutJsxstyleLoader
+                );
               }
-              resolveData.loaders = resolveData.loaders.filter(
-                (loaderObj: any) =>
-                  loaderObj.loader !== JsxstyleWebpackPlugin.loader
-              );
             }
           );
         }
@@ -164,12 +171,13 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
       });
 
       (childCompiler as any).runAsChild(
-        (err: any, entries: any, childCompilation: Compilation) => {
+        (err: any, entries: any[], childCompilation: Compilation) => {
           if (err) {
             compilation.errors.push(err);
             moduleCache.reject(err);
             reject(err);
           } else {
+            moduleCache.setModules(resultObject);
             resolve();
           }
         }
