@@ -2,7 +2,9 @@ import path = require('path');
 
 import { extractStyles } from '../extractStyles';
 
-const whitelistedModules = [require.resolve('./mock/LC')];
+const modulesByAbsolutePath = {
+  [require.resolve('./mock/LC')]: require('./mock/LC'),
+};
 
 const pathTo = (thing: string) => path.resolve(__dirname, thing);
 
@@ -23,7 +25,7 @@ const {Col: TestCol, Row} = require("jsxstyle");
 <InlineCol extract="yep" />;
 <TestCol extract="yep" />;`,
       pathTo('mock/validate.js'),
-      { cacheObject: {} }
+      { cacheObject: {}, modulesByAbsolutePath }
     );
 
     expect(rv1.js).toMatchInlineSnapshot(`
@@ -70,8 +72,7 @@ const val = "thing";
   staticMemberExpression={LC.staticValue}
 />`,
       pathTo('mock/extract-static1.js'),
-      { cacheObject: {} },
-      { whitelistedModules }
+      { cacheObject: {}, modulesByAbsolutePath }
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
@@ -102,8 +103,7 @@ const val = "thing";
 import LC from "./LC";
 <Block staticString="wow" staticInt={69} staticValue={val} staticMemberExpression={LC.staticValue} dynamicValue={notStatic} />`,
       pathTo('mock/extract-static2.js'),
-      { cacheObject: {} },
-      { whitelistedModules }
+      { cacheObject: {}, modulesByAbsolutePath }
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
@@ -222,8 +222,7 @@ function Thing(props) {
 }
 `,
       pathTo('mock/trusted-spreads.js'),
-      { cacheObject: {} },
-      { whitelistedModules }
+      { cacheObject: {}, modulesByAbsolutePath }
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
@@ -619,8 +618,7 @@ import LC from "./LC";
   smWidth="100%"
 />;`,
       pathTo('mock/media-queries.js'),
-      { cacheObject: {} },
-      { whitelistedModules }
+      { cacheObject: {}, modulesByAbsolutePath }
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
@@ -694,15 +692,14 @@ describe('ternaries', () => {
     expect(rv.css).toMatchInlineSnapshot();
   });
 
-  it('extracts a ternary expression that has a whitelisted consequent and alternate', () => {
+  it('extracts a ternary expression that has a static consequent and alternate', () => {
     const rv = extractStyles(
       `import LC from "./LC";
 import {Block} from "jsxstyle";
 const blue = "blueberry";
 <Block color={dynamic ? LC.red : blue} />`,
       pathTo('mock/ternary.js'),
-      { cacheObject: {} },
-      { whitelistedModules }
+      { cacheObject: {}, modulesByAbsolutePath }
     );
 
     expect(rv.js).toMatchInlineSnapshot(`

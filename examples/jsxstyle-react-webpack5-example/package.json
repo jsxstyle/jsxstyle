@@ -3,8 +3,8 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "build": "rimraf build/* && webpack --mode=production",
-    "start": "webpack serve --mode=development"
+    "build": "rimraf build/* && node -r \"../augmentPaths\" ./node_modules/.bin/webpack --mode=production",
+    "start": "node -r \"../augmentPaths\" ./node_modules/.bin/webpack serve --mode=development"
   },
   "devDependencies": {
     "@babel/core": "^7.7.4",

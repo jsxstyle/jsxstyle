@@ -25,7 +25,6 @@ export interface ExtractStylesOptions {
   namedStyleGroups?: Record<string, Record<string, any>>;
   parserPlugins?: ParserPlugin[];
   styleGroups?: Array<Record<string, any>>;
-  whitelistedModules?: string[];
   cssModules?: boolean;
   evaluateVars?: boolean;
 }
@@ -34,6 +33,7 @@ export interface Options {
   cacheObject: CacheObject;
   errorCallback?: (str: string, ...args: any[]) => void;
   warnCallback?: (str: string, ...args: any[]) => void;
+  modulesByAbsolutePath?: Record<string, unknown>;
 }
 
 declare module '@babel/traverse' {
@@ -108,7 +108,12 @@ export function extractStyles(
   src: string | Buffer,
   sourceFileName: string,
   /** non-user-configurable options */
-  { cacheObject, warnCallback, errorCallback }: Options,
+  {
+    cacheObject,
+    warnCallback,
+    errorCallback,
+    modulesByAbsolutePath = {},
+  }: Options,
   options: ExtractStylesOptions = {}
 ): {
   js: string | Buffer;
@@ -165,27 +170,11 @@ export function extractStyles(
     namedStyleGroups,
     parserPlugins: _parserPlugins,
     styleGroups,
-    whitelistedModules = [],
     cssModules,
     evaluateVars = true,
   } = options;
 
   const sourceDir = path.dirname(sourceFileName);
-
-  const modulesByAbsolutePath = whitelistedModules.reduce<
-    Record<string, unknown>
-  >((prev, modulePath) => {
-    try {
-      prev[modulePath] = require(modulePath);
-    } catch (err) {
-      logError(
-        'Could not require module `%s`:\n',
-        path.relative(process.cwd(), modulePath),
-        err
-      );
-    }
-    return prev;
-  }, {});
 
   // Using a map for (officially supported) guaranteed insertion order
   const cssMap = new Map<string, { css: string; commentTexts: string[] }>();

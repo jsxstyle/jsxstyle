@@ -1,14 +1,14 @@
 import { dangerousStyleValue } from '..';
 
 describe('dangerousStyleValue', () => {
-  it('adds a px prefix to whitelisted unitless values', () => {
-    const value = dangerousStyleValue('width', 415);
-    expect(value).toEqual('415px');
-  });
-
-  it('does not add a px prefix to props not on the whitelist', () => {
+  it('leaves the `px` prefix off known unitless prop values', () => {
     const value = dangerousStyleValue('flexGrow', 415);
     expect(value).toEqual('415');
+  });
+
+  it('adds a `px` prefix to all other numeric prop values', () => {
+    const value = dangerousStyleValue('width', 415);
+    expect(value).toEqual('415px');
   });
 
   it('converts fractional number values to percentages', () => {

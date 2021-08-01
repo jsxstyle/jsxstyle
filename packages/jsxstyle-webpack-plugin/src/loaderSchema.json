@@ -16,14 +16,6 @@
         "type": "object"
       }
     },
-    "whitelistedModules": {
-      "description": "array of absolute paths to modules that should be considered static",
-      "type": "array",
-      "items": {
-        "type": "string",
-        "pattern": "(^/|^[a-zA-Z]:\\\\)"
-      }
-    },
     "parserPlugins": {
       "description": "array of plugins that should be passed to @babel/parser. You can see a full list of available plugins here: https://new.babeljs.io/docs/en/next/babel-parser.html#plugins",
       "type": "array",
