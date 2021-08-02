@@ -1,4 +1,3 @@
-/* tslint:disable no-bitwise */
 // thx darksky: https://git.io/v9kWO
 export function stringHash(str: string): number {
   let hash = 5381;

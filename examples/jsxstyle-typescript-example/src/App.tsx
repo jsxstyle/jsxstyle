@@ -2,7 +2,6 @@ import { Block, InlineBlock } from 'jsxstyle';
 import * as React from 'react';
 import logo from './logo.svg';
 
-// tslint:disable-next-line no-var-requires
 const width = '100%';
 const height = () => 150;
 

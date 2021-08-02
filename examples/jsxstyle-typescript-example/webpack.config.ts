@@ -23,7 +23,6 @@ const config: webpack.Configuration = {
 
   plugins: [new JsxstylePlugin(), new ReactIndexPlugin()],
 
-  // tslint:disable object-literal-sort-keys
   module: {
     strictExportPresence: true,
     rules: [
@@ -97,7 +96,6 @@ const config: webpack.Configuration = {
       },
     ],
   },
-  // tslint:enable object-literal-sort-keys
 };
 
 export = config;

@@ -15,9 +15,6 @@
     "version:canary": "changeset version --snapshot canary",
     "reset": "rimraf packages/{*,*/*}/lib/",
     "tsc": "tsc -p packages/jsxstyle-webpack-plugin/tsconfig.json",
-    "tslint": "tslint",
-    "tslint-all": "find . -type f -name 'tsconfig.json' -not -path '*/node_modules/*' -exec echo {} \\; -exec tslint -p {} \\;",
-    "tslint-fix-all": "find . -type f -name 'tsconfig.json' -not -path '*/node_modules/*' -exec echo {} \\; -exec tslint -p {} \\;",
     "tsc-check-all": "find . -type f -name 'tsconfig.json' -not -path '*/node_modules/*' -exec echo {} \\; -exec tsc --noEmit --pretty --project {} \\;",
     "update-readme": "echo \"$(<./misc/monorepo-preamble.md)\\n\\n---\\n\\n$(<./packages/jsxstyle/README.md)\" > README.md",
     "karma": "karma start",
@@ -88,9 +85,6 @@
     "ts-jest": "^27.0.3",
     "ts-loader": "^6.0.4",
     "ts-node": "^8.5.2",
-    "tslint": "^6.1.0",
-    "tslint-config-prettier": "^1.18.0",
-    "tslint-react": "^4.1.0",
     "typescript": "~3.9.6",
     "webpack": "^4.36.1"
   }
