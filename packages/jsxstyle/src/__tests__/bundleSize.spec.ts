@@ -4,6 +4,9 @@ import rollupNodeResolve from 'rollup-plugin-node-resolve';
 import rollupReplace from 'rollup-plugin-replace';
 import { terser as rollupTerser } from 'rollup-plugin-terser';
 import zlib = require('zlib');
+import { promisify } from 'util';
+
+const gzipAsync = promisify(zlib.gzip);
 
 const entry = 'bundleSize entrypoint';
 
@@ -54,22 +57,12 @@ it('has a runtime size of less than 3KB', async () => {
     throw new Error('Generated bundle resulted in a falsey value');
   }
 
-  const buf = await new Promise<Buffer>((resolve, reject) => {
-    return zlib.deflate(code, (err, buf) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(buf);
-      }
-    });
-  });
-
-  const strLen = Buffer.byteLength(code);
-  const gzipLen = buf.byteLength;
+  const codeLen = Buffer.byteLength(code);
+  const gzipLen = (await gzipAsync(code)).byteLength;
   console.warn(
     'jsxstyle bundle size: %s bytes (%skb)',
-    strLen,
-    (strLen / 1024).toFixed(4)
+    codeLen,
+    (codeLen / 1024).toFixed(4)
   );
   console.warn(
     'jsxstyle bundle size (gzip): %s bytes (%skb)',
