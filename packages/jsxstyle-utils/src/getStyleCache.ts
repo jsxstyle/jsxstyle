@@ -9,16 +9,25 @@ type InsertRuleCallback = (
 
 type GetClassNameFn = (key: string, props?: Record<string, any>) => string;
 
-function cannotInject() {
-  throw new Error(
-    'jsxstyle error: `injectOptions` must be called before any jsxstyle components mount.'
-  );
-}
+const throwProdError = () => {
+  throw new Error();
+};
 
-function alreadyInjected() {
-  throw new Error(
-    'jsxstyle error: `injectOptions` should be called once and only once.'
-  );
+let cannotInject = throwProdError;
+let alreadyInjected = throwProdError;
+
+if (process.env.NODE_ENV !== 'production') {
+  cannotInject = () => {
+    throw new Error(
+      'jsxstyle error: `injectOptions` must be called before any jsxstyle components mount.'
+    );
+  };
+
+  alreadyInjected = () => {
+    throw new Error(
+      'jsxstyle error: `injectOptions` should be called once and only once.'
+    );
+  };
 }
 
 const getStringHash: GetClassNameFn = (key) => {
@@ -26,20 +35,17 @@ const getStringHash: GetClassNameFn = (key) => {
 };
 
 export function getStyleCache() {
-  let _classNameCache: Record<string, string> = {};
+  let cache: Record<string, string> = {};
   let getClassNameForKey: GetClassNameFn = getStringHash;
-  let onInsertRule: InsertRuleCallback;
+  let onInsertRule: InsertRuleCallback | void;
 
   const memoizedGetClassNameForKey = (key: string): string => {
-    if (!_classNameCache[key]) {
-      _classNameCache[key] = getClassNameForKey(key);
-    }
-    return _classNameCache[key];
+    return (cache[key] = cache[key] || getClassNameForKey(key));
   };
 
   const styleCache = {
     reset() {
-      _classNameCache = {};
+      cache = {};
     },
 
     injectOptions(options?: {
@@ -51,9 +57,7 @@ export function getStyleCache() {
         if (options.getClassName) {
           getClassNameForKey = options.getClassName;
         }
-        if (options.onInsertRule) {
-          onInsertRule = options.onInsertRule;
-        }
+        onInsertRule = options.onInsertRule;
       }
       styleCache.injectOptions = alreadyInjected;
     },
@@ -64,27 +68,18 @@ export function getStyleCache() {
     ): Record<string, any> | null {
       styleCache.injectOptions = cannotInject;
 
-      const componentProps = processProps(
+      const propsAndRules = processProps(
         props,
         classNamePropKey,
         memoizedGetClassNameForKey
       );
-      if (!componentProps) {
-        return null;
-      }
 
-      componentProps.rules.forEach((rule) => {
-        if (
-          onInsertRule &&
-          // if the function returns false, bail.
-          onInsertRule(rule, props) === false
-        ) {
-          return;
-        }
+      propsAndRules.rules.forEach((rule) => {
+        onInsertRule && onInsertRule(rule);
         addStyleToHead(rule);
       });
 
-      return componentProps.props;
+      return propsAndRules.props;
     },
   };
 
