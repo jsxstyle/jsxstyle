@@ -93,7 +93,7 @@ export const parseStyleProps = (
   componentProps: Record<string, any>;
 } => {
   const componentProps: Record<string, any> =
-    typeof props.props === 'object' ? { ...props.props } : {};
+    typeof props.props === 'object' ? Object.assign({}, props.props) : {};
 
   const parsedStyleProps: Record<string, ParsedStyleProp> = {};
   for (const originalPropName in props) {
