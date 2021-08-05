@@ -1,8 +1,14 @@
 name: CI
 
 on:
-  push: {}
-  pull_request: {}
+  push:
+    paths-ignore:
+      - '.changeset/**'
+
+  pull_request:
+    paths-ignore:
+      - '.changeset/**'
+
   schedule:
     # run every day at midnight UTC
     - cron: '0 0 * * *'
