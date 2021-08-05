@@ -13,6 +13,8 @@ module.exports = {
     filename: 'bundle.js',
   },
 
+  target: 'web',
+
   plugins: [
     new ReactIndexPlugin(),
     new JsxstyleWebpackPlugin({

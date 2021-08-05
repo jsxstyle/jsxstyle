@@ -29,9 +29,9 @@
     "singleQuote": true
   },
   "browserslist": [
-    "ie 11",
-    "Firefox ESR",
-    "> 0.5%"
+    "defaults",
+    "not IE 11",
+    "maintained node versions"
   ],
   "dependencies": {
     "@babel/core": "^7.7.4",
