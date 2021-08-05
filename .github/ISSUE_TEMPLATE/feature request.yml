@@ -1,15 +1,15 @@
-name: Feature request
+name: Feature request / Proposal
 description: Got an idea for jsxstyle that you think would make a great addition? Tell us about it!
-title: "Feature request: "
+title: "Proposal: "
 labels: [enhancement]
 assignees:
   - meyer
 
 body:
   - type: textarea
-    id: feature-request
+    id: details
     attributes:
-      label: Feature request
+      label: Details
       placeholder: Your idea goes here! I know blank spaces can be a bit intimidating so I added this placeholder.
     validations:
       required: true
