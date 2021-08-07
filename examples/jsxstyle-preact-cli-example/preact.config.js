@@ -10,9 +10,5 @@ export default function (config) {
     loader: JsxstylePlugin.loader,
     exclude: /node_modules/,
     enforce: 'pre',
-    options: {
-      // CSS module compatibility
-      cssModules: true,
-    },
   });
 }

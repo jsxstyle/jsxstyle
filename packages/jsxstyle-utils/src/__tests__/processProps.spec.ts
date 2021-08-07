@@ -1,18 +1,10 @@
 import { processProps } from '../processProps';
 import { kitchenSink } from './kitchenSink';
-
-const createClassNameGetter = () => {
-  let index = -1;
-  const cache: Record<string, number> = {};
-  return (key: string) => {
-    cache[key] = cache[key] || ++index;
-    return '_x' + cache[key].toString(36);
-  };
-};
+import { createClassNameGetter } from 'jsxstyle-utils';
 
 describe('processProps', () => {
   it('returns empty rules and props when given an empty props object', () => {
-    const keyObj = processProps({}, 'className', createClassNameGetter());
+    const keyObj = processProps({}, 'className', createClassNameGetter({}));
     expect(keyObj).toEqual({
       props: {},
       rules: [],
@@ -24,7 +16,7 @@ describe('processProps', () => {
     const keyObj = processProps(
       propsObject,
       'className',
-      createClassNameGetter()
+      createClassNameGetter({})
     );
     expect(keyObj.props).toEqual(propsObject);
     expect(keyObj.rules).toEqual([]);
@@ -34,7 +26,7 @@ describe('processProps', () => {
     const keyObj1 = processProps(
       kitchenSink,
       'className',
-      createClassNameGetter()
+      createClassNameGetter({})
     );
 
     expect(keyObj1).toMatchInlineSnapshot(`
@@ -71,7 +63,11 @@ Object {
       },
     };
 
-    const keyObj = processProps(styleObj, 'className', createClassNameGetter());
+    const keyObj = processProps(
+      styleObj,
+      'className',
+      createClassNameGetter({})
+    );
 
     expect(keyObj).toMatchInlineSnapshot(`
 Object {
@@ -96,7 +92,7 @@ Object {
     const { rules } = processProps(
       styleObj,
       'className',
-      createClassNameGetter()
+      createClassNameGetter({})
     );
 
     expect(rules).toMatchInlineSnapshot(`
@@ -119,7 +115,7 @@ Array [
     const { rules } = processProps(
       styleObj,
       'className',
-      createClassNameGetter()
+      createClassNameGetter({})
     );
 
     expect(consoleSpy).toHaveBeenCalledTimes(1);
@@ -152,7 +148,7 @@ Array [
         },
       },
       'className',
-      createClassNameGetter()
+      createClassNameGetter({})
     );
 
     const { rules: rules2 } = processProps(
@@ -164,7 +160,7 @@ Array [
         },
       },
       'className',
-      createClassNameGetter()
+      createClassNameGetter({})
     );
 
     expect(consoleSpy).toHaveBeenCalledTimes(2);
@@ -210,7 +206,7 @@ Array [
       placeholderHoverMarginLeft: 70,
     };
 
-    const getClassName = createClassNameGetter();
+    const getClassName = createClassNameGetter({});
 
     const { rules } = processProps(styleObject, 'className', getClassName);
 

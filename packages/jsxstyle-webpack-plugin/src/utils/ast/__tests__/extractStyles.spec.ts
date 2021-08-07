@@ -1,6 +1,10 @@
+import { createClassNameGetter } from 'jsxstyle-utils';
 import path = require('path');
-
-import { extractStyles, ExtractStylesOptions, Options } from '../extractStyles';
+import {
+  extractStyles,
+  ExtractStylesOptions,
+  UserConfigurableOptions,
+} from '../extractStyles';
 
 const modulesByAbsolutePath = {
   [require.resolve('./mock/LC')]: require('./mock/LC'),
@@ -8,24 +12,14 @@ const modulesByAbsolutePath = {
 
 process.chdir(__dirname);
 
-const createClassNameGetter = () => {
-  let index = -1;
-  const cache: Record<string, number> = {};
-  return (key: string) => {
-    cache[key] = cache[key] || ++index;
-    return '_x' + cache[key].toString(36);
-  };
-};
-
 const runExtractStyles = (
   src: string,
   sourceFileName: string,
-  options: Partial<Options> = {},
-  esOptions: ExtractStylesOptions = {}
+  options: Partial<ExtractStylesOptions> = {},
+  esOptions: UserConfigurableOptions = {}
 ) => {
-  const getClassNameForKey = createClassNameGetter();
-  const allOptions = {
-    cacheObject: {},
+  const getClassNameForKey = createClassNameGetter({});
+  const allOptions: ExtractStylesOptions = {
     modulesByAbsolutePath,
     getClassNameForKey,
     ...options,
@@ -320,39 +314,6 @@ function Thing(props) {
 /* mock/trusted-spreads.js:9 (Block) */
 ._x5 { color:#444 }
 "
-`);
-  });
-});
-
-describe('cache object', () => {
-  it('updates `cacheObject` counter and key object', () => {
-    const cacheObject = {};
-
-    runExtractStyles(
-      `import {Block} from "jsxstyle"; <Block />`,
-      'mock/cache-object.js',
-      { cacheObject }
-    );
-
-    runExtractStyles(
-      `import {Block} from "jsxstyle"; <Block staticThing="wow" />`,
-      'mock/cache-object.js',
-      { cacheObject }
-    );
-
-    runExtractStyles(
-      `import {InlineBlock} from "jsxstyle"; <InlineBlock />`,
-      'mock/cache-object.js',
-      { cacheObject }
-    );
-
-    expect(cacheObject).toMatchInlineSnapshot(`
-Object {
-  "display:block": "_x0",
-  "display:inline-block": "_x2",
-  "staticThing:wow": "_x1",
-  Symbol(counter): 3,
-}
 `);
   });
 });
@@ -1179,58 +1140,6 @@ export const MyComponent = () => {
   });
 });
 
-describe('deterministic rendering', () => {
-  it('generates deterministic class names when classNameFormat is set to `hash`', () => {
-    const rv = runExtractStyles(
-      `import { Block } from "jsxstyle";
-<Block ternary={condition ? 123 : 456} />`,
-      'mock/deteministic-classes.js',
-      {},
-      { classNameFormat: 'hash' }
-    );
-    expect(rv.js).toMatchInlineSnapshot(`
-"import \\"./deteministic-classes__jsxstyle.css\\";
-<div className={(condition ? \\"_o84axs\\" : \\"_jzempz\\") + \\" _cmecz0\\"} />;"
-`);
-  });
-
-  it('generates a classname hash of `_d3bqdr` for the specified style object', () => {
-    const rv = runExtractStyles(
-      `import { Block } from "jsxstyle";
-<Block
-  color="red"
-  hoverColor="green"
-  testActiveColor="blue"
-  mediaQueries={{
-    'test': 'example media query',
-  }}
-/>`,
-      'mock/consistent-hashes.js',
-      {},
-      { classNameFormat: 'hash' }
-    );
-
-    expect(rv.js).toMatchInlineSnapshot(`
-"import \\"./consistent-hashes__jsxstyle.css\\";
-<div className=\\"_cmecz0 _1jvcvsh _hwodt1 _ubrqe\\" />;"
-`);
-    expect(rv.css).toMatchInlineSnapshot(`
-"/* mock/consistent-hashes.js:2-9 (Block) */
-._1jvcvsh { color:red }
-
-/* mock/consistent-hashes.js:2-9 (Block) */
-._cmecz0 { display:block }
-
-/* mock/consistent-hashes.js:2-9 (Block) */
-._hwodt1:hover { color:green }
-
-/* mock/consistent-hashes.js:2-9 (Block) */
-._ubrqe { test-active-color:blue }
-"
-`);
-  });
-});
-
 describe('animation prop', () => {
   it('properly extracts object-type animation props', () => {
     const rv = runExtractStyles(
@@ -1306,19 +1215,13 @@ describe('evaluateVars config option', () => {
 const staticProp = 'static';
 <Block thing1={staticProp} thing2={69} />`;
 
-    const evalVars = runExtractStyles(
-      js,
-      'mock/evaluateVars.js',
-      {},
-      { evaluateVars: true }
-    );
+    const evalVars = runExtractStyles(js, 'mock/evaluateVars.js', {
+      evaluateVars: true,
+    });
 
-    const noEvalVars = runExtractStyles(
-      js,
-      'mock/evaluateVars.js',
-      {},
-      { evaluateVars: false }
-    );
+    const noEvalVars = runExtractStyles(js, 'mock/evaluateVars.js', {
+      evaluateVars: false,
+    });
 
     expect(evalVars.js).not.toEqual(noEvalVars.js);
     expect(evalVars.js).toMatchInlineSnapshot(`

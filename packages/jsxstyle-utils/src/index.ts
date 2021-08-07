@@ -4,6 +4,7 @@ export {
   JsxstyleComponentName,
   DeprecatedJsxstyleComponentName,
 } from './componentStyles';
+export { createClassNameGetter } from './createClassNameGetter';
 export { dangerousStyleValue } from './dangerousStyleValue';
 export { getStyleCache } from './getStyleCache';
 export { processProps } from './processProps';

@@ -21,7 +21,9 @@ module.exports = {
   performance: { hints: false },
 
   plugins: [
-    new JsxstylePlugin(),
+    new JsxstylePlugin({
+      classNameFormat: 'hash',
+    }),
     new MiniCssExtractPlugin({
       chunkFilename: '[id].css',
       filename: 'bundle-[name].css',
@@ -50,12 +52,7 @@ module.exports = {
               ],
             },
           },
-          {
-            loader: JsxstylePlugin.loader,
-            options: {
-              classNameFormat: 'hash',
-            },
-          },
+          JsxstylePlugin.loader,
         ],
       },
       {

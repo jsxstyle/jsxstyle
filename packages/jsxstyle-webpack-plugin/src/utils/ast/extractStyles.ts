@@ -2,14 +2,12 @@ import generate from '@babel/generator';
 import type { ParserPlugin } from '@babel/parser';
 import traverse, { NodePath, TraverseOptions } from '@babel/traverse';
 import t = require('@babel/types');
-import Ajv = require('ajv');
 import invariant = require('invariant');
-import { componentStyles, stringHash, processProps } from 'jsxstyle-utils';
+import { componentStyles, processProps } from 'jsxstyle-utils';
 import path = require('path');
 import util = require('util');
 import vm = require('vm');
 
-import { CacheObject } from '../../types';
 import { evaluateAstNode } from './evaluateAstNode';
 import { extractStaticTernaries, Ternary } from './extractStaticTernaries';
 import { generateUid } from './generatedUid';
@@ -17,20 +15,17 @@ import { getPropValueFromAttributes } from './getPropValueFromAttributes';
 import { getStaticBindingsForScope } from './getStaticBindingsForScope';
 import { parse } from './parse';
 
-import loaderSchema = require('../../loaderSchema.json');
 import { getCommentForNode } from './getCommentForNode';
 
-export interface ExtractStylesOptions {
-  classNameFormat?: 'hash';
+export interface UserConfigurableOptions {
   parserPlugins?: ParserPlugin[];
-  cssModules?: boolean;
-  evaluateVars?: boolean;
 }
 
-export interface Options {
-  cacheObject: CacheObject;
+export interface ExtractStylesOptions {
   errorCallback?: (str: string, ...args: any[]) => void;
   warnCallback?: (str: string, ...args: any[]) => void;
+  evaluateVars?: boolean;
+  getClassNameForKey: (key: string) => string;
   modulesByAbsolutePath?: Record<string, unknown>;
 }
 
@@ -107,12 +102,13 @@ export function extractStyles(
   sourceFileName: string,
   /** non-user-configurable options */
   {
-    cacheObject,
     warnCallback,
     errorCallback,
     modulesByAbsolutePath = {},
-  }: Options,
-  options: ExtractStylesOptions = {}
+    getClassNameForKey,
+    evaluateVars = true,
+  }: ExtractStylesOptions,
+  options: UserConfigurableOptions = {}
 ): {
   js: string | Buffer;
   css: string;
@@ -126,8 +122,6 @@ export function extractStyles(
     typeof sourceFileName === 'string' && path.isAbsolute(sourceFileName),
     '`sourceFileName` must be an absolute path to a .js file'
   );
-
-  invariant(cacheObject != null, '`cacheObject` must be an object');
 
   let logWarning = console.warn;
   if (typeof warnCallback !== 'undefined') {
@@ -147,47 +141,7 @@ export function extractStyles(
     logError = errorCallback;
   }
 
-  const ajv = new Ajv({
-    allErrors: true,
-    errorDataPath: 'property',
-    useDefaults: true,
-  });
-
-  if (!ajv.validate(loaderSchema, options)) {
-    const msg =
-      'jsxstyle-webpack-plugin is incorrectly configured:\n' +
-      (ajv.errors || [])
-        .map((err) => util.format(' - options%s %s', err.dataPath, err.message))
-        .join('\n');
-    logError(msg);
-    throw new Error(msg);
-  }
-
-  const {
-    classNameFormat,
-    parserPlugins: _parserPlugins,
-    // TODO(meyer) re-add CSS module support?
-    // cssModules,
-    evaluateVars = true,
-  } = options;
-
-  const getClassNameForKey = (() => {
-    let getClassName: (key: string) => string;
-
-    if (classNameFormat === 'hash') {
-      // content hash
-      getClassName = (key: string) => '_' + stringHash(key).toString(36);
-    } else {
-      // incrementing integer
-      const counterKey: any = Symbol.for('counter');
-      cacheObject[counterKey] = cacheObject[counterKey] || 0;
-      getClassName = () => '_x' + (cacheObject[counterKey]++).toString(36);
-    }
-
-    return (key: string) => {
-      return (cacheObject[key] = cacheObject[key] || getClassName(key));
-    };
-  })();
+  const { parserPlugins: _parserPlugins } = options;
 
   const sourceDir = path.dirname(sourceFileName);
 

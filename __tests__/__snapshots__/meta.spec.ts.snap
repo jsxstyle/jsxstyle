@@ -48,6 +48,8 @@ jsxstyle-utils
 - lib/addStyleToHead.d.ts.map
 - lib/componentStyles.d.ts
 - lib/componentStyles.d.ts.map
+- lib/createClassNameGetter.d.ts
+- lib/createClassNameGetter.d.ts.map
 - lib/dangerousStyleValue.d.ts
 - lib/dangerousStyleValue.d.ts.map
 - lib/getStyleCache.d.ts
@@ -83,7 +85,6 @@ jsxstyle-webpack-plugin
 - lib/loader.d.ts.map
 - lib/loader.js
 - lib/loader.js.map
-- lib/loaderSchema.json
 - lib/plugin.d.ts
 - lib/plugin.d.ts.map
 - lib/plugin.js

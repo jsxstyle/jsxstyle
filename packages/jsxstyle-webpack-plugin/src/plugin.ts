@@ -1,10 +1,11 @@
-import type { CacheObject, PluginContext, MemoryFS } from './types';
+import type { CacheObject, PluginContext } from './types';
 import { wrapFileSystem } from './utils/wrapFileSystem';
 import { ModuleCache } from './utils/ModuleCache';
 
 import fs = require('fs');
 import webpack = require('webpack');
 import { Volume } from 'memfs';
+import { createClassNameGetter } from 'jsxstyle-utils';
 
 import LibraryTemplatePlugin = require('webpack/lib/LibraryTemplatePlugin');
 import LoaderTargetPlugin = require('webpack/lib/LoaderTargetPlugin');
@@ -16,25 +17,69 @@ import SingleEntryPlugin = require('webpack/lib/SingleEntryPlugin');
 import Compiler = webpack.Compiler;
 import Compilation = webpack.compilation.Compilation;
 import { pluginName, childCompilerName } from './constants';
+import type { UserConfigurableOptions } from './utils/ast/extractStyles';
 
-const counterKey = Symbol.for('counter');
-
-interface JsxstyleWebpackPluginOptions {
+interface JsxstyleWebpackPluginOptions extends UserConfigurableOptions {
   /** An array of absolute paths to modules that should be compiled by webpack */
   staticModules?: string[];
+
+  /** If set to `'hash``, use content-based hashes to generate classNames */
+  classNameFormat?: 'hash';
+
+  /**
+   * An absolute path to a file that will be used to store jsxstyle class name cache information between builds.
+   *
+   * If `cacheFile` is set, the file will be created if it does not exist and will be overwritten every time `jsxstyle-webpack-plugin` runs.
+   */
+  cacheFile?: string;
 }
 
 const filterOutJsxstyleLoader = (loaderObj: any) =>
   loaderObj.loader !== JsxstyleWebpackPlugin.loader;
 
 class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
-  constructor({ staticModules }: JsxstyleWebpackPluginOptions = {}) {
-    this.memoryFS = new Volume();
+  constructor({
+    cacheFile,
+    classNameFormat,
+    staticModules,
+    ...loaderOptions
+  }: JsxstyleWebpackPluginOptions = {}) {
+    const cacheObject: CacheObject = {};
 
-    // the default cache object. can be overridden on a per-loader instance basis with the `cacheFile` option.
-    this.cacheObject = {
-      [counterKey]: 0,
-    };
+    const getClassNameForKey = createClassNameGetter(
+      cacheObject,
+      classNameFormat
+    );
+
+    if (typeof cacheFile === 'string') {
+      try {
+        const cacheFileContents = fs.readFileSync(cacheFile, {
+          encoding: 'utf8',
+          flag: 'r',
+        });
+
+        // create mapping of unique CSS strings to class names
+        const lines = new Set<string>(cacheFileContents.trim().split('\n'));
+        lines.forEach((line) => {
+          const trimmedLine = line.trim();
+          if (trimmedLine) {
+            // add each line of CSS to the cache
+            getClassNameForKey(trimmedLine);
+          }
+        });
+
+        this.donePlugin = (): void => {
+          // write contents of cache object as a newline-separated list of CSS strings
+          const cacheString =
+            Object.keys(cacheObject).filter(Boolean).join('\n') + '\n';
+          fs.writeFileSync(cacheFile, cacheString, 'utf8');
+        };
+      } catch (err) {
+        if (err.code === 'EISDIR') {
+          throw new Error('cacheFile is a directory');
+        }
+      }
+    }
 
     if (Array.isArray(staticModules)) {
       this.entrypointCache = new ModuleCache(staticModules);
@@ -43,21 +88,22 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
     const getModules =
       this.entrypointCache?.getModules || (() => Promise.resolve({}));
 
+    this.memoryFS = new Volume();
+
     // context object that gets passed to each loader.
     // available in each loader as this[Symbol.for('jsxstyle-webpack-plugin')]
     this.ctx = {
-      cacheFile: null,
-      cacheObject: this.cacheObject,
-      memoryFS: this.memoryFS,
+      getClassNameForKey,
       getModules,
+      defaultLoaderOptions: loaderOptions,
+      memoryFS: this.memoryFS,
     };
   }
 
   public static loader = require.resolve('./loader');
 
-  private cacheObject: CacheObject;
   private ctx: PluginContext;
-  private memoryFS: MemoryFS;
+  private memoryFS = new Volume();
   private entrypointCache?: ModuleCache;
 
   private nmlPlugin = (loaderContext: any): void => {
@@ -77,12 +123,8 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
     }
   };
 
-  private donePlugin = (cacheFile: string) => (): void => {
-    // write contents of cache object as a newline-separated list of CSS strings
-    const cacheString =
-      Object.keys(this.ctx.cacheObject).filter(Boolean).join('\n') + '\n';
-    fs.writeFileSync(cacheFile, cacheString, 'utf8');
-  };
+  /** conditionally set based on whether or not we have a `cacheFile` */
+  private donePlugin: (() => void) | null = null;
 
   private makePlugin = (compiler: Compiler, moduleCache: ModuleCache) => (
     compilation: Compilation
@@ -202,11 +244,8 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
       compiler.hooks.environment.tap(pluginName, environmentPlugin);
       compiler.hooks.compilation.tap(pluginName, this.compilationPlugin);
 
-      if (this.ctx.cacheFile) {
-        compiler.hooks.done.tap(
-          pluginName,
-          this.donePlugin(this.ctx.cacheFile)
-        );
+      if (this.donePlugin) {
+        compiler.hooks.done.tap(pluginName, this.donePlugin);
       }
 
       if (this.entrypointCache) {
@@ -219,8 +258,8 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
       // webpack 1-3
       compiler.plugin('environment', environmentPlugin);
       compiler.plugin('compilation', this.compilationPlugin);
-      if (this.ctx.cacheFile) {
-        compiler.plugin('done', this.donePlugin(this.ctx.cacheFile));
+      if (this.donePlugin) {
+        compiler.plugin('done', this.donePlugin);
       }
     }
   }
