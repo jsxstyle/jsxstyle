@@ -1,18 +1,47 @@
 import path = require('path');
 
-import { extractStyles } from '../extractStyles';
+import { extractStyles, ExtractStylesOptions, Options } from '../extractStyles';
 
 const modulesByAbsolutePath = {
   [require.resolve('./mock/LC')]: require('./mock/LC'),
 };
 
-const pathTo = (thing: string) => path.resolve(__dirname, thing);
-
 process.chdir(__dirname);
+
+const createClassNameGetter = () => {
+  let index = -1;
+  const cache: Record<string, number> = {};
+  return (key: string) => {
+    cache[key] = cache[key] || ++index;
+    return '_x' + cache[key].toString(36);
+  };
+};
+
+const runExtractStyles = (
+  src: string,
+  sourceFileName: string,
+  options: Partial<Options> = {},
+  esOptions: ExtractStylesOptions = {}
+) => {
+  const getClassNameForKey = createClassNameGetter();
+  const allOptions = {
+    cacheObject: {},
+    modulesByAbsolutePath,
+    getClassNameForKey,
+    ...options,
+  };
+
+  return extractStyles(
+    src,
+    path.resolve(__dirname, sourceFileName),
+    allOptions,
+    esOptions
+  );
+};
 
 describe('the basics', () => {
   it('only extracts styles from valid jsxstyle components', () => {
-    const rv1 = extractStyles(
+    const rv1 = runExtractStyles(
       `import {Block as TestBlock, Flex, InlineRow, InlineCol} from "jsxstyle";
 const {Col: TestCol, Row} = require("jsxstyle");
 <Block extract="nope" />;
@@ -24,8 +53,7 @@ const {Col: TestCol, Row} = require("jsxstyle");
 <InlineRow extract="yep" />;
 <InlineCol extract="yep" />;
 <TestCol extract="yep" />;`,
-      pathTo('mock/validate.js'),
-      { cacheObject: {}, modulesByAbsolutePath }
+      'mock/validate.js'
     );
 
     expect(rv1.js).toMatchInlineSnapshot(`
@@ -74,11 +102,10 @@ const {Col: TestCol, Row} = require("jsxstyle");
   });
 
   it('puts spaces between each class name', () => {
-    const rv = extractStyles(
+    const rv = runExtractStyles(
       `import {Block} from "jsxstyle";
 <Block className="orange" color={thing1 ? "orange" : "purple"} width={thing2 ? 200 : 400} />`,
-      pathTo('mock/classname-spaces.js'),
-      { cacheObject: {} }
+      'mock/classname-spaces.js'
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
@@ -90,7 +117,7 @@ const {Col: TestCol, Row} = require("jsxstyle");
 
 describe('element conversion', () => {
   it('converts jsxstyle elements to plain elements when all props are static', () => {
-    const rv = extractStyles(
+    const rv = runExtractStyles(
       `import {Block} from "jsxstyle";
 import LC from "./LC";
 const val = "thing";
@@ -102,8 +129,7 @@ const val = "thing";
   staticValue={val}
   staticMemberExpression={LC.staticValue}
 />`,
-      pathTo('mock/extract-static1.js'),
-      { cacheObject: {}, modulesByAbsolutePath }
+      'mock/extract-static1.js'
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
@@ -138,13 +164,12 @@ const val = \\"thing\\";
   });
 
   it('converts jsxstyle elements to Block elements when some props aren\u2019t static', () => {
-    const rv = extractStyles(
+    const rv = runExtractStyles(
       `import {Block} from "jsxstyle";
 const val = "thing";
 import LC from "./LC";
 <Block staticString="wow" staticInt={69} staticValue={val} staticMemberExpression={LC.staticValue} dynamicValue={notStatic} />`,
-      pathTo('mock/extract-static2.js'),
-      { cacheObject: {}, modulesByAbsolutePath }
+      'mock/extract-static2.js'
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
@@ -176,12 +201,11 @@ import LC from \\"./LC\\";
 
 describe('spread operators', () => {
   it("doesn't explode if you use the spread operator", () => {
-    const rv = extractStyles(
+    const rv = runExtractStyles(
       `import {Block} from "jsxstyle";
 const BlueBlock = ({wow, ...props}) => <Block color="blue" {...props} test="wow" />;
 const DynamicBlock = ({wow, ...props}) => <Block dynamicProp={wow} {...props} />;`,
-      pathTo('mock/rest-spread.js'),
-      { cacheObject: {} }
+      'mock/rest-spread.js'
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
@@ -201,11 +225,10 @@ const DynamicBlock = ({
   });
 
   it('handles props mixed with spread operators', () => {
-    const rv = extractStyles(
+    const rv = runExtractStyles(
       `import {Block} from "jsxstyle";
 <Block doNotExtract="no" {...spread} extract="yep" />`,
-      pathTo('mock/spread.js'),
-      { cacheObject: {} }
+      'mock/spread.js'
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
@@ -221,7 +244,7 @@ import { Box } from \\"jsxstyle\\";
   });
 
   it('handles reserved props before the spread operators', () => {
-    const rv = extractStyles(
+    const rv = runExtractStyles(
       `import {Block} from "jsxstyle";
 <Block
   className={wow}
@@ -233,8 +256,7 @@ import { Box } from \\"jsxstyle\\";
   {...spread}
   color="red"
 />`,
-      pathTo('mock/spread.js'),
-      { cacheObject: {} }
+      'mock/spread.js'
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
@@ -252,7 +274,7 @@ import { Box } from \\"jsxstyle\\";
   });
 
   it('extracts spreads from trusted sources', () => {
-    const rv = extractStyles(
+    const rv = runExtractStyles(
       `import {Block} from "jsxstyle";
 import LC from "./LC";
 const staticSpread = {
@@ -264,8 +286,7 @@ function Thing(props) {
   return <Block width="100%" {...LC.containerStyles} {...staticSpread} />;
 }
 `,
-      pathTo('mock/trusted-spreads.js'),
-      { cacheObject: {}, modulesByAbsolutePath }
+      'mock/trusted-spreads.js'
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
@@ -307,21 +328,21 @@ describe('cache object', () => {
   it('updates `cacheObject` counter and key object', () => {
     const cacheObject = {};
 
-    extractStyles(
+    runExtractStyles(
       `import {Block} from "jsxstyle"; <Block />`,
-      pathTo('mock/cache-object.js'),
+      'mock/cache-object.js',
       { cacheObject }
     );
 
-    extractStyles(
+    runExtractStyles(
       `import {Block} from "jsxstyle"; <Block staticThing="wow" />`,
-      pathTo('mock/cache-object.js'),
+      'mock/cache-object.js',
       { cacheObject }
     );
 
-    extractStyles(
+    runExtractStyles(
       `import {InlineBlock} from "jsxstyle"; <InlineBlock />`,
-      pathTo('mock/cache-object.js'),
+      'mock/cache-object.js',
       { cacheObject }
     );
 
@@ -340,7 +361,7 @@ describe('jsxstyle-specific props', () => {
   it('handles the `props` prop correctly', () => {
     const warnCallback = jest.fn();
 
-    const rv = extractStyles(
+    const rv = runExtractStyles(
       `import {Block} from "jsxstyle";
 <Block props={{staticObject: "yep"}} />;
 <Block props={{}} />;
@@ -356,8 +377,8 @@ describe('jsxstyle-specific props', () => {
 <Block dynamicProp={wow} props="invalid" />;
 <Block props={{ "aria hidden": true }} />;
 <Block props={{ "-aria-hidden": true }} />;`,
-      pathTo('mock/props-prop1.js'),
-      { cacheObject: {}, warnCallback }
+      'mock/props-prop1.js',
+      { warnCallback }
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
@@ -396,11 +417,11 @@ import { Box } from \\"jsxstyle\\";
   it('does not attempt to extract a ref prop found on a jsxstyle component', () => {
     const warnCallback = jest.fn();
 
-    const rv = extractStyles(
+    const rv = runExtractStyles(
       `import {Block} from "jsxstyle";
 <Block color="red" ref={this.cannotBeExtracted} />`,
-      pathTo('mock/props-prop2.js'),
-      { cacheObject: {}, warnCallback }
+      'mock/props-prop2.js',
+      { warnCallback }
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
@@ -414,15 +435,14 @@ import { Box } from \\"jsxstyle\\";
   });
 
   it('handles the `component` prop correctly', () => {
-    const rv = extractStyles(
+    const rv = runExtractStyles(
       `import {Block} from "jsxstyle";
 <Block component="input" />;
 <Block component={Thing} />;
 <Block component={thing.cool} />;
 <Block component="h1" {...spread} />;
 <Block before="wow" component="h1" dynamic={wow} color="red" />;`,
-      pathTo('mock/component-prop1.js'),
-      { cacheObject: {} }
+      'mock/component-prop1.js'
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
@@ -438,33 +458,33 @@ import { Box } from \\"jsxstyle\\";
     const warnCallback = jest.fn();
 
     // does not warn
-    extractStyles(
+    runExtractStyles(
       `import {Block} from "jsxstyle";
 <Block component="CapitalisedString" />`,
-      pathTo('mock/component-prop2.js'),
-      { cacheObject: {}, warnCallback }
+      'mock/component-prop2.js',
+      { warnCallback }
     );
 
     // does not warn
-    extractStyles(
+    runExtractStyles(
       `import {Block} from "jsxstyle";
 <Block component={lowercaseIdentifier} />`,
-      pathTo('mock/component-prop3.js'),
-      { cacheObject: {}, warnCallback }
+      'mock/component-prop3.js',
+      { warnCallback }
     );
 
-    extractStyles(
+    runExtractStyles(
       `import {Block} from "jsxstyle";
     <Block component={functionCall()} />`,
-      pathTo('mock/component-prop4.js'),
-      { cacheObject: {}, warnCallback }
+      'mock/component-prop4.js',
+      { warnCallback }
     );
 
-    extractStyles(
+    runExtractStyles(
       `import {Block} from "jsxstyle";
     <Block component={member.expression()} />`,
-      pathTo('mock/component-prop4.js'),
-      { cacheObject: {}, warnCallback }
+      'mock/component-prop4.js',
+      { warnCallback }
     );
 
     expect(warnCallback).toHaveBeenCalledTimes(4);
@@ -473,7 +493,7 @@ import { Box } from \\"jsxstyle\\";
   it('converts complex `component` prop values to varable declarations', () => {
     const warnCallback = jest.fn();
 
-    const rv = extractStyles(
+    const rv = runExtractStyles(
       `import { Block } from "jsxstyle";
 function Test({ component, thing }) {
   const Compy = component;
@@ -486,8 +506,8 @@ function Test({ component, thing }) {
 
   <Block component={complex} />;
 }`,
-      pathTo('mock/funky-component-prop.js'),
-      { cacheObject: {}, warnCallback }
+      'mock/funky-component-prop.js',
+      { warnCallback }
     );
 
     expect(warnCallback).toHaveBeenCalledTimes(4);
@@ -514,12 +534,11 @@ function Test({
   });
 
   it('handles the `className` prop correctly', () => {
-    const rv1 = extractStyles(
+    const rv1 = runExtractStyles(
       `import {Block, Row} from "jsxstyle";
 <Row className={member.expression} {...spread} />;
 <Block className="orange" />;`,
-      pathTo('mock/class-name1.js'),
-      { cacheObject: {} }
+      'mock/class-name1.js'
     );
 
     expect(rv1.js).toMatchInlineSnapshot(`
@@ -531,15 +550,14 @@ import { Box } from \\"jsxstyle\\";
   });
 
   it('handles the `mediaQueries` prop correctly', () => {
-    const rv = extractStyles(
+    const rv = runExtractStyles(
       `import {Block} from "jsxstyle";
 <Block
   mediaQueries={{ sm: "only screen and (min-width: 640px)" }}
   width={640}
   smWidth="100%"
 />;`,
-      pathTo('mock/media-queries.js'),
-      { cacheObject: {} }
+      'mock/media-queries.js'
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
@@ -560,7 +578,7 @@ import { Box } from \\"jsxstyle\\";
   });
 
   it('evaluates the `mediaQueries` prop correctly', () => {
-    const rv = extractStyles(
+    const rv = runExtractStyles(
       `import {Block} from "jsxstyle";
 import LC from "./LC";
 <Block
@@ -568,8 +586,7 @@ import LC from "./LC";
   width={640}
   smWidth="100%"
 />;`,
-      pathTo('mock/media-queries.js'),
-      { cacheObject: {}, modulesByAbsolutePath }
+      'mock/media-queries.js'
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
@@ -593,11 +610,10 @@ import LC from \\"./LC\\";
 
 describe('ternaries', () => {
   it('extracts a ternary expression that has static consequent and alternate', () => {
-    const rv = extractStyles(
+    const rv = runExtractStyles(
       `import { Block } from "jsxstyle";
 <Block color={dynamic ? "red" : "blue"} />`,
-      pathTo('mock/ternary.js'),
-      { cacheObject: {} }
+      'mock/ternary.js'
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
@@ -619,11 +635,10 @@ describe('ternaries', () => {
   });
 
   it('extracts a conditional expression with a static right side and an AND operator', () => {
-    const rv = extractStyles(
+    const rv = runExtractStyles(
       `import {Block} from "jsxstyle";
 <Block color={dynamic && "red"} />`,
-      pathTo('mock/ternary.js'),
-      { cacheObject: {} }
+      'mock/ternary.js'
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
@@ -641,11 +656,10 @@ describe('ternaries', () => {
   });
 
   it.skip('extracts a conditional expression with a static right side and an OR operator', () => {
-    const rv = extractStyles(
+    const rv = runExtractStyles(
       `import {Block} from "jsxstyle";
 <Block color={dynamic || "red"} />`,
-      pathTo('mock/ternary.js'),
-      { cacheObject: {} }
+      'mock/ternary.js'
     );
 
     expect(rv.js).toMatchInlineSnapshot();
@@ -653,13 +667,12 @@ describe('ternaries', () => {
   });
 
   it('extracts a ternary expression that has a static consequent and alternate', () => {
-    const rv = extractStyles(
+    const rv = runExtractStyles(
       `import LC from "./LC";
 import {Block} from "jsxstyle";
 const blue = "blueberry";
 <Block color={dynamic ? LC.red : blue} />`,
-      pathTo('mock/ternary.js'),
-      { cacheObject: {}, modulesByAbsolutePath }
+      'mock/ternary.js'
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
@@ -682,11 +695,10 @@ const blue = \\"blueberry\\";
   });
 
   it('extracts a ternary expression from a component that has a className specified', () => {
-    const rv = extractStyles(
+    const rv = runExtractStyles(
       `import {Block} from "jsxstyle";
 <Block className="cool" color={dynamic ? "red" : "blue"} />`,
-      pathTo('mock/ternary-with-classname.js'),
-      { cacheObject: {} }
+      'mock/ternary-with-classname.js'
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
@@ -708,11 +720,10 @@ const blue = \\"blueberry\\";
   });
 
   it('extracts a ternary expression from a component that has a spread operator specified', () => {
-    const rv = extractStyles(
+    const rv = runExtractStyles(
       `import {Block} from "jsxstyle";
 <Block {...spread} color={dynamic ? "red" : "blue"} />`,
-      pathTo('mock/ternary-with-spread.js'),
-      { cacheObject: {} }
+      'mock/ternary-with-spread.js'
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
@@ -731,7 +742,7 @@ import { Box } from \\"jsxstyle\\";
   });
 
   it('positivizes binary expressions', () => {
-    const rv1 = extractStyles(
+    const rv1 = runExtractStyles(
       `import {Block} from "jsxstyle";
   <Block
     thing1={dynamic === 4 && "four"}
@@ -739,11 +750,10 @@ import { Box } from \\"jsxstyle\\";
     thing3={dynamic === 4 ? "four" : "not four"}
     thing4={dynamic !== 4 ? "not four" : "four"}
   />`,
-      pathTo('mock/binary-expressions.js'),
-      { cacheObject: {} }
+      'mock/binary-expressions.js'
     );
 
-    const rv2 = extractStyles(
+    const rv2 = runExtractStyles(
       `import {Block} from "jsxstyle";
   <Block
     thing1={dynamic == 4 && "four"}
@@ -751,8 +761,7 @@ import { Box } from \\"jsxstyle\\";
     thing3={dynamic == 4 ? "four" : "not four"}
     thing4={dynamic != 4 ? "not four" : "four"}
   />`,
-      pathTo('mock/binary-expressions.js'),
-      { cacheObject: {} }
+      'mock/binary-expressions.js'
     );
 
     expect(rv1.js).toMatchInlineSnapshot(`
@@ -790,7 +799,7 @@ import { Box } from \\"jsxstyle\\";
   });
 
   it('positivizes unary expressions', () => {
-    const rv = extractStyles(
+    const rv = runExtractStyles(
       `import {Block} from "jsxstyle";
     <Block
       thing1={dynamic % 2 && "mod 2"}
@@ -798,8 +807,7 @@ import { Box } from \\"jsxstyle\\";
       thing3={dynamic % 2 ? "mod 2" : "not mod 2"}
       thing4={!(dynamic % 2) ? "not mod 2" : "mod 2"}
     />`,
-      pathTo('mock/unary-expressions.js'),
-      { cacheObject: {} }
+      'mock/unary-expressions.js'
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
@@ -832,11 +840,10 @@ import { Box } from \\"jsxstyle\\";
   });
 
   it('ignores a ternary expression that comes before a spread operator', () => {
-    const rv = extractStyles(
+    const rv = runExtractStyles(
       `import {Block} from "jsxstyle";
 <Block color={dynamic ? "red" : "blue"} {...spread} className="cool" />`,
-      pathTo('mock/ternary-with-classname.js'),
-      { cacheObject: {} }
+      'mock/ternary-with-classname.js'
     );
 
     expect(rv.js).toEqual(`import { Box } from "jsxstyle";
@@ -844,11 +851,10 @@ import { Box } from \\"jsxstyle\\";
   });
 
   it('groups extracted ternary statements', () => {
-    const rv = extractStyles(
+    const rv = runExtractStyles(
       `import {Block} from "jsxstyle";
 <Block color={dynamic ? "red" : "blue"} width={dynamic ? 200 : 400} />`,
-      pathTo('mock/ternary-groups.js'),
-      { cacheObject: {} }
+      'mock/ternary-groups.js'
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
@@ -875,11 +881,10 @@ import { Box } from \\"jsxstyle\\";
   });
 
   it('handles null values in ternaries correctly', () => {
-    const rv = extractStyles(
+    const rv = runExtractStyles(
       `import {Block} from "jsxstyle";
 <Block color={dynamic ? null : "blue"} />`,
-      pathTo('mock/ternary-null-values.js'),
-      { cacheObject: {} }
+      'mock/ternary-null-values.js'
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
@@ -899,33 +904,29 @@ import { Box } from \\"jsxstyle\\";
 
 describe('useMatchMedia', () => {
   it('marks useMatchMedia calls as pure', () => {
-    const rv1 = extractStyles(
+    const rv1 = runExtractStyles(
       `import { Block, useMatchMedia } from 'jsxstyle';
 
 export const MyComponent = () => {
   const matchesThing = useMatchMedia('thing');
   return <Block width={matchesThing ? 100 : 200} />;
 };`,
-      pathTo('mock/useMatchMedia-import.js'),
-      { cacheObject: {} },
-      { classNameFormat: 'hash' }
+      'mock/useMatchMedia-import.js'
     );
     expect(rv1.js).toContain('/*#__PURE__*/useMatchMedia(');
 
-    const rv2 = extractStyles(
+    const rv2 = runExtractStyles(
       `import { Block, useMatchMedia as useMM } from 'jsxstyle';
 
 export const MyComponent = () => {
   const matchesThing = useMM('thing');
   return <Block width={matchesThing ? 100 : 200} />;
 };`,
-      pathTo('mock/useMatchMedia-import-renamed.js'),
-      { cacheObject: {} },
-      { classNameFormat: 'hash' }
+      'mock/useMatchMedia-import-renamed.js'
     );
     expect(rv2.js).toContain('/*#__PURE__*/useMM(');
 
-    const rv3 = extractStyles(
+    const rv3 = runExtractStyles(
       `const { Block, useMatchMedia } = require('jsxstyle');
 
 const MyComponent = () => {
@@ -934,13 +935,11 @@ const MyComponent = () => {
 };
 
 module.exports = MyComponent;`,
-      pathTo('mock/useMatchMedia-required.js'),
-      { cacheObject: {} },
-      { classNameFormat: 'hash' }
+      'mock/useMatchMedia-required.js'
     );
     expect(rv3.js).toContain('/*#__PURE__*/useMatchMedia(');
 
-    const rv4 = extractStyles(
+    const rv4 = runExtractStyles(
       `const { Block, useMatchMedia: useMM } = require('jsxstyle');
 
 const MyComponent = () => {
@@ -949,9 +948,7 @@ const MyComponent = () => {
 };
 
 module.exports = MyComponent;`,
-      pathTo('mock/useMatchMedia-required-renamed.js'),
-      { cacheObject: {} },
-      { classNameFormat: 'hash' }
+      'mock/useMatchMedia-required-renamed.js'
     );
     expect(rv4.js).toContain('/*#__PURE__*/useMM(');
   });
@@ -1020,10 +1017,9 @@ export const MyComponent = () => {
     };
     `;
 
-    const rv = extractStyles(
+    const rv = runExtractStyles(
       source,
-      pathTo('mock/useMatchMedia-shorthand-props.js'),
-      { cacheObject: {} }
+      'mock/useMatchMedia-shorthand-props.js'
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
@@ -1076,11 +1072,7 @@ export const MyComponent = () => {
     };
     `;
 
-    const rv = extractStyles(
-      source,
-      pathTo('mock/useMatchMedia-extraction.js'),
-      { cacheObject: {} }
-    );
+    const rv = runExtractStyles(source, 'mock/useMatchMedia-extraction.js');
 
     expect(rv.js).toMatchInlineSnapshot(`
 "import \\"./useMatchMedia-extraction__jsxstyle.css\\";
@@ -1141,10 +1133,10 @@ export const MyComponent = () => {
 
     const warnCallback = jest.fn();
 
-    const rv = extractStyles(
+    const rv = runExtractStyles(
       source,
-      pathTo('mock/mediaqueries-plus-useMatchMedia.js'),
-      { cacheObject: {}, warnCallback }
+      'mock/mediaqueries-plus-useMatchMedia.js',
+      { warnCallback }
     );
 
     expect(warnCallback).toHaveBeenCalledTimes(2);
@@ -1189,11 +1181,11 @@ export const MyComponent = () => {
 
 describe('deterministic rendering', () => {
   it('generates deterministic class names when classNameFormat is set to `hash`', () => {
-    const rv = extractStyles(
+    const rv = runExtractStyles(
       `import { Block } from "jsxstyle";
 <Block ternary={condition ? 123 : 456} />`,
-      pathTo('mock/deteministic-classes.js'),
-      { cacheObject: {} },
+      'mock/deteministic-classes.js',
+      {},
       { classNameFormat: 'hash' }
     );
     expect(rv.js).toMatchInlineSnapshot(`
@@ -1203,7 +1195,7 @@ describe('deterministic rendering', () => {
   });
 
   it('generates a classname hash of `_d3bqdr` for the specified style object', () => {
-    const rv = extractStyles(
+    const rv = runExtractStyles(
       `import { Block } from "jsxstyle";
 <Block
   color="red"
@@ -1213,8 +1205,8 @@ describe('deterministic rendering', () => {
     'test': 'example media query',
   }}
 />`,
-      pathTo('mock/consistent-hashes.js'),
-      { cacheObject: {} },
+      'mock/consistent-hashes.js',
+      {},
       { classNameFormat: 'hash' }
     );
 
@@ -1241,7 +1233,7 @@ describe('deterministic rendering', () => {
 
 describe('animation prop', () => {
   it('properly extracts object-type animation props', () => {
-    const rv = extractStyles(
+    const rv = runExtractStyles(
       `import { Block } from "jsxstyle";
 <Block
   animation={{
@@ -1249,8 +1241,7 @@ describe('animation prop', () => {
     '100%': { opacity: 1, paddingH: 50 },
   }}
 />`,
-      pathTo('mock/animation-prop.js'),
-      { cacheObject: {} }
+      'mock/animation-prop.js'
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
@@ -1282,13 +1273,8 @@ export interface ThingProps {
 export const Thing: React.FC<ThingProps> = props => <Block />;
 ReactDOM.render(<Thing />, (document.getElementById('root') as HTMLElement));`;
 
-    const tsResults = extractStyles(src, pathTo('mock/typescript.ts'), {
-      cacheObject: {},
-    });
-
-    const tsxResults = extractStyles(src, pathTo('mock/typescript.tsx'), {
-      cacheObject: {},
-    });
+    const tsResults = runExtractStyles(src, 'mock/typescript.ts');
+    const tsxResults = runExtractStyles(src, 'mock/typescript.tsx');
 
     expect(tsResults.js).toEqual(tsxResults.js);
     expect(tsResults.js).toMatchInlineSnapshot(`
@@ -1320,17 +1306,17 @@ describe('evaluateVars config option', () => {
 const staticProp = 'static';
 <Block thing1={staticProp} thing2={69} />`;
 
-    const evalVars = extractStyles(
+    const evalVars = runExtractStyles(
       js,
-      pathTo('mock/evaluateVars.js'),
-      { cacheObject: {} },
+      'mock/evaluateVars.js',
+      {},
       { evaluateVars: true }
     );
 
-    const noEvalVars = extractStyles(
+    const noEvalVars = runExtractStyles(
       js,
-      pathTo('mock/evaluateVars.js'),
-      { cacheObject: {} },
+      'mock/evaluateVars.js',
+      {},
       { evaluateVars: false }
     );
 
@@ -1351,7 +1337,7 @@ const staticProp = 'static';
 
 describe('edge cases', () => {
   it('only removes component imports', () => {
-    const rv = extractStyles(
+    const rv = runExtractStyles(
       `import 'jsxstyle';
 import { cache, InvalidComponent, Row as RenamedRow } from 'jsxstyle';
 import { Grid } from 'jsxstyle';
@@ -1360,8 +1346,7 @@ require('jsxstyle');
 const { Box } = require('jsxstyle');
 const { Block, Col: RenamedCol } = require('jsxstyle');
 const { invalid, AlsoInvalid, InlineBlock } = require('jsxstyle');`,
-      pathTo('mock/edge-case1.js'),
-      { cacheObject: {} }
+      'mock/edge-case1.js'
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
@@ -1384,9 +1369,7 @@ for (const thing in things) {
   <Block />;
 }
 `;
-    const rv = extractStyles(fileContent, pathTo('mock/const-sans-init.js'), {
-      cacheObject: {},
-    });
+    const rv = runExtractStyles(fileContent, 'mock/const-sans-init.js');
 
     expect(rv.js).toMatchInlineSnapshot(`
 "import \\"./const-sans-init__jsxstyle.css\\";
