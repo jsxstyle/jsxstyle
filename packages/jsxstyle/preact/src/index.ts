@@ -65,7 +65,7 @@ function factory(displayName: JsxstyleComponentName): JsxstyleComponent {
     }
 
     public render() {
-      return <this.component {...this.calculatedProps} />;
+      return preact.h(this.component, this.calculatedProps);
     }
   };
 }

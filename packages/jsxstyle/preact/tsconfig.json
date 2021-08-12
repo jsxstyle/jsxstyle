@@ -2,8 +2,6 @@
   "extends": "../../../config/tsconfig.base.json",
   "compilerOptions": {
     "declarationDir": "lib",
-    "jsx": "react",
-    "jsxFactory": "preact.h",
     "lib": [
       "es6",
       "dom"
