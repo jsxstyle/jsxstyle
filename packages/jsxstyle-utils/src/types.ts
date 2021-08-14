@@ -1,4 +1,5 @@
-import { Properties } from 'csstype';
+import type { Properties } from 'csstype';
+import type { ShorthandProps } from './parseStyleProps';
 
 /**
  * Make all properties in `T` potentially `null` or `false`.
@@ -7,24 +8,17 @@ import { Properties } from 'csstype';
  */
 export type Falsey<T> = { [P in keyof T]?: T[P] | false | null };
 
-type BaseCSSProperties = Properties<string | number>;
+type BaseCSSProperties = Falsey<Properties<string | number>>;
+
+/** Properties that can be animated */
+export type AnimatableCSSProperties = Omit<BaseCSSProperties, 'animation'>;
 
 interface JsxstyleAnimation {
-  // Prefixes on animation styles are not currently supported
-  [key: string]: BaseCSSProperties;
+  [key: string]: AnimatableCSSProperties;
 }
 
-interface CSSPropsInternal extends Omit<BaseCSSProperties, 'animation'> {
-  // custom animation prop
-  animation?: BaseCSSProperties['animation'] | JsxstyleAnimation;
-
-  // jsxstyle-only shorthand props
-  marginH?: BaseCSSProperties['margin'];
-  marginV?: BaseCSSProperties['margin'];
-  paddingH?: BaseCSSProperties['padding'];
-  paddingV?: BaseCSSProperties['padding'];
-
-  // commonly used pseudo-prefixed style names
+/** Commonly-used pseudo-prefixed style names */
+interface PseudoPrefixedProps {
   activeOpacity?: BaseCSSProperties['opacity'];
   disabledOpacity?: BaseCSSProperties['opacity'];
   focusOpacity?: BaseCSSProperties['opacity'];
@@ -81,4 +75,9 @@ interface CSSPropsInternal extends Omit<BaseCSSProperties, 'animation'> {
 ```
  * For further reading, see the TypeScript docs: https://www.typescriptlang.org/docs/handbook/declaration-merging.html#module-augmentation
  */
-export interface CSSProperties extends Falsey<CSSPropsInternal> {}
+export interface CSSProperties
+  extends AnimatableCSSProperties,
+    PseudoPrefixedProps,
+    ShorthandProps {
+  animation?: BaseCSSProperties['animation'] | JsxstyleAnimation;
+}

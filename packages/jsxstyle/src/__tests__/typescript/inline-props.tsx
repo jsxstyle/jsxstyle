@@ -12,7 +12,7 @@ const TestComponent: React.FC<{
   color="red"
 />;
 
-<Block component="input" value="ok" color="red" />;
+<Block component="input" value="ok" color="red" marginH={20} />;
 
 <Block
   component="input"

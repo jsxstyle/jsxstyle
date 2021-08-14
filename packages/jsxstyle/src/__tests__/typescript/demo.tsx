@@ -33,6 +33,7 @@ class DemoClassComponent extends React.Component<DemoProps> {
 export const ValidInputComponent = () => (
   <Block
     component="input"
+    className="hello"
     props={{
       value: 'wow',
       // @ts-expect-error

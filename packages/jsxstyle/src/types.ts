@@ -1,4 +1,4 @@
-import { CSSProperties, ComponentProp } from 'jsxstyle-utils';
+import { CSSProperties, CommonComponentProp } from 'jsxstyle-utils';
 
 export type IntrinsicElement = keyof JSX.IntrinsicElements;
 
@@ -36,18 +36,11 @@ export type ExtractProps<T extends ValidComponentPropValue> = T extends
 /** Props that will be passed through to whatever component is specified */
 export type StylableComponentProps<T extends ValidComponentPropValue> = Pick<
   ExtractProps<T>,
-  Extract<keyof ExtractProps<T>, ComponentProp | KnownEventHandler>
+  Extract<keyof ExtractProps<T>, CommonComponentProp | KnownEventHandler>
 >;
 
-/** Common props */
-interface SharedProps extends CSSProperties {
-  /** An object of media query values keyed by the desired style prop prefix */
-  mediaQueries?: Record<string, string>;
-}
-
 /** Props for jsxstyle components that have a `component` prop set */
-interface JsxstylePropsWithComponent<C extends ValidComponentPropValue>
-  extends SharedProps {
+interface JsxstylePropsWithComponent<C extends ValidComponentPropValue> {
   /** Component value can be either a React component or a tag name string. Defaults to `div`. */
   component: C;
   /** Object of props that will be passed down to the component specified in the `component` prop */
@@ -55,7 +48,7 @@ interface JsxstylePropsWithComponent<C extends ValidComponentPropValue>
 }
 
 /** Props for jsxstyle components that have no `component` prop set */
-interface JsxstyleDefaultProps extends SharedProps {
+interface JsxstyleDefaultProps {
   /** Component value can be either a React component or a tag name string. Defaults to `div`. */
   component?: undefined;
   /** Object of props that will be passed down to the underlying div */
@@ -66,7 +59,8 @@ export type JsxstyleProps<T extends ValidComponentPropValue = 'div'> = (
   | JsxstyleDefaultProps
   | JsxstylePropsWithComponent<T>
 ) &
-  StylableComponentProps<T>;
+  StylableComponentProps<T> &
+  CSSProperties;
 
 // copied from React.DOMAttributes
 // I'm not using React.DOMAttributes here because it's an interface that gets augmented

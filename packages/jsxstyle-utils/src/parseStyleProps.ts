@@ -1,4 +1,4 @@
-import type { CSSProperties } from './types';
+import type { AnimatableCSSProperties as CSSProps } from './types';
 
 // global flag makes subsequent calls of capRegex.test advance to the next match
 const capRegex = /[A-Z]/g;
@@ -55,25 +55,30 @@ const doubleSpecificityPrefixes = {
 };
 
 const shorthandProps = {
-  marginH: (margin: CSSProperties['marginLeft']): CSSProperties => ({
+  marginH: (margin: CSSProps['marginLeft']): CSSProps => ({
     marginLeft: margin,
     marginRight: margin,
   }),
-  marginV: (margin: CSSProperties['marginTop']): CSSProperties => ({
+
+  marginV: (margin: CSSProps['marginTop']): CSSProps => ({
     marginTop: margin,
     marginBottom: margin,
   }),
-  paddingH: (padding: CSSProperties['paddingLeft']): CSSProperties => ({
+
+  paddingH: (padding: CSSProps['paddingLeft']): CSSProps => ({
     paddingLeft: padding,
     paddingRight: padding,
   }),
-  paddingV: (padding: CSSProperties['paddingTop']): CSSProperties => ({
+
+  paddingV: (padding: CSSProps['paddingTop']): CSSProps => ({
     paddingTop: padding,
     paddingBottom: padding,
   }),
 };
 
-export type ShorthandProp = typeof shorthandProps;
+export type ShorthandProps = {
+  [K in keyof typeof shorthandProps]?: Parameters<typeof shorthandProps[K]>[0];
+};
 
 export interface ParsedStyleProp {
   pseudoelement?: string;
@@ -83,7 +88,7 @@ export interface ParsedStyleProp {
   propValue: any;
 }
 
-export type ComponentProp = keyof typeof commonComponentProps;
+export type CommonComponentProp = keyof typeof commonComponentProps;
 
 export const parseStyleProps = (
   props: Record<string, any>,
