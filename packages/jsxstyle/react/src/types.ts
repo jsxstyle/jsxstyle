@@ -10,6 +10,8 @@ export type ValidComponentPropValue =
   | React.FunctionComponent<any>
   | React.ComponentClass<any>;
 
+type CommonReactComponentProp = 'className' | CommonComponentProp;
+
 /**
  * Generic that returns either the extracted props type for a React component
  * or the props type for an IntrinsicElement.
@@ -36,7 +38,7 @@ export type ExtractProps<T extends ValidComponentPropValue> = T extends
 /** Props that will be passed through to whatever component is specified */
 export type StylableComponentProps<T extends ValidComponentPropValue> = Pick<
   ExtractProps<T>,
-  Extract<keyof ExtractProps<T>, CommonComponentProp | KnownEventHandler>
+  Extract<keyof ExtractProps<T>, CommonReactComponentProp | KnownEventHandler>
 >;
 
 /** Props for jsxstyle components that have a `component` prop set */

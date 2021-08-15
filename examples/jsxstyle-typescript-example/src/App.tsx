@@ -12,6 +12,7 @@ interface LogoProps {
 
 const Logo: React.FC<LogoProps> = ({ width, height }) => (
   <InlineBlock
+    className="example-classname"
     component="img"
     props={{ src: logo, alt: 'logo' }}
     animation={{

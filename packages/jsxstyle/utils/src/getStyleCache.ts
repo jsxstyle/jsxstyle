@@ -50,7 +50,6 @@ export function getStyleCache() {
 
     injectOptions(options?: {
       onInsertRule?: InsertRuleCallback;
-      pretty?: boolean;
       getClassName?: GetClassNameFn;
     }) {
       if (options) {
