@@ -1,4 +1,4 @@
-import { createClassNameGetter } from 'jsxstyle-utils';
+import { createClassNameGetter } from 'jsxstyle/utils';
 import path = require('path');
 import {
   extractStyles,

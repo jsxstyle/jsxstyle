@@ -1,7 +1,7 @@
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const path = require('path');
 const webpack = require('webpack');
-const JsxstylePlugin = require('.../../..');
+const JsxstyleWebpackPlugin = require('jsxstyle-webpack-plugin');
 
 /** @type {webpack.Configuration} */
 module.exports = {
@@ -21,7 +21,7 @@ module.exports = {
   performance: { hints: false },
 
   plugins: [
-    new JsxstylePlugin({
+    new JsxstyleWebpackPlugin({
       classNameFormat: 'hash',
     }),
     new MiniCssExtractPlugin({
@@ -32,7 +32,10 @@ module.exports = {
 
   resolve: {
     alias: {
-      jsxstyle: require.resolve('../../../../jsxstyle'),
+      jsxstyle: path.dirname(require.resolve('jsxstyle/package.json')),
+      'jsxstyle/utils': path.dirname(
+        require.resolve('jsxstyle/utils/package.json')
+      ),
     },
   },
 
@@ -52,7 +55,7 @@ module.exports = {
               ],
             },
           },
-          JsxstylePlugin.loader,
+          JsxstyleWebpackPlugin.loader,
         ],
       },
       {

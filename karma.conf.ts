@@ -21,9 +21,6 @@ const webpackConfig: Configuration = {
       jsxstyle: path.dirname(
         require.resolve('./packages/jsxstyle/package.json')
       ),
-      'jsxstyle-utils': path.dirname(
-        require.resolve('./packages/jsxstyle-utils/package.json')
-      ),
       react: path.dirname(require.resolve('react/package.json')),
       'react-dom': path.dirname(require.resolve('react-dom/package.json')),
     },

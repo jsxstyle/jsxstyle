@@ -1,7 +1,7 @@
 import generate from '@babel/generator';
 import t = require('@babel/types');
 import invariant = require('invariant');
-import { CSSProperties, processProps } from 'jsxstyle-utils';
+import { CSSProperties, processProps } from 'jsxstyle/utils';
 
 export interface Ternary {
   name: string;

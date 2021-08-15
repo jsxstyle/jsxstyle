@@ -1,6 +1,6 @@
 import { processProps } from '../processProps';
 import { kitchenSink } from './kitchenSink';
-import { createClassNameGetter } from 'jsxstyle-utils';
+import { createClassNameGetter } from '../createClassNameGetter';
 
 describe('processProps', () => {
   it('returns empty rules and props when given an empty props object', () => {

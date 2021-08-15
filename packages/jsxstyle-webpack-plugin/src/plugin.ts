@@ -5,7 +5,7 @@ import { ModuleCache } from './utils/ModuleCache';
 import fs = require('fs');
 import webpack = require('webpack');
 import { Volume } from 'memfs';
-import { createClassNameGetter } from 'jsxstyle-utils';
+import { createClassNameGetter } from 'jsxstyle/utils';
 
 import LibraryTemplatePlugin = require('webpack/lib/LibraryTemplatePlugin');
 import LoaderTargetPlugin = require('webpack/lib/LoaderTargetPlugin');

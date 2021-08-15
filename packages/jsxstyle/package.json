@@ -2,20 +2,21 @@
   "name": "jsxstyle",
   "version": "2.5.1",
   "description": "Inline style system for React and Preact",
-  "repository": "git@github.com:jsxstyle/jsxstyle.git",
   "author": "Pete Hunt",
   "license": "Apache-2.0",
-  "main": "lib/jsxstyle.cjs.js",
-  "module": "lib/jsxstyle.es.js",
-  "jsnext:main": "lib/jsxstyle.es.js",
-  "types": "lib/index.d.ts",
+  "repository": "git@github.com:jsxstyle/jsxstyle.git",
+  "main": "react/lib/jsxstyle-react.cjs.js",
+  "module": "react/lib/jsxstyle-react.es.js",
+  "jsnext:main": "react/lib/jsxstyle-react.es.js",
+  "types": "react/lib/index.d.ts",
   "files": [
-    "lib",
-    "preact/lib"
+    "preact/lib",
+    "react/lib",
+    "utils/lib"
   ],
   "sideEffects": false,
   "dependencies": {
-    "jsxstyle-utils": "^2.5.0"
+    "csstype": "^2.6.7"
   },
   "keywords": [
     "jsxstyle",

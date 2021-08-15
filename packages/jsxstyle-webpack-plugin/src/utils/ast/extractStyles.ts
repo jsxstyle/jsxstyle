@@ -3,7 +3,7 @@ import type { ParserPlugin } from '@babel/parser';
 import traverse, { NodePath, TraverseOptions } from '@babel/traverse';
 import t = require('@babel/types');
 import invariant = require('invariant');
-import { componentStyles, processProps } from 'jsxstyle-utils';
+import { componentStyles, processProps } from 'jsxstyle/utils';
 import path = require('path');
 import util = require('util');
 import vm = require('vm');

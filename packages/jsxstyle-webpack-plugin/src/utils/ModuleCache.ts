@@ -2,7 +2,7 @@ import invariant from 'invariant';
 import path = require('path');
 import { getExportsFromModuleSource } from './getExportsFromModuleSource';
 import { makePromise } from './makePromise';
-import { stringHash } from 'jsxstyle-utils';
+import { stringHash } from 'jsxstyle/utils';
 
 interface EntrypointMetadata {
   hash: string | null;

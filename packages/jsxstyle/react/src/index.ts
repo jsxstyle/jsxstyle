@@ -1,12 +1,12 @@
 import {
   componentStyles,
   DeprecatedJsxstyleComponentName,
-} from 'jsxstyle-utils';
+} from 'jsxstyle/utils';
 import { styleCache } from './styleCache';
 import { createElement } from 'react';
 import { componentFactory } from './componentFactory';
 
-export { CSSProperties } from 'jsxstyle-utils';
+export { CSSProperties } from 'jsxstyle/utils';
 export { StylableComponentProps } from './types';
 export { styleCache as cache };
 export { useMatchMedia } from './useMatchMedia';

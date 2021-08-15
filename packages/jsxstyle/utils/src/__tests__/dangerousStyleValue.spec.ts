@@ -1,4 +1,4 @@
-import { dangerousStyleValue } from '..';
+import { dangerousStyleValue } from '../dangerousStyleValue';
 
 describe('dangerousStyleValue', () => {
   it('leaves the `px` prefix off known unitless prop values', () => {

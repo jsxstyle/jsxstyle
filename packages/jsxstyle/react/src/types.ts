@@ -1,4 +1,4 @@
-import { CSSProperties, CommonComponentProp } from 'jsxstyle-utils';
+import { CSSProperties, CommonComponentProp } from 'jsxstyle/utils';
 
 export type IntrinsicElement = keyof JSX.IntrinsicElements;
 

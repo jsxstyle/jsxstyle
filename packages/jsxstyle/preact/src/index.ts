@@ -1,4 +1,4 @@
-import { componentStyles, CSSProperties, getStyleCache } from 'jsxstyle-utils';
+import { componentStyles, CSSProperties, getStyleCache } from 'jsxstyle/utils';
 import * as preact from 'preact';
 
 type JsxstyleComponentName = keyof typeof componentStyles;

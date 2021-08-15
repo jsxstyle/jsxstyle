@@ -2,7 +2,7 @@ import {
   componentStyles,
   DeprecatedJsxstyleComponentName,
   JsxstyleComponentName,
-} from 'jsxstyle-utils';
+} from 'jsxstyle/utils';
 import { styleCache } from './styleCache';
 import type { JsxstyleProps, ValidComponentPropValue } from './types';
 import * as React from 'react';

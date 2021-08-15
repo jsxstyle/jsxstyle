@@ -71,7 +71,7 @@ it('has a runtime size of less than 3KB', async () => {
   );
   // ensure jsxstyle and jsxstyle-utils are bundled
   expect(code).not.toMatch(/require\(['"]jsxstyle['"]\)/);
-  expect(code).not.toMatch(/require\(['"]jsxstyle-utils['"]\)/);
+  expect(code).not.toMatch(/require\(['"]jsxstyle\/utils['"]\)/);
   // check file size
   expect(gzipLen).toBeLessThan(1024 * 3);
 });

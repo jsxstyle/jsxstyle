@@ -1,0 +1,9 @@
+{
+  "name": "jsxstyle-utils",
+  "main": "lib/jsxstyle-utils.cjs.js",
+  "module": "lib/jsxstyle-utils.es.js",
+  "jsnext:main": "lib/jsxstyle-utils.es.js",
+  "types": "lib/index.d.ts",
+  "private": true,
+  "sideEffects": false
+}
