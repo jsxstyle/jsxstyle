@@ -12,13 +12,10 @@ export interface Ternary {
 
 export function extractStaticTernaries(
   ternaries: Ternary[],
-  getClassNameForKey: (key: string) => string
-): {
-  /** style rules to be extracted */
-  ternaryRules: string[];
-  /** ternaries grouped into one binary expression */
-  ternaryExpression: t.BinaryExpression | t.ConditionalExpression;
-} | null {
+  getClassNameForKey: (key: string) => string,
+  onInsertRule: (rule: string) => void
+): /** ternaries grouped into one binary expression */
+t.BinaryExpression | t.ConditionalExpression | null {
   invariant(
     Array.isArray(ternaries),
     'extractStaticTernaries expects param 1 to be an array of ternaries'
@@ -36,8 +33,6 @@ export function extractStaticTernaries(
       alternateStyles: CSSProperties;
     }
   > = {};
-
-  const ternaryRules: string[] = [];
 
   for (let idx = -1, len = ternaries.length; ++idx < len; ) {
     const { name, test, consequent, alternate } = ternaries[idx];
@@ -81,26 +76,33 @@ export function extractStaticTernaries(
   const ternaryExpression = Object.keys(ternariesByKey)
     .map((key, idx) => {
       const { test, consequentStyles, alternateStyles } = ternariesByKey[key];
-      const { rules: consequentRules, props: consequentProps } = processProps(
+
+      const consequentProps = processProps(
         consequentStyles,
         'className',
-        getClassNameForKey
+        getClassNameForKey,
+        onInsertRule
       );
 
-      const { rules: alternateRules, props: alternateProps } = processProps(
+      const alternateProps = processProps(
         alternateStyles,
         'className',
-        getClassNameForKey
+        getClassNameForKey,
+        onInsertRule
       );
 
-      const alternateClassName: string = alternateProps?.className || '';
-      const consequentClassName: string = consequentProps?.className || '';
+      const alternateClassName: string =
+        (typeof alternateProps?.className === 'string' &&
+          alternateProps.className) ||
+        '';
+      const consequentClassName: string =
+        (typeof consequentProps?.className === 'string' &&
+          consequentProps.className) ||
+        '';
 
       if (!alternateClassName && !consequentClassName) {
         return null;
       }
-
-      ternaryRules.push(...alternateRules, ...consequentRules);
 
       if (consequentClassName && alternateClassName) {
         if (idx > 0) {
@@ -140,9 +142,5 @@ export function extractStaticTernaries(
       null
     );
 
-  if (!ternaryExpression) {
-    return null;
-  }
-
-  return { ternaryRules, ternaryExpression };
+  return ternaryExpression || null;
 }

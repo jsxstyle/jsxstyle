@@ -37,7 +37,7 @@ const getStringHash: GetClassNameFn = (key) => {
 export function getStyleCache() {
   let cache: Record<string, string> = {};
   let getClassNameForKey: GetClassNameFn = getStringHash;
-  let onInsertRule: InsertRuleCallback | void;
+  let onInsertRule: InsertRuleCallback | undefined = addStyleToHead;
 
   const memoizedGetClassNameForKey = (key: string): string => {
     return (cache[key] = cache[key] || getClassNameForKey(key));
@@ -48,37 +48,28 @@ export function getStyleCache() {
       cache = {};
     },
 
-    injectOptions(options?: {
+    injectOptions(options: {
       onInsertRule?: InsertRuleCallback;
       getClassName?: GetClassNameFn;
     }) {
-      if (options) {
-        if (options.getClassName) {
-          getClassNameForKey = options.getClassName;
-        }
-        onInsertRule = options.onInsertRule;
+      if (options.getClassName) {
+        getClassNameForKey = options.getClassName;
       }
+      onInsertRule = options.onInsertRule;
       styleCache.injectOptions = alreadyInjected;
     },
 
     getComponentProps(
       props: Record<string, any>,
       classNamePropKey = 'className'
-    ): Record<string, any> | null {
+    ): Record<string, unknown> | null {
       styleCache.injectOptions = cannotInject;
-
-      const propsAndRules = processProps(
+      return processProps(
         props,
         classNamePropKey,
-        memoizedGetClassNameForKey
+        memoizedGetClassNameForKey,
+        onInsertRule
       );
-
-      propsAndRules.rules.forEach((rule) => {
-        onInsertRule && onInsertRule(rule);
-        addStyleToHead(rule);
-      });
-
-      return propsAndRules.props;
     },
   };
 

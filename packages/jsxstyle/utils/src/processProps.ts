@@ -2,26 +2,15 @@ import { dangerousStyleValue } from './dangerousStyleValue';
 import { hyphenateStyleName } from './hyphenateStyleName';
 import { parseStyleProps } from './parseStyleProps';
 
-interface PropsAndRules {
-  /** Filtered props object */
-  props: Record<string, any>;
-  /** An array of CSS rules extracted from style props */
-  rules: string[];
-}
-
 export function processProps(
   props: Record<string, any>,
   classNamePropKey: string,
   getClassNameForKey: (key: string) => string,
+  insertRuleCallback?: (rule: string) => void,
   mediaQuery?: string
-): PropsAndRules {
-  const rules: string[] = [];
-
+): Record<string, unknown> | null {
   if (props == null || typeof props !== 'object') {
-    return {
-      props: {},
-      rules,
-    };
+    return null;
   }
 
   const { parsedStyleProps, componentProps } = parseStyleProps(
@@ -30,10 +19,7 @@ export function processProps(
   );
 
   if (!parsedStyleProps) {
-    return {
-      props: componentProps,
-      rules,
-    };
+    return componentProps;
   }
 
   let classNames: string = props[classNamePropKey] || '';
@@ -116,7 +102,8 @@ export function processProps(
       styleValue = animationKey;
       specificity++;
 
-      rules.push(`@keyframes ${animationKey} { ${animationValue}}`);
+      insertRuleCallback &&
+        insertRuleCallback(`@keyframes ${animationKey} { ${animationValue}}`);
     } else {
       styleValue = dangerousStyleValue(propName, propValue);
       if (styleValue === '') continue;
@@ -146,12 +133,12 @@ export function processProps(
 
     classNames += (classNames === '' ? '' : ' ') + className;
 
-    rules.push(styleRule);
+    insertRuleCallback && insertRuleCallback(styleRule);
   }
 
   if (classNames) {
     componentProps[classNamePropKey] = classNames;
   }
 
-  return { props: componentProps, rules };
+  return componentProps;
 }

@@ -381,6 +381,12 @@ export function extractStyles(
       enter(traversePath) {
         const node = traversePath.node.openingElement;
 
+        const onInsertRule = (rule: string) => {
+          (cssMap[rule] = cssMap[rule] || []).push(
+            getCommentForNode(node, sourceFileName, originalNodeName)
+          );
+        };
+
         if (
           // skip non-identifier opening elements (member expressions, etc.)
           !t.isJSXIdentifier(node.name) ||
@@ -928,6 +934,7 @@ export function extractStyles(
               mediaQueryStyles,
               'className',
               getClassNameForKey,
+              onInsertRule,
               mediaQuery
             );
 
@@ -935,26 +942,20 @@ export function extractStyles(
               continue;
             }
 
-            if (processedProps.props.className) {
-              staticAttributes[classPropName] = processedProps.props.className;
+            if (processedProps.className) {
+              staticAttributes[classPropName] = processedProps.className;
             }
-
-            processedProps.rules.forEach((rule) => {
-              (cssMap[rule] = cssMap[rule] || []).push(
-                getCommentForNode(node, sourceFileName, originalNodeName)
-              );
-            });
           }
         }
 
         const processedProps = processProps(
           staticAttributes,
           classPropName,
-          getClassNameForKey
+          getClassNameForKey,
+          onInsertRule
         );
 
-        const extractedStyleClassNames: string =
-          processedProps.props[classPropName];
+        const extractedStyleClassNames = processedProps?.[classPropName];
         const classNameObjects: Array<t.StringLiteral | t.Expression> = [];
 
         if (classNamePropValue) {
@@ -967,24 +968,19 @@ export function extractStyles(
         }
 
         if (staticTernaries.length > 0) {
-          const ternaryObj = extractStaticTernaries(
+          const ternaryExpression = extractStaticTernaries(
             staticTernaries,
-            getClassNameForKey
+            getClassNameForKey,
+            onInsertRule
           );
 
-          // ternaryObj is null if all of the extracted ternaries have falsey consequents and alternates
-          if (ternaryObj !== null) {
-            // add extracted styles by className to existing object
-            ternaryObj.ternaryRules.forEach((rule) => {
-              (cssMap[rule] = cssMap[rule] || []).push(
-                getCommentForNode(node, sourceFileName, originalNodeName)
-              );
-            });
-            classNameObjects.push(ternaryObj.ternaryExpression);
+          // ternaryExpression is null if all of the extracted ternaries have falsey consequents and alternates
+          if (ternaryExpression !== null) {
+            classNameObjects.push(ternaryExpression);
           }
         }
 
-        if (extractedStyleClassNames) {
+        if (typeof extractedStyleClassNames === 'string') {
           classNameObjects.push(t.stringLiteral(extractedStyleClassNames));
         }
 
@@ -1067,16 +1063,6 @@ export function extractStyles(
               )
             );
           }
-        }
-
-        const comment = getCommentForNode(
-          node,
-          sourceFileName,
-          originalNodeName
-        );
-
-        for (const rule of processedProps?.rules || []) {
-          (cssMap[rule] = cssMap[rule] || []).push(comment);
         }
       },
       exit(traversePath) {

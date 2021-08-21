@@ -2,9 +2,16 @@ import { processProps } from '../processProps';
 import { kitchenSink } from './kitchenSink';
 import { createClassNameGetter } from '../createClassNameGetter';
 
+const runProcessProps = (...args: Parameters<typeof processProps>) => {
+  const rules: string[] = [];
+  const onInsertRule = (rule: string) => rules.push(rule);
+  const props = processProps(args[0], args[1], args[2], onInsertRule, args[4]);
+  return { props, rules };
+};
+
 describe('processProps', () => {
   it('returns empty rules and props when given an empty props object', () => {
-    const keyObj = processProps({}, 'className', createClassNameGetter({}));
+    const keyObj = runProcessProps({}, 'className', createClassNameGetter({}));
     expect(keyObj).toEqual({
       props: {},
       rules: [],
@@ -13,7 +20,7 @@ describe('processProps', () => {
 
   it('returns empty rules and a props object when only given known component props', () => {
     const propsObject = { id: 'hello', onBanana: true };
-    const keyObj = processProps(
+    const keyObj = runProcessProps(
       propsObject,
       'className',
       createClassNameGetter({})
@@ -23,7 +30,7 @@ describe('processProps', () => {
   });
 
   it('generates valid CSS rules', () => {
-    const keyObj1 = processProps(
+    const keyObj1 = runProcessProps(
       kitchenSink,
       'className',
       createClassNameGetter({})
@@ -63,7 +70,7 @@ Object {
       },
     };
 
-    const keyObj = processProps(
+    const keyObj = runProcessProps(
       styleObj,
       'className',
       createClassNameGetter({})
@@ -89,7 +96,7 @@ Object {
       animation: {},
     };
 
-    const { rules } = processProps(
+    const { rules } = runProcessProps(
       styleObj,
       'className',
       createClassNameGetter({})
@@ -112,7 +119,7 @@ Array [
       },
     };
 
-    const { rules } = processProps(
+    const { rules } = runProcessProps(
       styleObj,
       'className',
       createClassNameGetter({})
@@ -139,7 +146,7 @@ Array [
   it('logs an error when it encounters empty/invalid style objects in object-type animation syntax', () => {
     const consoleSpy = jest.spyOn(console, 'error');
 
-    const { rules: rules1 } = processProps(
+    const { rules: rules1 } = runProcessProps(
       {
         color: 'red',
         animation: {
@@ -151,7 +158,7 @@ Array [
       createClassNameGetter({})
     );
 
-    const { rules: rules2 } = processProps(
+    const { rules: rules2 } = runProcessProps(
       {
         color: 'red',
         animation: {
@@ -208,12 +215,13 @@ Array [
 
     const getClassName = createClassNameGetter({});
 
-    const { rules } = processProps(styleObject, 'className', getClassName);
+    const { rules } = runProcessProps(styleObject, 'className', getClassName);
 
-    const { rules: mediaQueryRules } = processProps(
+    const { rules: mediaQueryRules } = runProcessProps(
       styleObject,
       'className',
       getClassName,
+      undefined,
       'example'
     );
 

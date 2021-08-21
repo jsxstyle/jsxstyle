@@ -151,17 +151,21 @@ Array [
   it('throws an errors when injections are added incorrectly', () => {
     const styleCache = getStyleCache();
 
-    expect(() => styleCache.injectOptions()).not.toThrow();
+    expect(() => styleCache.injectOptions({})).not.toThrow();
 
     // no repeated injections
-    expect(() => styleCache.injectOptions()).toThrowErrorMatchingInlineSnapshot(
+    expect(() =>
+      styleCache.injectOptions({})
+    ).toThrowErrorMatchingInlineSnapshot(
       `"jsxstyle error: \`injectOptions\` should be called once and only once."`
     );
 
     styleCache.getComponentProps({ a: 1 });
 
     // no injections after getComponentProps is called
-    expect(() => styleCache.injectOptions()).toThrowErrorMatchingInlineSnapshot(
+    expect(() =>
+      styleCache.injectOptions({})
+    ).toThrowErrorMatchingInlineSnapshot(
       `"jsxstyle error: \`injectOptions\` must be called before any jsxstyle components mount."`
     );
   });
