@@ -12,7 +12,7 @@
 // https://github.com/facebook/react/blob/master/packages/react-dom/src/shared/CSSProperty.js
 // https://github.com/facebook/react/blob/master/packages/react-dom/src/shared/dangerousStyleValue.js
 
-const isUnitlessNumber: Record<string, true> = {
+const isUnitlessNumber = Object.keys({
   animationIterationCount: true,
   aspectRatio: true,
   borderImageOutset: true,
@@ -58,19 +58,18 @@ const isUnitlessNumber: Record<string, true> = {
   strokeMiterlimit: true,
   strokeOpacity: true,
   strokeWidth: true,
-};
+}).reduce<Record<string, true>>((prev, key) => {
+  prev[key] = true;
+  prev[prefixKey('Webkit', key)] = true;
+  prev[prefixKey('ms', key)] = true;
+  prev[prefixKey('Moz', key)] = true;
+  prev[prefixKey('O', key)] = true;
+  return prev;
+}, {});
 
 function prefixKey(prefix: string, key: string): string {
   return prefix + key.charAt(0).toUpperCase() + key.substring(1);
 }
-
-const prefixes = ['Webkit', 'ms', 'Moz', 'O'];
-
-Object.keys(isUnitlessNumber).forEach((prop) => {
-  prefixes.forEach((prefix) => {
-    isUnitlessNumber[prefixKey(prefix, prop)] = isUnitlessNumber[prop];
-  });
-});
 
 export function dangerousStyleValue(name: any, value: any): string {
   const isEmpty = value == null || typeof value === 'boolean' || value === '';

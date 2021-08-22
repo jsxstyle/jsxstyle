@@ -55,47 +55,43 @@ const JSXSTYLE_SOURCES = {
 
 const matchMediaHookName = 'useMatchMedia';
 
-const defaultStyleAttributes: Record<string, t.JSXAttribute[]> = {};
-
-for (const componentName in componentStyles) {
-  const styleObj =
-    componentStyles[componentName as keyof typeof componentStyles];
-
+const defaultStyleAttributes = Object.entries(componentStyles).reduce<
+  Record<string, t.JSXAttribute[]>
+>((attrs, [componentName, styleObj]) => {
   // skip `Box`
   if (!styleObj) {
-    continue;
+    return attrs;
   }
 
-  const propKeys = Object.keys(styleObj);
-  const styleProps: t.JSXAttribute[] = [];
+  attrs[componentName] = Object.entries(styleObj).reduce<t.JSXAttribute[]>(
+    (props, [propKey, propValue]) => {
+      if (propValue == null || propValue === '') {
+        return props;
+      }
 
-  for (let idx = -1, len = propKeys.length; ++idx < len; ) {
-    const prop = propKeys[idx];
-    const value = styleObj[prop];
-    if (value == null || value === '') {
-      continue;
-    }
+      let valueEx: t.JSXExpressionContainer | t.StringLiteral;
+      if (typeof propValue === 'number') {
+        valueEx = t.jsxExpressionContainer(t.numericLiteral(propValue));
+      } else if (typeof propValue === 'string') {
+        valueEx = t.stringLiteral(propValue);
+      } else {
+        throw new Error(
+          util.format(
+            'Unhandled type `%s` for `%s` component styles',
+            typeof propValue,
+            componentName
+          )
+        );
+      }
 
-    let valueEx: t.JSXExpressionContainer | t.StringLiteral;
-    if (typeof value === 'number') {
-      valueEx = t.jsxExpressionContainer(t.numericLiteral(value));
-    } else if (typeof value === 'string') {
-      valueEx = t.stringLiteral(value);
-    } else {
-      throw new Error(
-        util.format(
-          'Unhandled type `%s` for `%s` component styles',
-          typeof value,
-          componentName
-        )
-      );
-    }
+      props.push(t.jsxAttribute(t.jsxIdentifier(propKey), valueEx));
+      return props;
+    },
+    []
+  );
 
-    styleProps.push(t.jsxAttribute(t.jsxIdentifier(prop), valueEx));
-  }
-
-  defaultStyleAttributes[componentName] = styleProps;
-}
+  return attrs;
+}, {});
 
 export function extractStyles(
   src: string | Buffer,
@@ -141,13 +137,10 @@ export function extractStyles(
     logError = errorCallback;
   }
 
-  const { parserPlugins: _parserPlugins } = options;
-
   const sourceDir = path.dirname(sourceFileName);
-
   const cssMap: Record<string, string[]> = {};
 
-  const parserPlugins = _parserPlugins ? _parserPlugins.slice() : [];
+  const parserPlugins = options.parserPlugins?.slice() || [];
   if (/\.tsx?$/.test(sourceFileName)) {
     parserPlugins.push('typescript');
   } else {
@@ -158,7 +151,7 @@ export function extractStyles(
   const ast = parse(src, parserPlugins);
 
   let jsxstyleSrc: string | null = null;
-  const validComponents = {};
+  const validComponents: Record<string, string> = {};
   // default to using require syntax
   let useImportSyntax = false;
   let hasValidComponents = false;
@@ -381,12 +374,6 @@ export function extractStyles(
       enter(traversePath) {
         const node = traversePath.node.openingElement;
 
-        const onInsertRule = (rule: string) => {
-          (cssMap[rule] = cssMap[rule] || []).push(
-            getCommentForNode(node, sourceFileName, originalNodeName)
-          );
-        };
-
         if (
           // skip non-identifier opening elements (member expressions, etc.)
           !t.isJSXIdentifier(node.name) ||
@@ -399,6 +386,12 @@ export function extractStyles(
         // Remember the source component
         const originalNodeName = node.name.name;
         const srcKey = validComponents[originalNodeName];
+
+        const onInsertRule = (rule: string) => {
+          (cssMap[rule] = cssMap[rule] || []).push(
+            getCommentForNode(node, sourceFileName, originalNodeName)
+          );
+        };
 
         let shouldExtractMatchMedia = !!matchMediaImportName;
 
