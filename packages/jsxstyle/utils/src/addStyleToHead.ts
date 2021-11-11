@@ -4,50 +4,30 @@ const canUseDOM = !!(
   window.document.createElement
 );
 
-let styleElement: HTMLStyleElement | undefined;
+const props = {
+  styleContainer: canUseDOM
+    ? window.document.head
+    : (undefined as HTMLElement | undefined),
+  styleElement: undefined as HTMLStyleElement | undefined,
+};
 
-interface HotData {
-  styleElement: typeof styleElement;
+export function setStyleContainer(container: HTMLElement) {
+  props.styleContainer = container;
 }
 
-interface NodeModule {
-  hot: {
-    data: HotData;
-    addDisposeHandler: (handler: (data: HotData) => void) => void;
-  };
-}
-
-declare const __webpack_nonce__: string | undefined;
-declare const module: NodeModule;
-
-if (
-  typeof module !== 'undefined' &&
-  module.hot &&
-  typeof module.hot.addDisposeHandler === 'function'
-) {
-  // gross
-  const { hot } = module;
-  if (hot.data != null) {
-    styleElement = hot.data.styleElement;
+function getStyleElement(): HTMLStyleElement | undefined {
+  if (canUseDOM && !props.styleElement) {
+    props.styleElement = document.createElement('style');
+    props.styleElement.type = 'text/css';
+    props.styleElement.appendChild(document.createTextNode('/* jsxstyle */'));
+    props.styleContainer?.appendChild(props.styleElement);
   }
-
-  hot.addDisposeHandler((data) => {
-    data.styleElement = styleElement;
-  });
-}
-
-if (canUseDOM && !styleElement) {
-  styleElement = document.createElement('style');
-  styleElement.type = 'text/css';
-  if (typeof __webpack_nonce__ !== 'undefined') {
-    styleElement.nonce = __webpack_nonce__;
-  }
-  styleElement.appendChild(document.createTextNode('/* jsxstyle */'));
-  document.head!.appendChild(styleElement);
+  return props.styleElement;
 }
 
 export function addStyleToHead(rule: string): void {
-  if (styleElement && styleElement.sheet) {
+  const styleElement = getStyleElement();
+  if (styleElement?.sheet != null) {
     const sheet = styleElement.sheet as CSSStyleSheet;
     try {
       sheet.insertRule(rule, sheet.cssRules.length);

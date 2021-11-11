@@ -11,15 +11,8 @@ export type JsxstyleComponentName =
   | 'InlineRow'
   | 'Row';
 
-export type DeprecatedJsxstyleComponentName =
-  | 'Flex'
-  | 'InlineFlex'
-  | 'Table'
-  | 'TableCell'
-  | 'TableRow';
-
 export const componentStyles: Record<
-  JsxstyleComponentName | DeprecatedJsxstyleComponentName,
+  JsxstyleComponentName,
   Pick<CSSProperties, 'display' | 'flexDirection'> | null
 > = {
   Block: { display: 'block' },
@@ -31,11 +24,4 @@ export const componentStyles: Record<
   InlineCol: { display: 'inline-flex', flexDirection: 'column' },
   InlineRow: { display: 'inline-flex', flexDirection: 'row' },
   Row: { display: 'flex', flexDirection: 'row' },
-
-  // deprecated
-  Flex: { display: 'flex' },
-  InlineFlex: { display: 'inline-flex' },
-  Table: { display: 'table' },
-  TableCell: { display: 'table-cell' },
-  TableRow: { display: 'table-row' },
 };
