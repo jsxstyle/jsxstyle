@@ -18,10 +18,6 @@ export function processProps(
     classNamePropKey
   );
 
-  if (!parsedStyleProps) {
-    return componentProps;
-  }
-
   let classNames: string = props[classNamePropKey] || '';
 
   propLoop: for (const key in parsedStyleProps) {

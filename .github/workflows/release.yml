@@ -17,10 +17,10 @@ jobs:
           # fetch everything so that we can properly calculate what needs to be published
           fetch-depth: 0
 
-      - name: Use Node 12
+      - name: Use Node 16
         uses: actions/setup-node@v2
         with:
-          node-version: 12.x
+          node-version: 16.x
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile

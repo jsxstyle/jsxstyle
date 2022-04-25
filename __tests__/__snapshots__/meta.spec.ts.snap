@@ -44,6 +44,8 @@ jsxstyle
 - utils/lib/createClassNameGetter.d.ts.map
 - utils/lib/dangerousStyleValue.d.ts
 - utils/lib/dangerousStyleValue.d.ts.map
+- utils/lib/getStringHash.d.ts
+- utils/lib/getStringHash.d.ts.map
 - utils/lib/getStyleCache.d.ts
 - utils/lib/getStyleCache.d.ts.map
 - utils/lib/hyphenateStyleName.d.ts

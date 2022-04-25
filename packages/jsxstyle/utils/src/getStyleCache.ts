@@ -1,13 +1,13 @@
 import { addStyleToHead } from './addStyleToHead';
+import { getStringHash } from './getStringHash';
 import { processProps } from './processProps';
-import { stringHash } from './stringHash';
 
 type InsertRuleCallback = (
   rule: string,
   props?: Record<string, any>
 ) => boolean | void;
 
-type GetClassNameFn = (key: string, props?: Record<string, any>) => string;
+type GetClassNameFn = (key: string) => string;
 
 const throwProdError = () => {
   throw new Error();
@@ -29,10 +29,6 @@ if (process.env.NODE_ENV !== 'production') {
     );
   };
 }
-
-const getStringHash: GetClassNameFn = (key) => {
-  return '_' + stringHash(key).toString(36);
-};
 
 export function getStyleCache() {
   let cache: Record<string, string> = {};

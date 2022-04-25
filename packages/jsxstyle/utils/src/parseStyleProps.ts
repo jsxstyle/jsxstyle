@@ -90,6 +90,9 @@ export interface ParsedStyleProp {
 
 export type CommonComponentProp = keyof typeof commonComponentProps;
 
+/**
+ * Split an object of component props into two objects: parsed style prop objects and component props.
+ */
 export const parseStyleProps = (
   props: Record<string, any>,
   classNamePropKey: string

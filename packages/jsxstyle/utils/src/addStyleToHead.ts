@@ -48,7 +48,7 @@ if (canUseDOM && !styleElement) {
 
 export function addStyleToHead(rule: string): void {
   if (styleElement && styleElement.sheet) {
-    const sheet = styleElement.sheet as CSSStyleSheet;
+    const sheet = styleElement.sheet;
     try {
       sheet.insertRule(rule, sheet.cssRules.length);
     } catch (insertError) {
