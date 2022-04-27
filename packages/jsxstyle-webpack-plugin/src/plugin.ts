@@ -131,11 +131,12 @@ class JsxstyleWebpackPlugin implements WebpackPluginInstance {
         ]
       );
 
+      // these two options don't appear to be respected
+      childCompiler.options.mode = 'production';
+      childCompiler.options.devtool = false;
+
       childCompiler.context = compiler.context;
-      childCompiler.options.output.library = {
-        type: 'commonjs2',
-        umdNamedDefine: false,
-      };
+      childCompiler.options.output.library = { type: 'commonjs2' };
 
       Object.entries(moduleCache.entrypoints).forEach(
         ([modulePath, metadata]) => {
