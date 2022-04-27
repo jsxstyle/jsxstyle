@@ -9,11 +9,10 @@
     "start": "preact watch"
   },
   "devDependencies": {
-    "preact-cli": "^3.0.0-0"
+    "preact-cli": "^3.3.5"
   },
   "dependencies": {
-    "preact": "^10.0.5",
-    "preact-compat": "^3.18.4",
-    "preact-router": "^3.1.0"
+    "preact": "^10.7.1",
+    "preact-router": "^4.0.1"
   }
 }

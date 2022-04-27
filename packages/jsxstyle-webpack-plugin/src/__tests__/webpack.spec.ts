@@ -28,6 +28,10 @@ it('builds without issue', async () => {
           return reject(err);
         }
 
+        if (!stats) {
+          return reject('Stats is falsey');
+        }
+
         const info = stats.toJson();
         if (stats.hasErrors()) {
           return reject(info.errors);

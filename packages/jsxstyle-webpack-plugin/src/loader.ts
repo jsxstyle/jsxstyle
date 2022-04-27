@@ -1,5 +1,4 @@
 import invariant = require('invariant');
-import loaderUtils = require('loader-utils');
 import path = require('path');
 import util = require('util');
 import webpack = require('webpack');
@@ -8,7 +7,7 @@ import { LoaderOptions, PluginContext } from './types';
 import { extractStyles } from './utils/ast/extractStyles';
 
 const jsxstyleLoader = async function (
-  this: webpack.loader.LoaderContext,
+  this: webpack.LoaderContext<LoaderOptions>,
   content: string | Buffer,
   sourceMap?: any
 ) {
@@ -35,8 +34,7 @@ const jsxstyleLoader = async function (
     defaultLoaderOptions,
   } = pluginContext;
 
-  const userSpecifiedOptions: LoaderOptions =
-    loaderUtils.getOptions(this) || {};
+  const userSpecifiedOptions = this.getOptions() || {};
 
   const options: LoaderOptions = {
     ...defaultLoaderOptions,

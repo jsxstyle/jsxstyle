@@ -1,7 +1,7 @@
 import * as path from 'path';
 import { OutputOptions, rollup, RollupOptions } from 'rollup';
-import rollupNodeResolve from 'rollup-plugin-node-resolve';
-import rollupReplace from 'rollup-plugin-replace';
+import rollupNodeResolve from '@rollup/plugin-node-resolve';
+import rollupReplace from '@rollup/plugin-replace';
 import { terser as rollupTerser } from 'rollup-plugin-terser';
 import zlib = require('zlib');
 import { promisify } from 'util';
@@ -18,9 +18,7 @@ it('has a runtime size of less than 3KB', async () => {
     input: entry,
     plugins: [
       rollupNodeResolve({
-        customResolveOptions: {
-          moduleDirectory: 'packages',
-        },
+        moduleDirectories: ['packages'],
         jail: path.resolve(__dirname, '../../'),
       }),
       rollupTerser({ output: { comments: false } }),

@@ -15,7 +15,7 @@ import NodeWatchFileSystem = require('webpack/lib/node/NodeWatchFileSystem');
 import SingleEntryPlugin = require('webpack/lib/SingleEntryPlugin');
 
 import Compiler = webpack.Compiler;
-import Compilation = webpack.compilation.Compilation;
+import Compilation = webpack.Compilation;
 import { pluginName, childCompilerName } from './constants';
 import type { UserConfigurableOptions } from './utils/ast/extractStyles';
 
@@ -111,15 +111,13 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
   };
 
   private compilationPlugin = (compilation: Compilation): void => {
-    if ((webpack as any)?.NormalModule?.getCompilationHooks) {
-      const normalModuleLoader = (webpack as any).NormalModule.getCompilationHooks(
+    if (webpack.NormalModule?.getCompilationHooks) {
+      const normalModuleLoader = webpack.NormalModule.getCompilationHooks(
         compilation
       ).loader;
       normalModuleLoader.tap(pluginName, this.nmlPlugin);
     } else if (compilation.hooks) {
       compilation.hooks.normalModuleLoader.tap(pluginName, this.nmlPlugin);
-    } else {
-      compilation.plugin('normal-module-loader', this.nmlPlugin);
     }
   };
 
@@ -253,13 +251,6 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
           pluginName,
           this.makePlugin(compiler, this.entrypointCache)
         );
-      }
-    } else {
-      // webpack 1-3
-      compiler.plugin('environment', environmentPlugin);
-      compiler.plugin('compilation', this.compilationPlugin);
-      if (this.donePlugin) {
-        compiler.plugin('done', this.donePlugin);
       }
     }
   }

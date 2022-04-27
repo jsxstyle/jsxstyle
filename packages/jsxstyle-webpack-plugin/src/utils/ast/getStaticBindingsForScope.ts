@@ -101,7 +101,7 @@ export function getStaticBindingsForScope(
     // skip ObjectExpressions not defined in the root
     if (
       t.isObjectExpression(dec.init) &&
-      parentPath.parentPath.type !== 'Program'
+      parentPath?.parentPath?.type !== 'Program'
     ) {
       continue;
     }

@@ -59,7 +59,7 @@ describe('lockfile', () => {
   });
 });
 
-const skippedExamples = ['preact-cli', 'preact-cli-typescript'].map(
+const skippedExamples = ['preact-cli', 'preact-cli-typescript', 'gatsby'].map(
   (name) => `jsxstyle-${name}-example`
 );
 

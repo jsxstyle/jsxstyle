@@ -1068,9 +1068,9 @@ export function extractStyles(
             ];
           } else {
             // find nearest Statement
-            let statementPath: NodePath<any> = traversePath;
+            let statementPath: NodePath<any> | null | undefined = traversePath;
             do {
-              statementPath = statementPath.parentPath;
+              statementPath = statementPath?.parentPath;
             } while (!t.isStatement(statementPath));
 
             invariant(

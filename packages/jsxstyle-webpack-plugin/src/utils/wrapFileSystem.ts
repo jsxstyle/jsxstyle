@@ -1,5 +1,6 @@
-import type { InputFileSystem } from 'webpack';
 import type { MemoryFS } from '../types';
+
+type InputFileSystem = import('webpack').Compilation['inputFileSystem'];
 
 const handledMethods = {
   // exists: true,

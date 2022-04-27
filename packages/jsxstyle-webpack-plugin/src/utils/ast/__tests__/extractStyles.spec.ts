@@ -930,7 +930,7 @@ export const MyComponent = () => {
 
     const terser = await import('terser');
 
-    const minifyOutput = terser.minify(source, {
+    const minifyOutput = await terser.minify(source, {
       compress: {
         // remove dead code
         dead_code: true,

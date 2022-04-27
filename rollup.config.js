@@ -72,7 +72,7 @@ const makeRollupConfig = (packageName, formats = ['amd', 'cjs', 'es']) => {
         name: 'GenerateTypesPlugin',
         async buildEnd() {
           await execAsync(
-            `npm exec tsc -- -p ${tsconfigPath} --emitDeclarationOnly`
+            `npm exec tsc -- -p ${tsconfigPath} --emitDeclarationOnly --declarationDir ${libRoot}`
           );
         },
       },

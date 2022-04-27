@@ -13,26 +13,22 @@
     "node": ">=6.0.0"
   },
   "dependencies": {
-    "@babel/core": "^7.7.4",
-    "@babel/generator": "^7.7.4",
-    "@babel/parser": "^7.7.4",
-    "@babel/traverse": "^7.7.4",
-    "@babel/types": "^7.7.4",
-    "invariant": "^2.2.1",
-    "jsxstyle": "^2.5.0",
-    "loader-utils": "^1.2.3",
-    "memfs": "^3.2.2"
+    "@babel/core": "^7.17.9",
+    "@babel/generator": "^7.17.9",
+    "@babel/parser": "^7.17.9",
+    "@babel/traverse": "^7.17.9",
+    "@babel/types": "^7.17.0",
+    "invariant": "^2.2.4",
+    "jsxstyle": "^2.5.1",
+    "memfs": "^3.4.1"
   },
   "devDependencies": {
-    "@types/babel__generator": "*",
-    "@types/babel__traverse": "*",
-    "@types/loader-utils": "*",
-    "@types/memory-fs": "*",
-    "@types/node": "*",
-    "@types/webpack": "*",
-    "webpack": "^4.36.1"
+    "@types/babel__generator": "^7.6.4",
+    "@types/babel__traverse": "^7.17.1",
+    "@types/node": "^16.0.0",
+    "webpack": "^5.72.0"
   },
   "peerDependencies": {
-    "webpack": ">=2 <=5"
+    "webpack": "5"
   }
 }

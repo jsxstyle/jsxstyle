@@ -9,6 +9,7 @@ const appSrc = path.join(__dirname, 'src');
 const config: webpack.Configuration = {
   entry: path.join(__dirname, './src/index.tsx'),
   mode: 'development',
+  target: 'web',
   output: {
     chunkFilename: '[name].chunk.js',
     filename: 'bundle.js',

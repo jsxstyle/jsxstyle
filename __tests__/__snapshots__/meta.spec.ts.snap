@@ -15,7 +15,6 @@ gatsby-plugin-jsxstyle
 jsxstyle
 ========
 - package.json
-- CHANGELOG.md
 - LICENSE
 - README.md
 - preact/lib/index.d.ts
@@ -68,7 +67,6 @@ jsxstyle
 jsxstyle-webpack-plugin
 =======================
 - package.json
-- CHANGELOG.md
 - LICENSE
 - README.md
 - lib/constants.d.ts
