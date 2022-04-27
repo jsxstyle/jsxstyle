@@ -16,6 +16,7 @@ require('dotenv').config();
 const webpackConfig: Configuration = {
   devtool: 'inline-source-map',
   mode: 'development',
+  target: 'web',
   resolve: {
     alias: {
       jsxstyle: path.dirname(
