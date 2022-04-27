@@ -23,13 +23,13 @@ jobs:
           node-version: 16.x
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: npm ci
 
       - name: Run jest
-        run: yarn run test
+        run: npm test
 
       - name: Run karma
-        run: yarn run karma
+        run: npm run karma
         env:
           CI: true
           TZ: 'America/Los_Angeles'
@@ -48,7 +48,7 @@ jobs:
         with:
           commit: Bump versions
           title: Bump versions
-          publish: yarn release
+          publish: npm run release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -57,8 +57,8 @@ jobs:
         if: steps.changesets.outputs.published != 'true'
         run: |
           git checkout main
-          yarn version:canary
-          yarn release:canary
+          npm run version:canary
+          npm run release:canary
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

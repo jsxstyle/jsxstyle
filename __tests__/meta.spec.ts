@@ -49,10 +49,10 @@ ${fileList
   });
 });
 
-describe('yarn.lock', () => {
+describe('lockfile', () => {
   it('does not contain Twitter-internal URLs', async () => {
     const lockfileContents = fs.readFileSync(
-      path.resolve(__dirname, '../yarn.lock'),
+      path.resolve(__dirname, '../package-lock.json'),
       'utf8'
     );
     expect(lockfileContents.includes('twitter.biz')).toEqual(false);
@@ -77,7 +77,7 @@ describe('examples', () => {
         const cwd = path.join(exampleDir, example);
         expect.assertions(1);
         return expect(() =>
-          execSync('yarn build', { cwd, stdio: 'inherit' })
+          execSync('npm run build', { cwd, stdio: 'inherit' })
         ).not.toThrow();
       },
       30000

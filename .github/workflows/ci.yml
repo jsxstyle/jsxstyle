@@ -30,13 +30,13 @@ jobs:
           node-version: 16.x
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: npm ci
 
       - name: Run jest
-        run: yarn run test
+        run: npm test
 
       - name: Run karma
-        run: yarn run karma
+        run: npm run karma
         env:
           CI: true
           TZ: 'America/Los_Angeles'

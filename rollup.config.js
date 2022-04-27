@@ -71,7 +71,9 @@ const makeRollupConfig = (packageName, formats = ['amd', 'cjs', 'es']) => {
       {
         name: 'GenerateTypesPlugin',
         async buildEnd() {
-          await execAsync(`yarn tsc -p ${tsconfigPath} --emitDeclarationOnly`);
+          await execAsync(
+            `npm exec tsc -- -p ${tsconfigPath} --emitDeclarationOnly`
+          );
         },
       },
       rollupPluginTypescript({
