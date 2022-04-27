@@ -7,12 +7,12 @@ import webpack = require('webpack');
 import { Volume } from 'memfs';
 import { createClassNameGetter } from 'jsxstyle/utils';
 
-import LibraryTemplatePlugin = require('webpack/lib/LibraryTemplatePlugin');
-import LoaderTargetPlugin = require('webpack/lib/LoaderTargetPlugin');
+// @ts-expect-error
 import NodeTargetPlugin = require('webpack/lib/node/NodeTargetPlugin');
+// @ts-expect-error
 import NodeTemplatePlugin = require('webpack/lib/node/NodeTemplatePlugin');
+// @ts-expect-error
 import NodeWatchFileSystem = require('webpack/lib/node/NodeWatchFileSystem');
-import SingleEntryPlugin = require('webpack/lib/SingleEntryPlugin');
 
 import Compiler = webpack.Compiler;
 import Compilation = webpack.Compilation;
@@ -23,7 +23,7 @@ interface JsxstyleWebpackPluginOptions extends UserConfigurableOptions {
   /** An array of absolute paths to modules that should be compiled by webpack */
   staticModules?: string[];
 
-  /** If set to `'hash``, use content-based hashes to generate classNames */
+  /** If set to `'hash'`, use content-based hashes to generate classNames */
   classNameFormat?: 'hash';
 
   /**
@@ -33,9 +33,6 @@ interface JsxstyleWebpackPluginOptions extends UserConfigurableOptions {
    */
   cacheFile?: string;
 }
-
-const filterOutJsxstyleLoader = (loaderObj: any) =>
-  loaderObj.loader !== JsxstyleWebpackPlugin.loader;
 
 class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
   constructor({
@@ -130,11 +127,10 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
     return new Promise((resolve, reject) => {
       const resultObject: Record<string, string> = {};
 
-      const childCompiler: Compiler = (compilation as any).createChildCompiler(
+      const childCompiler = compilation.createChildCompiler(
         childCompilerName,
         {
           filename: '[name]',
-          libraryTarget: 'commonjs2',
           library: {
             type: 'commonjs2',
           },
@@ -144,8 +140,7 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
         [
           new NodeTargetPlugin(),
           new NodeTemplatePlugin(),
-          new LoaderTargetPlugin('node'),
-          new LibraryTemplatePlugin(undefined, 'commonjs2'),
+          new compiler.webpack.LoaderTargetPlugin('node'),
         ]
       );
 
@@ -153,7 +148,7 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
 
       Object.entries(moduleCache.entrypoints).forEach(
         ([modulePath, metadata]) => {
-          new SingleEntryPlugin(
+          new compiler.webpack.SingleEntryPlugin(
             compiler.context,
             modulePath,
             metadata.key
@@ -163,32 +158,18 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
 
       // delete all emitted chunks
       childCompiler.hooks.thisCompilation.tap(pluginName, (compilation) => {
-        // webpack 5
-        if ('processAssets' in compilation.hooks) {
-          (compilation.hooks as any).processAssets.tap(
-            {
-              name: pluginName,
-              stage: (webpack as any).Compilation
-                .PROCESS_ASSETS_STAGE_ADDITIONS,
-            },
-            (assets: Record<string, { source: () => string | Buffer }>) => {
-              Object.keys(assets).forEach((key) => {
-                resultObject[key] = assets[key].source().toString();
-                (compilation as any).deleteAsset(key);
-              });
-            }
-          );
-        }
-
-        // webpack 4
-        else {
-          childCompiler.hooks.afterCompile.tap(pluginName, (compilation) => {
-            Object.keys(compilation.assets).forEach((key) => {
-              resultObject[key] = compilation.assets[key].source().toString();
-              delete compilation.assets[key];
+        compilation.hooks.processAssets.tap(
+          {
+            name: pluginName,
+            stage: webpack.Compilation.PROCESS_ASSETS_STAGE_ADDITIONS,
+          },
+          (assets) => {
+            Object.keys(assets).forEach((key) => {
+              resultObject[key] = assets[key].source().toString();
+              compilation.deleteAsset(key);
             });
-          });
-        }
+          }
+        );
       });
 
       childCompiler.hooks.normalModuleFactory.tap(
@@ -196,16 +177,10 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
         (normalModuleFactory) => {
           normalModuleFactory.hooks.afterResolve.tap(
             pluginName,
-            (resolveData: any) => {
-              if (Array.isArray(resolveData.loaders)) {
-                resolveData.loaders = resolveData.loaders.filter(
-                  filterOutJsxstyleLoader
-                );
-              } else if ('createData' in resolveData) {
-                resolveData.createData.loaders = resolveData.createData.loaders.filter(
-                  filterOutJsxstyleLoader
-                );
-              }
+            (resolveData) => {
+              resolveData.createData.loaders = resolveData.createData.loaders?.filter(
+                (loaderObj) => loaderObj.loader !== JsxstyleWebpackPlugin.loader
+              );
             }
           );
         }
@@ -215,18 +190,16 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
         moduleCache.reset();
       });
 
-      (childCompiler as any).runAsChild(
-        (err: any, entries: any[], childCompilation: Compilation) => {
-          if (err) {
-            compilation.errors.push(err);
-            moduleCache.reject(err);
-            reject(err);
-          } else {
-            moduleCache.setModules(resultObject);
-            resolve();
-          }
+      childCompiler.runAsChild((err) => {
+        if (err) {
+          compilation.errors.push(err as any);
+          moduleCache.reject(err);
+          reject(err);
+        } else {
+          moduleCache.setModules(resultObject);
+          resolve();
         }
-      );
+      });
     });
   };
 
@@ -234,24 +207,21 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
     const environmentPlugin = (): void => {
       const wrappedFS = wrapFileSystem(compiler.inputFileSystem, this.memoryFS);
       compiler.inputFileSystem = wrappedFS;
-      (compiler as any).watchFileSystem = new NodeWatchFileSystem(wrappedFS);
+      compiler.watchFileSystem = new NodeWatchFileSystem(wrappedFS);
     };
 
-    if (compiler.hooks) {
-      // webpack 4+
-      compiler.hooks.environment.tap(pluginName, environmentPlugin);
-      compiler.hooks.compilation.tap(pluginName, this.compilationPlugin);
+    compiler.hooks.environment.tap(pluginName, environmentPlugin);
+    compiler.hooks.compilation.tap(pluginName, this.compilationPlugin);
 
-      if (this.donePlugin) {
-        compiler.hooks.done.tap(pluginName, this.donePlugin);
-      }
+    if (this.donePlugin) {
+      compiler.hooks.done.tap(pluginName, this.donePlugin);
+    }
 
-      if (this.entrypointCache) {
-        compiler.hooks.make.tapPromise(
-          pluginName,
-          this.makePlugin(compiler, this.entrypointCache)
-        );
-      }
+    if (this.entrypointCache) {
+      compiler.hooks.make.tapPromise(
+        pluginName,
+        this.makePlugin(compiler, this.entrypointCache)
+      );
     }
   }
 }

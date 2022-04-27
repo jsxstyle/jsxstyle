@@ -26,22 +26,11 @@ class ReactIndexPlugin {
     /** @type {import('webpack').Compiler} */
     compiler
   ) {
-    if (compiler.hooks) {
-      compiler.hooks.make.tap('ReactIndexPlugin', (compilation) => {
-        if ('processAssets' in compilation.hooks) {
-          // webpack 5
-          compilation.hooks.processAssets.tap('ReactIndexPlugin', () => {
-            compilation.emitAsset(fileName, source);
-          });
-        } else {
-          // webpack 4
-          compiler.hooks.emit.tap('ReactIndexPlugin', emitPlugin);
-        }
+    compiler.hooks.make.tap('ReactIndexPlugin', (compilation) => {
+      compilation.hooks.processAssets.tap('ReactIndexPlugin', () => {
+        compilation.emitAsset(fileName, source);
       });
-    } else {
-      // webpack 1-3
-      compiler.plugin('emit', emitPlugin);
-    }
+    });
   }
 }
 
