@@ -1,23 +1,20 @@
-import type { CacheObject, PluginContext } from './types';
-import { wrapFileSystem } from './utils/wrapFileSystem';
-import { ModuleCache } from './utils/ModuleCache';
-
 import fs = require('fs');
-import webpack = require('webpack');
+// @ts-expect-error
+import NodeWatchFileSystem = require('webpack/lib/node/NodeWatchFileSystem');
 import { Volume } from 'memfs';
 import { createClassNameGetter } from 'jsxstyle/utils';
 
-// @ts-expect-error
-import NodeTargetPlugin = require('webpack/lib/node/NodeTargetPlugin');
-// @ts-expect-error
-import NodeTemplatePlugin = require('webpack/lib/node/NodeTemplatePlugin');
-// @ts-expect-error
-import NodeWatchFileSystem = require('webpack/lib/node/NodeWatchFileSystem');
-
-import Compiler = webpack.Compiler;
-import Compilation = webpack.Compilation;
-import { pluginName, childCompilerName } from './constants';
+import type { CacheObject, PluginContext } from './types';
+import { wrapFileSystem } from './utils/wrapFileSystem';
+import { ModuleCache } from './utils/ModuleCache';
 import type { UserConfigurableOptions } from './utils/ast/extractStyles';
+
+type Compilation = import('webpack').Compilation;
+type Compiler = import('webpack').Compiler;
+type WebpackPluginInstance = import('webpack').WebpackPluginInstance;
+
+const pluginName = 'JsxstyleWebpackPlugin';
+const childCompilerName = `${pluginName} compiled modules`;
 
 interface JsxstyleWebpackPluginOptions extends UserConfigurableOptions {
   /** An array of absolute paths to modules that should be compiled by webpack */
@@ -34,7 +31,7 @@ interface JsxstyleWebpackPluginOptions extends UserConfigurableOptions {
   cacheFile?: string;
 }
 
-class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
+class JsxstyleWebpackPlugin implements WebpackPluginInstance {
   constructor({
     cacheFile,
     classNameFormat,
@@ -107,17 +104,6 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
     loaderContext[Symbol.for('jsxstyle-webpack-plugin')] = this.ctx;
   };
 
-  private compilationPlugin = (compilation: Compilation): void => {
-    if (webpack.NormalModule?.getCompilationHooks) {
-      const normalModuleLoader = webpack.NormalModule.getCompilationHooks(
-        compilation
-      ).loader;
-      normalModuleLoader.tap(pluginName, this.nmlPlugin);
-    } else if (compilation.hooks) {
-      compilation.hooks.normalModuleLoader.tap(pluginName, this.nmlPlugin);
-    }
-  };
-
   /** conditionally set based on whether or not we have a `cacheFile` */
   private donePlugin: (() => void) | null = null;
 
@@ -138,17 +124,22 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
           iife: true,
         },
         [
-          new NodeTargetPlugin(),
-          new NodeTemplatePlugin(),
+          new compiler.webpack.node.NodeTargetPlugin(),
+          new compiler.webpack.node.NodeTemplatePlugin(),
           new compiler.webpack.LoaderTargetPlugin('node'),
+          new compiler.webpack.library.EnableLibraryPlugin('commonjs2'),
         ]
       );
 
       childCompiler.context = compiler.context;
+      childCompiler.options.output.library = {
+        type: 'commonjs2',
+        umdNamedDefine: false,
+      };
 
       Object.entries(moduleCache.entrypoints).forEach(
         ([modulePath, metadata]) => {
-          new compiler.webpack.SingleEntryPlugin(
+          new compiler.webpack.EntryPlugin(
             compiler.context,
             modulePath,
             metadata.key
@@ -161,7 +152,7 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
         compilation.hooks.processAssets.tap(
           {
             name: pluginName,
-            stage: webpack.Compilation.PROCESS_ASSETS_STAGE_ADDITIONS,
+            stage: compiler.webpack.Compilation.PROCESS_ASSETS_STAGE_ADDITIONS,
           },
           (assets) => {
             Object.keys(assets).forEach((key) => {
@@ -211,7 +202,12 @@ class JsxstyleWebpackPlugin implements webpack.WebpackPluginInstance {
     };
 
     compiler.hooks.environment.tap(pluginName, environmentPlugin);
-    compiler.hooks.compilation.tap(pluginName, this.compilationPlugin);
+    compiler.hooks.compilation.tap(pluginName, (compilation) => {
+      compiler.webpack.NormalModule.getCompilationHooks(compilation).loader.tap(
+        pluginName,
+        this.nmlPlugin
+      );
+    });
 
     if (this.donePlugin) {
       compiler.hooks.done.tap(pluginName, this.donePlugin);

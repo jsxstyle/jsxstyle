@@ -26,6 +26,7 @@ module.exports = {
   plugins: [
     new JsxstyleWebpackPlugin({
       classNameFormat: 'hash',
+      staticModules: [require.resolve('./test-app/LayoutConstants')],
     }),
     new MiniCssExtractPlugin({
       chunkFilename: '[id].css',
