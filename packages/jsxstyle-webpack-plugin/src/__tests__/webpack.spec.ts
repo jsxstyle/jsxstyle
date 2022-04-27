@@ -1,7 +1,7 @@
 import path = require('path');
 import webpack = require('webpack');
+import { Volume } from 'memfs';
 
-const MemoryFS: any = require('webpack/lib/MemoryOutputFileSystem');
 const webpackConfig: webpack.Configuration = require('./webpack/webpack.config');
 
 // one minute
@@ -12,7 +12,7 @@ process.chdir(path.join(__dirname, 'webpack'));
 // TODO: evaluate webpack bundle
 it('builds without issue', async () => {
   const compiler = webpack(webpackConfig);
-  const fs = new MemoryFS();
+  const fs = new Volume();
   compiler.outputFileSystem = fs;
 
   expect.assertions(4);

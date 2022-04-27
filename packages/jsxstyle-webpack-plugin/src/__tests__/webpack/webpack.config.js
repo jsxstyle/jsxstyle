@@ -1,3 +1,5 @@
+// @ts-check
+
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const path = require('path');
 const webpack = require('webpack');
@@ -11,6 +13,7 @@ module.exports = {
   },
 
   mode: 'development',
+  target: 'web',
 
   output: {
     filename: 'bundle-[name].js',
