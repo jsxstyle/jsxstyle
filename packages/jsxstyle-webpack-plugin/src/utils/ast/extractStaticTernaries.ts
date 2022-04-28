@@ -13,7 +13,7 @@ export interface Ternary {
 export function extractStaticTernaries(
   ternaries: Ternary[],
   getClassNameForKey: (key: string) => string,
-  onInsertRule: (rule: string) => void
+  onInsertRule: (rule: string, key: string) => void
 ): /** ternaries grouped into one binary expression */
 t.BinaryExpression | t.ConditionalExpression | null {
   invariant(

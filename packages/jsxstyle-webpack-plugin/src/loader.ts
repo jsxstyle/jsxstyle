@@ -52,7 +52,6 @@ const jsxstyleLoader = async function (
       content,
       this.resourcePath,
       {
-        base64Mode: true,
         getClassNameForKey,
         modulesByAbsolutePath,
         errorCallback: (str: string, ...args: any[]) =>
@@ -63,13 +62,16 @@ const jsxstyleLoader = async function (
       options
     );
 
-    if (!rv.cssFileName || rv.css.length === 0) {
-      callback(null, content, sourceMap);
-      return;
-    }
+    // if inline import mode is enabled, no files will be written to the virtual filesystem
+    if (!options.inlineImports) {
+      if (!rv.cssFileName || rv.css.length === 0) {
+        callback(null, content, sourceMap);
+        return;
+      }
 
-    memoryFS.mkdirpSync(path.dirname(rv.cssFileName));
-    memoryFS.writeFileSync(rv.cssFileName, rv.css);
+      memoryFS.mkdirpSync(path.dirname(rv.cssFileName));
+      memoryFS.writeFileSync(rv.cssFileName, rv.css);
+    }
 
     callback(null, rv.js, rv.map);
   } catch (err) {

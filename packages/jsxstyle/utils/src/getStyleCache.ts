@@ -2,10 +2,7 @@ import { addStyleToHead } from './addStyleToHead';
 import { getStringHash } from './getStringHash';
 import { processProps } from './processProps';
 
-type InsertRuleCallback = (
-  rule: string,
-  props?: Record<string, any>
-) => boolean | void;
+type InsertRuleCallback = (rule: string, key: string) => boolean | void;
 
 type GetClassNameFn = (key: string) => string;
 
