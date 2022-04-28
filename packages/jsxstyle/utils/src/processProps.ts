@@ -6,7 +6,7 @@ export function processProps(
   props: Record<string, any>,
   classNamePropKey: string,
   getClassNameForKey: (key: string) => string,
-  insertRuleCallback?: (rule: string) => void,
+  insertRuleCallback?: (rule: string, key: string) => void,
   mediaQuery?: string
 ): Record<string, unknown> | null {
   if (props == null || typeof props !== 'object') {
@@ -99,7 +99,10 @@ export function processProps(
       specificity++;
 
       insertRuleCallback &&
-        insertRuleCallback(`@keyframes ${animationKey} { ${animationValue}}`);
+        insertRuleCallback(
+          `@keyframes ${animationKey} { ${animationValue}}`,
+          animationKey
+        );
     } else {
       styleValue = dangerousStyleValue(propName, propValue);
       if (styleValue === '') continue;
@@ -129,7 +132,7 @@ export function processProps(
 
     classNames += (classNames === '' ? '' : ' ') + className;
 
-    insertRuleCallback && insertRuleCallback(styleRule);
+    insertRuleCallback && insertRuleCallback(styleRule, className);
   }
 
   if (classNames) {

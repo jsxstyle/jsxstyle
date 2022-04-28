@@ -11,14 +11,15 @@ import vm = require('vm');
 import { evaluateAstNode } from './evaluateAstNode';
 import { extractStaticTernaries, Ternary } from './extractStaticTernaries';
 import { generateUid } from './generatedUid';
+import { getInlineImportString } from './getInlineImportString';
 import { getPropValueFromAttributes } from './getPropValueFromAttributes';
 import { getStaticBindingsForScope } from './getStaticBindingsForScope';
 import { parse } from './parse';
-
-import { getCommentForNode } from './getCommentForNode';
+import { getImportForSource } from './getImportForSource';
 
 export interface UserConfigurableOptions {
   parserPlugins?: ParserPlugin[];
+  inlineImports?: 'single' | 'multiple';
 }
 
 export interface ExtractStylesOptions {
@@ -138,8 +139,9 @@ export function extractStyles(
   }
 
   const sourceDir = path.dirname(sourceFileName);
-  const cssMap: Record<string, string[]> = {};
+  const cssMap: Record<string, string> = {};
 
+  const inlineImports = options.inlineImports;
   const parserPlugins = options.parserPlugins?.slice() || [];
   if (/\.tsx?$/.test(sourceFileName)) {
     parserPlugins.push('typescript');
@@ -387,10 +389,8 @@ export function extractStyles(
         const originalNodeName = node.name.name;
         const srcKey = validComponents[originalNodeName];
 
-        const onInsertRule = (rule: string) => {
-          (cssMap[rule] = cssMap[rule] || []).push(
-            getCommentForNode(node, sourceFileName, originalNodeName)
-          );
+        const onInsertRule = (rule: string, key: string) => {
+          cssMap[rule] = key;
         };
 
         let shouldExtractMatchMedia = !!matchMediaImportName;
@@ -1091,18 +1091,6 @@ export function extractStyles(
   };
   traverse(ast, traverseOptions);
 
-  const resultCSS = Object.entries(cssMap)
-    .sort((a, b) => a[0].localeCompare(b[0]))
-    .map(
-      ([rule, comments]) =>
-        comments
-          .sort()
-          .map((txt) => `${txt}\n`)
-          .join('') +
-        rule +
-        '\n'
-    )
-    .join('\n');
   // path.parse doesn't exist in the webpack'd bundle but path.dirname and path.basename do.
   const extName = path.extname(sourceFileName);
   const baseName = path.basename(sourceFileName, extName);
@@ -1140,22 +1128,45 @@ export function extractStyles(
     }
   }
 
-  // append require/import statement to the document
-  if (resultCSS !== '') {
-    if (useImportSyntax) {
-      ast.program.body.unshift(
-        t.importDeclaration([], t.stringLiteral(cssRelativeFileName))
-      );
-    } else {
-      ast.program.body.unshift(
-        t.expressionStatement(
-          t.callExpression(t.identifier('require'), [
-            t.stringLiteral(cssRelativeFileName),
-          ])
+  let resultCSS = '';
+  const importsToPrepend: t.Statement[] = [];
+
+  if (!inlineImports || inlineImports === 'single') {
+    const relativeFilePath = path.relative(process.cwd(), sourceFileName);
+    const cssString =
+      `/* ${relativeFilePath} */\n` +
+      Object.entries(cssMap)
+        .sort((a, b) => a[0].localeCompare(b[0]))
+        .map(([cssRule]) => cssRule + '\n')
+        .join('');
+
+    if (inlineImports === 'single') {
+      importsToPrepend.push(
+        getImportForSource(
+          getInlineImportString(resultCSS, relativeFilePath),
+          useImportSyntax
         )
       );
+    } else {
+      resultCSS = cssString;
+      importsToPrepend.push(
+        getImportForSource(cssRelativeFileName, useImportSyntax)
+      );
     }
+  } else if (inlineImports === 'multiple') {
+    Object.entries(cssMap).forEach(([cssRule, key]) => {
+      if (cssRule !== '') {
+        importsToPrepend.push(
+          getImportForSource(
+            getInlineImportString(cssRule, key),
+            useImportSyntax
+          )
+        );
+      }
+    });
   }
+
+  ast.program.body.unshift(...importsToPrepend);
 
   const result = generate(
     ast,

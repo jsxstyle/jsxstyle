@@ -18,6 +18,7 @@ module.exports = {
   plugins: [
     new ReactIndexPlugin(),
     new JsxstyleWebpackPlugin({
+      inlineImports: 'multiple',
       staticModules: [require.resolve('./LayoutConstants')],
     }),
   ],
@@ -66,7 +67,13 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        use: ['style-loader', 'css-loader'],
+        use: [
+          {
+            loader: 'style-loader',
+            options: { injectType: 'singletonStyleTag' },
+          },
+          'css-loader',
+        ],
       },
     ],
   },

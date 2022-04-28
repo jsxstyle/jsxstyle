@@ -23,7 +23,10 @@ it('has a runtime size of less than 3KB', async () => {
       }),
       rollupTerser({ output: { comments: false } }),
       rollupReplace({
-        'process.env.NODE_ENV': JSON.stringify('production'),
+        values: {
+          'process.env.NODE_ENV': JSON.stringify('production'),
+        },
+        preventAssignment: true,
       }),
       {
         name: 'custom resolve plugin',
