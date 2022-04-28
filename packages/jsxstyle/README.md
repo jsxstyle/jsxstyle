@@ -7,7 +7,7 @@ Styles are written _inline_ on a special set of components exported by jsxstyle.
 With `jsxstyle`, your component code looks like this:
 
 ```jsx
-<Row alignItems="center" padding={15}>
+<Row padding={15}>
   <Block
     backgroundColor="#EEE"
     boxShadow="inset 0 0 0 1px rgba(0,0,0,0.15)"

@@ -20,7 +20,7 @@ export type DeprecatedJsxstyleComponentName =
 
 export const componentStyles: Record<
   JsxstyleComponentName | DeprecatedJsxstyleComponentName,
-  Pick<CSSProperties, 'display' | 'flexDirection'> | null
+  Pick<CSSProperties, 'display' | 'flexDirection' | 'alignItems'> | null
 > = {
   Block: { display: 'block' },
   Box: null,
@@ -29,8 +29,12 @@ export const componentStyles: Record<
   Inline: { display: 'inline' },
   InlineBlock: { display: 'inline-block' },
   InlineCol: { display: 'inline-flex', flexDirection: 'column' },
-  InlineRow: { display: 'inline-flex', flexDirection: 'row' },
-  Row: { display: 'flex', flexDirection: 'row' },
+  InlineRow: {
+    display: 'inline-flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  Row: { display: 'flex', flexDirection: 'row', alignItems: 'center' },
 
   // deprecated
   Flex: { display: 'flex' },

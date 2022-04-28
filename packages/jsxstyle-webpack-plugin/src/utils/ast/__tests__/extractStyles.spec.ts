@@ -54,13 +54,13 @@ const {Col: TestCol, Row} = require("jsxstyle");
 "import \\"./validate__jsxstyle.css\\";
 <Block extract=\\"nope\\" />;
 <div className=\\"_x0 _x1\\" />;
-<div className=\\"_x2 _x3 _x1\\" />;
+<div className=\\"_x2 _x3 _x4 _x1\\" />;
 <Col extract=\\"nope\\" />;
 <InlineBlock extract=\\"nope\\" />;
 <div className=\\"_x2 _x1\\" />;
-<div className=\\"_x4 _x3 _x1\\" />;
-<div className=\\"_x4 _x5 _x1\\" />;
-<div className=\\"_x2 _x5 _x1\\" />;"
+<div className=\\"_x5 _x3 _x4 _x1\\" />;
+<div className=\\"_x5 _x6 _x1\\" />;
+<div className=\\"_x2 _x6 _x1\\" />;"
 `);
 
     expect(rv1.css).toMatchInlineSnapshot(`
@@ -69,8 +69,9 @@ const {Col: TestCol, Row} = require("jsxstyle");
 ._x1 { extract:yep }
 ._x2 { display:flex }
 ._x3._x3 { flex-direction:row }
-._x4 { display:inline-flex }
-._x5._x5 { flex-direction:column }
+._x4 { align-items:center }
+._x5 { display:inline-flex }
+._x6._x6 { flex-direction:column }
 "
 `);
   });
@@ -455,7 +456,7 @@ function Test({
     expect(rv1.js).toMatchInlineSnapshot(`
 "import \\"./class-name1__jsxstyle.css\\";
 import { Box } from \\"jsxstyle\\";
-<Box display=\\"flex\\" flexDirection=\\"row\\" className={member.expression} {...spread} />;
+<Box display=\\"flex\\" flexDirection=\\"row\\" alignItems=\\"center\\" className={member.expression} {...spread} />;
 <div className=\\"orange _x0\\" />;"
 `);
   });

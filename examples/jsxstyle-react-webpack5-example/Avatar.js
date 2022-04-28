@@ -10,7 +10,6 @@ export default function Avatar(props) {
       width={192}
       marginLeft="auto"
       marginRight="auto"
-      alignItems="center"
       mediaQueries={{
         sm: 'screen and (max-width: 900px)',
       }}
