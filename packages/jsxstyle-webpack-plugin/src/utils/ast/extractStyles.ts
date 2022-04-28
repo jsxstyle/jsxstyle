@@ -15,7 +15,7 @@ import { getInlineImportString } from './getInlineImportString';
 import { getPropValueFromAttributes } from './getPropValueFromAttributes';
 import { getStaticBindingsForScope } from './getStaticBindingsForScope';
 import { parse } from './parse';
-import { getImportForSource } from './prependImportToAstBody';
+import { getImportForSource } from './getImportForSource';
 
 export interface UserConfigurableOptions {
   parserPlugins?: ParserPlugin[];

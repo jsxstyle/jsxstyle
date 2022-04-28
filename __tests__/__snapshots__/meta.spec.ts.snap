@@ -69,6 +69,10 @@ jsxstyle-webpack-plugin
 - package.json
 - LICENSE
 - README.md
+- lib/base64-loader.d.ts
+- lib/base64-loader.d.ts.map
+- lib/base64-loader.js
+- lib/base64-loader.js.map
 - lib/loader.d.ts
 - lib/loader.d.ts.map
 - lib/loader.js
@@ -101,6 +105,14 @@ jsxstyle-webpack-plugin
 - lib/utils/ast/getCommentForNode.d.ts.map
 - lib/utils/ast/getCommentForNode.js
 - lib/utils/ast/getCommentForNode.js.map
+- lib/utils/ast/getImportForSource.d.ts
+- lib/utils/ast/getImportForSource.d.ts.map
+- lib/utils/ast/getImportForSource.js
+- lib/utils/ast/getImportForSource.js.map
+- lib/utils/ast/getInlineImportString.d.ts
+- lib/utils/ast/getInlineImportString.d.ts.map
+- lib/utils/ast/getInlineImportString.js
+- lib/utils/ast/getInlineImportString.js.map
 - lib/utils/ast/getPropValueFromAttributes.d.ts
 - lib/utils/ast/getPropValueFromAttributes.d.ts.map
 - lib/utils/ast/getPropValueFromAttributes.js
@@ -133,6 +145,10 @@ jsxstyle-webpack-plugin
 - lib/utils/ModuleCache.d.ts.map
 - lib/utils/ModuleCache.js
 - lib/utils/ModuleCache.js.map
+- lib/utils/noop.d.ts
+- lib/utils/noop.d.ts.map
+- lib/utils/noop.js
+- lib/utils/noop.js.map
 - lib/utils/typePredicates.d.ts
 - lib/utils/typePredicates.d.ts.map
 - lib/utils/typePredicates.js
