@@ -55,24 +55,16 @@ it('builds without issue', async () => {
     }))();
 
   const sharedStyles = `
-/* test-app/Shared.js:9 (Block) */
+/* test-app/Shared.js */
 ._1jdyhuw._1jdyhuw { font-size:18px }
-
-/* test-app/Shared.js:9 (Block) */
 ._1n29hly { line-height:22px }
-
-/* test-app/Shared.js:9 (Block) */
 ._cmecz0 { display:block }
-
-/* test-app/Shared.js:9 (Block) */
 ._uaq4md._uaq4md { font-family:-apple-system, BlinkMacSystemFont, sans-serif }
 `.trim();
 
-  expect(redCSS).toContain(`/* test-app/RedApp.js:9 (Inline) */
-._1jvcvsh { color:red }`);
+  expect(redCSS).toContain('._1jvcvsh { color:red }');
 
-  expect(blueCSS).toContain(`/* test-app/BlueApp.js:9 (Inline) */
-._1mb383g { color:blue }`);
+  expect(blueCSS).toContain('._1mb383g { color:blue }');
 
   expect(redCSS).toContain(sharedStyles);
   expect(blueCSS).toContain(sharedStyles);
