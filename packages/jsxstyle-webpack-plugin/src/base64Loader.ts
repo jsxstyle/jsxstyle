@@ -1,9 +1,7 @@
 import webpack = require('webpack');
 
 /** Webpack loader that decodes the `value` option and returns it as the module source */
-const base64Loader = async function (
-  this: webpack.LoaderContext<{ value: string }>
-) {
+function base64Loader(this: webpack.LoaderContext<{ value: string }>) {
   return Buffer.from(
     this.getOptions({
       type: 'object',
@@ -17,6 +15,6 @@ const base64Loader = async function (
     }).value,
     'base64'
   ).toString('utf-8');
-};
+}
 
 export = base64Loader;

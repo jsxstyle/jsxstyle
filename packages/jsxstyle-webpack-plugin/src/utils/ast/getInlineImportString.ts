@@ -7,11 +7,11 @@ export const getInlineImportString = (css: string, key: string) =>
   // https://webpack.js.org/api/loaders/#inline-matchresource
   '!=!' +
   // this loader base64 decodes the `value` string
-  'jsxstyle-webpack-plugin/lib/base64-loader.js' +
+  'jsxstyle-webpack-plugin/lib/base64Loader.js' +
   '?' +
   new URLSearchParams({
     value: Buffer.from(css).toString('base64'),
   }).toString() +
   '!' +
   // the contents of this file will be discarded
-  'jsxstyle-webpack-plugin/lib/utils/noop.js';
+  'jsxstyle-webpack-plugin/lib/noop.js';

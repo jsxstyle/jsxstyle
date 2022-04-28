@@ -1114,7 +1114,7 @@ const staticProp = 'static';
     );
 
     expect(singleInlineImports.js).toMatchInlineSnapshot(`
-"import \\"jsxstyle-cache/mock/evaluateVars.js.css!=!jsxstyle-webpack-plugin/lib/base64-loader.js?value=!jsxstyle-webpack-plugin/lib/utils/noop.js\\";
+"import \\"jsxstyle-cache/mock/evaluateVars.js.css!=!jsxstyle-webpack-plugin/lib/base64Loader.js?value=!jsxstyle-webpack-plugin/lib/noop.js\\";
 const staticProp = 'static';
 <div className=\\"_x0 _x1 _x2\\" />;"
 `);
@@ -1132,9 +1132,9 @@ const staticProp = 'static';
     );
 
     expect(multipleInlineImports.js).toMatchInlineSnapshot(`
-"import \\"jsxstyle-cache/_x0.css!=!jsxstyle-webpack-plugin/lib/base64-loader.js?value=Ll94MCB7IGRpc3BsYXk6YmxvY2sgfQ%3D%3D!jsxstyle-webpack-plugin/lib/utils/noop.js\\";
-import \\"jsxstyle-cache/_x1.css!=!jsxstyle-webpack-plugin/lib/base64-loader.js?value=Ll94MSB7IHRoaW5nMTpzdGF0aWMgfQ%3D%3D!jsxstyle-webpack-plugin/lib/utils/noop.js\\";
-import \\"jsxstyle-cache/_x2.css!=!jsxstyle-webpack-plugin/lib/base64-loader.js?value=Ll94MiB7IHRoaW5nMjo2OXB4IH0%3D!jsxstyle-webpack-plugin/lib/utils/noop.js\\";
+"import \\"jsxstyle-cache/_x0.css!=!jsxstyle-webpack-plugin/lib/base64Loader.js?value=Ll94MCB7IGRpc3BsYXk6YmxvY2sgfQ%3D%3D!jsxstyle-webpack-plugin/lib/noop.js\\";
+import \\"jsxstyle-cache/_x1.css!=!jsxstyle-webpack-plugin/lib/base64Loader.js?value=Ll94MSB7IHRoaW5nMTpzdGF0aWMgfQ%3D%3D!jsxstyle-webpack-plugin/lib/noop.js\\";
+import \\"jsxstyle-cache/_x2.css!=!jsxstyle-webpack-plugin/lib/base64Loader.js?value=Ll94MiB7IHRoaW5nMjo2OXB4IH0%3D!jsxstyle-webpack-plugin/lib/noop.js\\";
 const staticProp = 'static';
 <div className=\\"_x0 _x1 _x2\\" />;"
 `);
