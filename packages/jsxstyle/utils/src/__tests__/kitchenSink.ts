@@ -1,4 +1,6 @@
 export const kitchenSink = {
+  disabled: true,
+  href: 'https://jsx.style',
   margin: 1,
   marginH: 2,
   marginLeft: 3,

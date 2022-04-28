@@ -7,6 +7,7 @@ const commonComponentProps = {
   // class (preact) and className (React) are handled separately
   checked: true,
   children: true,
+  disabled: true,
   href: true,
   id: true,
   name: true,

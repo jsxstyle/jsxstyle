@@ -29,7 +29,7 @@ describe('processProps', () => {
     expect(keyObj.rules).toEqual([]);
   });
 
-  it('generates valid CSS rules', () => {
+  it('separates component props and styles', () => {
     const keyObj1 = runProcessProps(
       kitchenSink,
       'className',
@@ -40,6 +40,8 @@ describe('processProps', () => {
 Object {
   "props": Object {
     "className": "_x0 _x1 _x2 _x3 _x4 _x5 _x6 _x7 _x8 _x9 _xa _xb",
+    "disabled": true,
+    "href": "https://jsx.style",
   },
   "rules": Array [
     "._x0 { margin:1px }",
