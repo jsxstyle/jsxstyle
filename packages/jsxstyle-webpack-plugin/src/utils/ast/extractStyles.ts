@@ -27,6 +27,7 @@ export interface ExtractStylesOptions {
   evaluateVars?: boolean;
   getClassNameForKey: (key: string) => string;
   modulesByAbsolutePath?: Record<string, unknown>;
+  base64Mode?: boolean;
 }
 
 declare module '@babel/traverse' {
@@ -103,6 +104,7 @@ export function extractStyles(
     modulesByAbsolutePath = {},
     getClassNameForKey,
     evaluateVars = true,
+    base64Mode = false,
   }: ExtractStylesOptions,
   options: UserConfigurableOptions = {}
 ): {
@@ -1142,15 +1144,27 @@ export function extractStyles(
 
   // append require/import statement to the document
   if (resultCSS !== '') {
+    const importString = base64Mode
+      ? cssRelativeFileName +
+        '!=!' +
+        'jsxstyle-webpack-plugin/lib/base64-loader.js' +
+        '?' +
+        new URLSearchParams({
+          value: Buffer.from(resultCSS).toString('base64'),
+        }).toString() +
+        '!' +
+        'jsxstyle-webpack-plugin/lib/utils/noop.js'
+      : cssRelativeFileName;
+
     if (useImportSyntax) {
       ast.program.body.unshift(
-        t.importDeclaration([], t.stringLiteral(cssRelativeFileName))
+        t.importDeclaration([], t.stringLiteral(importString))
       );
     } else {
       ast.program.body.unshift(
         t.expressionStatement(
           t.callExpression(t.identifier('require'), [
-            t.stringLiteral(cssRelativeFileName),
+            t.stringLiteral(importString),
           ])
         )
       );

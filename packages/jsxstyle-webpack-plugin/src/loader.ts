@@ -15,6 +15,10 @@ const jsxstyleLoader = async function (
     this.cacheable();
   }
 
+  if (this.resourcePath.startsWith('data:')) {
+    return;
+  }
+
   const callback = this.async();
   invariant(callback, 'Async callback is falsey');
 
@@ -48,6 +52,7 @@ const jsxstyleLoader = async function (
       content,
       this.resourcePath,
       {
+        base64Mode: true,
         getClassNameForKey,
         modulesByAbsolutePath,
         errorCallback: (str: string, ...args: any[]) =>
