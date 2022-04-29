@@ -1156,12 +1156,12 @@ export function extractStyles(
   } else if (inlineImports === 'multiple') {
     Object.entries(cssMap).forEach(([cssRule, key]) => {
       if (cssRule !== '') {
-        importsToPrepend.push(
-          getImportForSource(
-            getInlineImportString(cssRule, key),
-            useImportSyntax
-          )
+        const importNode = getImportForSource(
+          getInlineImportString(cssRule, key),
+          useImportSyntax
         );
+        t.addComment(importNode, 'leading', ' ' + cssRule + ' ', false);
+        importsToPrepend.push(importNode);
       }
     });
   }
