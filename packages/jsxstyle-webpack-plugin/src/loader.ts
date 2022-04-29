@@ -48,12 +48,22 @@ const jsxstyleLoader = async function (
   try {
     const modulesByAbsolutePath = await getModules();
 
+    /** If there is an attempt to access a module in `modulesByAbsolutePath`, add it as a dependency */
+    const proxiedModulesByAbsolutePath = new Proxy(modulesByAbsolutePath, {
+      get: (target, prop, receiver) => {
+        if (typeof prop === 'string' && prop.startsWith('/')) {
+          this.addDependency(prop);
+        }
+        return Reflect.get(target, prop, receiver);
+      },
+    });
+
     const rv = extractStyles(
       content,
       this.resourcePath,
       {
         getClassNameForKey,
-        modulesByAbsolutePath,
+        modulesByAbsolutePath: proxiedModulesByAbsolutePath,
         errorCallback: (str: string, ...args: any[]) =>
           this.emitError(new Error(util.format(str, ...args))),
         warnCallback: (str: string, ...args: any[]) =>

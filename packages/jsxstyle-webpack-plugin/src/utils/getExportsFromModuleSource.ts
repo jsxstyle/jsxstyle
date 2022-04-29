@@ -9,7 +9,7 @@ export const getExportsFromModuleSource = (
   if (!path.isAbsolute(modulePath)) {
     throw new Error(`Expected an absolute path, received ${modulePath}`);
   }
-  const moduleObj = { exports: {} };
+  const moduleObj: { exports: Record<string, unknown> } = { exports: {} };
 
   const requireFn = (importPath: any) => {
     throw new Error(`Unhandled module import: '${importPath}'`);
