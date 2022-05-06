@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 import generate from '@babel/generator';
 import t = require('@babel/types');
 

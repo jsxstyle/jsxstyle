@@ -1,11 +1,12 @@
-import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
 import { Block, cache, Col, InlineBlock, Row } from 'jsxstyle';
 
 import './polyfills';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const reactVersion = require('react/package').version;
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const reactDomVersion = require('react-dom/package').version;
 
 describe('jsxstyle', () => {
@@ -35,7 +36,7 @@ describe('jsxstyle', () => {
               placeholderColor="red"
               hoverColor="orange"
               activeColor="purple"
-              // @ts-expect-error
+              // @ts-expect-error untyped style prop
               activePlaceholderColor="cyan"
               flex={1}
               width={2 / 3}

@@ -3,7 +3,7 @@ import { Component, h } from 'preact';
 
 import NavLink from './NavLink';
 
-export default class Header extends Component<{}, {}> {
+export default class Header extends Component {
   public render() {
     return (
       <Block

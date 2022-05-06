@@ -27,7 +27,7 @@ export function getPropValueFromAttributes(
   propName: string,
   attrs: Array<t.JSXAttribute | t.JSXSpreadAttribute>
 ): t.Expression | null {
-  let propIndex: number = -1;
+  let propIndex = -1;
   let jsxAttr: t.JSXAttribute | null = null;
   for (let idx = -1, len = attrs.length; ++idx < len; ) {
     const attr = attrs[idx];

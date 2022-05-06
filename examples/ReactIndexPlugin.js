@@ -13,14 +13,6 @@ const source = {
   size: () => indexFileContents.length,
 };
 
-const emitPlugin = (compilation, callback) => {
-  compilation.assets[fileName] = source;
-
-  if (callback) {
-    callback();
-  }
-};
-
 class ReactIndexPlugin {
   apply(
     /** @type {import('webpack').Compiler} */

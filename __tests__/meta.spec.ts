@@ -71,6 +71,7 @@ describe('examples', () => {
     // TODO(meyer) re-enable when this error is fixed: https://github.com/preactjs/preact-cli/issues/1043
     const itFn = skippedExamples.includes(example) ? it.skip : it;
 
+    /* eslint jest/no-standalone-expect: ['error', { additionalTestBlockFunctions: ['itFn'] }] */
     itFn(
       `\`${example}\` builds correctly`,
       async () => {

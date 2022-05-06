@@ -37,15 +37,14 @@ export interface JsxstyleProps<ComponentProps>
 }
 
 type JsxstyleComponent = preact.ComponentConstructor<
-  JsxstyleProps<Record<string, any>>,
-  {}
+  JsxstyleProps<Record<string, any>>
 >;
 
 function factory(displayName: JsxstyleComponentName): JsxstyleComponent {
   const tagName = 'div';
   const defaultProps = componentStyles[displayName] || undefined;
 
-  return class<P> extends preact.Component<JsxstyleProps<P>, {}> {
+  return class<P> extends preact.Component<JsxstyleProps<P>> {
     constructor(props: JsxstyleProps<P>) {
       super(props);
       this.component = props.component || tagName;

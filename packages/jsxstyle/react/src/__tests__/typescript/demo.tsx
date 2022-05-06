@@ -20,7 +20,9 @@ interface StyleNeverProps {
 
 const StyleNeverFC: React.FC<StyleNeverProps> = () => null;
 
-interface NoStyleProps {}
+interface NoStyleProps {
+  children: React.ReactNode;
+}
 
 const NoStyleFC: React.FC<NoStyleProps> = () => null;
 

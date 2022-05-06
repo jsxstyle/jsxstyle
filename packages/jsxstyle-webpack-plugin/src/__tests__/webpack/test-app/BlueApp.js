@@ -1,4 +1,3 @@
-import React from 'react';
 import { Inline } from 'jsxstyle';
 import Shared from './Shared';
 import { colorBlue } from './LayoutConstants';

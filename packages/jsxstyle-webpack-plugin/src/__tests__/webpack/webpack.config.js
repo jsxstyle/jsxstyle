@@ -2,10 +2,9 @@
 
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const path = require('path');
-const webpack = require('webpack');
 const JsxstyleWebpackPlugin = require('jsxstyle-webpack-plugin');
 
-/** @type {webpack.Configuration} */
+/** @type {import('webpack').Configuration} */
 module.exports = {
   entry: {
     blue: require.resolve('./test-app/blue-entrypoint'),

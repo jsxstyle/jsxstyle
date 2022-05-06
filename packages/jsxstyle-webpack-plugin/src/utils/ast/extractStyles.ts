@@ -1,3 +1,4 @@
+/* eslint-disable no-prototype-builtins */
 import generate from '@babel/generator';
 import type { ParserPlugin } from '@babel/parser';
 import traverse, { NodePath, TraverseOptions } from '@babel/traverse';
@@ -31,7 +32,7 @@ export interface ExtractStylesOptions {
 }
 
 declare module '@babel/traverse' {
-  export interface NodePath<T = t.Node, TNode = any> {
+  export interface NodePath {
     _complexComponentProp?: t.VariableDeclarator[] | null;
   }
 }
@@ -314,7 +315,7 @@ export function extractStyles(
     jsxstyleSrc === 'jsxstyle/preact' ? 'class' : 'className';
 
   // Generate a UID that's unique in the program scope
-  let boxComponentName: string = '';
+  let boxComponentName = '';
   traverse(ast, {
     Program(traversePath) {
       boxComponentName = generateUid(traversePath.scope, 'Box');
@@ -432,7 +433,7 @@ export function extractStyles(
               return (n: t.Node) => evaluateAstNode(n, evalFn);
             })();
 
-        let lastSpreadIndex: number = -1;
+        let lastSpreadIndex = -1;
         const flattenedAttributes: Array<
           t.JSXAttribute | t.JSXSpreadAttribute
         > = [];
@@ -812,7 +813,7 @@ export function extractStyles(
             node.attributes.splice(propsPropIndex, 1);
           }
 
-          let componentPropIndex: number = -1;
+          let componentPropIndex = -1;
           let componentAttr: t.JSXAttribute | null = null;
           for (let idx = -1, len = node.attributes.length; ++idx < len; ) {
             const attr = node.attributes[idx];

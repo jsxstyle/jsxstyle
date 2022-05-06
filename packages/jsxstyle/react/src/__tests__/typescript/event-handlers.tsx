@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import * as React from 'react';
 import { Block } from 'jsxstyle';
 
@@ -11,7 +12,7 @@ const TestComponent: React.FC<{
 <Block onClick={() => {}} color="red" />;
 
 <Block
-  // @ts-expect-error
+  // @ts-expect-error function is expected
   onClick={123}
   color="red"
 />;

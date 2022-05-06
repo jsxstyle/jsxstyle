@@ -1,4 +1,3 @@
-import React from 'react';
 import { Block } from 'jsxstyle';
 import { fontStyle } from './LayoutConstants';
 

@@ -4,7 +4,7 @@ interface PromiseObj<T> {
   promise: Promise<T>;
 }
 
-export const makePromise = <T extends any>(): PromiseObj<T> => {
+export const makePromise = <T>(): PromiseObj<T> => {
   const result: PromiseObj<T> = {} as any;
 
   result.promise = new Promise<T>((resolve, reject) => {
