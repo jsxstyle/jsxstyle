@@ -36,10 +36,8 @@ function outerFunction(innerParam1, innerParam2) {
 }
 `);
 
-  const testItems: Record<
-    string,
-    { attrs: Record<string, any>; scope: any }
-  > = {};
+  const testItems: Record<string, { attrs: Record<string, any>; scope: any }> =
+    {};
   traverse(ast, {
     JSXElement(traversePath) {
       const node = traversePath.node.openingElement;

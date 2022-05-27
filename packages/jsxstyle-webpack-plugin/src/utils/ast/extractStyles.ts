@@ -572,9 +572,8 @@ export function extractStyles(
           if (name === 'props') {
             if (t.isObjectExpression(value)) {
               let errorCount = 0;
-              const attributes: Array<
-                t.JSXAttribute | t.JSXSpreadAttribute
-              > = [];
+              const attributes: Array<t.JSXAttribute | t.JSXSpreadAttribute> =
+                [];
 
               for (const k in value.properties) {
                 const propObj = value.properties[k];
@@ -977,8 +976,8 @@ export function extractStyles(
           classNameObjects.push(t.stringLiteral(extractedStyleClassNames));
         }
 
-        const classNamePropValueForReals = classNameObjects.reduce<t.Expression | null>(
-          (acc, val) => {
+        const classNamePropValueForReals =
+          classNameObjects.reduce<t.Expression | null>((acc, val) => {
             if (acc == null) {
               if (
                 // pass conditional expressions through
@@ -1036,9 +1035,7 @@ export function extractStyles(
               );
             }
             return t.binaryExpression('+', acc, inner);
-          },
-          null
-        );
+          }, null);
 
         if (classNamePropValueForReals) {
           if (t.isStringLiteral(classNamePropValueForReals)) {

@@ -1,2 +1,5 @@
 *.json
 .cache
+examples/jsxstyle-gatsby-example/public
+**/build/*
+**/lib/*

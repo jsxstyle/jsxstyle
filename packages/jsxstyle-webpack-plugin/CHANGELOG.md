@@ -1,6 +1,7 @@
 # jsxstyle-webpack-plugin
 
 ## 1.5.0
+
 ### Minor Changes
 
 - 5c7973f: - Update webpack peer dep range to include version 5

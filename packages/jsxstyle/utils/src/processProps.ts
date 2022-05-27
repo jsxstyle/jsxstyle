@@ -46,12 +46,8 @@ export function processProps(
         const animationResult = parseStyleProps(obj, 'className');
 
         for (const key in animationResult.parsedStyleProps) {
-          const {
-            propName,
-            propValue,
-            pseudoclass,
-            pseudoelement,
-          } = animationResult.parsedStyleProps[key];
+          const { propName, propValue, pseudoclass, pseudoelement } =
+            animationResult.parsedStyleProps[key];
           if (pseudoclass || pseudoelement) {
             if (process.env.NODE_ENV !== 'production') {
               console.error(

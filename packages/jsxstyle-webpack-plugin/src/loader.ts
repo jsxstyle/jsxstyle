@@ -22,21 +22,16 @@ const jsxstyleLoader = async function (
   const callback = this.async();
   invariant(callback, 'Async callback is falsey');
 
-  const pluginContext: PluginContext = this[
-    Symbol.for('jsxstyle-webpack-plugin')
-  ];
+  const pluginContext: PluginContext =
+    this[Symbol.for('jsxstyle-webpack-plugin')];
 
   invariant(
     pluginContext,
     'jsxstyle-webpack-plugin must be added to the plugins array in your webpack config'
   );
 
-  const {
-    memoryFS,
-    getClassNameForKey,
-    getModules,
-    defaultLoaderOptions,
-  } = pluginContext;
+  const { memoryFS, getClassNameForKey, getModules, defaultLoaderOptions } =
+    pluginContext;
 
   const userSpecifiedOptions = this.getOptions() || {};
 
