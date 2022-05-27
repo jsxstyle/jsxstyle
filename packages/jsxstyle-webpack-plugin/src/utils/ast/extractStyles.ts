@@ -1157,7 +1157,9 @@ export function extractStyles(
           getInlineImportString(cssRule, key),
           useImportSyntax
         );
-        t.addComment(importNode, 'leading', ' ' + cssRule + ' ', false);
+        cssRule.split('\n').forEach((line) => {
+          t.addComment(importNode, 'leading', ' ' + line, true);
+        });
         importsToPrepend.push(importNode);
       }
     });
