@@ -8,7 +8,7 @@ import Profile from './routes/Profile';
 
 import './style.css';
 
-export default class App extends Component<{}, {}> {
+export default class App extends Component {
   public render() {
     return (
       <Block height="100%">

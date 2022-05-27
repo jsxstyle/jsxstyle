@@ -44,7 +44,7 @@ const webpackConfig: Configuration = {
                 targets: { browsers: ['last 2 versions'] },
               },
             ],
-            '@babel/preset-react',
+            ['@babel/preset-react', { runtime: 'automatic' }],
           ],
           plugins: [
             '@babel/plugin-proposal-object-rest-spread',

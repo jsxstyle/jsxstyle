@@ -26,7 +26,7 @@ const TestComponent: React.FC<{
 <Block
   component={TestComponent}
   value={{
-    // @ts-expect-error
+    // @ts-expect-error TestComponent expects an object
     hello: 'abc',
   }}
   color="red"

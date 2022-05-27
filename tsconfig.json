@@ -1,7 +1,7 @@
 {
   "extends": "./config/tsconfig.base.json",
   "compilerOptions": {
-    "jsx": "react",
+    "jsx": "react-jsx",
     "module": "commonjs",
     "target": "es2015",
     "types": [

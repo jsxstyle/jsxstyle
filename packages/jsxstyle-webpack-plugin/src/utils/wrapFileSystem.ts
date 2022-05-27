@@ -30,13 +30,13 @@ export function wrapFileSystem(
   memoryFS: MemoryFS
 ): InputFileSystem {
   return new Proxy(fs, {
-    get: (target, key) => {
-      const value = target[key];
+    get: (target, prop, receiver) => {
+      const value = Reflect.get(target, prop, receiver);
 
-      if (handledMethods.hasOwnProperty(key)) {
+      if (prop in handledMethods) {
         return function (this: any, filePath: string, ...args: string[]) {
           if (filePath.endsWith('__jsxstyle.css')) {
-            return memoryFS[key](filePath, ...args);
+            return memoryFS[prop](filePath, ...args);
           }
           return value.call(this, filePath, ...args);
         };

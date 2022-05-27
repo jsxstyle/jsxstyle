@@ -57,7 +57,7 @@ export function evaluateAstNode(
       'evaluateAstNode does not support template literals unless an eval function is provided'
     );
 
-    let ret: string = '';
+    let ret = '';
     for (let idx = -1, len = exprNode.quasis.length; ++idx < len; ) {
       const quasi = exprNode.quasis[idx];
       const expr = exprNode.expressions[idx];

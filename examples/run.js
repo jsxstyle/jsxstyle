@@ -33,7 +33,7 @@ const npmCommand = (example, ...args) =>
   });
 
 (async (searchString) => {
-  const { packages, tool } = await getPackages(JSXSTYLE_ROOT);
+  const { packages } = await getPackages(JSXSTYLE_ROOT);
   const examplePkgs = packages.filter((f) =>
     f.packageJson.name.endsWith('-example')
   );

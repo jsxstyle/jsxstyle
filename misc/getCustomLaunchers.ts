@@ -68,7 +68,7 @@ export function getCustomLaunchers(): Record<string, Launcher> {
 
       const sauceObjs = latestOSVersions
         .slice(0, 4)
-        .map((v) => sample(groupedByOsVersion[v])!);
+        .map((v) => sample(groupedByOsVersion[v]));
 
       return sauceObjs;
     })

@@ -1,3 +1,4 @@
+/* eslint-disable no-prototype-builtins */
 import invariant from 'invariant';
 import path = require('path');
 import { getExportsFromModuleSource } from './getExportsFromModuleSource';

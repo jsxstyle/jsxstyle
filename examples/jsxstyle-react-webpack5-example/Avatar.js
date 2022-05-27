@@ -1,4 +1,3 @@
-import React from 'react';
 import { Block, Row } from 'jsxstyle';
 import PropTypes from 'prop-types';
 

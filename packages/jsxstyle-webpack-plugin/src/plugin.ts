@@ -1,5 +1,5 @@
 import fs = require('fs');
-// @ts-expect-error
+// @ts-expect-error this export is not exposed in the `compiler.webpack` object
 import NodeWatchFileSystem = require('webpack/lib/node/NodeWatchFileSystem');
 import { Volume } from 'memfs';
 import { createClassNameGetter } from 'jsxstyle/utils';

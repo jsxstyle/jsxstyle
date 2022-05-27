@@ -71,7 +71,7 @@ function prefixKey(prefix: string, key: string): string {
   return prefix + key.charAt(0).toUpperCase() + key.substring(1);
 }
 
-export function dangerousStyleValue(name: any, value: any): string {
+export function dangerousStyleValue(name: string, value: unknown): string {
   const isEmpty = value == null || typeof value === 'boolean' || value === '';
   if (isEmpty) {
     return '';
@@ -80,7 +80,7 @@ export function dangerousStyleValue(name: any, value: any): string {
   if (
     typeof value === 'number' &&
     value !== 0 &&
-    !(isUnitlessNumber.hasOwnProperty(name) && isUnitlessNumber[name])
+    isUnitlessNumber[name] !== true
   ) {
     if (value > -1 && value < 1) {
       return Math.round(value * 1e6) / 1e4 + '%';
@@ -88,7 +88,7 @@ export function dangerousStyleValue(name: any, value: any): string {
     return value + 'px';
   }
 
-  if (!value.toString) {
+  if (!(value as any).toString) {
     // values that lack a toString method on their prototype will throw a TypeError
     // see https://github.com/jsxstyle/jsxstyle/issues/112
     if (process.env.NODE_ENV === 'development') {

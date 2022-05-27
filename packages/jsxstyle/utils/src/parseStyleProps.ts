@@ -1,3 +1,4 @@
+/* eslint-disable no-prototype-builtins */
 import type { AnimatableCSSProperties as CSSProps } from './types';
 
 // global flag makes subsequent calls of capRegex.test advance to the next match
@@ -91,9 +92,6 @@ export interface ParsedStyleProp {
 
 export type CommonComponentProp = keyof typeof commonComponentProps;
 
-/**
- * Split an object of component props into two objects: parsed style prop objects and component props.
- */
 export const parseStyleProps = (
   props: Record<string, any>,
   classNamePropKey: string
