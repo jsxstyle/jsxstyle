@@ -5,6 +5,7 @@ const TestComponent: React.FC<{
   /** Test comment */
   onClick: number;
   onMouseDown?: string;
+  onWhatever?: number;
 }> = () => null;
 
 <Block onClick={() => {}} color="red" />;
@@ -27,4 +28,10 @@ const TestComponent: React.FC<{
 // @ts-expect-error onClick is a required prop
 <Block component={TestComponent} color="red" />;
 
-<Block component={TestComponent} onClick={123} onMouseDown="wow" color="red" />;
+<Block
+  component={TestComponent}
+  onClick={123}
+  onMouseDown="wow"
+  onWhatever={123}
+  color="red"
+/>;

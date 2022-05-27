@@ -35,10 +35,19 @@ export type ExtractProps<T extends ValidComponentPropValue> = T extends
     : ClassProps
   : {};
 
+// prettier-ignore
+type UpperCaseLetter = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X' | 'Y' | 'Z';
+
+/** Generic that extracts the keys of event handlers from an object of props. */
+type EventHandlerKeys<T> = Extract<keyof T, `on${UpperCaseLetter}${string}`>;
+
 /** Props that will be passed through to whatever component is specified */
 export type StylableComponentProps<T extends ValidComponentPropValue> = Pick<
   ExtractProps<T>,
-  Extract<keyof ExtractProps<T>, CommonReactComponentProp | KnownEventHandler>
+  Extract<
+    keyof ExtractProps<T>,
+    CommonReactComponentProp | EventHandlerKeys<ExtractProps<T>>
+  >
 >;
 
 /** Props for jsxstyle components that have a `component` prop set */
@@ -63,196 +72,3 @@ export type JsxstyleProps<T extends ValidComponentPropValue = 'div'> = (
 ) &
   StylableComponentProps<T> &
   CSSProperties;
-
-// copied from React.DOMAttributes
-// I'm not using React.DOMAttributes here because it's an interface that gets augmented
-type KnownEventHandler =
-  // Clipboard Events
-  | 'onCopy'
-  | 'onCopyCapture'
-  | 'onCut'
-  | 'onCutCapture'
-  | 'onPaste'
-  | 'onPasteCapture'
-
-  // Composition Events
-  | 'onCompositionEnd'
-  | 'onCompositionEndCapture'
-  | 'onCompositionStart'
-  | 'onCompositionStartCapture'
-  | 'onCompositionUpdate'
-  | 'onCompositionUpdateCapture'
-
-  // Focus Events
-  | 'onFocus'
-  | 'onFocusCapture'
-  | 'onBlur'
-  | 'onBlurCapture'
-
-  // Form Events
-  | 'onChange'
-  | 'onChangeCapture'
-  | 'onBeforeInput'
-  | 'onBeforeInputCapture'
-  | 'onInput'
-  | 'onInputCapture'
-  | 'onReset'
-  | 'onResetCapture'
-  | 'onSubmit'
-  | 'onSubmitCapture'
-  | 'onInvalid'
-  | 'onInvalidCapture'
-
-  // Image Events
-  | 'onLoad'
-  | 'onLoadCapture'
-  | 'onError'
-  | 'onErrorCapture'
-
-  // Keyboard Events
-  | 'onKeyDown'
-  | 'onKeyDownCapture'
-  | 'onKeyPress'
-  | 'onKeyPressCapture'
-  | 'onKeyUp'
-  | 'onKeyUpCapture'
-
-  // Media Events
-  | 'onAbort'
-  | 'onAbortCapture'
-  | 'onCanPlay'
-  | 'onCanPlayCapture'
-  | 'onCanPlayThrough'
-  | 'onCanPlayThroughCapture'
-  | 'onDurationChange'
-  | 'onDurationChangeCapture'
-  | 'onEmptied'
-  | 'onEmptiedCapture'
-  | 'onEncrypted'
-  | 'onEncryptedCapture'
-  | 'onEnded'
-  | 'onEndedCapture'
-  | 'onLoadedData'
-  | 'onLoadedDataCapture'
-  | 'onLoadedMetadata'
-  | 'onLoadedMetadataCapture'
-  | 'onLoadStart'
-  | 'onLoadStartCapture'
-  | 'onPause'
-  | 'onPauseCapture'
-  | 'onPlay'
-  | 'onPlayCapture'
-  | 'onPlaying'
-  | 'onPlayingCapture'
-  | 'onProgress'
-  | 'onProgressCapture'
-  | 'onRateChange'
-  | 'onRateChangeCapture'
-  | 'onSeeked'
-  | 'onSeekedCapture'
-  | 'onSeeking'
-  | 'onSeekingCapture'
-  | 'onStalled'
-  | 'onStalledCapture'
-  | 'onSuspend'
-  | 'onSuspendCapture'
-  | 'onTimeUpdate'
-  | 'onTimeUpdateCapture'
-  | 'onVolumeChange'
-  | 'onVolumeChangeCapture'
-  | 'onWaiting'
-  | 'onWaitingCapture'
-
-  // MouseEvents
-  | 'onAuxClick'
-  | 'onAuxClickCapture'
-  | 'onClick'
-  | 'onClickCapture'
-  | 'onContextMenu'
-  | 'onContextMenuCapture'
-  | 'onDoubleClick'
-  | 'onDoubleClickCapture'
-  | 'onDrag'
-  | 'onDragCapture'
-  | 'onDragEnd'
-  | 'onDragEndCapture'
-  | 'onDragEnter'
-  | 'onDragEnterCapture'
-  | 'onDragExit'
-  | 'onDragExitCapture'
-  | 'onDragLeave'
-  | 'onDragLeaveCapture'
-  | 'onDragOver'
-  | 'onDragOverCapture'
-  | 'onDragStart'
-  | 'onDragStartCapture'
-  | 'onDrop'
-  | 'onDropCapture'
-  | 'onMouseDown'
-  | 'onMouseDownCapture'
-  | 'onMouseEnter'
-  | 'onMouseLeave'
-  | 'onMouseMove'
-  | 'onMouseMoveCapture'
-  | 'onMouseOut'
-  | 'onMouseOutCapture'
-  | 'onMouseOver'
-  | 'onMouseOverCapture'
-  | 'onMouseUp'
-  | 'onMouseUpCapture'
-
-  // Selection Events
-  | 'onSelect'
-  | 'onSelectCapture'
-
-  // Touch Events
-  | 'onTouchCancel'
-  | 'onTouchCancelCapture'
-  | 'onTouchEnd'
-  | 'onTouchEndCapture'
-  | 'onTouchMove'
-  | 'onTouchMoveCapture'
-  | 'onTouchStart'
-  | 'onTouchStartCapture'
-
-  // Pointer Events
-  | 'onPointerDown'
-  | 'onPointerDownCapture'
-  | 'onPointerMove'
-  | 'onPointerMoveCapture'
-  | 'onPointerUp'
-  | 'onPointerUpCapture'
-  | 'onPointerCancel'
-  | 'onPointerCancelCapture'
-  | 'onPointerEnter'
-  | 'onPointerEnterCapture'
-  | 'onPointerLeave'
-  | 'onPointerLeaveCapture'
-  | 'onPointerOver'
-  | 'onPointerOverCapture'
-  | 'onPointerOut'
-  | 'onPointerOutCapture'
-  | 'onGotPointerCapture'
-  | 'onGotPointerCaptureCapture'
-  | 'onLostPointerCapture'
-  | 'onLostPointerCaptureCapture'
-
-  // UI Events
-  | 'onScroll'
-  | 'onScrollCapture'
-
-  // Wheel Events
-  | 'onWheel'
-  | 'onWheelCapture'
-
-  // Animation Events
-  | 'onAnimationStart'
-  | 'onAnimationStartCapture'
-  | 'onAnimationEnd'
-  | 'onAnimationEndCapture'
-  | 'onAnimationIteration'
-  | 'onAnimationIterationCapture'
-
-  // Transition Events
-  | 'onTransitionEnd'
-  | 'onTransitionEndCapture';
