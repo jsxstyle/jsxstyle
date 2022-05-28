@@ -1,0 +1,40 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    paths:
+      - 'minisite/**'
+
+  workflow_dispatch:
+
+jobs:
+  deployment:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout jsxstyle
+        uses: actions/checkout@v2
+
+      - name: Use Node 16
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build minisite
+        run: npm -w minisite run export
+
+      - name: Update gh-pages branch
+        run: |
+          git submodule add -b gh-pages git@github.com:jsxstyle/jsxstyle.git gh-pages-temp
+          cd gh-pages-temp
+          git rm -rf .
+          cd ..
+          cp -r minisite/dist/. gh-pages-temp/
+          cd gh-pages-temp
+          git add -A
+          git commit -m "Automated update"
+          git push origin HEAD
