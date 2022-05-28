@@ -12,6 +12,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Log github.event
+        run: |
+          echo "${{toJSON(github.event)}}"
+
       - name: Checkout jsxstyle
         uses: actions/checkout@v3
 
