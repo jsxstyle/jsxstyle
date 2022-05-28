@@ -10,12 +10,11 @@ on:
 jobs:
   deployment:
     runs-on: ubuntu-latest
+    
+    env:
+      commitmsg: ${{ github.event.head_commit.message }}
 
     steps:
-      - name: Log github.event
-        run: |
-          echo "${{toJSON(github.event)}}"
-
       - name: Checkout jsxstyle
         uses: actions/checkout@v3
 
@@ -47,5 +46,5 @@ jobs:
           git rm -rf .
           cp -r ../minisite/dist/. .
           git add -A
-          git commit -m "Automated update"
+          git commit -m "${{ env.commitmsg }}"
           git push origin HEAD
