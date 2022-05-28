@@ -13,7 +13,7 @@ jobs:
 
     steps:
       - name: Checkout jsxstyle
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Use Node 16
         uses: actions/setup-node@v2
@@ -29,14 +29,19 @@ jobs:
           npm run build
           npm -w minisite run export
 
+      - name: Fetch gh-pages branch
+        uses: actions/checkout@v3
+        with:
+          ref: gh-pages
+          path: gh-pages-temp
+
       - name: Update gh-pages branch
         run: |
-          git submodule add -b gh-pages git@github.com:jsxstyle/jsxstyle.git gh-pages-temp
           cd gh-pages-temp
+          git config user.name github-actions
+          git config user.email github-actions@github.com
           git rm -rf .
-          cd ..
-          cp -r minisite/dist/. gh-pages-temp/
-          cd gh-pages-temp
+          cp -r ../minisite/dist/. .
           git add -A
           git commit -m "Automated update"
           git push origin HEAD
