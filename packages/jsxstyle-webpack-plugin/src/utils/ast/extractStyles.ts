@@ -18,9 +18,15 @@ import { getStaticBindingsForScope } from './getStaticBindingsForScope';
 import { parse } from './parse';
 import { getImportForSource } from './getImportForSource';
 
+const validCssModes = [
+  'singleInlineImport',
+  'multipleInlineImports',
+  'nextjs',
+] as const;
+
 export interface UserConfigurableOptions {
   parserPlugins?: ParserPlugin[];
-  inlineImports?: 'single' | 'multiple';
+  cssMode?: typeof validCssModes[number];
 }
 
 export interface ExtractStylesOptions {
@@ -140,9 +146,17 @@ export function extractStyles(
   }
 
   const sourceDir = path.dirname(sourceFileName);
-  const cssMap: Record<string, string> = {};
+  let cssMap: Record<string, string> = {};
 
-  const inlineImports = options.inlineImports;
+  const cssMode = options.cssMode;
+  if (typeof cssMode !== 'undefined') {
+    invariant(
+      validCssModes.includes(cssMode),
+      '`cssMode` is expected to be one of the following: %s',
+      validCssModes.join(', ')
+    );
+  }
+
   const parserPlugins = options.parserPlugins?.slice() || [];
   if (/\.tsx?$/.test(sourceFileName)) {
     parserPlugins.push('typescript');
@@ -1084,6 +1098,41 @@ export function extractStyles(
           }
           traversePath._complexComponentProp = null;
         }
+
+        if (cssMode === 'nextjs') {
+          if (!t.isJSXElement(traversePath.parentPath)) {
+            const cssContent = Object.keys(cssMap).join(' ');
+            cssMap = {};
+
+            if (cssContent !== '') {
+              // TODO(meyer) wrap `traversePath.node` in a fragment
+              invariant(
+                traversePath.node.closingElement,
+                'Encountered a self-closing jsxstyle element. Style injection will be skipped.'
+              );
+
+              const styleTag = t.jsxElement(
+                t.jsxOpeningElement(t.jsxIdentifier('style'), [
+                  t.jsxAttribute(t.jsxIdentifier('jsx'), null),
+                  t.jsxAttribute(t.jsxIdentifier('global'), null),
+                ]),
+                t.jsxClosingElement(t.jsxIdentifier('style')),
+                [
+                  t.jsxExpressionContainer(
+                    t.templateLiteral(
+                      [t.templateElement({ raw: cssContent })],
+                      []
+                    )
+                  ),
+                ],
+                false
+              );
+
+              traversePath.node.children.push(styleTag);
+              traversePath.skip();
+            }
+          }
+        }
       },
     },
   };
@@ -1129,7 +1178,7 @@ export function extractStyles(
   let resultCSS = '';
   const importsToPrepend: t.Statement[] = [];
 
-  if (!inlineImports || inlineImports === 'single') {
+  if (!cssMode || cssMode === 'singleInlineImport') {
     const relativeFilePath = path.relative(process.cwd(), sourceFileName);
     const cssString =
       `/* ${relativeFilePath} */\n` +
@@ -1138,7 +1187,7 @@ export function extractStyles(
         .map(([cssRule]) => cssRule + '\n')
         .join('');
 
-    if (inlineImports === 'single') {
+    if (cssMode === 'singleInlineImport') {
       importsToPrepend.push(
         getImportForSource(
           getInlineImportString(resultCSS, relativeFilePath),
@@ -1151,7 +1200,7 @@ export function extractStyles(
         getImportForSource(cssRelativeFileName, useImportSyntax)
       );
     }
-  } else if (inlineImports === 'multiple') {
+  } else if (cssMode === 'multipleInlineImports') {
     Object.entries(cssMap).forEach(([cssRule, key]) => {
       if (cssRule !== '') {
         const importNode = getImportForSource(

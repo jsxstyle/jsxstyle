@@ -1099,36 +1099,39 @@ const staticProp = 'static';
   });
 });
 
-describe('inlineImports config option', () => {
+describe('cssMode config option', () => {
   const js = `import { Block } from 'jsxstyle';
 const staticProp = 'static';
-<Block thing1={staticProp} thing2={69} />`;
+<Block thing1={staticProp} thing2={69}></Block>;
+<Block thing3={staticProp} thing4={69}></Block>;
+`;
 
-  it('prepends one import when inlineImports is set to "single"', () => {
+  it('prepends one import when cssMode is set to "singleInlineImport"', () => {
     const singleInlineImports = runExtractStyles(
       js,
       'mock/evaluateVars.js',
       undefined,
       {
-        inlineImports: 'single',
+        cssMode: 'singleInlineImport',
       }
     );
 
     expect(singleInlineImports.js).toMatchInlineSnapshot(`
 "import \\"jsxstyle/cache/mock/evaluateVars.js.css!=!jsxstyle-webpack-plugin/lib/base64Loader.js?value=!jsxstyle-webpack-plugin/lib/noop.js\\";
 const staticProp = 'static';
-<div className=\\"_x0 _x1 _x2\\" />;"
+<div className=\\"_x0 _x1 _x2\\"></div>;
+<div className=\\"_x0 _x3 _x4\\"></div>;"
 `);
     expect(singleInlineImports.css).toEqual('');
   });
 
-  it('prepends one import per rule when inlineImports is set to "multiple"', () => {
+  it('prepends one import per rule when cssMode is set to "multipleInlineImports"', () => {
     const multipleInlineImports = runExtractStyles(
       js,
       'mock/evaluateVars.js',
       undefined,
       {
-        inlineImports: 'multiple',
+        cssMode: 'multipleInlineImports',
       }
     );
 
@@ -1139,10 +1142,51 @@ import \\"jsxstyle/cache/_x0.css!=!jsxstyle-webpack-plugin/lib/base64Loader.js?v
 import \\"jsxstyle/cache/_x1.css!=!jsxstyle-webpack-plugin/lib/base64Loader.js?value=Ll94MSB7IHRoaW5nMTpzdGF0aWMgfQ%3D%3D!jsxstyle-webpack-plugin/lib/noop.js\\";
 // ._x2 { thing2:69px }
 import \\"jsxstyle/cache/_x2.css!=!jsxstyle-webpack-plugin/lib/base64Loader.js?value=Ll94MiB7IHRoaW5nMjo2OXB4IH0%3D!jsxstyle-webpack-plugin/lib/noop.js\\";
+// ._x3 { thing3:static }
+import \\"jsxstyle/cache/_x3.css!=!jsxstyle-webpack-plugin/lib/base64Loader.js?value=Ll94MyB7IHRoaW5nMzpzdGF0aWMgfQ%3D%3D!jsxstyle-webpack-plugin/lib/noop.js\\";
+// ._x4 { thing4:69px }
+import \\"jsxstyle/cache/_x4.css!=!jsxstyle-webpack-plugin/lib/base64Loader.js?value=Ll94NCB7IHRoaW5nNDo2OXB4IH0%3D!jsxstyle-webpack-plugin/lib/noop.js\\";
 const staticProp = 'static';
-<div className=\\"_x0 _x1 _x2\\" />;"
+<div className=\\"_x0 _x1 _x2\\"></div>;
+<div className=\\"_x0 _x3 _x4\\"></div>;"
 `);
     expect(multipleInlineImports.css).toEqual('');
+  });
+
+  it('prepends a <style> element to existing JSX when cssMode is set to "nextjs"', () => {
+    const multipleInlineImports = runExtractStyles(
+      js,
+      'mock/evaluateVars.js',
+      undefined,
+      {
+        cssMode: 'nextjs',
+      }
+    );
+
+    expect(multipleInlineImports.js).toMatchInlineSnapshot(`
+"const staticProp = 'static';
+<div className=\\"_x0 _x1 _x2\\"><style jsx global>{\`._x0 { display:block } ._x1 { thing1:static } ._x2 { thing2:69px }\`}</style></div>;
+<div className=\\"_x0 _x3 _x4\\"><style jsx global>{\`._x0 { display:block } ._x3 { thing3:static } ._x4 { thing4:69px }\`}</style></div>;"
+`);
+    expect(multipleInlineImports.css).toEqual('');
+  });
+
+  it('throws an error for self-closing jsxstyle elements when cssMode is set to "nextjs"', () => {
+    expect(() =>
+      runExtractStyles(
+        `import { Block } from 'jsxstyle';
+const staticProp = 'static';
+<Block thing1={staticProp} thing2={69} />;
+`,
+        'mock/evaluateVars.js',
+        undefined,
+        {
+          cssMode: 'nextjs',
+        }
+      )
+    ).toThrowErrorMatchingInlineSnapshot(
+      `"Encountered a self-closing jsxstyle element. Style injection will be skipped."`
+    );
   });
 });
 

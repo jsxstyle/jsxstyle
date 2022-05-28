@@ -68,7 +68,7 @@ const jsxstyleLoader = async function (
     );
 
     // if inline import mode is enabled, no files will be written to the virtual filesystem
-    if (!options.inlineImports) {
+    if (!options.cssMode) {
       if (!rv.cssFileName || rv.css.length === 0) {
         callback(null, content, sourceMap);
         return;

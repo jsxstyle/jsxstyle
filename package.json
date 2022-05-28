@@ -24,7 +24,8 @@
   },
   "workspaces": [
     "packages/*",
-    "examples/*"
+    "examples/*",
+    "minisite"
   ],
   "prettier": {
     "singleQuote": true
