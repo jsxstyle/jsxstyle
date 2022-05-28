@@ -25,7 +25,9 @@ jobs:
         run: npm ci
 
       - name: Build minisite
-        run: npm -w minisite run export
+        run: |
+          npm run build
+          npm -w minisite run export
 
       - name: Update gh-pages branch
         run: |
