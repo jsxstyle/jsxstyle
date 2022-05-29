@@ -1,0 +1,20 @@
+{
+  "extends": "../tsconfig.json",
+  "include": [
+    "pages",
+    "next-env.d.ts"
+  ],
+  "compilerOptions": {
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "incremental": true,
+    "isolatedModules": true,
+    "jsx": "preserve"
+  }
+}

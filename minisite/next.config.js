@@ -1,5 +1,9 @@
 /** @type {import('next/types').NextConfig} */
 module.exports = {
+  typescript: {
+    tsconfigPath: './tsconfig.json',
+  },
+
   webpack: (config, context) => {
     const JsxstyleWebpackPlugin = require('jsxstyle-webpack-plugin');
     const path = require('path');

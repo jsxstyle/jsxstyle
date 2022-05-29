@@ -5,8 +5,13 @@ export default function Home() {
   return (
     <div>
       <Head>
-        <title>jsxstyle</title>
+        <title>jsxstyle—Inline styles for React</title>
         <link rel="icon" href="/favicon.ico" />
+        <meta
+          name="description"
+          content="Simple and powerful team-friendly inline styling for React in just 3KB"
+        />
+        <meta name="viewport" content="width=device-width" />
       </Head>
 
       <Block component="main" paddingH={20} paddingV={20} fontSize={24}>
