@@ -37,11 +37,12 @@ jobs:
 
       - name: Update gh-pages branch
         run: |
+          export COMMIT_TITLE="$(git show --pretty=format:%s -s HEAD)"
           cd gh-pages-temp
           git config user.name github-actions
           git config user.email github-actions@github.com
           git rm -rf .
           cp -r ../minisite/dist/. .
           git add -A
-          git commit -m "Automated update"
+          git commit -m "$COMMIT_TITLE"
           git push origin HEAD
