@@ -14,12 +14,6 @@ jobs:
     steps:
       - name: Checkout jsxstyle
         uses: actions/checkout@v3
-        
-      - name: Print some stuff
-        run: |
-          echo "$(git show --pretty=format:%s -s HEAD)"
-          echo "$(git show --oneline -s HEAD)"
-          exit 1
 
       - name: Use Node 16
         uses: actions/setup-node@v2
@@ -43,11 +37,12 @@ jobs:
 
       - name: Update gh-pages branch
         run: |
+          export COMMIT_TITLE="$(git show --pretty=format:%s -s HEAD)"
           cd gh-pages-temp
           git config user.name github-actions
           git config user.email github-actions@github.com
           git rm -rf .
           cp -r ../minisite/dist/. .
           git add -A
-          git commit -m "$commitmsg"
+          git commit -m "$COMMIT_TITLE"
           git push origin HEAD
