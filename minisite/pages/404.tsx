@@ -1,4 +1,4 @@
-import { Chrome } from './Chrome';
+import { Chrome } from '../components/Chrome';
 
 export default function Error404Page() {
   return (

@@ -1,4 +1,4 @@
-import { Chrome } from './Chrome';
+import { Chrome } from '../components/Chrome';
 
 export default function HomePage() {
   return (
