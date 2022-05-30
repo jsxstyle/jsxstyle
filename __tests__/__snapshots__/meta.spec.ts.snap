@@ -77,6 +77,10 @@ jsxstyle-webpack-plugin
 - lib/loader.d.ts.map
 - lib/loader.js
 - lib/loader.js.map
+- lib/nextjs.d.ts
+- lib/nextjs.d.ts.map
+- lib/nextjs.js
+- lib/nextjs.js.map
 - lib/noop.d.ts
 - lib/noop.d.ts.map
 - lib/noop.js
