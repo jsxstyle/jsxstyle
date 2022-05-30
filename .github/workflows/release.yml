@@ -64,7 +64,7 @@ jobs:
 
       - name: Create release PR or publish to npm
         id: changesets
-        uses: changesets/action@master
+        uses: changesets/action@v1
         with:
           commit: Bump versions
           title: Bump versions
