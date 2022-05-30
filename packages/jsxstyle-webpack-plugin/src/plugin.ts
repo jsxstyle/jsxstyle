@@ -4,10 +4,9 @@ import NodeWatchFileSystem = require('webpack/lib/node/NodeWatchFileSystem');
 import { Volume } from 'memfs';
 import { createClassNameGetter } from 'jsxstyle/utils';
 
-import type { CacheObject, PluginContext } from './types';
+import type { PluginContext, JsxstyleWebpackPluginOptions } from './types';
 import { wrapFileSystem } from './utils/wrapFileSystem';
 import { ModuleCache } from './utils/ModuleCache';
-import type { UserConfigurableOptions } from './utils/ast/extractStyles';
 import invariant = require('invariant');
 
 type Compilation = import('webpack').Compilation;
@@ -17,30 +16,14 @@ type WebpackPluginInstance = import('webpack').WebpackPluginInstance;
 const pluginName = 'JsxstyleWebpackPlugin';
 const childCompilerName = `${pluginName} compiled modules`;
 
-interface JsxstyleWebpackPluginOptions extends UserConfigurableOptions {
-  /** An array of absolute paths to modules that should be compiled by webpack */
-  staticModules?: string[];
-
-  /** If set to `'hash'`, use content-based hashes to generate classNames */
-  classNameFormat?: 'hash';
-
-  /**
-   * An absolute path to a file that will be used to store jsxstyle class name cache information between builds.
-   *
-   * If `cacheFile` is set, the file will be created if it does not exist and will be overwritten every time `jsxstyle-webpack-plugin` runs.
-   */
-  cacheFile?: string;
-}
-
 class JsxstyleWebpackPlugin implements WebpackPluginInstance {
   constructor({
     cacheFile,
     classNameFormat,
     staticModules,
+    cacheObject = {},
     ...loaderOptions
   }: JsxstyleWebpackPluginOptions = {}) {
-    const cacheObject: CacheObject = {};
-
     const getClassNameForKey = createClassNameGetter(
       cacheObject,
       classNameFormat

@@ -1,5 +1,8 @@
-/** @type {import('next/types').NextConfig} */
-module.exports = {
+// @ts-check
+
+const nextPlugin = require('jsxstyle-webpack-plugin/lib/nextjs');
+
+module.exports = nextPlugin()({
   typescript: {
     tsconfigPath: './tsconfig.json',
   },
@@ -13,29 +16,4 @@ module.exports = {
       .trim();
     return gitHash;
   },
-
-  webpack: (config, context) => {
-    const JsxstyleWebpackPlugin = require('jsxstyle-webpack-plugin');
-    const path = require('path');
-
-    config.plugins.push(
-      new JsxstyleWebpackPlugin({
-        cacheFile: path.resolve(
-          __dirname,
-          '.next',
-          'cache',
-          'jsxstyle-cache.txt'
-        ),
-        cssMode: 'nextjs',
-      })
-    );
-
-    config.module.rules.push({
-      test: /\.(?:js|tsx?)$/,
-      include: context.dir,
-      use: [JsxstyleWebpackPlugin.loader],
-    });
-
-    return config;
-  },
-};
+});
