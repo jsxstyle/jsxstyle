@@ -8,6 +8,7 @@ import type { CacheObject, PluginContext } from './types';
 import { wrapFileSystem } from './utils/wrapFileSystem';
 import { ModuleCache } from './utils/ModuleCache';
 import type { UserConfigurableOptions } from './utils/ast/extractStyles';
+import invariant = require('invariant');
 
 type Compilation = import('webpack').Compilation;
 type Compiler = import('webpack').Compiler;
@@ -61,18 +62,24 @@ class JsxstyleWebpackPlugin implements WebpackPluginInstance {
             getClassNameForKey(trimmedLine);
           }
         });
+      } catch (err) {
+        invariant(
+          err.code !== 'EISDIR',
+          'Value of cacheFile (`%s`) is a directory',
+          cacheFile
+        );
+      }
 
-        this.donePlugin = (): void => {
+      this.donePlugin = (): void => {
+        try {
           // write contents of cache object as a newline-separated list of CSS strings
           const cacheString =
             Object.keys(cacheObject).filter(Boolean).join('\n') + '\n';
           fs.writeFileSync(cacheFile, cacheString, 'utf8');
-        };
-      } catch (err) {
-        if (err.code === 'EISDIR') {
-          throw new Error('cacheFile is a directory');
+        } catch (err) {
+          console.error('Could not write cache file to `%s`', cacheFile);
         }
-      }
+      };
     }
 
     if (Array.isArray(staticModules)) {
