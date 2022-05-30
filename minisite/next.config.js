@@ -4,13 +4,28 @@ module.exports = {
     tsconfigPath: './tsconfig.json',
   },
 
+  generateBuildId: async () => {
+    const { spawnSync } = require('child_process');
+    const gitHash = spawnSync('git', ['rev-parse', '--short', 'HEAD'], {
+      cwd: __dirname,
+    })
+      .stdout.toString()
+      .trim();
+    return gitHash;
+  },
+
   webpack: (config, context) => {
     const JsxstyleWebpackPlugin = require('jsxstyle-webpack-plugin');
     const path = require('path');
 
     config.plugins.push(
       new JsxstyleWebpackPlugin({
-        cacheFile: path.resolve(__dirname, 'jsxstyle-cache.txt'),
+        cacheFile: path.resolve(
+          __dirname,
+          '.next',
+          'cache',
+          'jsxstyle-cache.txt'
+        ),
         cssMode: 'nextjs',
       })
     );
