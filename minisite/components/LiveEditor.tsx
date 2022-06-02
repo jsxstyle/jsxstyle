@@ -90,10 +90,21 @@ export const LiveEditor: React.FC = () => {
       <MonacoEditor
         flex="1 1 300px"
         theme="vs-dark"
-        value={`import { Block } from 'jsxstyle';
-const ok = <Block color="red">Hello there!</Block>;
+        value={`import { Block, useMatchMedia } from 'jsxstyle';
 
-export default ok;
+function ExampleComponent() {
+  const isDarkMode = useMatchMedia('screen and (prefers-color-scheme: dark)');
+  return (
+    <Block
+      color={isDarkMode ? 'white' : 'black'}
+      backgroundColor={isDarkMode ? 'black' : 'white'}
+    >
+      Dark mode is{isDarkMode ? '' : ' not'} active {isDarkMode ? '🌃' : '🌅'}
+    </Block>
+  );
+}
+
+export default <ExampleComponent />;
 `}
         onChange={handleChange}
       />
