@@ -3,7 +3,7 @@ import * as jsxstyle from 'jsxstyle';
 import * as jsxRuntime from 'react/jsx-runtime';
 
 import { useCallback } from 'react';
-import { Col, Row, Block } from 'jsxstyle';
+import { Col, Block, Box, useMatchMedia } from 'jsxstyle';
 import { MonacoEditor } from './MonacoEditor';
 import { useAsyncModule } from '../hooks/useAsyncModule';
 import { ErrorBoundary } from './ErrorBoundary';
@@ -31,6 +31,9 @@ export const LiveEditor: React.FC = () => {
   const transpileModule = useAsyncModule(
     () => import('../utilities/transpile')
   );
+
+  const isSmallScreen = useMatchMedia('screen and (max-width: 1000px)');
+  const isDarkMode = useMatchMedia('screen and (prefers-color-scheme: dark)');
 
   const [element, setElement] =
     React.useState<React.ReactNode>(defaultComponent);
@@ -86,10 +89,15 @@ export const LiveEditor: React.FC = () => {
   );
 
   return (
-    <Row height="100vh" alignItems="stretch">
+    <Box
+      display="flex"
+      flexDirection={isSmallScreen ? 'column' : 'row'}
+      height="100vh"
+      alignItems="stretch"
+    >
       <MonacoEditor
         flex="1 1 300px"
-        theme="vs-dark"
+        theme={isDarkMode ? 'vs-dark' : 'vs-light'}
         value={`import { Block, useMatchMedia } from 'jsxstyle';
 
 function ExampleComponent() {
@@ -112,6 +120,6 @@ export default <ExampleComponent />;
       <Block flex="1 1 300px" backgroundColor="#EEE" overflowX="scroll">
         {element}
       </Block>
-    </Row>
+    </Box>
   );
 };

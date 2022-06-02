@@ -2,6 +2,7 @@ import { useRef, useEffect } from 'react';
 import { useMonacoEditor } from '../hooks/useMonacoEditor';
 import type EditorApi from 'monaco-editor/esm/vs/editor/editor.api';
 import { Block, type CSSProperties } from 'jsxstyle';
+import debounce from 'lodash/debounce';
 
 export type ChangeHandler = (
   value: string,
@@ -26,6 +27,11 @@ export const MonacoEditor: React.FC<MonacoEditorProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const monacoEditorObj = useMonacoEditor();
+  const editorRef = useRef<EditorApi.editor.IStandaloneCodeEditor>();
+
+  useEffect(() => {
+    editorRef.current?.updateOptions({ theme });
+  }, [theme]);
 
   useEffect(() => {
     if (monacoEditorObj.state !== 'success') return;
@@ -50,6 +56,14 @@ export const MonacoEditor: React.FC<MonacoEditorProps> = ({
       theme,
     });
 
+    editorRef.current = editor;
+
+    const resizeHandler = debounce(() => {
+      editor.layout();
+    }, 200);
+
+    window.addEventListener('resize', resizeHandler);
+
     const onChangeModelContentSubscription = editor.onDidChangeModelContent(
       (event) => {
         const value = editor.getValue() || '';
@@ -61,8 +75,15 @@ export const MonacoEditor: React.FC<MonacoEditorProps> = ({
       editor.dispose();
       model.dispose();
       onChangeModelContentSubscription.dispose();
+      window.removeEventListener('resize', resizeHandler);
     };
   }, [monacoEditorObj.state]);
 
-  return <Block {...cssProperties} props={{ ref: containerRef }}></Block>;
+  return (
+    <Block
+      {...cssProperties}
+      overflow="hidden"
+      props={{ ref: containerRef }}
+    ></Block>
+  );
 };
