@@ -19,7 +19,7 @@ export = (
           new JsxstyleWebpackPlugin({
             ...pluginOptions,
             cacheObject,
-            cssMode: 'nextjs',
+            cssMode: 'styled-jsx',
           })
         );
 

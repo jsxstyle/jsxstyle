@@ -1153,13 +1153,13 @@ const staticProp = 'static';
     expect(multipleInlineImports.css).toEqual('');
   });
 
-  it('prepends a <style> element to existing JSX when cssMode is set to "nextjs"', () => {
+  it('prepends a <style> element to existing JSX when cssMode is set to "styled-jsx"', () => {
     const multipleInlineImports = runExtractStyles(
       js,
       'mock/evaluateVars.js',
       undefined,
       {
-        cssMode: 'nextjs',
+        cssMode: 'styled-jsx',
       }
     );
 
@@ -1171,7 +1171,7 @@ const staticProp = 'static';
     expect(multipleInlineImports.css).toEqual('');
   });
 
-  it('throws an error for self-closing jsxstyle elements when cssMode is set to "nextjs"', () => {
+  it('throws an error for self-closing jsxstyle elements when cssMode is set to "styled-jsx"', () => {
     expect(() =>
       runExtractStyles(
         `import { Block } from 'jsxstyle';
@@ -1181,7 +1181,7 @@ const staticProp = 'static';
         'mock/evaluateVars.js',
         undefined,
         {
-          cssMode: 'nextjs',
+          cssMode: 'styled-jsx',
         }
       )
     ).toThrowErrorMatchingInlineSnapshot(

@@ -21,7 +21,7 @@ import { getImportForSource } from './getImportForSource';
 const validCssModes = [
   'singleInlineImport',
   'multipleInlineImports',
-  'nextjs',
+  'styled-jsx',
 ] as const;
 
 export interface UserConfigurableOptions {
@@ -1099,7 +1099,7 @@ export function extractStyles(
           traversePath._complexComponentProp = null;
         }
 
-        if (cssMode === 'nextjs') {
+        if (cssMode === 'styled-jsx') {
           if (!t.isJSXElement(traversePath.parentPath)) {
             const cssContent = Object.keys(cssMap).join(' ');
             cssMap = {};
