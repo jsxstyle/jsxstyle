@@ -12,6 +12,9 @@
     ],
     "skipLibCheck": true,
     "strict": true,
+    "types": [
+      "webpack-env"
+    ],
     "noEmit": true,
     "incremental": true,
     "isolatedModules": true,

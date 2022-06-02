@@ -20,9 +20,7 @@ export const Chrome: React.FC<ChromeProps> = ({
         <meta name="viewport" content="width=device-width" />
       </Head>
 
-      <Block component="main" paddingH={20} paddingV={20} fontSize={24}>
-        {children}
-      </Block>
+      <Block component="main">{children}</Block>
 
       <style jsx global>{`
         html,

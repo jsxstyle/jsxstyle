@@ -1,9 +1,10 @@
 import { Chrome } from '../components/Chrome';
+import { LiveEditor } from '../components/LiveEditor';
 
 export default function HomePage() {
   return (
     <Chrome>
-      <p>Hello!!!</p>
+      <LiveEditor />
     </Chrome>
   );
 }
