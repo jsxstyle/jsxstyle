@@ -86,7 +86,7 @@ export const LiveEditor: React.FC = () => {
   );
 
   return (
-    <Row minHeight="100vh" alignItems="stretch">
+    <Row height="100vh" alignItems="stretch">
       <MonacoEditor
         flex="1 1 300px"
         theme="vs-dark"
