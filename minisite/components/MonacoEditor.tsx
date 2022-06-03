@@ -52,6 +52,10 @@ export const MonacoEditor: React.FC<MonacoEditorProps> = ({
       ...options,
       extraEditorClassName: className,
       language: 'typescript',
+      scrollBeyondLastLine: false,
+      minimap: {
+        enabled: false,
+      },
       model,
       theme,
     });

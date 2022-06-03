@@ -32,6 +32,13 @@ export const Chrome: React.FC<ChromeProps> = ({
           line-height: 1.2;
         }
 
+        @media screen and (prefers-color-scheme: dark) {
+          html,
+          body {
+            background-color: #333;
+          }
+        }
+
         * {
           box-sizing: border-box;
           padding: 0;
