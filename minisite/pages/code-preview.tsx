@@ -77,7 +77,7 @@ const CodePreviewPage: React.FC = () => {
           if (element) {
             setTranspiledCode({
               css,
-              component: () => element,
+              component: () => <ErrorBoundary>{element}</ErrorBoundary>,
             });
           } else {
             setTranspiledCode({
@@ -113,9 +113,7 @@ const CodePreviewPage: React.FC = () => {
 
   return (
     <Col gap={20} padding={20}>
-      <ErrorBoundary>
-        <transpiledCode.component />
-      </ErrorBoundary>
+      <transpiledCode.component />
       <CodeModule title="Extracted CSS" code={transpiledCode.css} />
       <style jsx global>
         {`
