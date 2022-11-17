@@ -43,7 +43,7 @@ if (canUseDOM && !styleElement) {
     styleElement.nonce = __webpack_nonce__;
   }
   styleElement.appendChild(document.createTextNode('/* jsxstyle */'));
-  document.head!.appendChild(styleElement);
+  document.head.appendChild(styleElement);
 }
 
 export function addStyleToHead(rule: string): void {

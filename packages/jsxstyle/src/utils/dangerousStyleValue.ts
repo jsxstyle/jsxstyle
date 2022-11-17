@@ -9,8 +9,8 @@
  */
 
 //  A hearty blend of the following two files:
-// https://github.com/facebook/react/blob/master/packages/react-dom/src/shared/CSSProperty.js
-// https://github.com/facebook/react/blob/master/packages/react-dom/src/shared/dangerousStyleValue.js
+// https://github.com/facebook/react/blob/main/packages/react-dom-bindings/src/shared/CSSProperty.js
+// https://github.com/facebook/react/blob/main/packages/react-dom-bindings/src/shared/dangerousStyleValue.js
 
 const isUnitlessNumber = Object.keys({
   animationIterationCount: true,

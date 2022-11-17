@@ -7,8 +7,7 @@
   "repository": "git@github.com:jsxstyle/jsxstyle.git",
   "main": "index.js",
   "dependencies": {
-    "jsxstyle": "^2.5.1",
-    "jsxstyle-webpack-plugin": "^1.5.0"
+    "jsxstyle": "^2.5.1"
   },
   "peerDependencies": {
     "gatsby-cli": "^2.0.0-0"
