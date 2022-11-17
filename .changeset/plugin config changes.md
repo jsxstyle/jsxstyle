@@ -1,5 +1,5 @@
 ---
-'jsxstyle-webpack-plugin': major
+'jsxstyle': major
 ---
 
-Moved `cacheFile` option and `classNameFormat` options from the loader to the plugin.
+Moved `cacheFile` option and `classNameFormat` options from the webpack loader to the plugin.

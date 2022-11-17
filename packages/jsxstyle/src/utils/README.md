@@ -1,6 +1,6 @@
 # jsxstyle-utils
 
-If you’re interested in digging around in the internals of jsxstyle, you’ve come to the right place. `jsxstyle` only contains React- and preact-specific jsxstyle components. `jsxstyle-utils` exports the functions that provide specific features to both runtime jsxstyle and `jsxstyle-webpack-plugin`.
+If you’re interested in digging around in the internals of jsxstyle, you’ve come to the right place. `jsxstyle` only contains React- and preact-specific jsxstyle components. `jsxstyle-utils` exports the functions that provide specific features to both runtime jsxstyle and `jsxstyle/webpack-plugin`.
 
 ## Core functionality
 
@@ -58,10 +58,10 @@ An object of styles keyed by component name. This is the object representation o
 | `Box`         | `null`                                         |
 
 [string-hash]: https://github.com/darkskyapp/string-hash
-[addstyletohead]: https://github.com/jsxstyle/jsxstyle/blob/main/packages/jsxstyle-utils/src/addStyleToHead.js
-[componentstyles]: https://github.com/jsxstyle/jsxstyle/blob/main/packages/jsxstyle-utils/src/componentStyles.js
-[dangerousstylevalue]: https://github.com/jsxstyle/jsxstyle/blob/main/packages/jsxstyle-utils/src/dangerousStyleValue.js
-[getstylecache]: https://github.com/jsxstyle/jsxstyle/blob/main/packages/jsxstyle-utils/src/getStyleCache.js
-[getstylekeysforprops]: https://github.com/jsxstyle/jsxstyle/blob/main/packages/jsxstyle-utils/src/getStyleKeysForProps.js
-[hyphenatestylenames]: https://github.com/jsxstyle/jsxstyle/blob/main/packages/jsxstyle-utils/src/hyphenateStyleName.js
-[stringhash]: https://github.com/jsxstyle/jsxstyle/blob/main/packages/jsxstyle-utils/src/stringHash.js
+[addstyletohead]: https://github.com/jsxstyle/jsxstyle/blob/main/packages/jsxstyle/src/utils/addStyleToHead.ts
+[componentstyles]: https://github.com/jsxstyle/jsxstyle/blob/main/packages/jsxstyle/src/utils/componentStyles.ts
+[dangerousstylevalue]: https://github.com/jsxstyle/jsxstyle/blob/main/packages/jsxstyle/src/utils/dangerousStyleValue.ts
+[getstylecache]: https://github.com/jsxstyle/jsxstyle/blob/main/packages/jsxstyle/src/utils/getStyleCache.ts
+[getstylekeysforprops]: https://github.com/jsxstyle/jsxstyle/blob/main/packages/jsxstyle/src/utils/getStyleKeysForProps.ts
+[hyphenatestylenames]: https://github.com/jsxstyle/jsxstyle/blob/main/packages/jsxstyle/src/utils/hyphenateStyleName.ts
+[stringhash]: https://github.com/jsxstyle/jsxstyle/blob/main/packages/jsxstyle/src/utils/stringHash.ts

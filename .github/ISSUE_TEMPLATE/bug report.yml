@@ -44,9 +44,8 @@ body:
       label: Which package is causing this issue?
       options:
         - jsxstyle
-        - jsxstyle-webpack-plugin
+        - jsxstyle’s webpack plugin
         - gatsby-plugin-jsxstyle
-        - jsxstyle-utils
     validations:
       required: true
 
@@ -56,7 +55,7 @@ body:
       required: false
     attributes:
       label: Which browser(s) are exhibiting this issue?
-      description: You can skip this question if the issue is being caused by jsxstyle-webpack-plugin.
+      description: You can skip this question if the issue is being caused by the jsxstyle webpack plugin.
       multiple: true
       options:
         - Firefox

@@ -1,16 +1,16 @@
-# jsxstyle-webpack-plugin
+# jsxstyle/webpack-plugin
 
-`jsxstyle-webpack-plugin` is a webpack plugin that extracts [**static style props**](#what-are-static-style-props) from jsxstyle components into a separate CSS file.
+`jsxstyle/webpack-plugin` is a webpack plugin that extracts [**static style props**](#what-are-static-style-props) from jsxstyle components into a separate CSS file.
 
 Don’t know what jsxstyle is? Check out the [jsxstyle README][] for more information.
 
 ## Getting Started
 
-1.  Import `jsxstyle-webpack-plugin` and add it to the `plugins` section of your webpack config.
+1.  Import `jsxstyle/webpack-plugin` and add it to the `plugins` section of your webpack config.
 
-2.  Add a new rule object with `jsxstyle-webpack-plugin`’s companion loader to your webpack config, _below_ any other JS loaders.
+2.  Add a new rule object with `jsxstyle/webpack-plugin`’s companion loader to your webpack config, _below_ any other JS loaders.
 
-    > `jsxstyle-webpack-plugin` relies on untranspiled JSX to be present in order to extract styles. Since webpack loaders run from right to left and bottom to top, `jsxstyle-webpack-plugin` should be placed at the end of your list of JS loaders.
+    > `jsxstyle/webpack-plugin` relies on untranspiled JSX to be present in order to extract styles. Since webpack loaders run from right to left and bottom to top, `jsxstyle/webpack-plugin` should be placed at the end of your list of JS loaders.
 
 3.  Ensure your webpack config contains a loader that handles `.css` files.
 
@@ -29,7 +29,7 @@ module.exports = {
       {
         test: /\.js$/,
         use: [
-          // loaders that transpile JSX should go before jsxstyle-webpack-plugin’s companion loader
+          // loaders that transpile JSX should go before jsxstyle/webpack-plugin’s companion loader
           {
             loader: 'your-cool-js-loader',
           },
@@ -68,33 +68,33 @@ new JsxstyleWebpackPlugin({
 
 ### `parserPlugins`
 
-`jsxstyle-webpack-plugin` uses `babylon` to parse javascript into an AST. By default, `jsxstyle-webpack-plugin` is preconfigured with most of `babylon`’s plugins enabled, but if you need to enable additional plugins, you can specify an array of plugins with the `parserPlugins` option.
+`jsxstyle/webpack-plugin` uses `@babel/parser` to parse javascript into an AST. By default, the webpack plugin is preconfigured with most of `@babel/parser`’s plugins enabled, but if you need to enable additional plugins, you can specify an array of plugins with the `parserPlugins` option.
 
 You can see a list of all available plugins in [the `@babel/parser` documentation][parser plugins].
 
 ### `classNameFormat`
 
-Out of the box, `jsxstyle-webpack-plugin` will use a _non-deterministic_ class naming scheme. Because webpack’s module iteration order is not guaranteed, class names will differ slightly between builds of the same code. If you need class names to remain the same each time the same code is bundled, set the `classNameFormat` option to `hash` in your loader config. Class names will be generated using a content-based hash.
+Out of the box, the jsxstyle webpack plugin will use a _non-deterministic_ class naming scheme. Because webpack’s module iteration order is not guaranteed, class names will differ slightly between builds of the same code. If you need class names to remain the same each time the same code is bundled, set the `classNameFormat` option to `hash` in your loader config. Class names will be generated using a content-based hash.
 
 ## FAQs
 
-### Can I use `jsxstyle-webpack-plugin` with Flow?
+### Can I use the jsxstyle webpack plugin with Flow?
 
 Yes! Flow parsing is automatically enabled for any non-Typescript files.
 
-### Can I use `jsxstyle-webpack-plugin` with Typescript?
+### Can I use the jsxstyle webpack plugin with Typescript?
 
 Yes! Take a look at [the TypeScript example][ts example] and [issue #82][issue 82] for some context. You’ll need to make a few configuration changes:
 
 1.  Set `jsx` to `preserve` in the `compilerOptions` section of your `tsconfig.json` file.
-2.  Ensure `jsxstyle-webpack-plugin`’s companion loader runs _after_ `ts-loader`. Webpack loaders run from bottom to top, to `jsxstyle-webpack-plugin` needs to be placed _before_ `ts-loader` in your webpack config.
+2.  Ensure `jsxstyle/webpack-plugin`’s companion loader runs _after_ `ts-loader`. Webpack loaders run from bottom to top, so `jsxstyle/webpack-plugin` needs to be placed _before_ `ts-loader` in your webpack config.
 3.  Add a loader that transpiles JSX, since `ts-loader` is now set to preserve JSX.
 
 ### It’s not working 😩
 
 1.  Make sure the loader object `test` regex matches JS files that use jsxstyle.
-2.  `jsxstyle-webpack-plugin` relies on JSX still being around, so make sure the companion loader runs _before_ `babel-loader` does its thing.
-3.  `jsxstyle-webpack-plugin` only supports destructured `require`/`import` syntax:
+2.  `jsxstyle/webpack-plugin` relies on JSX still being around, so make sure the companion loader runs _before_ `babel-loader` does its thing.
+3.  `jsxstyle/webpack-plugin` only supports destructured `require`/`import` syntax:
 
     ```jsx
     // Cool!
@@ -135,7 +135,7 @@ See [the jsxstyle FAQs][jsxstyle faqs].
 
 ### Does it work with hot reloading?
 
-It sure does, but using it in development will only cause confusion, since what you will see in the developer tools is the _transformed_ JS. `jsxstyle-webpack-plugin` is a _production_ optimisation.
+It sure does, but using it in development will only cause confusion, since what you will see in the developer tools is the _transformed_ JS. `jsxstyle/webpack-plugin` is a _production_ optimisation.
 
 ### Any caveats?
 
@@ -143,7 +143,7 @@ CSS class names are reused across components but they are not de-duplicated. Any
 
 ## Contributing
 
-Got an idea for `jsxstyle-webpack-plugin`? Did you encounter a bug? [Open an issue][new issue] and let’s talk it through. [PRs welcome too][pr]!
+Got an idea for the jsxstyle webpack plugin? Did you encounter a bug? [Open an issue][new issue] and let’s talk it through. [PRs welcome too][pr]!
 
 [jsxstyle readme]: https://github.com/jsxstyle/jsxstyle/tree/main/packages/jsxstyle#readme
 [jsxstyle faqs]: https://github.com/jsxstyle/jsxstyle/tree/main/packages/jsxstyle#faqs

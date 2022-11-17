@@ -51,7 +51,7 @@ jsxstyle’s mental model is easy to teach and easy to learn, which means onboar
 
 ## 🛠 Powerful build-time optimizations.
 
-Styles written inline on a set of components from a known source can very easily be statically analyzed, which opens up new possibilities for tooling and optimization. One such optimization is [`jsxstyle-webpack-plugin`][jsxstyle-webpack-plugin], a webpack plugin that extracts static styles from jsxstyle components _at build time_. `jsxstyle-webpack-plugin` reduces and in some cases _entirely removes_ the need for runtime jsxstyle.
+Styles written inline on a set of components from a known source can very easily be statically analyzed, which opens up new possibilities for tooling and optimization. One such optimization is the built-in [webpack-plugin][jsxstyle-webpack-plugin] that extracts static styles from jsxstyle components _at build time_. This plugin reduces and in some cases _entirely removes_ the need for runtime jsxstyle.
 
 # Getting started
 
@@ -148,7 +148,7 @@ export const RedOrBlueComponent = ({ children }) => {
 };
 ```
 
-When this hook is used in combination with `jsxstyle-webpack-plugin`, prop values will be extracted if the prop passed to the component is a ternary and if the alternate and consequent values of the ternary are both [static][].
+When this hook is used in combination with jsxstyle’s webpack plugin, prop values will be extracted if the prop passed to the component is a ternary and if the alternate and consequent values of the ternary are both [static][].
 
 <br>
 
@@ -202,7 +202,7 @@ Note: shortcut props should not be used with in combination with -Top/Left/Botto
 
 5.  ### Building tooling around inline styles is simple and straightforward.
 
-    Statically analyzing inline styles on known components is trivial. Most of the styles you’ll end up writing on jsxstyle primitive components are static. Once you’re done perusing this README, check out [`jsxstyle-webpack-plugin`][jsxstyle-webpack-plugin]. It’s a webpack plugin that, at build time, extracts static styles defined on jsxstyle components into separate CSS files. `jsxstyle-webpack-plugin` reduces and in some cases _entirely removes_ the need for runtime jsxstyle. jsxstyle becomes nothing more than syntactic sugar for styling components, much like how JSX itself is syntactic sugar for nested function calls. Dude, that’s next level!
+    Statically analyzing inline styles on known components is trivial. Most of the styles you’ll end up writing on jsxstyle primitive components are static. Once you’re done perusing this README, check out [`jsxstyle/webpack-plugin`][jsxstyle-webpack-plugin]. It’s a webpack plugin that, at build time, extracts static styles defined on jsxstyle components into separate CSS files. This plugin reduces and in some cases _entirely removes_ the need for runtime jsxstyle. jsxstyle becomes nothing more than syntactic sugar for styling components, much like how JSX itself is syntactic sugar for nested function calls. Dude, that’s next level!
 
 </details>
 
@@ -281,7 +281,7 @@ app.use(async (ctx) => {
 
 ## Does jsxstyle support autoprefixing?
 
-Runtime jsxstyle does not bundle an autoprefixer, but autoprefixing is easily doable if you use webpack. We recommend combining [`jsxstyle-webpack-plugin`][jsxstyle-webpack-plugin] with a CSS loader that handles provides autoprefixing. At Smyte, we use `postcss-loader` with `postcss-cssnext`. Not using `webpack` and you’d like to see runtime autoprefixing supported? [Open an issue][new issue] and let us know!
+Runtime jsxstyle does not bundle an autoprefixer, but autoprefixing is easily doable if you use webpack. We recommend combining [jsxstyle’s built-in webpack plugin][jsxstyle-webpack-plugin] with a CSS loader that handles provides autoprefixing. At Smyte, we use `postcss-loader` with `postcss-cssnext`. Not using `webpack` and you’d like to see runtime autoprefixing supported? [Open an issue][new issue] and let us know!
 
 ## What about global styles?
 
@@ -310,7 +310,7 @@ Sorting through the myriad CSS-in-JS solutions out there can get tiring, but the
 [`styled-components`][styled-components] and (more recently) [`emotion`][emotion] have both gained serious traction in the frontend JS community. I can’t do either system justice in a single sentence and I’ve never used either system, but they both seem like reasonable jsxstyle alternatives that embrace the funky things you can do with tagged template literals.
 
 [emotion]: https://github.com/emotion-js/emotion
-[jsxstyle-webpack-plugin]: https://github.com/jsxstyle/jsxstyle/tree/main/packages/jsxstyle-webpack-plugin
+[jsxstyle-webpack-plugin]: https://github.com/jsxstyle/jsxstyle/tree/main/packages/jsxstyle/src/webpack-plugin
 [jxnblk]: https://github.com/jxnblk
 [mrmrs]: https://github.com/mrmrs
 [new issue]: https://github.com/jsxstyle/jsxstyle/issues/new
@@ -318,7 +318,7 @@ Sorting through the myriad CSS-in-JS solutions out there can get tiring, but the
 [rebass]: https://github.com/jxnblk/rebass
 [sauce]: https://saucelabs.com/u/jsxstyle
 [scalable css]: http://mrmrs.github.io/writing/2016/03/24/scalable-css/
-[static]: https://github.com/jsxstyle/jsxstyle/blob/main/packages/jsxstyle-webpack-plugin/#what-are-static-style-props
+[static]: https://github.com/jsxstyle/jsxstyle/blob/main/packages/jsxstyle/src/webpack-plugin/#what-are-static-style-props
 [styled-components]: https://www.styled-components.com
 [tachyons]: http://tachyons.io
 [github-actions]: https://github.com/jsxstyle/jsxstyle/actions

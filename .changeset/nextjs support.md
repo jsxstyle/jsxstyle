@@ -1,5 +1,5 @@
 ---
-'jsxstyle-webpack-plugin': major
+'jsxstyle': major
 ---
 
-Added support for nextjs. Set `cssMode` to `'styled-jsx'` in your `jsxstyle-webpack-plugin` config options.
+Added support for nextjs. Set `cssMode` to `'styled-jsx'` in your `jsxstyle/webpack-plugin` config options.

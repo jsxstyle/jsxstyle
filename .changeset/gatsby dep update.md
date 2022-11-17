@@ -2,4 +2,4 @@
 'gatsby-plugin-jsxstyle': minor
 ---
 
-Updated jsxstyle-webpack-plugin to latest.
+Updated jsxstyle/webpack-plugin to latest.
