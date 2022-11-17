@@ -9,12 +9,10 @@ module.exports = {
   },
   extends: [
     'eslint:recommended',
-    'plugin:@typescript-eslint/recommended',
     'plugin:react/jsx-runtime',
     'plugin:react/recommended',
     'prettier',
   ],
-  parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaFeatures: {
       jsx: true,
@@ -27,13 +25,19 @@ module.exports = {
       version: 'detect',
     },
   },
-  plugins: ['react', '@typescript-eslint'],
+  plugins: ['react'],
   rules: {
     'react/prop-types': 'off',
     'react/react-in-jsx-scope': 'off',
     'react/jsx-uses-react': 'off',
   },
   overrides: [
+    {
+      files: ['**/*.ts', '**/*.tsx'],
+      plugins: ['@typescript-eslint'],
+      parser: '@typescript-eslint/parser',
+      extends: ['plugin:@typescript-eslint/recommended'],
+    },
     {
       files: ['**/*.spec.ts', '**/*.spec.tsx'],
       plugins: ['jest'],

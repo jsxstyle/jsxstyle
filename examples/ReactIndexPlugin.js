@@ -13,7 +13,7 @@ const source = {
   size: () => indexFileContents.length,
 };
 
-class ReactIndexPlugin {
+exports.ReactIndexPlugin = class ReactIndexPlugin {
   apply(
     /** @type {import('webpack').Compiler} */
     compiler
@@ -24,6 +24,4 @@ class ReactIndexPlugin {
       });
     });
   }
-}
-
-module.exports = ReactIndexPlugin;
+};

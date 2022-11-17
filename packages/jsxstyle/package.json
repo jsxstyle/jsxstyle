@@ -5,18 +5,33 @@
   "author": "Pete Hunt",
   "license": "Apache-2.0",
   "repository": "git@github.com:jsxstyle/jsxstyle.git",
-  "main": "react/lib/jsxstyle-react.cjs.js",
-  "module": "react/lib/jsxstyle-react.es.js",
-  "jsnext:main": "react/lib/jsxstyle-react.es.js",
-  "types": "react/lib/index.d.ts",
+  "main": "lib/jsxstyle/jsxstyle.cjs.js",
+  "module": "lib/jsxstyle/jsxstyle.es.js",
+  "jsnext:main": "lib/jsxstyle/jsxstyle.es.js",
+  "types": "lib/types/react/index.d.ts",
   "files": [
-    "preact/lib",
-    "react/lib",
-    "utils/lib"
+    "lib",
+    "preact",
+    "webpack-plugin"
   ],
-  "sideEffects": false,
+  "sideEffects": [
+    "**/*.css"
+  ],
   "dependencies": {
-    "csstype": "^3.0.11"
+    "@babel/core": "^7.17.9",
+    "@babel/generator": "^7.17.9",
+    "@babel/parser": "^7.17.9",
+    "@babel/traverse": "^7.17.9",
+    "@babel/types": "^7.17.0",
+    "csstype": "^3.0.11",
+    "invariant": "^2.2.4",
+    "memfs": "^3.4.1"
+  },
+  "devDependencies": {
+    "@types/babel__generator": "^7.6.4",
+    "@types/babel__traverse": "^7.17.1",
+    "@types/node": "^16.0.0",
+    "webpack": "^5.72.0"
   },
   "keywords": [
     "jsxstyle",
