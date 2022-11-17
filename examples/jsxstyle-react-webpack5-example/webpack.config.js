@@ -1,7 +1,7 @@
 // @ts-check
 
-const JsxstyleWebpackPlugin = require('jsxstyle-webpack-plugin');
-const ReactIndexPlugin = require('../ReactIndexPlugin');
+const { JsxstyleWebpackPlugin } = require('jsxstyle/webpack-plugin');
+const { ReactIndexPlugin } = require('../ReactIndexPlugin');
 
 /** @type {import('webpack').Configuration} */
 module.exports = {

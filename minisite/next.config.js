@@ -1,9 +1,9 @@
 // @ts-check
 
-const nextPlugin = require('jsxstyle-webpack-plugin/lib/nextjs');
+const { jsxstyleNextjsPlugin } = require('jsxstyle/lib/nextjs-plugin');
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 
-module.exports = nextPlugin()({
+module.exports = jsxstyleNextjsPlugin()({
   typescript: {
     tsconfigPath: './tsconfig.json',
   },

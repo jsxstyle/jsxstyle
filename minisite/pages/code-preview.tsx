@@ -40,7 +40,11 @@ const CodePreviewPage: React.FC = () => {
   });
 
   useEffect(() => {
-    if (transpileModule.state !== 'success') return;
+    if (transpileModule.state === 'pending') return;
+    if (transpileModule.state === 'error') {
+      console.error('Error transpiling module: %o', transpileModule.error);
+      return;
+    }
     const { transpile } = transpileModule.result;
 
     const handleMessage = (event: WindowEventMap['message']) => {
@@ -96,6 +100,7 @@ const CodePreviewPage: React.FC = () => {
           });
         }
       } catch (error) {
+        console.error('Transpile error: %o', error);
         setTranspiledCode({
           css: '',
           component: () => (

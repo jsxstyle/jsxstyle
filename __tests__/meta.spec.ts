@@ -39,7 +39,14 @@ ${pkg.packageJson.name}
 ${pkg.packageJson.name.replace(/./g, '=')}
 ${fileList
   .sort(legacySort)
-  .map((f) => `- ${f}`)
+  .map((fileName) => {
+    // chunk filenames contain a hash that will change across builds
+    const updatedFileName = fileName.replace(
+      /(\.)[a-e0-9]{8}(\.(?:e|cj)s\.js(?:\.map)?)$/,
+      '$1[hash]$2'
+    );
+    return `- ${updatedFileName}`;
+  })
   .join('\n')}
 `
         )
