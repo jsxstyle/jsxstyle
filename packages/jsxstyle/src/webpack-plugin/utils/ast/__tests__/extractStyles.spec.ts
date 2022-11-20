@@ -1,5 +1,5 @@
 import { createClassNameGetter } from '../../../../utils/createClassNameGetter';
-import path = require('path');
+import path from 'path';
 import {
   extractStyles,
   ExtractStylesOptions,
@@ -51,29 +51,29 @@ const {Col: TestCol, Row} = require("jsxstyle");
     );
 
     expect(rv1.js).toMatchInlineSnapshot(`
-"import \\"./validate__jsxstyle.css\\";
-<Block extract=\\"nope\\" />;
-<div className=\\"_x0 _x1\\" />;
-<div className=\\"_x2 _x3 _x4 _x1\\" />;
-<Col extract=\\"nope\\" />;
-<InlineBlock extract=\\"nope\\" />;
-<div className=\\"_x2 _x1\\" />;
-<div className=\\"_x5 _x3 _x4 _x1\\" />;
-<div className=\\"_x5 _x6 _x1\\" />;
-<div className=\\"_x2 _x6 _x1\\" />;"
-`);
+      "import "./validate__jsxstyle.css";
+      <Block extract="nope" />;
+      <div className="_x0 _x1" />;
+      <div className="_x2 _x3 _x4 _x1" />;
+      <Col extract="nope" />;
+      <InlineBlock extract="nope" />;
+      <div className="_x2 _x1" />;
+      <div className="_x5 _x3 _x4 _x1" />;
+      <div className="_x5 _x6 _x1" />;
+      <div className="_x2 _x6 _x1" />;"
+    `);
 
     expect(rv1.css).toMatchInlineSnapshot(`
-"/* mock/validate.js */
-._x0 { display:block }
-._x1 { extract:yep }
-._x2 { display:flex }
-._x3._x3 { flex-direction:row }
-._x4 { align-items:center }
-._x5 { display:inline-flex }
-._x6._x6 { flex-direction:column }
-"
-`);
+      "/* mock/validate.js */
+      ._x0 { display:block }
+      ._x1 { extract:yep }
+      ._x2 { display:flex }
+      ._x3._x3 { flex-direction:row }
+      ._x4 { align-items:center }
+      ._x5 { display:inline-flex }
+      ._x6._x6 { flex-direction:column }
+      "
+    `);
   });
 
   it('puts spaces between each class name', () => {
@@ -84,9 +84,9 @@ const {Col: TestCol, Row} = require("jsxstyle");
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
-"import \\"./classname-spaces__jsxstyle.css\\";
-<div className={\\"orange \\" + ((thing1 ? \\"_x1\\" : \\"_x2\\") + (\\" \\" + (thing2 ? \\"_x3\\" : \\"_x4\\"))) + \\" _x0\\"} />;"
-`);
+      "import "./classname-spaces__jsxstyle.css";
+      <div className={"orange " + ((thing1 ? "_x1" : "_x2") + (" " + (thing2 ? "_x3" : "_x4"))) + " _x0"} />;"
+    `);
   });
 });
 
@@ -108,22 +108,22 @@ const val = "thing";
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
-"import \\"./extract-static1__jsxstyle.css\\";
-import LC from \\"./LC\\";
-const val = \\"thing\\";
-<div className=\\"_x0 _x1 _x2 _x3 _x4 _x5 _x6\\" />;"
-`);
+      "import "./extract-static1__jsxstyle.css";
+      import LC from "./LC";
+      const val = "thing";
+      <div className="_x0 _x1 _x2 _x3 _x4 _x5 _x6" />;"
+    `);
     expect(rv.css).toMatchInlineSnapshot(`
-"/* mock/extract-static1.js */
-._x0 { display:block }
-._x1 { static-string:wow }
-._x2 { static-int:69px }
-._x3 { static-float:6.9px }
-._x4 { static-negative-int:-420px }
-._x5 { static-value:thing }
-._x6 { static-member-expression:ok }
-"
-`);
+      "/* mock/extract-static1.js */
+      ._x0 { display:block }
+      ._x1 { static-string:wow }
+      ._x2 { static-int:69px }
+      ._x3 { static-float:6.9px }
+      ._x4 { static-negative-int:-420px }
+      ._x5 { static-value:thing }
+      ._x6 { static-member-expression:ok }
+      "
+    `);
   });
 
   it('converts jsxstyle elements to Block elements when some props aren\u2019t static', () => {
@@ -136,21 +136,21 @@ import LC from "./LC";
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
-"import \\"./extract-static2__jsxstyle.css\\";
-import { Box } from \\"jsxstyle\\";
-const val = \\"thing\\";
-import LC from \\"./LC\\";
-<Box dynamicValue={notStatic} className=\\"_x0 _x1 _x2 _x3 _x4\\" />;"
-`);
+      "import "./extract-static2__jsxstyle.css";
+      import { Box } from "jsxstyle";
+      const val = "thing";
+      import LC from "./LC";
+      <Box dynamicValue={notStatic} className="_x0 _x1 _x2 _x3 _x4" />;"
+    `);
     expect(rv.css).toMatchInlineSnapshot(`
-"/* mock/extract-static2.js */
-._x0 { display:block }
-._x1 { static-string:wow }
-._x2 { static-int:69px }
-._x3 { static-value:thing }
-._x4 { static-member-expression:ok }
-"
-`);
+      "/* mock/extract-static2.js */
+      ._x0 { display:block }
+      ._x1 { static-string:wow }
+      ._x2 { static-int:69px }
+      ._x3 { static-value:thing }
+      ._x4 { static-member-expression:ok }
+      "
+    `);
   });
 });
 
@@ -164,19 +164,17 @@ const DynamicBlock = ({wow, ...props}) => <Block dynamicProp={wow} {...props} />
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
-"import \\"./rest-spread__jsxstyle.css\\";
-import { Box } from \\"jsxstyle\\";
-
-const BlueBlock = ({
-  wow,
-  ...props
-}) => <Box display=\\"block\\" color=\\"blue\\" {...props} test={null} className=\\"_x0\\" />;
-
-const DynamicBlock = ({
-  wow,
-  ...props
-}) => <Box display=\\"block\\" dynamicProp={wow} {...props} />;"
-`);
+      "import "./rest-spread__jsxstyle.css";
+      import { Box } from "jsxstyle";
+      const BlueBlock = ({
+        wow,
+        ...props
+      }) => <Box display="block" color="blue" {...props} test={null} className="_x0" />;
+      const DynamicBlock = ({
+        wow,
+        ...props
+      }) => <Box display="block" dynamicProp={wow} {...props} />;"
+    `);
   });
 
   it('handles props mixed with spread operators', () => {
@@ -187,15 +185,15 @@ const DynamicBlock = ({
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
-"import \\"./spread__jsxstyle.css\\";
-import { Box } from \\"jsxstyle\\";
-<Box display=\\"block\\" doNotExtract=\\"no\\" {...spread} extract={null} className=\\"_x0\\" />;"
-`);
+      "import "./spread__jsxstyle.css";
+      import { Box } from "jsxstyle";
+      <Box display="block" doNotExtract="no" {...spread} extract={null} className="_x0" />;"
+    `);
     expect(rv.css).toMatchInlineSnapshot(`
-"/* mock/spread.js */
-._x0 { extract:yep }
-"
-`);
+      "/* mock/spread.js */
+      ._x0 { extract:yep }
+      "
+    `);
   });
 
   it('handles reserved props before the spread operators', () => {
@@ -215,17 +213,17 @@ import { Box } from \\"jsxstyle\\";
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
-"import \\"./spread__jsxstyle.css\\";
-import { Box } from \\"jsxstyle\\";
-<Box display=\\"block\\" component=\\"wow\\" props={{
-  test: 4
-}} key={test} ref={test} style={{}} {...spread} color={null} className={(spread != null && spread.className || wow || \\"\\") + \\" _x0\\"} />;"
-`);
+      "import "./spread__jsxstyle.css";
+      import { Box } from "jsxstyle";
+      <Box display="block" component="wow" props={{
+        test: 4
+      }} key={test} ref={test} style={{}} {...spread} color={null} className={(spread != null && spread.className || wow || "") + " _x0"} />;"
+    `);
     expect(rv.css).toMatchInlineSnapshot(`
-"/* mock/spread.js */
-._x0 { color:red }
-"
-`);
+      "/* mock/spread.js */
+      ._x0 { color:red }
+      "
+    `);
   });
 
   it('extracts spreads from trusted sources', () => {
@@ -245,27 +243,26 @@ function Thing(props) {
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
-"import \\"./trusted-spreads__jsxstyle.css\\";
-import LC from \\"./LC\\";
-const staticSpread = {
-  color: \\"#444\\",
-  \\"width\\": 420
-};
-
-function Thing(props) {
-  return <div className=\\"_x0 _x1 _x2 _x3 _x4 _x5\\" />;
-}"
-`);
+      "import "./trusted-spreads__jsxstyle.css";
+      import LC from "./LC";
+      const staticSpread = {
+        color: "#444",
+        "width": 420
+      };
+      function Thing(props) {
+        return <div className="_x0 _x1 _x2 _x3 _x4 _x5" />;
+      }"
+    `);
     expect(rv.css).toMatchInlineSnapshot(`
-"/* mock/trusted-spreads.js */
-._x0 { display:block }
-._x1 { width:420px }
-._x2 { border-radius:4px }
-._x3 { box-shadow:0 1px 3px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.07) }
-._x4._x4 { background-color:#FFF }
-._x5 { color:#444 }
-"
-`);
+      "/* mock/trusted-spreads.js */
+      ._x0 { display:block }
+      ._x1 { width:420px }
+      ._x2 { border-radius:4px }
+      ._x3 { box-shadow:0 1px 3px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.07) }
+      ._x4._x4 { background-color:#FFF }
+      ._x5 { color:#444 }
+      "
+    `);
   });
 });
 
@@ -294,35 +291,35 @@ describe('jsxstyle-specific props', () => {
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
-"import \\"./props-prop1__jsxstyle.css\\";
-import { Box } from \\"jsxstyle\\";
-<div staticObject=\\"yep\\" className=\\"_x0\\" />;
-<div className=\\"_x0\\" />;
-<div {...variable} className=\\"_x0\\" />;
-<div {...calledFunction()} className=\\"_x0\\" />;
-<div {...member.expression} className=\\"_x0\\" />;
-<div objectShorthand={objectShorthand} className=\\"_x0\\" />;
-<div {...one} two={{
-  three,
-  four: \\"five\\",
-  ...six
-}} className=\\"_x0 _x1\\" />;
-<div aria-hidden={true} className=\\"_x0\\" />;
-<Box props={{
-  className: \\"test\\"
-}} className=\\"_x0\\" />;
-<Box props={{
-  style: \\"test\\"
-}} className=\\"_x0\\" />;
-<Box props=\\"invalid\\" className=\\"_x0\\" />;
-<Box dynamicProp={wow} props=\\"invalid\\" className=\\"_x0\\" />;
-<Box props={{
-  \\"aria hidden\\": true
-}} className=\\"_x0\\" />;
-<Box props={{
-  \\"-aria-hidden\\": true
-}} className=\\"_x0\\" />;"
-`);
+      "import "./props-prop1__jsxstyle.css";
+      import { Box } from "jsxstyle";
+      <div staticObject="yep" className="_x0" />;
+      <div className="_x0" />;
+      <div {...variable} className="_x0" />;
+      <div {...calledFunction()} className="_x0" />;
+      <div {...member.expression} className="_x0" />;
+      <div objectShorthand={objectShorthand} className="_x0" />;
+      <div {...one} two={{
+        three,
+        four: "five",
+        ...six
+      }} className="_x0 _x1" />;
+      <div aria-hidden={true} className="_x0" />;
+      <Box props={{
+        className: "test"
+      }} className="_x0" />;
+      <Box props={{
+        style: "test"
+      }} className="_x0" />;
+      <Box props="invalid" className="_x0" />;
+      <Box dynamicProp={wow} props="invalid" className="_x0" />;
+      <Box props={{
+        "aria hidden": true
+      }} className="_x0" />;
+      <Box props={{
+        "-aria-hidden": true
+      }} className="_x0" />;"
+    `);
     expect(warnCallback).toHaveBeenCalledTimes(6);
   });
 
@@ -337,10 +334,10 @@ import { Box } from \\"jsxstyle\\";
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
-"import \\"./props-prop2__jsxstyle.css\\";
-import { Box } from \\"jsxstyle\\";
-<Box ref={this.cannotBeExtracted} className=\\"_x0 _x1\\" />;"
-`);
+      "import "./props-prop2__jsxstyle.css";
+      import { Box } from "jsxstyle";
+      <Box ref={this.cannotBeExtracted} className="_x0 _x1" />;"
+    `);
     expect(warnCallback).toHaveBeenCalledWith(
       'The `ref` prop cannot be extracted from a jsxstyle component. If you want to attach a ref to the underlying component or element, specify a `ref` property in the `props` object.'
     );
@@ -358,14 +355,14 @@ import { Box } from \\"jsxstyle\\";
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
-"import \\"./component-prop1__jsxstyle.css\\";
-import { Box } from \\"jsxstyle\\";
-<input className=\\"_x0\\" />;
-<Thing className=\\"_x0\\" />;
-<thing.cool className=\\"_x0\\" />;
-<Box display=\\"block\\" component=\\"h1\\" {...spread} />;
-<Box component=\\"h1\\" dynamic={wow} className=\\"_x0 _x1 _x2\\" />;"
-`);
+      "import "./component-prop1__jsxstyle.css";
+      import { Box } from "jsxstyle";
+      <input className="_x0" />;
+      <Thing className="_x0" />;
+      <thing.cool className="_x0" />;
+      <Box display="block" component="h1" {...spread} />;
+      <Box component="h1" dynamic={wow} className="_x0 _x1 _x2" />;"
+    `);
 
     const warnCallback = jest.fn();
 
@@ -424,25 +421,24 @@ function Test({ component, thing }) {
 
     expect(warnCallback).toHaveBeenCalledTimes(4);
     expect(rv.js).toMatchInlineSnapshot(`
-"import \\"./funky-component-prop__jsxstyle.css\\";
-
-function Test({
-  component,
-  thing
-}) {
-  const Compy = component;
-  var Component = Compy || 'h1',
-      Component2 = complex,
-      Component3 = \\"Complex\\";
-  <Component className=\\"_x0\\">
-    <Component2 className=\\"_x0\\">
-      <Component3 className=\\"_x0\\" />
-    </Component2>
-  </Component>;
-  var Component4 = complex;
-  <Component4 className=\\"_x0\\" />;
-}"
-`);
+      "import "./funky-component-prop__jsxstyle.css";
+      function Test({
+        component,
+        thing
+      }) {
+        const Compy = component;
+        var Component = Compy || 'h1',
+          Component2 = complex,
+          Component3 = "Complex";
+        <Component className="_x0">
+          <Component2 className="_x0">
+            <Component3 className="_x0" />
+          </Component2>
+        </Component>;
+        var Component4 = complex;
+        <Component4 className="_x0" />;
+      }"
+    `);
   });
 
   it('handles the `className` prop correctly', () => {
@@ -454,11 +450,11 @@ function Test({
     );
 
     expect(rv1.js).toMatchInlineSnapshot(`
-"import \\"./class-name1__jsxstyle.css\\";
-import { Box } from \\"jsxstyle\\";
-<Box display=\\"flex\\" flexDirection=\\"row\\" alignItems=\\"center\\" className={member.expression} {...spread} />;
-<div className=\\"orange _x0\\" />;"
-`);
+      "import "./class-name1__jsxstyle.css";
+      import { Box } from "jsxstyle";
+      <Box display="flex" flexDirection="row" alignItems="center" className={member.expression} {...spread} />;
+      <div className="orange _x0" />;"
+    `);
   });
 
   it('handles the `mediaQueries` prop correctly', () => {
@@ -473,16 +469,16 @@ import { Box } from \\"jsxstyle\\";
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
-"import \\"./media-queries__jsxstyle.css\\";
-<div className=\\"_x0 _x1 _x2\\" />;"
-`);
+      "import "./media-queries__jsxstyle.css";
+      <div className="_x0 _x1 _x2" />;"
+    `);
     expect(rv.css).toMatchInlineSnapshot(`
-"/* mock/media-queries.js */
-._x0 { display:block }
-._x1 { width:640px }
-._x2 { sm-width:100% }
-"
-`);
+      "/* mock/media-queries.js */
+      ._x0 { display:block }
+      ._x1 { width:640px }
+      ._x2 { sm-width:100% }
+      "
+    `);
   });
 
   it('evaluates the `mediaQueries` prop correctly', () => {
@@ -498,17 +494,17 @@ import LC from "./LC";
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
-"import \\"./media-queries__jsxstyle.css\\";
-import LC from \\"./LC\\";
-<div className=\\"_x0 _x1 _x2\\" />;"
-`);
+      "import "./media-queries__jsxstyle.css";
+      import LC from "./LC";
+      <div className="_x0 _x1 _x2" />;"
+    `);
     expect(rv.css).toMatchInlineSnapshot(`
-"/* mock/media-queries.js */
-._x0 { display:block }
-._x1 { width:640px }
-._x2 { sm-width:100% }
-"
-`);
+      "/* mock/media-queries.js */
+      ._x0 { display:block }
+      ._x1 { width:640px }
+      ._x2 { sm-width:100% }
+      "
+    `);
   });
 });
 
@@ -521,17 +517,17 @@ describe('ternaries', () => {
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
-"import \\"./ternary__jsxstyle.css\\";
-<div className={(dynamic ? \\"_x1\\" : \\"_x2\\") + \\" _x0\\"} />;"
-`);
+      "import "./ternary__jsxstyle.css";
+      <div className={(dynamic ? "_x1" : "_x2") + " _x0"} />;"
+    `);
 
     expect(rv.css).toMatchInlineSnapshot(`
-"/* mock/ternary.js */
-._x0 { display:block }
-._x1 { color:red }
-._x2 { color:blue }
-"
-`);
+      "/* mock/ternary.js */
+      ._x0 { display:block }
+      ._x1 { color:red }
+      ._x2 { color:blue }
+      "
+    `);
   });
 
   it('extracts a conditional expression with a static right side and an AND operator', () => {
@@ -542,15 +538,15 @@ describe('ternaries', () => {
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
-"import \\"./ternary__jsxstyle.css\\";
-<div className={(dynamic ? \\"_x1\\" : \\"\\") + \\" _x0\\"} />;"
-`);
+      "import "./ternary__jsxstyle.css";
+      <div className={(dynamic ? "_x1" : "") + " _x0"} />;"
+    `);
     expect(rv.css).toMatchInlineSnapshot(`
-"/* mock/ternary.js */
-._x0 { display:block }
-._x1 { color:red }
-"
-`);
+      "/* mock/ternary.js */
+      ._x0 { display:block }
+      ._x1 { color:red }
+      "
+    `);
   });
 
   it.skip('extracts a conditional expression with a static right side and an OR operator', () => {
@@ -574,18 +570,18 @@ const blue = "blueberry";
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
-"import \\"./ternary__jsxstyle.css\\";
-import LC from \\"./LC\\";
-const blue = \\"blueberry\\";
-<div className={(dynamic ? \\"_x1\\" : \\"_x2\\") + \\" _x0\\"} />;"
-`);
+      "import "./ternary__jsxstyle.css";
+      import LC from "./LC";
+      const blue = "blueberry";
+      <div className={(dynamic ? "_x1" : "_x2") + " _x0"} />;"
+    `);
     expect(rv.css).toMatchInlineSnapshot(`
-"/* mock/ternary.js */
-._x0 { display:block }
-._x1 { color:strawberry }
-._x2 { color:blueberry }
-"
-`);
+      "/* mock/ternary.js */
+      ._x0 { display:block }
+      ._x1 { color:strawberry }
+      ._x2 { color:blueberry }
+      "
+    `);
   });
 
   it('extracts a ternary expression from a component that has a className specified', () => {
@@ -596,17 +592,17 @@ const blue = \\"blueberry\\";
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
-"import \\"./ternary-with-classname__jsxstyle.css\\";
-<div className={\\"cool \\" + (dynamic ? \\"_x1\\" : \\"_x2\\") + \\" _x0\\"} />;"
-`);
+      "import "./ternary-with-classname__jsxstyle.css";
+      <div className={"cool " + (dynamic ? "_x1" : "_x2") + " _x0"} />;"
+    `);
 
     expect(rv.css).toMatchInlineSnapshot(`
-"/* mock/ternary-with-classname.js */
-._x0 { display:block }
-._x1 { color:red }
-._x2 { color:blue }
-"
-`);
+      "/* mock/ternary-with-classname.js */
+      ._x0 { display:block }
+      ._x1 { color:red }
+      ._x2 { color:blue }
+      "
+    `);
   });
 
   it('extracts a ternary expression from a component that has a spread operator specified', () => {
@@ -617,16 +613,16 @@ const blue = \\"blueberry\\";
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
-"import \\"./ternary-with-spread__jsxstyle.css\\";
-import { Box } from \\"jsxstyle\\";
-<Box display=\\"block\\" {...spread} color={null} className={dynamic ? \\"_x0\\" : \\"_x1\\"} />;"
-`);
+      "import "./ternary-with-spread__jsxstyle.css";
+      import { Box } from "jsxstyle";
+      <Box display="block" {...spread} color={null} className={dynamic ? "_x0" : "_x1"} />;"
+    `);
     expect(rv.css).toMatchInlineSnapshot(`
-"/* mock/ternary-with-spread.js */
-._x0 { color:red }
-._x1 { color:blue }
-"
-`);
+      "/* mock/ternary-with-spread.js */
+      ._x0 { color:red }
+      ._x1 { color:blue }
+      "
+    `);
   });
 
   it('positivizes binary expressions', () => {
@@ -653,25 +649,25 @@ import { Box } from \\"jsxstyle\\";
     );
 
     expect(rv1.js).toMatchInlineSnapshot(`
-"import \\"./binary-expressions__jsxstyle.css\\";
-<div className={(dynamic === 4 ? \\"_x1 _x2 _x3\\" : \\"_x4 _x5 _x6\\") + \\" _x0\\"} />;"
-`);
+      "import "./binary-expressions__jsxstyle.css";
+      <div className={(dynamic === 4 ? "_x1 _x2 _x3" : "_x4 _x5 _x6") + " _x0"} />;"
+    `);
     expect(rv2.js).toMatchInlineSnapshot(`
-"import \\"./binary-expressions__jsxstyle.css\\";
-<div className={(dynamic == 4 ? \\"_x1 _x2 _x3\\" : \\"_x4 _x5 _x6\\") + \\" _x0\\"} />;"
-`);
+      "import "./binary-expressions__jsxstyle.css";
+      <div className={(dynamic == 4 ? "_x1 _x2 _x3" : "_x4 _x5 _x6") + " _x0"} />;"
+    `);
     expect(rv1.css).toEqual(rv2.css);
     expect(rv1.css).toMatchInlineSnapshot(`
-"/* mock/binary-expressions.js */
-._x0 { display:block }
-._x1 { thing1:four }
-._x2 { thing3:four }
-._x3 { thing4:four }
-._x4 { thing2:not four }
-._x5 { thing3:not four }
-._x6 { thing4:not four }
-"
-`);
+      "/* mock/binary-expressions.js */
+      ._x0 { display:block }
+      ._x1 { thing1:four }
+      ._x2 { thing3:four }
+      ._x3 { thing4:four }
+      ._x4 { thing2:not four }
+      ._x5 { thing3:not four }
+      ._x6 { thing4:not four }
+      "
+    `);
   });
 
   it('positivizes unary expressions', () => {
@@ -687,20 +683,20 @@ import { Box } from \\"jsxstyle\\";
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
-"import \\"./unary-expressions__jsxstyle.css\\";
-<div className={(dynamic % 2 ? \\"_x1 _x2 _x3\\" : \\"_x4 _x5 _x6\\") + \\" _x0\\"} />;"
-`);
+      "import "./unary-expressions__jsxstyle.css";
+      <div className={(dynamic % 2 ? "_x1 _x2 _x3" : "_x4 _x5 _x6") + " _x0"} />;"
+    `);
     expect(rv.css).toMatchInlineSnapshot(`
-"/* mock/unary-expressions.js */
-._x0 { display:block }
-._x1 { thing1:mod 2 }
-._x2 { thing3:mod 2 }
-._x3 { thing4:mod 2 }
-._x4 { thing2:not mod 2 }
-._x5 { thing3:not mod 2 }
-._x6 { thing4:not mod 2 }
-"
-`);
+      "/* mock/unary-expressions.js */
+      ._x0 { display:block }
+      ._x1 { thing1:mod 2 }
+      ._x2 { thing3:mod 2 }
+      ._x3 { thing4:mod 2 }
+      ._x4 { thing2:not mod 2 }
+      ._x5 { thing3:not mod 2 }
+      ._x6 { thing4:not mod 2 }
+      "
+    `);
   });
 
   it('ignores a ternary expression that comes before a spread operator', () => {
@@ -711,10 +707,10 @@ import { Box } from \\"jsxstyle\\";
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
-"import \\"./ternary-with-classname__jsxstyle.css\\";
-import { Box } from \\"jsxstyle\\";
-<Box display=\\"block\\" color={dynamic ? \\"red\\" : \\"blue\\"} {...spread} className=\\"cool\\" />;"
-`);
+      "import "./ternary-with-classname__jsxstyle.css";
+      import { Box } from "jsxstyle";
+      <Box display="block" color={dynamic ? "red" : "blue"} {...spread} className="cool" />;"
+    `);
   });
 
   it('groups extracted ternary statements', () => {
@@ -725,18 +721,18 @@ import { Box } from \\"jsxstyle\\";
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
-"import \\"./ternary-groups__jsxstyle.css\\";
-<div className={(dynamic ? \\"_x1 _x2\\" : \\"_x3 _x4\\") + \\" _x0\\"} />;"
-`);
+      "import "./ternary-groups__jsxstyle.css";
+      <div className={(dynamic ? "_x1 _x2" : "_x3 _x4") + " _x0"} />;"
+    `);
     expect(rv.css).toMatchInlineSnapshot(`
-"/* mock/ternary-groups.js */
-._x0 { display:block }
-._x1 { color:red }
-._x2 { width:200px }
-._x3 { color:blue }
-._x4 { width:400px }
-"
-`);
+      "/* mock/ternary-groups.js */
+      ._x0 { display:block }
+      ._x1 { color:red }
+      ._x2 { width:200px }
+      ._x3 { color:blue }
+      ._x4 { width:400px }
+      "
+    `);
   });
 
   it('handles null values in ternaries correctly', () => {
@@ -747,15 +743,15 @@ import { Box } from \\"jsxstyle\\";
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
-"import \\"./ternary-null-values__jsxstyle.css\\";
-<div className={(dynamic ? \\"\\" : \\"_x1\\") + \\" _x0\\"} />;"
-`);
+      "import "./ternary-null-values__jsxstyle.css";
+      <div className={(dynamic ? "" : "_x1") + " _x0"} />;"
+    `);
     expect(rv.css).toMatchInlineSnapshot(`
-"/* mock/ternary-null-values.js */
-._x0 { display:block }
-._x1 { color:blue }
-"
-`);
+      "/* mock/ternary-null-values.js */
+      ._x0 { display:block }
+      ._x1 { color:blue }
+      "
+    `);
   });
 });
 
@@ -840,18 +836,18 @@ export const MyComponent = () => {
     });
 
     expect(minifyOutput.code).toMatchInlineSnapshot(`
-"import { useMatchMedia, Block } from \\"jsxstyle\\";
+      "import { useMatchMedia, Block } from "jsxstyle";
 
-import React from \\"react\\";
+      import React from "react";
 
-export const MyComponent = () => {
-    useMatchMedia(\\"this call stays\\");
-    const usedThing = useMatchMedia(\\"this call stays as well\\");
-    return React.createElement(Block, {
-        usedThing: usedThing
-    });
-};"
-`);
+      export const MyComponent = () => {
+          useMatchMedia("this call stays");
+          const usedThing = useMatchMedia("this call stays as well");
+          return React.createElement(Block, {
+              usedThing: usedThing
+          });
+      };"
+    `);
   });
 
   it('extracts shorthand props', () => {
@@ -880,25 +876,25 @@ export const MyComponent = () => {
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
-"import \\"./useMatchMedia-shorthand-props__jsxstyle.css\\";
-import { useMatchMedia } from 'jsxstyle';
-import React from 'react';
-export const MyComponent = () => {
-  const useMatchMedia_matchesMQ = /*#__PURE__*/useMatchMedia('matchMedia media query');
-  return <>
-        <div className=\\"_x0 _x1\\" />
-        <div className=\\"_x0 _x1 _x2 _x3\\" />
-      </>;
-};"
-`);
+      "import "./useMatchMedia-shorthand-props__jsxstyle.css";
+      import { useMatchMedia } from 'jsxstyle';
+      import React from 'react';
+      export const MyComponent = () => {
+        const useMatchMedia_matchesMQ = /*#__PURE__*/useMatchMedia('matchMedia media query');
+        return <>
+              <div className="_x0 _x1" />
+              <div className="_x0 _x1 _x2 _x3" />
+            </>;
+      };"
+    `);
     expect(rv.css).toMatchInlineSnapshot(`
-"/* mock/useMatchMedia-shorthand-props.js */
-._x2._x2 { padding-left:40px }
-._x3._x3 { padding-right:30px }
-@media matchMedia media query { ._x0._x0._x0._x0 { padding-left:20px } }
-@media matchMedia media query { ._x1._x1._x1._x1 { padding-right:10px } }
-"
-`);
+      "/* mock/useMatchMedia-shorthand-props.js */
+      ._x2._x2 { padding-left:40px }
+      ._x3._x3 { padding-right:30px }
+      @media matchMedia media query { ._x0._x0._x0._x0 { padding-left:20px } }
+      @media matchMedia media query { ._x1._x1._x1._x1 { padding-right:10px } }
+      "
+    `);
   });
 
   it('extracts ternaries and conditional statements', () => {
@@ -924,26 +920,26 @@ export const MyComponent = () => {
     const rv = runExtractStyles(source, 'mock/useMatchMedia-extraction.js');
 
     expect(rv.js).toMatchInlineSnapshot(`
-"import \\"./useMatchMedia-extraction__jsxstyle.css\\";
-import { useMatchMedia } from 'jsxstyle';
-import React from 'react';
-export const MyComponent = () => {
-  const useMatchMedia_matchesMQ = /*#__PURE__*/useMatchMedia('matchMedia media query');
-  return <>
-        <div className=\\"_x0 _x1 _x2\\" />
-        <div className=\\"_x0 _x1 _x2 _x3 _x4\\" />
-      </>;
-};"
-`);
+      "import "./useMatchMedia-extraction__jsxstyle.css";
+      import { useMatchMedia } from 'jsxstyle';
+      import React from 'react';
+      export const MyComponent = () => {
+        const useMatchMedia_matchesMQ = /*#__PURE__*/useMatchMedia('matchMedia media query');
+        return <>
+              <div className="_x0 _x1 _x2" />
+              <div className="_x0 _x1 _x2 _x3 _x4" />
+            </>;
+      };"
+    `);
     expect(rv.css).toMatchInlineSnapshot(`
-"/* mock/useMatchMedia-extraction.js */
-._x2 { display:block }
-._x3 { color:blue }
-._x4._x4 { font-family:sans-serif }
-@media matchMedia media query { ._x0._x0._x0 { color:red } }
-@media matchMedia media query { ._x1._x1._x1._x1 { font-family:serif } }
-"
-`);
+      "/* mock/useMatchMedia-extraction.js */
+      ._x2 { display:block }
+      ._x3 { color:blue }
+      ._x4._x4 { font-family:sans-serif }
+      @media matchMedia media query { ._x0._x0._x0 { color:red } }
+      @media matchMedia media query { ._x1._x1._x1._x1 { font-family:serif } }
+      "
+    `);
   });
 
   it('logs a warning when a `mediaQueries` prop is encountered', () => {
@@ -982,26 +978,26 @@ export const MyComponent = () => {
       'useMatchMedia and the mediaQueries prop should not be mixed. useMatchMedia query extraction will be disabled.'
     );
     expect(rv.js).toMatchInlineSnapshot(`
-"import \\"./mediaqueries-plus-useMatchMedia__jsxstyle.css\\";
-import { useMatchMedia } from 'jsxstyle';
-import React from 'react';
-export const MyComponent = () => {
-  const useMatchMedia_matchesMQ = /*#__PURE__*/useMatchMedia('matchMedia media query');
-  return <>
-        <div className={(useMatchMedia_matchesMQ ? \\"_x2\\" : \\"_x3\\") + \\" _x0 _x1\\"} />
-        <div className={(useMatchMedia_matchesMQ ? \\"_x2\\" : \\"_x3\\") + \\" _x0 _x1 _x4\\"} />
-      </>;
-};"
-`);
+      "import "./mediaqueries-plus-useMatchMedia__jsxstyle.css";
+      import { useMatchMedia } from 'jsxstyle';
+      import React from 'react';
+      export const MyComponent = () => {
+        const useMatchMedia_matchesMQ = /*#__PURE__*/useMatchMedia('matchMedia media query');
+        return <>
+              <div className={(useMatchMedia_matchesMQ ? "_x2" : "_x3") + " _x0 _x1"} />
+              <div className={(useMatchMedia_matchesMQ ? "_x2" : "_x3") + " _x0 _x1 _x4"} />
+            </>;
+      };"
+    `);
     expect(rv.css).toMatchInlineSnapshot(`
-"/* mock/mediaqueries-plus-useMatchMedia.js */
-._x0 { display:block }
-._x1 { example-color:red }
-._x2 { should-remain-inline:consequent }
-._x3 { should-remain-inline:alternate }
-._x4 { color:blue }
-"
-`);
+      "/* mock/mediaqueries-plus-useMatchMedia.js */
+      ._x0 { display:block }
+      ._x1 { example-color:red }
+      ._x2 { should-remain-inline:consequent }
+      ._x3 { should-remain-inline:alternate }
+      ._x4 { color:blue }
+      "
+    `);
   });
 });
 
@@ -1019,16 +1015,16 @@ describe('animation prop', () => {
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
-"import \\"./animation-prop__jsxstyle.css\\";
-<div className=\\"_x0 _x1\\" />;"
-`);
+      "import "./animation-prop__jsxstyle.css";
+      <div className="_x0 _x1" />;"
+    `);
     expect(rv.css).toMatchInlineSnapshot(`
-"/* mock/animation-prop.js */
-._x0 { display:block }
-._x1._x1 { animation-name:_x1 }
-@keyframes _x1 { 0%, 50% { opacity:0; padding-left:30px } 100% { opacity:1; padding-left:50px; padding-right:50px } }
-"
-`);
+      "/* mock/animation-prop.js */
+      ._x0 { display:block }
+      ._x1._x1 { animation-name:_x1 }
+      @keyframes _x1 { 0%, 50% { opacity:0; padding-left:30px } 100% { opacity:1; padding-left:50px; padding-right:50px } }
+      "
+    `);
   });
 });
 
@@ -1048,25 +1044,25 @@ ReactDOM.render(<Thing />, (document.getElementById('root') as HTMLElement));`;
 
     expect(tsResults.js).toEqual(tsxResults.js);
     expect(tsResults.js).toMatchInlineSnapshot(`
-"import \\"./typescript__jsxstyle.css\\";
-import * as React from 'react';
-export interface ThingProps {
-  thing1: string;
-  thing2?: boolean;
-}
-export const Thing: React.FC<ThingProps> = props => <div className=\\"_x0\\" />;
-ReactDOM.render(<Thing />, (document.getElementById('root') as HTMLElement));"
-`);
+      "import "./typescript__jsxstyle.css";
+      import * as React from 'react';
+      export interface ThingProps {
+        thing1: string;
+        thing2?: boolean;
+      }
+      export const Thing: React.FC<ThingProps> = props => <div className="_x0" />;
+      ReactDOM.render(<Thing />, (document.getElementById('root') as HTMLElement));"
+    `);
     expect(tsxResults.js).toMatchInlineSnapshot(`
-"import \\"./typescript__jsxstyle.css\\";
-import * as React from 'react';
-export interface ThingProps {
-  thing1: string;
-  thing2?: boolean;
-}
-export const Thing: React.FC<ThingProps> = props => <div className=\\"_x0\\" />;
-ReactDOM.render(<Thing />, (document.getElementById('root') as HTMLElement));"
-`);
+      "import "./typescript__jsxstyle.css";
+      import * as React from 'react';
+      export interface ThingProps {
+        thing1: string;
+        thing2?: boolean;
+      }
+      export const Thing: React.FC<ThingProps> = props => <div className="_x0" />;
+      ReactDOM.render(<Thing />, (document.getElementById('root') as HTMLElement));"
+    `);
   });
 });
 
@@ -1086,16 +1082,16 @@ const staticProp = 'static';
 
     expect(evalVars.js).not.toEqual(noEvalVars.js);
     expect(evalVars.js).toMatchInlineSnapshot(`
-"import \\"./evaluateVars__jsxstyle.css\\";
-const staticProp = 'static';
-<div className=\\"_x0 _x1 _x2\\" />;"
-`);
+      "import "./evaluateVars__jsxstyle.css";
+      const staticProp = 'static';
+      <div className="_x0 _x1 _x2" />;"
+    `);
     expect(noEvalVars.js).toMatchInlineSnapshot(`
-"import \\"./evaluateVars__jsxstyle.css\\";
-import { Box } from \\"jsxstyle\\";
-const staticProp = 'static';
-<Box thing1={staticProp} className=\\"_x0 _x1\\" />;"
-`);
+      "import "./evaluateVars__jsxstyle.css";
+      import { Box } from "jsxstyle";
+      const staticProp = 'static';
+      <Box thing1={staticProp} className="_x0 _x1" />;"
+    `);
   });
 });
 
@@ -1117,11 +1113,11 @@ const staticProp = 'static';
     );
 
     expect(singleInlineImports.js).toMatchInlineSnapshot(`
-"import \\"jsxstyle/cache/mock/evaluateVars.js.css!=!jsxstyle/lib/base64-loader?value=!jsxstyle/lib/noop\\";
-const staticProp = 'static';
-<div className=\\"_x0 _x1 _x2\\"></div>;
-<div className=\\"_x0 _x3 _x4\\"></div>;"
-`);
+      "import "jsxstyle/cache/mock/evaluateVars.js.css!=!jsxstyle/lib/base64-loader?value=!jsxstyle/lib/noop";
+      const staticProp = 'static';
+      <div className="_x0 _x1 _x2"></div>;
+      <div className="_x0 _x3 _x4"></div>;"
+    `);
     expect(singleInlineImports.css).toEqual('');
   });
 
@@ -1136,20 +1132,20 @@ const staticProp = 'static';
     );
 
     expect(multipleInlineImports.js).toMatchInlineSnapshot(`
-"// ._x0 { display:block }
-import \\"jsxstyle/cache/_x0.css!=!jsxstyle/lib/base64-loader?value=Ll94MCB7IGRpc3BsYXk6YmxvY2sgfQ%3D%3D!jsxstyle/lib/noop\\";
-// ._x1 { thing1:static }
-import \\"jsxstyle/cache/_x1.css!=!jsxstyle/lib/base64-loader?value=Ll94MSB7IHRoaW5nMTpzdGF0aWMgfQ%3D%3D!jsxstyle/lib/noop\\";
-// ._x2 { thing2:69px }
-import \\"jsxstyle/cache/_x2.css!=!jsxstyle/lib/base64-loader?value=Ll94MiB7IHRoaW5nMjo2OXB4IH0%3D!jsxstyle/lib/noop\\";
-// ._x3 { thing3:static }
-import \\"jsxstyle/cache/_x3.css!=!jsxstyle/lib/base64-loader?value=Ll94MyB7IHRoaW5nMzpzdGF0aWMgfQ%3D%3D!jsxstyle/lib/noop\\";
-// ._x4 { thing4:69px }
-import \\"jsxstyle/cache/_x4.css!=!jsxstyle/lib/base64-loader?value=Ll94NCB7IHRoaW5nNDo2OXB4IH0%3D!jsxstyle/lib/noop\\";
-const staticProp = 'static';
-<div className=\\"_x0 _x1 _x2\\"></div>;
-<div className=\\"_x0 _x3 _x4\\"></div>;"
-`);
+      "// ._x0 { display:block }
+      import "jsxstyle/cache/_x0.css!=!jsxstyle/lib/base64-loader?value=Ll94MCB7IGRpc3BsYXk6YmxvY2sgfQ%3D%3D!jsxstyle/lib/noop";
+      // ._x1 { thing1:static }
+      import "jsxstyle/cache/_x1.css!=!jsxstyle/lib/base64-loader?value=Ll94MSB7IHRoaW5nMTpzdGF0aWMgfQ%3D%3D!jsxstyle/lib/noop";
+      // ._x2 { thing2:69px }
+      import "jsxstyle/cache/_x2.css!=!jsxstyle/lib/base64-loader?value=Ll94MiB7IHRoaW5nMjo2OXB4IH0%3D!jsxstyle/lib/noop";
+      // ._x3 { thing3:static }
+      import "jsxstyle/cache/_x3.css!=!jsxstyle/lib/base64-loader?value=Ll94MyB7IHRoaW5nMzpzdGF0aWMgfQ%3D%3D!jsxstyle/lib/noop";
+      // ._x4 { thing4:69px }
+      import "jsxstyle/cache/_x4.css!=!jsxstyle/lib/base64-loader?value=Ll94NCB7IHRoaW5nNDo2OXB4IH0%3D!jsxstyle/lib/noop";
+      const staticProp = 'static';
+      <div className="_x0 _x1 _x2"></div>;
+      <div className="_x0 _x3 _x4"></div>;"
+    `);
     expect(multipleInlineImports.css).toEqual('');
   });
 
@@ -1164,10 +1160,10 @@ const staticProp = 'static';
     );
 
     expect(multipleInlineImports.js).toMatchInlineSnapshot(`
-"const staticProp = 'static';
-<div className=\\"_x0 _x1 _x2\\"><style jsx global>{\`._x0 { display:block } ._x1 { thing1:static } ._x2 { thing2:69px }\`}</style></div>;
-<div className=\\"_x0 _x3 _x4\\"><style jsx global>{\`._x0 { display:block } ._x3 { thing3:static } ._x4 { thing4:69px }\`}</style></div>;"
-`);
+      "const staticProp = 'static';
+      <div className="_x0 _x1 _x2"><style jsx global>{\`._x0 { display:block } ._x1 { thing1:static } ._x2 { thing2:69px }\`}</style></div>;
+      <div className="_x0 _x3 _x4"><style jsx global>{\`._x0 { display:block } ._x3 { thing3:static } ._x4 { thing4:69px }\`}</style></div>;"
+    `);
     expect(multipleInlineImports.css).toEqual('');
   });
 
@@ -1205,17 +1201,15 @@ const { invalid, AlsoInvalid, InlineBlock } = require('jsxstyle');`,
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
-"import \\"./edge-case1__jsxstyle.css\\";
-import { cache, InvalidComponent } from 'jsxstyle';
-
-// should probably remove this as well
-require('jsxstyle');
-
-const {
-  invalid,
-  AlsoInvalid
-} = require('jsxstyle');"
-`);
+      "import "./edge-case1__jsxstyle.css";
+      import { cache, InvalidComponent } from 'jsxstyle';
+      // should probably remove this as well
+      require('jsxstyle');
+      const {
+        invalid,
+        AlsoInvalid
+      } = require('jsxstyle');"
+    `);
   });
 
   it('handles consts with no inits', () => {
@@ -1228,11 +1222,10 @@ for (const thing in things) {
     const rv = runExtractStyles(fileContent, 'mock/const-sans-init.js');
 
     expect(rv.js).toMatchInlineSnapshot(`
-"import \\"./const-sans-init__jsxstyle.css\\";
-
-for (const thing in things) {
-  <div className=\\"_x0\\" />;
-}"
-`);
+      "import "./const-sans-init__jsxstyle.css";
+      for (const thing in things) {
+        <div className="_x0" />;
+      }"
+    `);
   });
 });

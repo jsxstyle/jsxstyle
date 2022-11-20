@@ -17,10 +17,10 @@ jobs:
           # fetch everything so that we can properly calculate what needs to be published
           fetch-depth: 0
 
-      - name: Use Node 16
+      - name: Use Node 18
         uses: actions/setup-node@v3
         with:
-          node-version: 16.x
+          node-version: 18.x
           cache: "npm"
 
       - name: Cache node modules

@@ -66,18 +66,18 @@ describe('getStyleCache', () => {
     });
 
     expect(componentProps).toMatchInlineSnapshot(`
-Object {
-  "className": "_1jvcvsh _cmecz0",
-  "id": "hello",
-  "name": "test123",
-}
-`);
+      {
+        "className": "_1jvcvsh _cmecz0",
+        "id": "hello",
+        "name": "test123",
+      }
+    `);
     expect(insertedRules).toMatchInlineSnapshot(`
-Array [
-  "._1jvcvsh { color:red }",
-  "._cmecz0 { display:block }",
-]
-`);
+      [
+        "._1jvcvsh { color:red }",
+        "._cmecz0 { display:block }",
+      ]
+    `);
   });
 
   it('works with addRule injection', () => {
@@ -92,23 +92,23 @@ Array [
     styleCache.getComponentProps(kitchenSink);
 
     expect(insertedRules).toMatchInlineSnapshot(`
-Array [
-  "._17w4vug { margin:1px }",
-  "._1m680gx._1m680gx { margin-left:3px }",
-  "._tn8y8r._tn8y8r { margin-right:2px }",
-  "._11qejiy._11qejiy:hover { margin-left:4px }",
-  "._r23nsx._r23nsx:active { margin-top:5px }",
-  "._18b6tc5._18b6tc5:active { margin-bottom:5px }",
-  "._12u3iza._12u3iza::placeholder { padding-top:8px }",
-  "._1njps7w._1njps7w::placeholder { padding-bottom:6px }",
-  "._1kzxzhu::placeholder { padding:7px }",
-  "._16aryto:hover::placeholder { color:9px }",
-  "@keyframes _141dqt4 { from { color:red; padding-left:69px; padding-right:69px } to { margin-top:123px; margin-bottom:123px; margin:456px } }",
-  "._141dqt4._141dqt4 { animation-name:_141dqt4 }",
-  "@keyframes _1feg296 { test { margin:456px; margin-top:123px; margin-bottom:123px } }",
-  "._1feg296._1feg296:hover { animation-name:_1feg296 }",
-]
-`);
+      [
+        "._17w4vug { margin:1px }",
+        "._1m680gx._1m680gx { margin-left:3px }",
+        "._tn8y8r._tn8y8r { margin-right:2px }",
+        "._11qejiy._11qejiy:hover { margin-left:4px }",
+        "._r23nsx._r23nsx:active { margin-top:5px }",
+        "._18b6tc5._18b6tc5:active { margin-bottom:5px }",
+        "._12u3iza._12u3iza::placeholder { padding-top:8px }",
+        "._1njps7w._1njps7w::placeholder { padding-bottom:6px }",
+        "._1kzxzhu::placeholder { padding:7px }",
+        "._16aryto:hover::placeholder { color:9px }",
+        "@keyframes _141dqt4 { from { color:red; padding-left:69px; padding-right:69px } to { margin-top:123px; margin-bottom:123px; margin:456px } }",
+        "._141dqt4._141dqt4 { animation-name:_141dqt4 }",
+        "@keyframes _1feg296 { test { margin:456px; margin-top:123px; margin-bottom:123px } }",
+        "._1feg296._1feg296:hover { animation-name:_1feg296 }",
+      ]
+    `);
   });
 
   it('works with classname strategy injection', () => {

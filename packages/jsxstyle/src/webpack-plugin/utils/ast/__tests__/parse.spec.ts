@@ -29,13 +29,11 @@ type Props = {
   foo: number,
   bar?: string,
 };
-
 class MyComponent extends React.Component<Props> {
   render() {
     this.props.doesNotExist;
     return <div>{this.props.bar}</div>;
   }
-
 }`;
 
   expect(p(code, 'flow')).toEqual(code);

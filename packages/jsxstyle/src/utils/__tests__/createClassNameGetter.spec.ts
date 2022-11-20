@@ -12,13 +12,13 @@ describe('createClassNameGetter', () => {
     getClassNameForKey('one');
 
     expect(cacheObject).toMatchInlineSnapshot(`
-Object {
-  "one": "_x0",
-  "three": "_x2",
-  "two": "_x1",
-  Symbol(counter): 3,
-}
-`);
+      {
+        "one": "_x0",
+        "three": "_x2",
+        "two": "_x1",
+        Symbol(counter): 3,
+      }
+    `);
   });
 
   it('generates deterministic classNames when classNameFormat is set to "hash"', () => {
@@ -32,11 +32,11 @@ Object {
     getClassNameForKey('one');
 
     expect(cacheObject).toMatchInlineSnapshot(`
-Object {
-  "one": "_375csh",
-  "three": "_2qcld7",
-  "two": "_375oq1",
-}
-`);
+      {
+        "one": "_375csh",
+        "three": "_2qcld7",
+        "two": "_375oq1",
+      }
+    `);
   });
 });

@@ -1,6 +1,6 @@
 import generate from '@babel/generator';
 import traverse from '@babel/traverse';
-import t = require('@babel/types');
+import * as t from '@babel/types';
 import type { Scope, Binding } from '@babel/traverse';
 
 import { getSourceModule } from '../getSourceModule';

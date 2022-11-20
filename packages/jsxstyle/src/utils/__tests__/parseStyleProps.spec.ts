@@ -43,7 +43,7 @@ describe('parseStyleProps', () => {
     );
 
     expect(formatParsedStyleProps(parsedStyleProps)).toMatchInlineSnapshot(`
-      Object {
+      {
         "prop1": "string",
         "prop2": 1234,
         "prop3": 0,
@@ -82,7 +82,7 @@ describe('parseStyleProps', () => {
     );
 
     expect(formatParsedStyleProps(parsedStyleProps)).toMatchInlineSnapshot(`
-      Object {
+      {
         "backgroundColor::selection": "red",
         "color::placeholder": "blue",
         "color:active": "purple",
@@ -102,7 +102,7 @@ describe('parseStyleProps', () => {
     );
 
     expect(componentProps).toMatchInlineSnapshot(`
-      Object {
+      {
         "href": "https://jsx.style",
         "id": "id prop",
         "name": "name prop",
@@ -127,14 +127,14 @@ describe('parseStyleProps', () => {
     );
 
     expect(parsedProps).toMatchInlineSnapshot(`
-      Object {
-        "componentProps": Object {
+      {
+        "componentProps": {
           "onBanana": "purple",
           "onClick": [Function],
           "onNonExistentEventHandler": 123,
         },
-        "parsedStyleProps": Object {
-          "ontological": Object {
+        "parsedStyleProps": {
+          "ontological": {
             "propName": "ontological",
             "propValue": 456,
             "pseudoclass": undefined,
@@ -159,7 +159,7 @@ describe('parseStyleProps', () => {
     );
 
     expect(formatParsedStyleProps(parsedStyleProps)).toMatchInlineSnapshot(`
-      Object {
+      {
         "aaa": 123,
         "margin": 1,
         "marginLeft": 3,
@@ -185,7 +185,7 @@ describe('parseStyleProps', () => {
     );
 
     expect(formatParsedStyleProps(parsedStyleProps)).toMatchInlineSnapshot(`
-      Object {
+      {
         "margin": 1,
         "marginBottom:active": 5,
         "marginLeft": 3,
@@ -217,14 +217,14 @@ describe('parseStyleProps', () => {
     );
 
     expect(formatParsedStyleProps(parsedStyleProps1)).toMatchInlineSnapshot(`
-      Object {
+      {
         "marginLeft": 2,
         "marginRight": 1,
       }
     `);
 
     expect(formatParsedStyleProps(parsedStyleProps2)).toMatchInlineSnapshot(`
-      Object {
+      {
         "marginLeft": 1,
         "marginRight": 1,
       }

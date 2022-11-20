@@ -1,7 +1,7 @@
-import fs = require('fs');
-import packlist = require('npm-packlist');
-import path = require('path');
-import glob = require('glob');
+import fs from 'fs';
+import packlist from 'npm-packlist';
+import path from 'path';
+import glob from 'glob';
 import { execSync } from 'child_process';
 import { getPackages } from '@manypkg/get-packages';
 
