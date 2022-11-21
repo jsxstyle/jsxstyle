@@ -42,7 +42,7 @@ ${fileList
   .map((fileName) => {
     // chunk filenames contain a hash that will change across builds
     const updatedFileName = fileName.replace(
-      /(\.)[a-e0-9]{8}(\.(?:e|cj)s\.js(?:\.map)?)$/,
+      /(\.)[a-f0-9]{8}(\.(?:e|cj)s\.js(?:\.map)?)$/,
       '$1[hash]$2'
     );
     return `- ${updatedFileName}`;
