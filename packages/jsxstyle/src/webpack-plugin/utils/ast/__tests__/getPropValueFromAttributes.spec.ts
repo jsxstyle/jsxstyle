@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
 import generate from '@babel/generator';
-import t = require('@babel/types');
+import * as t from '@babel/types';
 
 import { getPropValueFromAttributes } from '../getPropValueFromAttributes';
 import { parse } from '../parse';

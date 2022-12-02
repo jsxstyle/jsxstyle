@@ -1,7 +1,7 @@
 import generate from '@babel/generator';
 import traverse from '@babel/traverse';
-import t = require('@babel/types');
-import path = require('path');
+import * as t from '@babel/types';
+import path from 'path';
 
 import { getStaticBindingsForScope } from '../getStaticBindingsForScope';
 import { parse } from '../parse';

@@ -1,6 +1,7 @@
 {
   "name": "jsxstyle-minisite",
   "private": true,
+  "version": "0.0.0",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -11,8 +12,8 @@
     "@types/webpack-env": "^1.17.0",
     "monaco-editor": "^0.33.0",
     "monaco-editor-webpack-plugin": "^7.0.1",
-    "next": "latest",
-    "react": "17.0.2",
-    "react-dom": "17.0.2"
+    "next": "^13.0.4",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
   }
 }

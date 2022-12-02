@@ -1,4 +1,4 @@
-import path = require('path');
+import path from 'path';
 import type { Configuration } from 'webpack';
 import type { Config as KarmaConfig } from 'karma';
 
