@@ -8,6 +8,10 @@ module.exports = jsxstyleNextjsPlugin()({
     tsconfigPath: './tsconfig.json',
   },
 
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+
   webpack: (config, options) => {
     // hack to allow global CSS imports in monaco-editor
     config.module.rules

@@ -1,19 +1,9 @@
-import path from 'path';
-import type { Configuration } from 'webpack';
-import type { Config as KarmaConfig } from 'karma';
-
-// augment karma module with custom config options
-declare module 'karma' {
-  interface ConfigOptions {
-    sauceLabs?: Record<string, any>;
-    webpack?: Configuration | Configuration[];
-    webpackServer?: Record<string, any>;
-  }
-}
+const path = require('path');
 
 require('dotenv').config();
 
-const webpackConfig: Configuration = {
+/** @type {import('webpack').Configuration} */
+const webpackConfig = {
   devtool: 'inline-source-map',
   mode: 'development',
   target: 'web',
@@ -117,7 +107,10 @@ const customLaunchers = [
   return prev;
 }, {});
 
-export default (config: KarmaConfig) => {
+module.exports = (
+  /** @type {(import('karma').Config)} */
+  config
+) => {
   if (useHeadlessChrome) {
     config.set({
       browsers: [isCI ? 'ChromeHeadlessNoSandbox' : 'ChromeHeadless'],
