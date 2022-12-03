@@ -17,6 +17,7 @@ import { getPropValueFromAttributes } from './getPropValueFromAttributes';
 import { getStaticBindingsForScope } from './getStaticBindingsForScope';
 import { parse } from './parse';
 import { getImportForSource } from './getImportForSource';
+import type { GetClassNameForKeyFn } from '../../../utils/processProps';
 
 const validCssModes = [
   'singleInlineImport',
@@ -33,7 +34,7 @@ export interface ExtractStylesOptions {
   errorCallback?: (str: string, ...args: any[]) => void;
   warnCallback?: (str: string, ...args: any[]) => void;
   evaluateVars?: boolean;
-  getClassNameForKey: (key: string) => string;
+  getClassNameForKey: GetClassNameForKeyFn;
   modulesByAbsolutePath?: Record<string, unknown>;
 }
 

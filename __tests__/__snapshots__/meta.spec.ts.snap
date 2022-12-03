@@ -5,16 +5,15 @@ exports[`npm publish only publishes the intended files 1`] = `
   "
 gatsby-plugin-jsxstyle
 ======================
-- package.json
+- LICENSE
 - gatsby-node.js
 - gatsby-ssr.js
 - index.js
-- LICENSE
+- package.json
 ",
   "
 jsxstyle
 ========
-- package.json
 - LICENSE
 - README.md
 - lib/base64-loader/base64-loader.cjs.js
@@ -100,6 +99,10 @@ jsxstyle
 - lib/types/webpack-plugin/noop.d.ts.map
 - lib/types/webpack-plugin/plugin.d.ts
 - lib/types/webpack-plugin/plugin.d.ts.map
+- lib/types/webpack-plugin/types.d.ts
+- lib/types/webpack-plugin/types.d.ts.map
+- lib/types/webpack-plugin/utils/ModuleCache.d.ts
+- lib/types/webpack-plugin/utils/ModuleCache.d.ts.map
 - lib/types/webpack-plugin/utils/ast/accessSafe.d.ts
 - lib/types/webpack-plugin/utils/ast/accessSafe.d.ts.map
 - lib/types/webpack-plugin/utils/ast/evaluateAstNode.d.ts
@@ -130,8 +133,6 @@ jsxstyle
 - lib/types/webpack-plugin/utils/getExportsFromModuleSource.d.ts.map
 - lib/types/webpack-plugin/utils/makePromise.d.ts
 - lib/types/webpack-plugin/utils/makePromise.d.ts.map
-- lib/types/webpack-plugin/utils/ModuleCache.d.ts
-- lib/types/webpack-plugin/utils/ModuleCache.d.ts.map
 - lib/types/webpack-plugin/utils/typePredicates.d.ts
 - lib/types/webpack-plugin/utils/typePredicates.d.ts.map
 - lib/types/webpack-plugin/utils/wrapFileSystem.d.ts
@@ -145,6 +146,7 @@ jsxstyle
 - lib/webpack-plugin/webpack-plugin.cjs.js.map
 - lib/webpack-plugin/webpack-plugin.es.js
 - lib/webpack-plugin/webpack-plugin.es.js.map
+- package.json
 - preact/package.json
 - webpack-plugin/package.json
 ",

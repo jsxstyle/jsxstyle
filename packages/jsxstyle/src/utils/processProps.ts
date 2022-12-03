@@ -2,10 +2,12 @@ import { dangerousStyleValue } from './dangerousStyleValue';
 import { hyphenateStyleName } from './hyphenateStyleName';
 import { parseStyleProps } from './parseStyleProps';
 
+export type GetClassNameForKeyFn = (key: string) => string;
+
 export function processProps(
   props: Record<string, any>,
   classNamePropKey: string,
-  getClassNameForKey: (key: string) => string,
+  getClassNameForKey: GetClassNameForKeyFn,
   insertRuleCallback?: (rule: string, key: string) => void,
   mediaQuery?: string
 ): Record<string, unknown> | null {
@@ -97,7 +99,7 @@ export function processProps(
       insertRuleCallback &&
         insertRuleCallback(
           `@keyframes ${animationKey} { ${animationValue}}`,
-          animationKey
+          '@' + animationKey
         );
     } else {
       styleValue = dangerousStyleValue(propName, propValue);

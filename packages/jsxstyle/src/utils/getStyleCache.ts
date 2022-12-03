@@ -1,8 +1,9 @@
+import type { CacheObject } from '../webpack-plugin/types';
 import { addStyleToHead } from './addStyleToHead';
 import { getStringHash } from './getStringHash';
-import { processProps } from './processProps';
+import { processProps, type GetClassNameForKeyFn } from './processProps';
 
-type InsertRuleCallback = (rule: string, key: string) => boolean | void;
+type InsertRuleCallback = (rule: string, key: string) => void;
 
 type GetClassNameFn = (key: string) => string;
 
@@ -28,17 +29,26 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 export function getStyleCache() {
-  let cache: Record<string, string> = {};
+  let classNameCache: CacheObject = {};
+  let insertRuleCache: Record<string, true> = {};
   let getClassNameForKey: GetClassNameFn = getStringHash;
   let onInsertRule: InsertRuleCallback | undefined = addStyleToHead;
 
-  const memoizedGetClassNameForKey = (key: string): string => {
-    return (cache[key] = cache[key] || getClassNameForKey(key));
+  const memoizedGetClassNameForKey: GetClassNameForKeyFn = (key) => {
+    return (classNameCache[key] =
+      classNameCache[key] || getClassNameForKey(key));
+  };
+
+  const memoizedOnInsertRule: InsertRuleCallback = (rule, key) => {
+    if (!onInsertRule || insertRuleCache[key]) return;
+    insertRuleCache[key] = true;
+    onInsertRule(rule, key);
   };
 
   const styleCache = {
     reset() {
-      cache = {};
+      classNameCache = {};
+      insertRuleCache = {};
     },
 
     injectOptions(options: {
@@ -61,7 +71,7 @@ export function getStyleCache() {
         props,
         classNamePropKey,
         memoizedGetClassNameForKey,
-        onInsertRule
+        onInsertRule ? memoizedOnInsertRule : undefined
       );
     },
   };
