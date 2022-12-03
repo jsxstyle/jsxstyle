@@ -1,7 +1,8 @@
 import generate from '@babel/generator';
 import * as t from '@babel/types';
 import invariant from 'invariant';
-import { CSSProperties, processProps } from '../../../utils';
+import { type CSSProperties, processProps } from '../../../utils';
+import type { GetClassNameForKeyFn } from '../../../utils/processProps';
 
 export interface Ternary {
   name: string;
@@ -12,7 +13,7 @@ export interface Ternary {
 
 export function extractStaticTernaries(
   ternaries: Ternary[],
-  getClassNameForKey: (key: string) => string,
+  getClassNameForKey: GetClassNameForKeyFn,
   onInsertRule: (rule: string, key: string) => void
 ): /** ternaries grouped into one binary expression */
 t.BinaryExpression | t.ConditionalExpression | null {

@@ -1,9 +1,11 @@
+import type { CacheObject } from '../webpack-plugin/types';
+import type { GetClassNameForKeyFn } from './processProps';
 import { stringHash } from './stringHash';
 
 export const createClassNameGetter = (
-  cacheObject: Record<string, any>,
+  cacheObject: CacheObject,
   classNameFormat?: 'hash'
-) => {
+): GetClassNameForKeyFn => {
   let getClassName: (key: string) => string;
 
   if (classNameFormat === 'hash') {
@@ -11,12 +13,14 @@ export const createClassNameGetter = (
     getClassName = (key: string) => '_' + stringHash(key).toString(36);
   } else {
     // incrementing integer
-    const counterKey: any = Symbol.for('counter');
+    const counterKey = Symbol.for('counter');
     cacheObject[counterKey] = cacheObject[counterKey] || 0;
     getClassName = () => '_x' + (cacheObject[counterKey]++).toString(36);
   }
 
-  return (key: string) => {
-    return (cacheObject[key] = cacheObject[key] || getClassName(key));
+  return (key) => {
+    const className = (cacheObject[key] =
+      cacheObject[key] || getClassName(key));
+    return className;
   };
 };

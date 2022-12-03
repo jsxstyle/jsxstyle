@@ -1,8 +1,10 @@
-import { UserConfigurableOptions } from './utils/ast/extractStyles';
+import type { UserConfigurableOptions } from './utils/ast/extractStyles';
 import type { Volume } from 'memfs';
+import type { GetClassNameForKeyFn } from '../utils/processProps';
 
 export interface CacheObject {
-  [key: string]: unknown;
+  [key: string]: string;
+  [key: symbol]: number;
 }
 
 export type LoaderOptions = UserConfigurableOptions;
@@ -32,7 +34,7 @@ export interface JsxstyleWebpackPluginOptions extends UserConfigurableOptions {
 export interface PluginContext {
   /** Loader options set by the plugin. These options can overridden on a per-loader basis. */
   defaultLoaderOptions: Partial<LoaderOptions>;
-  getClassNameForKey: (key: string) => string;
+  getClassNameForKey: GetClassNameForKeyFn;
   getModules: () => Promise<Record<string, unknown>>;
   memoryFS: MemoryFS;
 }
