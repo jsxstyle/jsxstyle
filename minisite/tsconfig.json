@@ -1,5 +1,5 @@
 {
-  "extends": "../tsconfig.json",
+  "extends": "../config/tsconfig.base.json",
   "include": [
     "components",
     "pages",
@@ -19,6 +19,8 @@
     "noEmit": true,
     "incremental": true,
     "isolatedModules": true,
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "target": "esnext",
+    "module": "esnext"
   }
 }

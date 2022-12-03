@@ -19,7 +19,7 @@ const requireFn = (moduleName: string) => {
   if (!modules.hasOwnProperty(moduleName)) {
     throw new Error('Unsupported module: ' + moduleName);
   }
-  return modules[moduleName];
+  return modules[moduleName as keyof typeof modules];
 };
 
 const DefaultComponent: React.FC = () => (
