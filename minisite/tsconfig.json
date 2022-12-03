@@ -1,6 +1,7 @@
 {
   "extends": "../tsconfig.json",
   "include": [
+    "components",
     "pages",
     "next-env.d.ts"
   ],

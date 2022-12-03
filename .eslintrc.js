@@ -2,6 +2,7 @@
 
 /** @type {import('eslint').Linter.Config} */
 module.exports = {
+  root: true,
   env: {
     browser: true,
     es2021: true,
@@ -36,12 +37,37 @@ module.exports = {
       files: ['**/*.ts', '**/*.tsx'],
       plugins: ['@typescript-eslint'],
       parser: '@typescript-eslint/parser',
+      parserOptions: {
+        project: [
+          'tsconfig.jest.json',
+          'minisite/tsconfig.json',
+          'packages/jsxstyle/tsconfig.json',
+          'examples/jsxstyle-typescript-example/tsconfig.json',
+        ],
+      },
       extends: ['plugin:@typescript-eslint/recommended'],
+    },
+    {
+      files: ['examples/jsxstyle-gatsby-example/**/*'],
+      rules: {
+        'react/react-in-jsx-scope': 2,
+        'react/jsx-uses-react': 2,
+      },
     },
     {
       files: ['**/*.spec.ts', '**/*.spec.tsx'],
       plugins: ['jest'],
       extends: ['plugin:jest/recommended'],
+    },
+    {
+      files: ['minisite/**/*.ts', 'minisite/**/*.tsx'],
+      plugins: ['@next/eslint-plugin-next'],
+      extends: ['plugin:@next/next/recommended'],
+      settings: {
+        next: {
+          rootDir: 'minisite',
+        },
+      },
     },
   ],
 };

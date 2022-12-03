@@ -1,20 +1,17 @@
 {
-  "extends": "./config/tsconfig.base.json",
-  "compilerOptions": {
-    "jsx": "react-jsx",
-    "module": "commonjs",
-    "target": "es2015",
-    "types": [
-      "jest",
-      "node"
-    ]
-  },
-  "include": [
-    "**/*.spec.ts",
-    "**/*.spec.tsx",
-    "**/*.karma.tsx"
-  ],
-  "exclude": [
-    "node_modules"
+  "files": [],
+  "references": [
+    {
+      "path": "tsconfig.jest.json"
+    },
+    {
+      "path": "packages/jsxstyle/tsconfig.json",
+    },
+    {
+      "path": "minisite/tsconfig.json"
+    },
+    {
+      "path": "examples/jsxstyle-typescript-example/tsconfig.json"
+    }
   ]
 }
