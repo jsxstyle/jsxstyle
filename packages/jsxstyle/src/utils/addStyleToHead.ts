@@ -1,4 +1,4 @@
-const canUseDOM = !!(
+export const canUseDOM = !!(
   typeof window !== 'undefined' &&
   window.document &&
   window.document.createElement
@@ -38,7 +38,6 @@ if (
 
 if (canUseDOM && !styleElement) {
   styleElement = document.createElement('style');
-  styleElement.type = 'text/css';
   if (typeof __webpack_nonce__ !== 'undefined') {
     styleElement.nonce = __webpack_nonce__;
   }

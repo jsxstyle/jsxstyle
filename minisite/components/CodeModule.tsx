@@ -1,4 +1,5 @@
-import { Col, Block, useMatchMedia } from 'jsxstyle';
+import { Col, Block } from 'jsxstyle';
+import { styleConstants } from '../utilities/constants';
 
 interface CodeModuleProps {
   title: string;
@@ -6,25 +7,23 @@ interface CodeModuleProps {
 }
 
 export const CodeModule: React.FC<CodeModuleProps> = ({ code, title }) => {
-  const isDarkMode = useMatchMedia('screen and (prefers-color-scheme: dark)');
-
   return (
     <Col
-      backgroundColor={isDarkMode ? '#111' : '#EEE'}
+      backgroundColor={styleConstants.background}
       border="1px solid"
-      borderColor={isDarkMode ? '#333' : '#AAA'}
+      borderColor={styleConstants.border}
       borderRadius={10}
-      color={isDarkMode ? '#FFF' : '#000'}
+      color={styleConstants.foreground}
       overflow="hidden"
     >
       <Block
         flex="0 0 auto"
         height={30}
         lineHeight="30px"
-        backgroundColor={isDarkMode ? '#000' : '#DDD'}
+        backgroundColor={styleConstants.insetBackground}
         paddingH={10}
         borderBottom="1px solid"
-        borderBottomColor={isDarkMode ? '#222' : '#BBB'}
+        borderBottomColor={styleConstants.insetBorder}
       >
         {title}
       </Block>
