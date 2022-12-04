@@ -11,6 +11,7 @@
   "types": "lib/types/react/index.d.ts",
   "files": [
     "lib",
+    "!**/*.tsbuildinfo",
     "preact",
     "webpack-plugin"
   ],

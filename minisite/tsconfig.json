@@ -2,10 +2,14 @@
   "extends": "../config/tsconfig.base.json",
   "include": [
     "components",
+    "hooks",
     "pages",
+    "utilities",
     "next-env.d.ts"
   ],
   "compilerOptions": {
+    "rootDir": ".",
+    "tsBuildInfoFile": "dist/cache.tsbuildinfo",
     "lib": [
       "dom",
       "dom.iterable",

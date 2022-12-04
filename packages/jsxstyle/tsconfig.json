@@ -2,6 +2,8 @@
   "extends": "../../config/tsconfig.base.json",
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
+    "tsBuildInfoFile": "lib/cache.tsbuildinfo",
+    "rootDir": "src",
     "outDir": "lib",
     "declarationDir": "lib/types",
     "lib": [
