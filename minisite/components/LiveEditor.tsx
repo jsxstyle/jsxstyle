@@ -2,6 +2,7 @@ import { Block, Box, useMatchMedia } from 'jsxstyle';
 import { MonacoEditor } from './MonacoEditor';
 import { CodePreview } from './CodePreview';
 import { useState } from 'react';
+import { styleConstants } from '../utilities/constants';
 
 export const LiveEditor: React.FC = () => {
   const isSmallScreen = useMatchMedia('screen and (max-width: 1000px)');
@@ -35,7 +36,7 @@ export default <ExampleComponent />;
       <MonacoEditor
         flex="1 1 300px"
         theme={isDarkMode ? 'vs-dark' : 'vs-light'}
-        backgroundColor={isDarkMode ? '#1e1e1e' : '#AAA'}
+        backgroundColor={styleConstants.editorBackground}
         value={code}
         onChange={setCode}
       />

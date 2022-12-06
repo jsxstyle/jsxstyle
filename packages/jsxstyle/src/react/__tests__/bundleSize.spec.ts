@@ -9,7 +9,10 @@ const gzipAsync = promisify(zlib.gzip);
 
 const entry = 'bundleSize entrypoint';
 
-it('has a runtime size of less than 3KB', async () => {
+// that's what, like 1/50th of your average JPG?
+const ACCEPTABLE_NUMBER_OF_KILOBYTES = 4;
+
+it(`has a runtime size of less than ${ACCEPTABLE_NUMBER_OF_KILOBYTES}KB`, async () => {
   expect.assertions(4);
 
   const inputOptions: RollupOptions = {
@@ -72,5 +75,5 @@ it('has a runtime size of less than 3KB', async () => {
   expect(code).not.toMatch(/require\(['"]jsxstyle['"]\)/);
   expect(code).not.toMatch(/require\(['"]jsxstyle\/utils['"]\)/);
   // check file size
-  expect(gzipLen).toBeLessThan(1024 * 3);
+  expect(gzipLen).toBeLessThan(1024 * ACCEPTABLE_NUMBER_OF_KILOBYTES);
 });

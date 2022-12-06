@@ -26,5 +26,10 @@
     "jsx": "preserve",
     "target": "esnext",
     "module": "esnext"
-  }
+  },
+  "references": [
+    {
+      "path": "../packages/jsxstyle/tsconfig.json"
+    }
+  ]
 }

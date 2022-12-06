@@ -59,6 +59,8 @@ jsxstyle
 - lib/types/react/componentFactory.d.ts.map
 - lib/types/react/index.d.ts
 - lib/types/react/index.d.ts.map
+- lib/types/react/makeCustomProperties.d.ts
+- lib/types/react/makeCustomProperties.d.ts.map
 - lib/types/react/styleCache.d.ts
 - lib/types/react/styleCache.d.ts.map
 - lib/types/react/types.d.ts
