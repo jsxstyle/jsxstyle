@@ -21,7 +21,6 @@ describe('npm publish', () => {
 ${pkg.packageJson.name}
 ${pkg.packageJson.name.replace(/./g, '=')}
 ${fileList
-  .sort()
   .map((fileName) => {
     // chunk filenames contain a hash that will change across builds
     const updatedFileName = fileName.replace(
@@ -30,6 +29,7 @@ ${fileList
     );
     return `- ${updatedFileName}`;
   })
+  .sort()
   .join('\n')}
 `
         )

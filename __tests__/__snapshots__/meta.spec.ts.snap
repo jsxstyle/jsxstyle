@@ -25,10 +25,10 @@ jsxstyle
 - lib/chunks/componentStyles.[hash].cjs.js.map
 - lib/chunks/componentStyles.[hash].es.js
 - lib/chunks/componentStyles.[hash].es.js.map
-- lib/chunks/getStyleCache.[hash].es.js
-- lib/chunks/getStyleCache.[hash].es.js.map
 - lib/chunks/getStyleCache.[hash].cjs.js
 - lib/chunks/getStyleCache.[hash].cjs.js.map
+- lib/chunks/getStyleCache.[hash].es.js
+- lib/chunks/getStyleCache.[hash].es.js.map
 - lib/extract-styles/extract-styles.cjs.js
 - lib/extract-styles/extract-styles.cjs.js.map
 - lib/extract-styles/extract-styles.es.js
