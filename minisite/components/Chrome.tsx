@@ -30,13 +30,7 @@ export const Chrome: React.FC<ChromeProps> = ({
             sans-serif;
           font-size: 16px;
           line-height: 1.2;
-        }
-
-        @media screen and (prefers-color-scheme: dark) {
-          html,
-          body {
-            background-color: #333;
-          }
+          background-color: var(--jsxstyle-pageBackground);
         }
 
         * {

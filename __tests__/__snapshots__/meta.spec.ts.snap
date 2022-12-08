@@ -75,6 +75,8 @@ jsxstyle
 - lib/types/utils/createClassNameGetter.d.ts.map
 - lib/types/utils/dangerousStyleValue.d.ts
 - lib/types/utils/dangerousStyleValue.d.ts.map
+- lib/types/utils/generateCustomPropertiesFromVariants.d.ts
+- lib/types/utils/generateCustomPropertiesFromVariants.d.ts.map
 - lib/types/utils/getStringHash.d.ts
 - lib/types/utils/getStringHash.d.ts.map
 - lib/types/utils/getStyleCache.d.ts

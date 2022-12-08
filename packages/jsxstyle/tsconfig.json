@@ -11,10 +11,7 @@
       "dom"
     ],
     "module": "ESNext",
-    "target": "ESNext",
-    "types": [
-      "node"
-    ]
+    "target": "ESNext"
   },
   "include": [
     "src"

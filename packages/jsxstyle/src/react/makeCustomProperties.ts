@@ -1,17 +1,10 @@
 import { canUseDOM } from '../utils/addStyleToHead';
+import {
+  generateCustomPropertiesFromVariants,
+  type VariantMap,
+} from '../utils/generateCustomPropertiesFromVariants';
 
 declare const __webpack_nonce__: string | undefined;
-
-type PropMap<KPropKeys extends string> = {
-  [K in KPropKeys]?: string | number;
-} & {
-  mediaQuery?: string;
-};
-
-type VariantMap<K extends string, KPropKeys extends string> = Record<
-  K,
-  PropMap<KPropKeys>
-> & { default: { [PK in KPropKeys]: string | number } };
 
 interface BuildOptions {
   /**
@@ -29,22 +22,22 @@ interface BuildOptions {
 }
 
 const makeCustomPropertiesInternal = <
-  KPropKeys extends string,
-  TVariantNames extends string
+  KPropKey extends string,
+  TVariantName extends string
 >(
-  variantMap: VariantMap<TVariantNames, KPropKeys>
+  variantMap: VariantMap<TVariantName, KPropKey>
 ) => ({
   addVariant: <TName extends string>(
     variantName: TName,
     props: {
-      [Key in KPropKeys]?: string | number;
+      [Key in KPropKey]?: string | number;
     } & {
       /** An optional media query that will activate this variant */
       mediaQuery?: string;
     }
   ) => {
     variantMap[variantName as any] = props;
-    return makeCustomPropertiesInternal<KPropKeys, TVariantNames | TName>(
+    return makeCustomPropertiesInternal<KPropKey, TVariantName | TName>(
       variantMap as any
     );
   },
@@ -52,22 +45,18 @@ const makeCustomPropertiesInternal = <
   build: ({ selector, namespace = 'jsxstyle' }: BuildOptions = {}): {
     /** Only available when NODE_ENV is not "production" */
     reset: () => void;
-    setVariant: (variantName: TVariantNames) => void;
-    variants: readonly TVariantNames[];
+    setVariant: (variantName: TVariantName | null) => void;
+    variants: readonly TVariantName[];
   } & {
-    [K in KPropKeys]: string;
+    [K in KPropKey]: string;
   } & {
-    [K in TVariantNames as `activate${Capitalize<K>}`]: () => void;
+    [K in TVariantName as `activate${Capitalize<K>}`]: () => void;
   } => {
     let overrideElement: Element | null = null;
-    let insertRule: ((rule: string) => void) | null = null;
     let reset: (() => void) | undefined;
 
-    /** Prefix for the override class name */
-    const overrideClassNamePrefix = namespace + '-override__';
-
-    /** Prefix for the CSS custom property names */
-    const customPropPrefix = `--${namespace}-`;
+    const { customProperties, overrideClasses, styles, variantNames } =
+      generateCustomPropertiesFromVariants(variantMap, namespace);
 
     if (canUseDOM) {
       const styleElement = document.createElement('style');
@@ -78,12 +67,13 @@ const makeCustomPropertiesInternal = <
         document.createTextNode('/* jsxstyle custom properties */')
       );
       document.head.appendChild(styleElement);
-      insertRule = (rule: string) => {
-        const sheet = styleElement.sheet;
-        if (sheet) {
-          sheet.insertRule(rule, sheet.cssRules.length);
-        }
-      };
+
+      const sheet = styleElement.sheet;
+      if (sheet) {
+        styles.forEach((cssRule) =>
+          sheet.insertRule(cssRule, sheet.cssRules.length)
+        );
+      }
 
       // don't want folks resetting this in prod
       if (process.env.NODE_ENV !== 'production') {
@@ -102,54 +92,21 @@ const makeCustomPropertiesInternal = <
       }
     }
 
-    const propNames: KPropKeys[] = Object.keys(variantMap.default) as any;
-    const variantNames: TVariantNames[] = Object.keys(variantMap) as any;
-
-    let defaultCss = '';
-    for (const propName of propNames) {
-      const propValue = variantMap.default[propName];
-      defaultCss += `${customPropPrefix}${propName}: ${propValue};`;
-    }
-
-    const setVariant = (variantName: TVariantNames): void => {
+    const setVariant = (variantName: TVariantName | null): void => {
       if (!overrideElement) return;
       overrideElement.classList.remove(
-        ...variantNames.map((key) => `${overrideClassNamePrefix}${key}`)
+        ...variantNames.map((key) => overrideClasses[key])
       );
-      overrideElement.classList.add(`${overrideClassNamePrefix}${variantName}`);
+      if (variantName) {
+        overrideElement.classList.add(overrideClasses[variantName]);
+      }
     };
 
-    const returnValue: Record<string, any> = {};
-
-    insertRule?.(`:root { ${defaultCss} }`);
-
+    const returnValue: Record<string, any> = { ...customProperties };
     for (const variantName of variantNames) {
       returnValue[
         `activate${variantName[0].toUpperCase()}${variantName.slice(1)}`
       ] = () => void setVariant(variantName);
-
-      const variant = variantMap[variantName as keyof typeof variantMap];
-      let cssBody = '';
-      for (const propName of propNames) {
-        if (propName === 'mediaQuery') break;
-        const propValue = variant[propName];
-        if (propValue != null) {
-          cssBody += `${customPropPrefix}${propName}: ${propValue};`;
-        }
-      }
-
-      const fullClassName = `.${overrideClassNamePrefix}${variantName}`;
-
-      insertRule?.(
-        `:root${fullClassName}, :root ${fullClassName} { ${cssBody} }`
-      );
-      if (variant.mediaQuery) {
-        insertRule?.(`@media ${variant.mediaQuery} { :root { ${cssBody} } }`);
-      }
-    }
-
-    for (const key of propNames) {
-      returnValue[key] = `var(--jsxstyle-${key})`;
     }
 
     returnValue.reset = reset || (() => {});

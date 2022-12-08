@@ -3,10 +3,7 @@ import type { NextConfig } from 'next/types';
 import { JsxstyleWebpackPlugin } from './plugin';
 
 export const jsxstyleNextjsPlugin = (
-  pluginOptions: Omit<
-    JsxstyleWebpackPluginOptions,
-    'cssMode' | 'cacheObject'
-  > = {}
+  pluginOptions: Omit<JsxstyleWebpackPluginOptions, 'cacheObject'> = {}
 ) => {
   // we keep the style cache object in memory here so that it gets shared between client and server builds
   const cacheObject: CacheObject = {};
@@ -17,9 +14,9 @@ export const jsxstyleNextjsPlugin = (
       webpack: (config, context) => {
         config.plugins.push(
           new JsxstyleWebpackPlugin({
+            cssMode: 'styled-jsx',
             ...pluginOptions,
             cacheObject,
-            cssMode: 'styled-jsx',
           })
         );
 

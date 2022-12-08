@@ -3,10 +3,11 @@ import * as jsxstyle from 'jsxstyle';
 import * as jsxRuntime from 'react/jsx-runtime';
 
 import { useEffect, useReducer } from 'react';
-import { Col, Block } from 'jsxstyle';
+import { Row, Col, Block } from 'jsxstyle';
 import { useAsyncModule } from '../hooks/useAsyncModule';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import { CodeModule } from '../components/CodeModule';
+import { styleConstants } from '../utilities/constants';
 
 const modules = {
   react: React,
@@ -141,6 +142,24 @@ const CodePreviewPage: React.FC = () => {
 
   return (
     <Col gap={20} padding={20}>
+      <Row
+        border="1px solid"
+        borderColor={styleConstants.border}
+        padding={3}
+        gap={3}
+      >
+        {styleConstants.variants.map((variantName) => (
+          <button
+            key={variantName}
+            onClick={() => styleConstants.setVariant(variantName)}
+          >
+            {variantName}
+          </button>
+        ))}
+        <button onClick={() => styleConstants.setVariant(null)}>
+          remove override
+        </button>
+      </Row>
       <transpileResult.component />
       <CodeModule title="Extracted CSS" code={transpileResult.css} />
       <style jsx global>
@@ -156,13 +175,7 @@ const CodePreviewPage: React.FC = () => {
             sans-serif;
           font-size: 16px;
           line-height: 1.2;
-        }
-
-        @media screen and (prefers-color-scheme: dark) {
-          html,
-          body {
-            background-color: #333;
-          }
+          background-color: var(--jsxstyle-pageBackground);
         }
 
         * {

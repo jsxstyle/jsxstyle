@@ -1,9 +1,10 @@
 // @ts-check
 
-const { jsxstyleNextjsPlugin } = require('jsxstyle/lib/nextjs-plugin');
+// TODO(meyer) re-enable this plugin
+// const { jsxstyleNextjsPlugin } = require('jsxstyle/lib/nextjs-plugin');
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 
-module.exports = jsxstyleNextjsPlugin()({
+module.exports = {
   typescript: {
     tsconfigPath: './tsconfig.json',
   },
@@ -47,4 +48,4 @@ module.exports = jsxstyleNextjsPlugin()({
       .trim();
     return gitHash;
   },
-});
+};
