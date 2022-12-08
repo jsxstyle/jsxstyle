@@ -23,7 +23,7 @@ export const CodeModule: React.FC<CodeModuleProps> = ({ code, title }) => {
         backgroundColor={styleConstants.insetBackground}
         paddingH={10}
         borderBottom="1px solid"
-        borderBottomColor={styleConstants.insetBorder}
+        borderBottomColor={styleConstants.border}
       >
         {title}
       </Block>

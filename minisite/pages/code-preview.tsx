@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as jsxstyle from 'jsxstyle';
 import * as jsxRuntime from 'react/jsx-runtime';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useReducer } from 'react';
 import { Col, Block } from 'jsxstyle';
 import { useAsyncModule } from '../hooks/useAsyncModule';
 import { ErrorBoundary } from '../components/ErrorBoundary';
@@ -22,20 +22,33 @@ const requireFn = (moduleName: string) => {
   return modules[moduleName as keyof typeof modules];
 };
 
-const DefaultComponent: React.FC = () => (
-  <Block padding={20}>Type out some React code in the editor</Block>
-);
+const DefaultComponent: React.FC = () => null;
+
+interface TranspileResult {
+  component: React.FC;
+  dispose?: (() => {}) | null;
+  css: string;
+}
+
+// using a reducer here to access previous state before setting new state (gross)
+const reducer: React.Reducer<TranspileResult, TranspileResult> = (
+  prevState,
+  action
+) => {
+  try {
+    prevState.dispose?.();
+  } catch {}
+  return action;
+};
 
 const CodePreviewPage: React.FC = () => {
   const transpileModule = useAsyncModule(
     () => import('../utilities/transpile')
   );
 
-  const [transpiledCode, setTranspiledCode] = useState<{
-    component: React.FC;
-    css: string;
-  }>({
+  const [transpileResult, setTranspileResult] = useReducer(reducer, {
     component: DefaultComponent,
+    dispose: null,
     css: '',
   });
 
@@ -58,8 +71,12 @@ const CodePreviewPage: React.FC = () => {
           // cssFileName,
           browserFriendlyJs,
         } = transpile(code);
-        const moduleExports: { default: JSX.Element | null } = {
+        const moduleExports: {
+          default: React.ComponentType | null;
+          dispose?: (() => {}) | null;
+        } = {
           default: null,
+          dispose: null,
         };
         try {
           new Function(
@@ -77,14 +94,20 @@ const CodePreviewPage: React.FC = () => {
             '/'
           );
 
-          const element = moduleExports.default;
-          if (element) {
-            setTranspiledCode({
+          const ExportedComponent = moduleExports.default;
+          const dispose = moduleExports.dispose;
+          if (ExportedComponent) {
+            setTranspileResult({
               css,
-              component: () => <ErrorBoundary>{element}</ErrorBoundary>,
+              dispose,
+              component: () => (
+                <ErrorBoundary>
+                  <ExportedComponent />
+                </ErrorBoundary>
+              ),
             });
           } else {
-            setTranspiledCode({
+            setTranspileResult({
               css: '',
               component: () => (
                 <Block>Your code is missing a default export.</Block>
@@ -92,7 +115,7 @@ const CodePreviewPage: React.FC = () => {
             });
           }
         } catch (error) {
-          setTranspiledCode({
+          setTranspileResult({
             css: '',
             component: () => (
               <Block>Could not evaluate your code: {error + ''}</Block>
@@ -101,7 +124,7 @@ const CodePreviewPage: React.FC = () => {
         }
       } catch (error) {
         console.error('Transpile error: %o', error);
-        setTranspiledCode({
+        setTranspileResult({
           css: '',
           component: () => (
             <Block>Something really went wrong: {error + ''}</Block>
@@ -118,11 +141,11 @@ const CodePreviewPage: React.FC = () => {
 
   return (
     <Col gap={20} padding={20}>
-      <transpiledCode.component />
-      <CodeModule title="Extracted CSS" code={transpiledCode.css} />
+      <transpileResult.component />
+      <CodeModule title="Extracted CSS" code={transpileResult.css} />
       <style jsx global>
         {`
-          ${transpiledCode.css}
+          ${transpileResult.css}
         `}
       </style>
       <style jsx global>{`

@@ -27,33 +27,62 @@ export const transpile = (code: string) => {
     })(),
   });
 
-  const unsupportedExport = () => {
-    throw new Error('Only default exports are supported');
-  };
-
   babelTraverse(ast, {
-    ExportDefaultDeclaration(path) {
-      if (
-        path.node.declaration.type === 'ClassDeclaration' ||
-        path.node.declaration.type === 'TSDeclareFunction' ||
-        path.node.declaration.type === 'FunctionDeclaration'
-      ) {
-        throw new Error(
-          'Unsupported export declaration type: ' + path.node.declaration.type
-        );
+    ExportDefaultDeclaration: (path) => {
+      const dec = path.node.declaration;
+      let exportedExpression: t.Expression;
+      if (dec.type === 'ClassDeclaration') {
+        exportedExpression = { ...dec, type: 'ClassExpression' };
+      } else if (dec.type === 'FunctionDeclaration') {
+        exportedExpression = { ...dec, type: 'FunctionExpression' };
+      } else if (dec.type === 'Identifier') {
+        exportedExpression = dec;
+      } else {
+        throw new Error('Unsupported declaration type: ' + dec.type);
       }
 
       path.replaceWith(
         t.assignmentExpression(
           '=',
           t.memberExpression(t.identifier('exports'), t.identifier('default')),
-          path.node.declaration
+          exportedExpression
         )
       );
     },
 
-    ExportNamedDeclaration: unsupportedExport,
-    ExportAllDeclaration: unsupportedExport,
+    ExportNamedDeclaration: (path) => {
+      const dec = path.node.declaration;
+      if (!dec) {
+        throw new Error('Missing declaration');
+      }
+
+      if (dec.type === 'VariableDeclaration') {
+        path.replaceWithMultiple(
+          dec.declarations.map((declarator) => {
+            if (!declarator.init) {
+              throw new Error('An exported variable declaration needs a value');
+            }
+            if (declarator.id.type !== 'Identifier') {
+              throw new Error('');
+            }
+            return t.assignmentExpression(
+              '=',
+              t.memberExpression(
+                t.identifier('exports'),
+                t.stringLiteral(declarator.id.name),
+                true
+              ),
+              declarator.init
+            );
+          })
+        );
+        return;
+      }
+    },
+
+    ExportAllDeclaration: () => {
+      throw new Error('Only named and default exports are supported');
+    },
 
     ImportDeclaration(path) {
       path.replaceWithMultiple(

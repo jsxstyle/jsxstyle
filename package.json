@@ -15,7 +15,7 @@
     "release": "changeset publish",
     "release:canary": "changeset publish --tag canary",
     "version:canary": "changeset version --snapshot canary",
-    "reset": "rimraf packages/{*,*/*}/lib/",
+    "reset": "rimraf packages/{*,*/*}/lib/ minisite/.next/",
     "update-readme": "echo \"$(<./misc/monorepo-preamble.md)\\n\\n---\\n\\n$(<./packages/jsxstyle/README.md)\" > README.md",
     "karma": "karma start",
     "karma-headless-chrome": "karma start",

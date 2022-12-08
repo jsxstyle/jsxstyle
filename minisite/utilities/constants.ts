@@ -3,19 +3,17 @@ import { EXPERIMENTAL_makeCustomProperties } from 'jsxstyle';
 export const styleConstants = EXPERIMENTAL_makeCustomProperties({
   foreground: '#333',
   background: '#FFF',
-  border: '#EEE',
+  border: '#BBB',
   editorBackground: '#AAA',
   insetBackground: '#DDD',
-  insetBorder: '#BBB',
 })
   .addVariant('darkMode', {
     mediaQuery: 'screen and (prefers-color-scheme: dark)',
     foreground: '#FFF',
-    background: '#000',
-    border: '#111',
+    background: '#222',
+    border: '#666',
     editorBackground: '#1e1e1e',
     insetBackground: '#000',
-    insetBorder: '#222',
   })
   .build();
 

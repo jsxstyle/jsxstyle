@@ -8,22 +8,33 @@ export const LiveEditor: React.FC = () => {
   const isSmallScreen = useMatchMedia('screen and (max-width: 1000px)');
   const isDarkMode = useMatchMedia('screen and (prefers-color-scheme: dark)');
   const [code, setCode] =
-    useState(`import { Block, useMatchMedia } from 'jsxstyle';
+    useState(`import { Block, useMatchMedia, EXPERIMENTAL_makeCustomProperties } from 'jsxstyle';
 
-function ExampleComponent() {
+const styleProps = EXPERIMENTAL_makeCustomProperties({
+  foreground: 'black',
+  background: 'white',
+}).addVariant('darkMode', {
+  mediaQuery: 'screen and (prefers-color-scheme: dark)',
+  foreground: 'white',
+  background: 'black',
+}).build();
+
+export default function ExampleComponent() {
   const isDarkMode = useMatchMedia('screen and (prefers-color-scheme: dark)');
   return (
     <Block
       padding={20}
-      color={isDarkMode ? 'white' : 'black'}
-      backgroundColor={isDarkMode ? 'black' : 'white'}
+      color={styleProps.foreground}
+      backgroundColor={styleProps.background}
     >
       Dark mode is{isDarkMode ? '' : ' not'} active {isDarkMode ? '🌃' : '🌅'}
     </Block>
   );
 }
 
-export default <ExampleComponent />;
+// jsxstyle custom properties objects should be reset in a hot-reloading environment.
+// Webpack example: \`module.hot.dispose(styleProps.reset);\`
+export const dispose = () => styleProps.reset();
 `);
 
   return (
