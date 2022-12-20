@@ -1,5 +1,6 @@
 import { styleCache } from './styleCache';
 import { createElement } from 'react';
+import type * as React from 'react';
 import {
   ExtractProps,
   CustomPropsObj,
@@ -18,7 +19,7 @@ const defaultTagName = 'div';
 
 export const makeComponent = <
   P extends ExtractProps<C>,
-  K extends keyof P,
+  K extends Extract<keyof P, string>,
   F extends CustomPropsObj,
   C extends ComponentOrIntrinsicElement = 'div'
 >({
@@ -31,13 +32,13 @@ export const makeComponent = <
   const allowedProps: Record<string, true> = {};
   if (Array.isArray(componentProps)) {
     for (const propName of componentProps) {
-      allowedProps[propName as string] = true;
+      allowedProps[propName] = true;
     }
   }
 
   const customComponent = (
     props: MakeComponentProps<P, K, F>
-  ): React.ReactElement<any, any> => {
+  ): React.ReactElement => {
     const componentProps: Record<string, any> = {};
     const styleProps: Record<string, any> = {};
     // merging default style props here rather than using `defaultProps` so that the default props don't show up in React dev tools.
@@ -45,7 +46,7 @@ export const makeComponent = <
 
     // separate component props and style props
     for (const key in props) {
-      const value = (props as any)[key];
+      const value = props[key];
 
       if (allowedProps[key]) {
         componentProps[key] = value;
@@ -72,7 +73,7 @@ export const makeComponent = <
     return createElement(
       component || defaultTagName,
       componentProps,
-      (props as any).children
+      props.children
     );
   };
 
@@ -81,7 +82,7 @@ export const makeComponent = <
   /** Create a new component that inherits `customProps` from the parent component */
   customComponent.makeComponent = <
     P2 extends ExtractProps<C2>,
-    K2 extends keyof P2,
+    K2 extends Extract<keyof P2, string>,
     C2 extends ComponentOrIntrinsicElement
   >(
     options: MakeComponentOptionsWithoutCustomProps<P2, K2, C2>

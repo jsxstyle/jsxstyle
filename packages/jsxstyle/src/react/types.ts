@@ -1,4 +1,5 @@
 import type { CSSProperties, CommonComponentProp } from '../utils';
+import type * as React from 'react';
 
 export type IntrinsicElement = keyof JSX.IntrinsicElements;
 
