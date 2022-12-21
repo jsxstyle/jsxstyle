@@ -118,15 +118,6 @@ module.exports = {
       cwd: path.join(__dirname, 'packages', 'jsxstyle'),
       babelHelpers: 'bundled',
       extensions: [...DEFAULT_EXTENSIONS, '.ts', '.tsx'],
-      presets: [['@babel/preset-env', { loose: true }]],
-      plugins: [
-        [
-          require.resolve('./misc/babel-plugin-pure-annotation'),
-          {
-            functionNames: ['factory', 'depFactory', 'componentFactory'],
-          },
-        ],
-      ],
     }),
   ],
   external: [
