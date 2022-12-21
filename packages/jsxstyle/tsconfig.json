@@ -8,7 +8,8 @@
     "declarationDir": "lib/types",
     "lib": [
       "es6",
-      "dom"
+      "dom",
+      "ES2021.WeakRef"
     ],
     "module": "ESNext",
     "target": "ESNext"

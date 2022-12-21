@@ -1,0 +1,21 @@
+{
+  "name": "jsxstyle-devtools",
+  "version": "0.0.0",
+  "private": true,
+  "devDependencies": {
+    "@types/chrome": "^0.0.204",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "css-loader": "^6.7.3",
+    "html-webpack-plugin": "^5.5.0",
+    "jsxstyle": "^2.5.1",
+    "mini-css-extract-plugin": "^2.7.2",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1"
+  },
+  "scripts": {
+    "build": "webpack build"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "description": "Adds a panel to the developer tools that enables advanced jsxstyle styling functionality.",
+  "manifest_version": 3,
+  "name": "jsxstyle-devtools",
+  "version": "0.0",
+  "author": "Mike Meyer",
+  "homepage_url": "https://jsx.style",
+  "icons": {
+    "48": "icons/star.png"
+  },
+  "permissions": [
+    "scripting"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "devtools_page": "lib/devtools.html"
+}

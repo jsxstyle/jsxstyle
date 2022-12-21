@@ -42,6 +42,7 @@ module.exports = {
           'tsconfig.jest.json',
           'minisite/tsconfig.json',
           'packages/jsxstyle/tsconfig.json',
+          'packages/jsxstyle-devtools/tsconfig.json',
           'examples/jsxstyle-typescript-example/tsconfig.json',
         ],
       },

@@ -19,7 +19,41 @@ interface BuildOptions {
    * Defaults to `jsxstyle`.
    */
   namespace?: string;
+  /**
+   * Identifier that will be used in jsxstyle dev tools to expose.
+   */
+  name?: string;
 }
+
+const updateStylesForVariantMap = (variantMap: VariantMap<string, string>) => {
+  const { styles } = generateCustomPropertiesFromVariants(
+    variantMap,
+    namespace
+  );
+
+  if (canUseDOM) {
+    const styleElement = document.createElement('style');
+    if (typeof __webpack_nonce__ !== 'undefined') {
+      styleElement.nonce = __webpack_nonce__;
+    }
+    styleElement.appendChild(
+      document.createTextNode('/* jsxstyle custom properties */')
+    );
+    document.head.appendChild(styleElement);
+
+    const sheet = styleElement.sheet;
+    if (sheet) {
+      styles.forEach((cssRule) =>
+        sheet.insertRule(cssRule, sheet.cssRules.length)
+      );
+    }
+
+    // don't want folks resetting this in prod
+    if (process.env.NODE_ENV !== 'production') {
+      reset = () => void document.head.removeChild(styleElement);
+    }
+  }
+};
 
 const makeCustomPropertiesInternal = <
   KPropKey extends string,
@@ -42,7 +76,7 @@ const makeCustomPropertiesInternal = <
     );
   },
 
-  build: ({ selector, namespace = 'jsxstyle' }: BuildOptions = {}): {
+  build: ({ selector, namespace = 'jsxstyle', name }: BuildOptions = {}): {
     /** Only available when NODE_ENV is not "production" */
     reset: () => void;
     setVariant: (variantName: TVariantName | null) => void;
@@ -79,7 +113,9 @@ const makeCustomPropertiesInternal = <
       if (process.env.NODE_ENV !== 'production') {
         reset = () => void document.head.removeChild(styleElement);
       }
+    }
 
+    if (canUseDOM) {
       if (selector) {
         overrideElement = document.querySelector(selector);
         if (!overrideElement && process.env.NODE_ENV !== 'production') {

@@ -7,3 +7,4 @@ size-plugin.json
 misc/saucelabs-data.json
 /.rollup.cache
 *.tsbuildinfo
+packages/jsxstyle-devtools/lib
