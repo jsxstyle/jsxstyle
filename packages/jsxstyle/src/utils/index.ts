@@ -10,5 +10,5 @@ export { getStyleCache } from './getStyleCache';
 export { processProps } from './processProps';
 export { hyphenateStyleName } from './hyphenateStyleName';
 export { stringHash } from './stringHash';
-export type { CSSProperties, AnimatableCSSProperties } from './types';
+export type { CSSProperties, AnimatableCSSProperties, Falsey } from './types';
 export type { CommonComponentProp } from './parseStyleProps';

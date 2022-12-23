@@ -2,13 +2,16 @@ import type { CSSProperties, CommonComponentProp } from '../utils';
 
 export type IntrinsicElement = keyof JSX.IntrinsicElements;
 
+export type ComponentOrIntrinsicElement =
+  | IntrinsicElement
+  | ((props: any) => React.ReactElement<any, any> | null)
+  | React.ComponentClass<any>;
+
 export type ValidComponentPropValue =
   | false
   | null
   | undefined
-  | IntrinsicElement
-  | React.FunctionComponent<any>
-  | React.ComponentClass<any>;
+  | ComponentOrIntrinsicElement;
 
 type CommonReactComponentProp = 'className' | CommonComponentProp;
 
@@ -25,7 +28,7 @@ export type ExtractProps<T extends ValidComponentPropValue> = T extends
   ? JSX.IntrinsicElements['div']
   : T extends IntrinsicElement
   ? JSX.IntrinsicElements[T]
-  : T extends React.FunctionComponent<infer FCProps>
+  : T extends (props: infer FCProps) => React.ReactElement<any, any> | null
   ? keyof FCProps extends never
     ? Record<string, unknown>
     : FCProps
@@ -40,6 +43,10 @@ type UpperCaseLetter = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J'
 
 /** Generic that extracts the keys of event handlers from an object of props. */
 type EventHandlerKeys<T> = Extract<keyof T, `on${UpperCaseLetter}${string}`>;
+
+/** Props that will be passed through to whatever component is specified */
+// export interface StylableComponentProps<T extends ValidComponentPropValue>
+//   extends Falsey<Pick<ExtractProps<T>, 'className' | 'style'>> {};
 
 /** Props that will be passed through to whatever component is specified */
 export type StylableComponentProps<T extends ValidComponentPropValue> = Pick<
@@ -72,3 +79,49 @@ export type JsxstyleProps<T extends ValidComponentPropValue = 'div'> = (
 ) &
   StylableComponentProps<T> &
   CSSProperties;
+
+export type CustomPropsObj = Record<
+  string,
+  (value: any) => CSSProperties | null
+>;
+
+/** Props that should be allowed on a `makeComponent` component */
+type DefaultProp = 'children';
+
+export type MakeComponentProps<
+  P extends Record<string, any>,
+  K extends keyof P,
+  F extends CustomPropsObj
+> = {
+  // CSS properties that don't collide with customProps or componentProps
+  [K1 in Exclude<
+    keyof CSSProperties,
+    K | keyof F | DefaultProp
+  >]: CSSProperties[K1];
+} & {
+  // componentProps that don't collide with default props or style props
+  [K1 in Exclude<K, keyof F | DefaultProp>]: P[K1];
+} & {
+  // customProps that don't collide with componentProps
+  [K1 in keyof F]?: Parameters<F[K1]>[0];
+} & Pick<P, DefaultProp>;
+
+export interface MakeComponentOptionsWithoutCustomProps<
+  P extends ExtractProps<C>,
+  K extends keyof P,
+  C extends ComponentOrIntrinsicElement
+> {
+  component?: C;
+  componentProps?: K[];
+  defaultStyles?: CSSProperties | null;
+  displayName: string;
+}
+
+export interface MakeComponentOptions<
+  P extends ExtractProps<C>,
+  K extends keyof P,
+  F extends CustomPropsObj,
+  C extends ComponentOrIntrinsicElement
+> extends MakeComponentOptionsWithoutCustomProps<P, K, C> {
+  customProps?: F;
+}

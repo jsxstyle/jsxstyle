@@ -11,6 +11,7 @@ export type { StylableComponentProps } from './types';
 export { styleCache as cache };
 export { useMatchMedia } from './useMatchMedia';
 export { makeCustomProperties as EXPERIMENTAL_makeCustomProperties } from './makeCustomProperties';
+export { makeComponent as EXPERIMENTAL_makeComponent } from './makeComponent';
 
 let depFactory: any = componentFactory;
 
