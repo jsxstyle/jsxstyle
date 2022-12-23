@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import * as React from 'react';
 
 import { Block } from 'jsxstyle';
@@ -36,8 +37,8 @@ export const ValidInputComponent = () => (
   <Block
     component="input"
     className="hello"
+    value="wow"
     props={{
-      value: 'wow',
       // @ts-expect-error
       typeError: true,
     }}
@@ -90,16 +91,6 @@ export const FCWithStyleProps = () => (
       style={{ width: 1234 }}
     />
     <Block component={StyleNumberFC} style={123} />
-    {React.createElement(Block, {
-      component: StyleNumberFC,
-      // @ts-expect-error style is a number
-      style: 'banana',
-    })}
-    {React.createElement(Block, {
-      component: StyleNumberFC,
-      // @ts-expect-error this appears to be a limitation of createElement typing. Hmmmm.
-      style: 1234,
-    })}
     <Block
       component={StyleNeverFC}
       // @ts-expect-error
