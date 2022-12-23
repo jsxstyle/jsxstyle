@@ -1,3 +1,5 @@
+import { dangerousStyleValue } from './dangerousStyleValue';
+
 type PropMap<KPropKeys extends string> = {
   [K in KPropKeys]?: string | number;
 } & {
@@ -38,8 +40,8 @@ export const generateCustomPropertiesFromVariants = <
     for (const propName of propNames) {
       if (propName === 'mediaQuery') break;
       customProperties[propName] = `var(${customPropPrefix}${propName})`;
-      const propValue = variant[propName];
-      if (propValue != null) {
+      const propValue = dangerousStyleValue('', variant[propName]);
+      if (propValue) {
         cssBody += `${customPropPrefix}${propName}: ${propValue};`;
       }
     }
