@@ -1,3 +1,10 @@
+chrome.devtools.inspectedWindow.eval(
+  'window.__JSXSTYLE_RUNTIME__',
+  (result, error) => {
+    console.log(result, error);
+  }
+);
+
 chrome.devtools.panels.create(
   'jsxstyle',
   '/icons/star.png',

@@ -1,4 +1,5 @@
 import { Row } from 'jsxstyle';
+import { styleConstants } from '../constants';
 
 export const DevToolsPanel: React.FC = () => {
   function handleError(error: any) {
@@ -39,7 +40,12 @@ export const DevToolsPanel: React.FC = () => {
   };
 
   return (
-    <Row padding={20} gap={10}>
+    <Row
+      padding={20}
+      gap={10}
+      backgroundColor={styleConstants.pageBackground}
+      color={styleConstants.pageForeground}
+    >
       <button onClick={handleButtonBackgroundClick}>
         Reddinate current element
       </button>

@@ -32,7 +32,7 @@ module.exports = {
       inject: true,
       chunks: ['devtoolsPanel'],
       filename: 'devtoolsPanel.html',
-      templateContent: `<!doctype html><div id=".jsxstyle-devtools"></div>`,
+      templateContent: `<!doctype html><head></head><div id=".jsxstyle-devtools"></div>`,
     }),
     new MiniCssExtractPlugin({
       filename: '[name].css',
