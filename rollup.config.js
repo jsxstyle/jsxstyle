@@ -3,6 +3,7 @@
 const { DEFAULT_EXTENSIONS } = require('@babel/core');
 const invariant = require('invariant');
 const path = require('path');
+const fs = require('fs').promises;
 const rollupPluginBabel = require('@rollup/plugin-babel').default;
 const rollupPluginResolve = require('@rollup/plugin-node-resolve').default;
 const rollupPluginTypescript = require('@rollup/plugin-typescript').default;
@@ -12,18 +13,15 @@ const supportedModuleFormats = ['cjs', 'es'];
 
 const topLevelModules = ['preact', 'webpack-plugin'];
 
+/** @type {Record<string, Partial<Record<'require' | 'import' | 'types', string>>>} */
+const exportsObject = {};
+
 /** @type {import('rollup').Plugin} */
 const rollupPackageJsonPlugin = {
   name: 'module-package-json-files',
   async renderChunk(code, chunk, options) {
-    if (options.format !== 'cjs' || !chunk.isEntry) return null;
-
-    const jsxstyleDir = path.join(__dirname, 'packages', 'jsxstyle');
-    const jsxstyleSrcDir = path.join(jsxstyleDir, 'src');
-    const jsxstyleLibDir = path.join(jsxstyleDir, 'lib');
-    const jsxstyleTypesDir = path.join(jsxstyleLibDir, 'types');
-
     if (!chunk.facadeModuleId) return null;
+    const jsxstyleSrcDir = path.join(__dirname, 'packages', 'jsxstyle', 'src');
 
     const sourceTSFile = path.relative(jsxstyleSrcDir, chunk.facadeModuleId);
     invariant(
@@ -31,50 +29,57 @@ const rollupPackageJsonPlugin = {
       'Expected a TypeScript source file'
     );
 
-    const packageJsonDir = path.join(
-      topLevelModules.includes(chunk.name) ? jsxstyleDir : jsxstyleLibDir,
-      chunk.name
-    );
+    const prefix = topLevelModules.includes(chunk.name) ? './' : './lib/';
+    const modulePath = chunk.name === 'jsxstyle' ? '.' : prefix + chunk.name;
+    const moduleEntry = (exportsObject[modulePath] ||= {});
 
-    const packageJsonFileName = path.join(
-      path.relative(jsxstyleDir, packageJsonDir),
-      'package.json'
-    );
+    // this needs to go first
+    moduleEntry['types'] =
+      './lib/types/' + sourceTSFile.replace(/\.tsx?$/, '.d.ts');
 
-    const mainEntry = path.relative(
-      packageJsonDir,
-      path.join(jsxstyleDir, chunk.fileName)
-    );
-
-    const moduleEntry = path.relative(
-      packageJsonDir,
-      path.join(jsxstyleDir, chunk.fileName.replace(/\.cjs\.js$/, '.es.js'))
-    );
-
-    const typesEntry = path.relative(
-      packageJsonDir,
-      path.join(jsxstyleTypesDir, sourceTSFile.replace(/\.tsx?$/, '.d.ts'))
-    );
-
-    this.emitFile({
-      type: 'asset',
-      fileName: packageJsonFileName,
-      source:
-        JSON.stringify(
-          {
-            name: 'jsxstyle-' + chunk.name,
-            main: mainEntry,
-            module: moduleEntry,
-            types: typesEntry,
-            private: true,
-            sideEffects: false,
-          },
-          null,
-          2
-        ) + '\n',
-    });
+    if (options.format === 'cjs') {
+      moduleEntry['require'] = './' + chunk.fileName;
+    } else if (options.format === 'es') {
+      moduleEntry['import'] = './' + chunk.fileName;
+    } else {
+      throw new Error('Unhandled format: ' + options.format);
+    }
 
     return null;
+  },
+  async writeBundle() {
+    const sortedEntries = Object.fromEntries(
+      Object.entries(exportsObject)
+        .map(
+          /** @returns {[string, any]} */
+          ([key, value]) => {
+            return [
+              key,
+              {
+                // `types` always goes first: https://nodejs.org/api/packages.html#community-conditions-definitions
+                types: value.types,
+                import: value.import,
+                require: value.require,
+              },
+            ];
+          }
+        )
+        .sort(([a], [b]) => a.localeCompare(b))
+    );
+
+    const pkgJsonPath = path.join(
+      __dirname,
+      'packages',
+      'jsxstyle',
+      'package.json'
+    );
+    const pkgJsonContent = await fs.readFile(pkgJsonPath, 'utf-8');
+    const pkgJson = JSON.parse(pkgJsonContent);
+    pkgJson.exports = sortedEntries;
+    pkgJson.main = exportsObject['.'].require;
+    pkgJson.module = exportsObject['.'].import;
+    pkgJson.types = exportsObject['.'].types;
+    await fs.writeFile(pkgJsonPath, JSON.stringify(pkgJson, null, 2) + '\n');
   },
 };
 

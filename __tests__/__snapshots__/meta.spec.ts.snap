@@ -20,7 +20,6 @@ jsxstyle
 - lib/base64-loader/base64-loader.cjs.js.map
 - lib/base64-loader/base64-loader.es.js
 - lib/base64-loader/base64-loader.es.js.map
-- lib/base64-loader/package.json
 - lib/chunks/componentStyles.[hash].cjs.js
 - lib/chunks/componentStyles.[hash].cjs.js.map
 - lib/chunks/componentStyles.[hash].es.js
@@ -33,22 +32,18 @@ jsxstyle
 - lib/extract-styles/extract-styles.cjs.js.map
 - lib/extract-styles/extract-styles.es.js
 - lib/extract-styles/extract-styles.es.js.map
-- lib/extract-styles/package.json
 - lib/jsxstyle/jsxstyle.cjs.js
 - lib/jsxstyle/jsxstyle.cjs.js.map
 - lib/jsxstyle/jsxstyle.es.js
 - lib/jsxstyle/jsxstyle.es.js.map
-- lib/jsxstyle/package.json
 - lib/nextjs-plugin/nextjs-plugin.cjs.js
 - lib/nextjs-plugin/nextjs-plugin.cjs.js.map
 - lib/nextjs-plugin/nextjs-plugin.es.js
 - lib/nextjs-plugin/nextjs-plugin.es.js.map
-- lib/nextjs-plugin/package.json
 - lib/noop/noop.cjs.js
 - lib/noop/noop.cjs.js.map
 - lib/noop/noop.es.js
 - lib/noop/noop.es.js.map
-- lib/noop/package.json
 - lib/preact/preact.cjs.js
 - lib/preact/preact.cjs.js.map
 - lib/preact/preact.es.js
@@ -141,7 +136,6 @@ jsxstyle
 - lib/types/webpack-plugin/utils/typePredicates.d.ts.map
 - lib/types/webpack-plugin/utils/wrapFileSystem.d.ts
 - lib/types/webpack-plugin/utils/wrapFileSystem.d.ts.map
-- lib/webpack-loader/package.json
 - lib/webpack-loader/webpack-loader.cjs.js
 - lib/webpack-loader/webpack-loader.cjs.js.map
 - lib/webpack-loader/webpack-loader.es.js
@@ -151,8 +145,6 @@ jsxstyle
 - lib/webpack-plugin/webpack-plugin.es.js
 - lib/webpack-plugin/webpack-plugin.es.js.map
 - package.json
-- preact/package.json
-- webpack-plugin/package.json
 ",
 ]
 `;

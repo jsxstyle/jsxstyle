@@ -5,16 +5,55 @@
   "author": "Pete Hunt",
   "license": "Apache-2.0",
   "repository": "git@github.com:jsxstyle/jsxstyle.git",
-  "main": "lib/jsxstyle/jsxstyle.cjs.js",
-  "module": "lib/jsxstyle/jsxstyle.es.js",
-  "jsnext:main": "lib/jsxstyle/jsxstyle.es.js",
-  "types": "lib/types/react/index.d.ts",
+  "main": "./lib/jsxstyle/jsxstyle.cjs.js",
+  "module": "./lib/jsxstyle/jsxstyle.es.js",
+  "types": "./lib/types/react/index.d.ts",
   "files": [
     "lib",
-    "!**/*.tsbuildinfo",
-    "preact",
-    "webpack-plugin"
+    "!**/*.tsbuildinfo"
   ],
+  "exports": {
+    ".": {
+      "types": "./lib/types/react/index.d.ts",
+      "import": "./lib/jsxstyle/jsxstyle.es.js",
+      "require": "./lib/jsxstyle/jsxstyle.cjs.js"
+    },
+    "./lib/base64-loader": {
+      "types": "./lib/types/webpack-plugin/base64Loader.d.ts",
+      "import": "./lib/base64-loader/base64-loader.es.js",
+      "require": "./lib/base64-loader/base64-loader.cjs.js"
+    },
+    "./lib/extract-styles": {
+      "types": "./lib/types/webpack-plugin/utils/ast/extractStyles.d.ts",
+      "import": "./lib/extract-styles/extract-styles.es.js",
+      "require": "./lib/extract-styles/extract-styles.cjs.js"
+    },
+    "./lib/nextjs-plugin": {
+      "types": "./lib/types/webpack-plugin/nextjs.d.ts",
+      "import": "./lib/nextjs-plugin/nextjs-plugin.es.js",
+      "require": "./lib/nextjs-plugin/nextjs-plugin.cjs.js"
+    },
+    "./lib/noop": {
+      "types": "./lib/types/webpack-plugin/noop.d.ts",
+      "import": "./lib/noop/noop.es.js",
+      "require": "./lib/noop/noop.cjs.js"
+    },
+    "./lib/webpack-loader": {
+      "types": "./lib/types/webpack-plugin/loader.d.ts",
+      "import": "./lib/webpack-loader/webpack-loader.es.js",
+      "require": "./lib/webpack-loader/webpack-loader.cjs.js"
+    },
+    "./preact": {
+      "types": "./lib/types/preact/index.d.ts",
+      "import": "./lib/preact/preact.es.js",
+      "require": "./lib/preact/preact.cjs.js"
+    },
+    "./webpack-plugin": {
+      "types": "./lib/types/webpack-plugin/plugin.d.ts",
+      "import": "./lib/webpack-plugin/webpack-plugin.es.js",
+      "require": "./lib/webpack-plugin/webpack-plugin.cjs.js"
+    }
+  },
   "sideEffects": [
     "**/*.css"
   ],
