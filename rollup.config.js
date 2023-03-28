@@ -11,7 +11,7 @@ const rollupPluginTypescript = require('@rollup/plugin-typescript').default;
 /** @type {import('rollup').ModuleFormat[]} */
 const supportedModuleFormats = ['cjs', 'es'];
 
-const topLevelModules = ['preact', 'webpack-plugin'];
+const topLevelModules = ['preact', 'webpack-plugin', 'utils'];
 
 /** @type {Record<string, Partial<Record<'require' | 'import' | 'types', string>>>} */
 const exportsObject = {};
@@ -90,6 +90,7 @@ module.exports = {
   input: {
     'jsxstyle':       'packages/jsxstyle/src/react/index.ts',
     'preact':         'packages/jsxstyle/src/preact/index.ts',
+    'utils':         'packages/jsxstyle/src/utils/index.ts',
 
     'webpack-plugin': 'packages/jsxstyle/src/webpack-plugin/plugin.ts',
     'webpack-loader': 'packages/jsxstyle/src/webpack-plugin/loader.ts',

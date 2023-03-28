@@ -48,6 +48,11 @@
       "import": "./lib/preact/preact.es.js",
       "require": "./lib/preact/preact.cjs.js"
     },
+    "./utils": {
+      "types": "./lib/types/utils/index.d.ts",
+      "import": "./lib/utils/utils.es.js",
+      "require": "./lib/utils/utils.cjs.js"
+    },
     "./webpack-plugin": {
       "types": "./lib/types/webpack-plugin/plugin.d.ts",
       "import": "./lib/webpack-plugin/webpack-plugin.es.js",
