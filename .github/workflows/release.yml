@@ -11,8 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout jsxstyle
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
         with:
           # fetch everything so that we can properly calculate what needs to be published
           fetch-depth: 0
@@ -23,14 +22,10 @@ jobs:
           node-version: 18.x
           cache: 'npm'
 
-      - name: Install dependencies
-        run: npm install
+      - run: npm install
+      - run: npm test
 
-      - name: Run jest
-        run: npm test
-
-      - name: Run karma
-        run: npm run karma
+      - run: npm run karma
         env:
           CI: true
           TZ: 'America/Los_Angeles'

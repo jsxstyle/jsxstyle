@@ -19,8 +19,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout jsxstyle
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
         with:
           fetch-depth: 1
 
@@ -30,11 +29,8 @@ jobs:
           node-version: 18.x
           cache: 'npm'
 
-      - name: Install dependencies
-        run: npm install
-
-      - name: Run jest
-        run: npm test
+      - run: npm install
+      - run: npm test
 
       - name: Run karma
         run: npm run karma
