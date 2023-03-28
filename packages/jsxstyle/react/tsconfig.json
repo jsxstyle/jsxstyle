@@ -1,0 +1,24 @@
+{
+  "extends": "../../../config/tsconfig.base.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "lib/cache.tsbuildinfo",
+    "rootDir": "src",
+    "outDir": "lib",
+    "lib": [
+      "es6",
+      "dom"
+    ],
+    "module": "ESNext",
+    "target": "ESNext",
+    "types": [
+      "react"
+    ]
+  },
+  "include": [
+    "src",
+  ],
+  "exclude": [
+    "./lib",
+    "./**/__tests__"
+  ]
+}

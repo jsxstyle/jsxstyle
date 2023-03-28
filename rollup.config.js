@@ -11,7 +11,7 @@ const rollupPluginTypescript = require('@rollup/plugin-typescript').default;
 /** @type {import('rollup').ModuleFormat[]} */
 const supportedModuleFormats = ['cjs', 'es'];
 
-const topLevelModules = ['preact', 'webpack-plugin', 'utils'];
+const topLevelModules = ['preact', 'solid', 'utils', 'webpack-plugin'];
 
 /** @type {Record<string, Partial<Record<'require' | 'import' | 'types', string>>>} */
 const exportsObject = {};
@@ -21,21 +21,20 @@ const rollupPackageJsonPlugin = {
   name: 'module-package-json-files',
   async renderChunk(code, chunk, options) {
     if (!chunk.facadeModuleId) return null;
-    const jsxstyleSrcDir = path.join(__dirname, 'packages', 'jsxstyle', 'src');
+    const jsxstyleDir = path.join(__dirname, 'packages', 'jsxstyle');
 
-    const sourceTSFile = path.relative(jsxstyleSrcDir, chunk.facadeModuleId);
+    const sourceTSFile = path.relative(jsxstyleDir, chunk.facadeModuleId);
     invariant(
       sourceTSFile.endsWith('.ts') || sourceTSFile.endsWith('.tsx'),
       'Expected a TypeScript source file'
     );
 
     const prefix = topLevelModules.includes(chunk.name) ? './' : './lib/';
-    const modulePath = chunk.name === 'jsxstyle' ? '.' : prefix + chunk.name;
+    const modulePath = chunk.name === 'react' ? '.' : prefix + chunk.name;
     const moduleEntry = (exportsObject[modulePath] ||= {});
 
-    // this needs to go first
     moduleEntry['types'] =
-      './lib/types/' + sourceTSFile.replace(/\.tsx?$/, '.d.ts');
+      './' + sourceTSFile.replace('/src/', '/lib/').replace(/\.tsx?$/, '.d.ts');
 
     if (options.format === 'cjs') {
       moduleEntry['require'] = './' + chunk.fileName;
@@ -88,17 +87,18 @@ module.exports = {
   context: 'packages/jsxstyle',
   // prettier-ignore
   input: {
-    'jsxstyle':       'packages/jsxstyle/src/react/index.ts',
-    'preact':         'packages/jsxstyle/src/preact/index.ts',
-    'utils':         'packages/jsxstyle/src/utils/index.ts',
+    'preact':         'packages/jsxstyle/preact/src/index.ts',
+    'react':          'packages/jsxstyle/react/src/index.ts',
+    'solid':          'packages/jsxstyle/solid/src/index.tsx',
+    'utils':          'packages/jsxstyle/utils/src/index.ts',
 
-    'webpack-plugin': 'packages/jsxstyle/src/webpack-plugin/plugin.ts',
-    'webpack-loader': 'packages/jsxstyle/src/webpack-plugin/loader.ts',
+    'webpack-plugin': 'packages/jsxstyle/webpack-plugin/src/plugin.ts',
+    'webpack-loader': 'packages/jsxstyle/webpack-plugin/src/loader.ts',
 
-    'base64-loader':  'packages/jsxstyle/src/webpack-plugin/base64Loader.ts',
-    'noop':           'packages/jsxstyle/src/webpack-plugin/noop.ts',
-    'nextjs-plugin':  'packages/jsxstyle/src/webpack-plugin/nextjs.ts',
-    'extract-styles': 'packages/jsxstyle/src/webpack-plugin/utils/ast/extractStyles.ts',
+    'base64-loader':  'packages/jsxstyle/webpack-plugin/src/base64Loader.ts',
+    'noop':           'packages/jsxstyle/webpack-plugin/src/noop.ts',
+    'nextjs-plugin':  'packages/jsxstyle/webpack-plugin/src/nextjs.ts',
+    'extract-styles': 'packages/jsxstyle/webpack-plugin/src/utils/ast/extractStyles.ts',
   },
   output: supportedModuleFormats.map(
     /** @returns {import('rollup').OutputOptions} */
@@ -106,33 +106,23 @@ module.exports = {
       format,
       interop: 'compat',
       dir: 'packages/jsxstyle',
-      // exports: 'named',
-      entryFileNames: `lib/[name]/[name].[format].js`,
+      entryFileNames: `lib/[name]/index.[format].js`,
       chunkFileNames: `lib/chunks/[name].[hash].[format].js`,
-      amd: format === 'amd' ? { autoId: true } : undefined,
-      // hoistTransitiveImports: false,
       sourcemap: true,
     })
   ),
   plugins: [
     rollupPackageJsonPlugin,
-    rollupPluginTypescript({
-      tsconfig: 'packages/jsxstyle/tsconfig.json',
+    ['preact', 'react', 'utils', 'solid', 'webpack-plugin'].map((dir) => {
+      return rollupPluginTypescript({
+        tsconfig: `packages/jsxstyle/${dir}/tsconfig.json`,
+      });
     }),
-    rollupPluginResolve({ browser: false, preferBuiltins: true }),
+    rollupPluginResolve({ preferBuiltins: true }),
     rollupPluginBabel({
       cwd: path.join(__dirname, 'packages', 'jsxstyle'),
       babelHelpers: 'bundled',
       extensions: [...DEFAULT_EXTENSIONS, '.ts', '.tsx'],
-      presets: [['@babel/preset-env', { loose: true }]],
-      plugins: [
-        [
-          require.resolve('./misc/babel-plugin-pure-annotation'),
-          {
-            functionNames: ['factory', 'depFactory', 'componentFactory'],
-          },
-        ],
-      ],
     }),
   ],
   external: [
@@ -148,6 +138,9 @@ module.exports = {
     'preact',
     'prop-types',
     'react',
+    'solid-js',
+    'solid-js/types',
+    'solid-js/web',
     'util',
     'vm',
     'webpack/lib/node/NodeWatchFileSystem',

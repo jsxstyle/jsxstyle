@@ -1,0 +1,25 @@
+{
+  "extends": "./config/tsconfig.base.json",
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "jsx": "react-jsx",
+    "module": "commonjs",
+    "target": "es2015",
+    "types": [
+      "jest",
+      "node"
+    ]
+  },
+  "include": [
+    "karma.conf.ts",
+    "misc/getCustomLaunchers.ts",
+    "**/__tests__/**/*.ts",
+    "**/__tests__/**/*.tsx",
+    "**/*.karma.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "packages/jsxstyle/react/src/__tests__/typescript"
+  ]
+}

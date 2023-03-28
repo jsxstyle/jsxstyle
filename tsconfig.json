@@ -2,10 +2,10 @@
   "files": [],
   "references": [
     {
-      "path": "tsconfig.jest.json"
+      "path": "tsconfig.test.json"
     },
     {
-      "path": "packages/jsxstyle/tsconfig.json",
+      "path": "packages/jsxstyle/tsconfig.json"
     },
     {
       "path": "minisite/tsconfig.json"

@@ -5,58 +5,63 @@
   "author": "Pete Hunt",
   "license": "Apache-2.0",
   "repository": "git@github.com:jsxstyle/jsxstyle.git",
-  "main": "./lib/jsxstyle/jsxstyle.cjs.js",
-  "module": "./lib/jsxstyle/jsxstyle.es.js",
-  "types": "./lib/types/react/index.d.ts",
+  "main": "./lib/react/index.cjs.js",
+  "module": "./lib/react/index.es.js",
+  "types": "./react/lib/index.d.ts",
   "files": [
-    "lib",
-    "!**/*.tsbuildinfo"
+    "*/lib",
+    "!**/lib/*.tsbuildinfo"
   ],
   "exports": {
     ".": {
-      "types": "./lib/types/react/index.d.ts",
-      "import": "./lib/jsxstyle/jsxstyle.es.js",
-      "require": "./lib/jsxstyle/jsxstyle.cjs.js"
+      "types": "./react/lib/index.d.ts",
+      "import": "./lib/react/index.es.js",
+      "require": "./lib/react/index.cjs.js"
     },
     "./lib/base64-loader": {
-      "types": "./lib/types/webpack-plugin/base64Loader.d.ts",
-      "import": "./lib/base64-loader/base64-loader.es.js",
-      "require": "./lib/base64-loader/base64-loader.cjs.js"
+      "types": "./webpack-plugin/lib/base64Loader.d.ts",
+      "import": "./lib/base64-loader/index.es.js",
+      "require": "./lib/base64-loader/index.cjs.js"
     },
     "./lib/extract-styles": {
-      "types": "./lib/types/webpack-plugin/utils/ast/extractStyles.d.ts",
-      "import": "./lib/extract-styles/extract-styles.es.js",
-      "require": "./lib/extract-styles/extract-styles.cjs.js"
+      "types": "./webpack-plugin/lib/utils/ast/extractStyles.d.ts",
+      "import": "./lib/extract-styles/index.es.js",
+      "require": "./lib/extract-styles/index.cjs.js"
     },
     "./lib/nextjs-plugin": {
-      "types": "./lib/types/webpack-plugin/nextjs.d.ts",
-      "import": "./lib/nextjs-plugin/nextjs-plugin.es.js",
-      "require": "./lib/nextjs-plugin/nextjs-plugin.cjs.js"
+      "types": "./webpack-plugin/lib/nextjs.d.ts",
+      "import": "./lib/nextjs-plugin/index.es.js",
+      "require": "./lib/nextjs-plugin/index.cjs.js"
     },
     "./lib/noop": {
-      "types": "./lib/types/webpack-plugin/noop.d.ts",
-      "import": "./lib/noop/noop.es.js",
-      "require": "./lib/noop/noop.cjs.js"
+      "types": "./webpack-plugin/lib/noop.d.ts",
+      "import": "./lib/noop/index.es.js",
+      "require": "./lib/noop/index.cjs.js"
     },
     "./lib/webpack-loader": {
-      "types": "./lib/types/webpack-plugin/loader.d.ts",
-      "import": "./lib/webpack-loader/webpack-loader.es.js",
-      "require": "./lib/webpack-loader/webpack-loader.cjs.js"
+      "types": "./webpack-plugin/lib/loader.d.ts",
+      "import": "./lib/webpack-loader/index.es.js",
+      "require": "./lib/webpack-loader/index.cjs.js"
     },
     "./preact": {
-      "types": "./lib/types/preact/index.d.ts",
-      "import": "./lib/preact/preact.es.js",
-      "require": "./lib/preact/preact.cjs.js"
+      "types": "./preact/lib/index.d.ts",
+      "import": "./lib/preact/index.es.js",
+      "require": "./lib/preact/index.cjs.js"
+    },
+    "./solid": {
+      "types": "./solid/lib/index.d.ts",
+      "import": "./lib/solid/index.es.js",
+      "require": "./lib/solid/index.cjs.js"
     },
     "./utils": {
-      "types": "./lib/types/utils/index.d.ts",
-      "import": "./lib/utils/utils.es.js",
-      "require": "./lib/utils/utils.cjs.js"
+      "types": "./utils/lib/index.d.ts",
+      "import": "./lib/utils/index.es.js",
+      "require": "./lib/utils/index.cjs.js"
     },
     "./webpack-plugin": {
-      "types": "./lib/types/webpack-plugin/plugin.d.ts",
-      "import": "./lib/webpack-plugin/webpack-plugin.es.js",
-      "require": "./lib/webpack-plugin/webpack-plugin.cjs.js"
+      "types": "./webpack-plugin/lib/plugin.d.ts",
+      "import": "./lib/webpack-plugin/index.es.js",
+      "require": "./lib/webpack-plugin/index.cjs.js"
     }
   },
   "sideEffects": [
@@ -75,7 +80,8 @@
   "devDependencies": {
     "@types/babel__generator": "^7.6.4",
     "@types/babel__traverse": "^7.17.1",
-    "@types/node": "^16.0.0",
+    "@types/node": "^18.0.0",
+    "solid-js": "^1.6.16",
     "next": "^13.0.4",
     "webpack": "^5.72.0"
   },
