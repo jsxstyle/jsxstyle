@@ -9,6 +9,8 @@ jobs:
   run-tests:
     name: Run tests
     uses: ./.github/workflows/ci.yml
+    secrets:
+      SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
 
   canary:
     name: Create and publish a new release

@@ -61,11 +61,7 @@ const useHeadlessChrome =
 if (!useHeadlessChrome) {
   if (!process.env.SAUCE_USERNAME || !process.env.SAUCE_ACCESS_KEY) {
     console.error('SAUCE_USERNAME and SAUCE_ACCESS_KEY must both be set');
-    if (isCI) {
-      process.exit(0);
-    } else {
-      process.exit(1);
-    }
+    process.exit(1);
   }
 }
 

@@ -2,6 +2,9 @@ name: Run tests
 
 on:
   workflow_call:
+    secrets:
+      SAUCE_ACCESS_KEY:
+        required: true
 
   pull_request:
     paths-ignore:
