@@ -1,4 +1,4 @@
-import { createClassNameGetter } from '../../../../../jsxstyle-utils/src';
+import { createClassNameGetter } from '../../../../jsxstyle-utils/src';
 import path from 'path';
 import {
   extractStyles,

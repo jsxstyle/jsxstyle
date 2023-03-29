@@ -5,6 +5,9 @@
   },
   "references": [
     {
+      "path": "jsxstyle-bundler-utils"
+    },
+    {
       "path": "jsxstyle-react"
     },
     {

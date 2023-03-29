@@ -10,9 +10,6 @@
   "references": [
     {
       "path": "../jsxstyle-utils"
-    },
-    {
-      "path": "../jsxstyle-bundler-utils"
     }
   ]
 }

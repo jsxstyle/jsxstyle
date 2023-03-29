@@ -41,9 +41,13 @@ module.exports = {
         project: [
           'tsconfig.test.json',
           'minisite/tsconfig.json',
+
+          'packages/jsxstyle-bundler-utils/tsconfig.json',
+
           'packages/jsxstyle-react/tsconfig.json',
           'packages/jsxstyle-solid/tsconfig.json',
           'packages/jsxstyle-utils/tsconfig.json',
+
           'packages/jsxstyle-nextjs-plugin/tsconfig.json',
           'packages/jsxstyle-webpack-plugin/tsconfig.json',
           'examples/jsxstyle-typescript-example/tsconfig.json',

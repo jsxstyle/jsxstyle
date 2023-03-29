@@ -68,14 +68,14 @@
       "require": "./lib/jsxstyle-webpack-plugin/src/base64Loader.cjs.js"
     },
     "./lib/extract-styles": {
-      "types": "./lib/jsxstyle-webpack-plugin/src/utils/ast/extractStyles.d.ts",
-      "import": "./lib/jsxstyle-webpack-plugin/src/utils/ast/extractStyles.es.js",
-      "require": "./lib/jsxstyle-webpack-plugin/src/utils/ast/extractStyles.cjs.js"
+      "types": "./lib/jsxstyle-bundler-utils/src/ast/extractStyles.d.ts",
+      "import": "./lib/jsxstyle-bundler-utils/src/ast/extractStyles.es.js",
+      "require": "./lib/jsxstyle-bundler-utils/src/ast/extractStyles.cjs.js"
     },
     "./lib/noop": {
-      "types": "./lib/jsxstyle-webpack-plugin/src/noop.d.ts",
-      "import": "./lib/jsxstyle-webpack-plugin/src/noop.es.js",
-      "require": "./lib/jsxstyle-webpack-plugin/src/noop.cjs.js"
+      "types": "./lib/jsxstyle-bundler-utils/src/noop.d.ts",
+      "import": "./lib/jsxstyle-bundler-utils/src/noop.es.js",
+      "require": "./lib/jsxstyle-bundler-utils/src/noop.cjs.js"
     },
     "./lib/webpack-loader": {
       "types": "./lib/jsxstyle-webpack-plugin/src/loader.d.ts",

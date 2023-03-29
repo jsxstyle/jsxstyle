@@ -1,5 +1,5 @@
-import type { UserConfigurableOptions } from './utils/ast/extractStyles';
-import type { Volume } from 'memfs';
+import type { UserConfigurableOptions } from '../../jsxstyle-bundler-utils/src/ast/extractStyles';
+import type { MemoryFS } from '../../jsxstyle-bundler-utils/src/types';
 import type {
   CacheObject,
   GetClassNameForKeyFn,
@@ -36,5 +36,3 @@ export interface PluginContext {
   getModules: () => Promise<Record<string, unknown>>;
   memoryFS: MemoryFS;
 }
-
-export type MemoryFS = InstanceType<typeof Volume>;

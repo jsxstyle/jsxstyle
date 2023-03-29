@@ -5,8 +5,8 @@ import { Volume } from 'memfs';
 import { createClassNameGetter } from '../../jsxstyle-utils/src';
 
 import type { PluginContext, JsxstyleWebpackPluginOptions } from './types';
-import { wrapFileSystem } from './utils/wrapFileSystem';
-import { ModuleCache } from './utils/ModuleCache';
+import { wrapFileSystem } from '../../jsxstyle-bundler-utils/src/wrapFileSystem';
+import { ModuleCache } from '../../jsxstyle-bundler-utils/src/ModuleCache';
 import invariant from 'invariant';
 
 type Compilation = import('webpack').Compilation;

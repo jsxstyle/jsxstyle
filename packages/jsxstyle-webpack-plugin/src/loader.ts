@@ -4,7 +4,7 @@ import util from 'util';
 import type * as webpack from 'webpack';
 
 import type { LoaderOptions, PluginContext } from './types';
-import { extractStyles } from './utils/ast/extractStyles';
+import { extractStyles } from '../../jsxstyle-bundler-utils/src/ast/extractStyles';
 
 const pluginSymbol = Symbol.for('jsxstyle-webpack-plugin');
 

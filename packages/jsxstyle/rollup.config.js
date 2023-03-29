@@ -102,8 +102,8 @@ module.exports = {
     'webpack-loader': '../jsxstyle-webpack-plugin/src/loader.ts',
 
     'base64-loader':  '../jsxstyle-webpack-plugin/src/base64Loader.ts',
-    'noop':           '../jsxstyle-webpack-plugin/src/noop.ts',
-    'extract-styles': '../jsxstyle-webpack-plugin/src/utils/ast/extractStyles.ts',
+    'noop':           '../jsxstyle-bundler-utils/src/noop.ts',
+    'extract-styles': '../jsxstyle-bundler-utils/src/ast/extractStyles.ts',
   },
   output: supportedModuleFormats.map(
     /** @returns {import('rollup').OutputOptions} */

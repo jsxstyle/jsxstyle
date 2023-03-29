@@ -4,7 +4,7 @@ import type { ParserPlugin } from '@babel/parser';
 import traverse, { type NodePath, type TraverseOptions } from '@babel/traverse';
 import * as t from '@babel/types';
 import invariant from 'invariant';
-import { componentStyles, processProps } from '../../../../jsxstyle-utils/src';
+import { componentStyles, processProps } from '../../../jsxstyle-utils/src';
 import path from 'path';
 import util from 'util';
 import vm from 'vm';
@@ -17,7 +17,7 @@ import { getPropValueFromAttributes } from './getPropValueFromAttributes';
 import { getStaticBindingsForScope } from './getStaticBindingsForScope';
 import { parse } from './parse';
 import { getImportForSource } from './getImportForSource';
-import type { GetClassNameForKeyFn } from '../../../../jsxstyle-utils/src';
+import type { GetClassNameForKeyFn } from '../../../jsxstyle-utils/src';
 
 const validCssModes = [
   'singleInlineImport',

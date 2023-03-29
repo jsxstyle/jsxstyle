@@ -1,4 +1,4 @@
-import type { MemoryFS } from '../types';
+import type { MemoryFS } from '../../jsxstyle-bundler-utils/src/types';
 
 type InputFileSystem = import('webpack').Compilation['inputFileSystem'];
 
