@@ -113,14 +113,12 @@ module.exports = {
       dir: __dirname,
       entryFileNames: (chunkInfo) => {
         invariant(chunkInfo.facadeModuleId, 'Missing facadeModuleId');
-        const fileName = path.join(
+        return path.join(
           'lib',
           path
             .relative(packagesDir, chunkInfo.facadeModuleId)
             .replace(/\.tsx?$/, '.[format].js')
         );
-        console.log('entryFileNames!', fileName);
-        return fileName;
       },
       chunkFileNames: 'lib/chunks/[name].[hash].[format].js',
       sourcemap: true,
