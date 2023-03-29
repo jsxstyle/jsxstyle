@@ -11,7 +11,7 @@ const getReleaseLine = async (
   const lines = summary
     .trim()
     .split('\n')
-    .map((l) => l.trimRight());
+    .map((l) => l.trimEnd());
 
   const commitLine = `- ${commit}:`;
 

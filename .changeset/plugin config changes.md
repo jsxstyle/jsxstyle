@@ -1,5 +1,4 @@
 ---
-'jsxstyle': major
 'jsxstyle-webpack-plugin': major
 ---
 

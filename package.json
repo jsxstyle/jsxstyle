@@ -14,7 +14,6 @@
     "prettier": "prettier --write \"**/*.{js,ts,tsx,css,md}\"",
     "release": "changeset publish",
     "release:canary": "changeset publish --tag canary",
-    "sync-changesets": "node scripts/sync-changesets.js",
     "version:canary": "changeset version --snapshot canary",
     "reset": "rm -rf packages/{*,*/*}/lib/ minisite/.next/",
     "update-readme": "echo \"$(<./misc/monorepo-preamble.md)\\n\\n---\\n\\n$(<./packages/jsxstyle/README.md)\" > README.md",
