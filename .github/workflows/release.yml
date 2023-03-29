@@ -6,14 +6,17 @@ on:
       - main
 
 jobs:
+  run-tests:
+    uses: ./.github/workflows/ci.yml
+
   canary:
     name: Create and publish a new release
     runs-on: ubuntu-latest
+    needs: run-tests
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
-          # fetch everything so that we can properly calculate what needs to be published
           fetch-depth: 0
 
       - name: Use Node 18
@@ -23,18 +26,6 @@ jobs:
           cache: 'npm'
 
       - run: npm install
-      - run: npm test
-
-      - run: npm run karma
-        env:
-          CI: true
-          TZ: 'America/Los_Angeles'
-          SAUCE_USERNAME: jsxstyle
-          SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
-
-      - name: Configure NPM
-        run: |
-          npm set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }}
 
       - name: Create release PR or publish to npm
         id: changesets
@@ -45,6 +36,7 @@ jobs:
           publish: npm run release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publishing canary release
@@ -55,4 +47,5 @@ jobs:
           npm run release:canary
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
