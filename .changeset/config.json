@@ -1,11 +1,18 @@
 {
-  "$schema": "https://unpkg.com/@changesets/config@1.6.0/schema.json",
+  "$schema": "https://unpkg.com/@changesets/config@latest/schema.json",
   "changelog": "./custom-changelog-format.js",
   "commit": false,
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
+  "fixed": [
+    [
+      "jsxstyle",
+      "jsxstyle-*"
+    ]
+  ],
   "ignore": [
+    "minisite",
     "jsxstyle-*-example"
   ]
 }
