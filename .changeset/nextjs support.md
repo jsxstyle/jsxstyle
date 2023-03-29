@@ -1,4 +1,5 @@
 ---
+'jsxstyle': major
 'jsxstyle-nextjs-plugin': major
 ---
 

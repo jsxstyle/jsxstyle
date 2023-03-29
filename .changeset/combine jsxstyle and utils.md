@@ -1,4 +1,5 @@
 ---
+'jsxstyle': minor
 'jsxstyle-react': minor
 'jsxstyle-utils': minor
 ---
