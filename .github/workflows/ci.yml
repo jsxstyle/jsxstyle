@@ -12,8 +12,8 @@ on:
     - cron: '0 0 * * *'
 
 jobs:
-  build:
-    name: Run tests
+  run-jest:
+    name: Run jest tests
     runs-on: ubuntu-latest
 
     steps:
@@ -29,6 +29,23 @@ jobs:
 
       - run: npm install
       - run: npm test
+
+  run-karma:
+    name: Run karma tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+
+      - name: Use Node 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          cache: 'npm'
+
+      - run: npm install
       - run: npm run karma
         env:
           CI: true

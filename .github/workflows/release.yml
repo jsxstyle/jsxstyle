@@ -7,6 +7,7 @@ on:
 
 jobs:
   run-tests:
+    name: Run tests
     uses: ./.github/workflows/ci.yml
 
   canary:
@@ -27,6 +28,9 @@ jobs:
 
       - run: npm install
 
+      - name: Configure NPM
+        run: npm set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }}
+
       - name: Create release PR or publish to npm
         id: changesets
         uses: changesets/action@v1
@@ -36,7 +40,6 @@ jobs:
           publish: npm run release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publishing canary release
@@ -47,5 +50,4 @@ jobs:
           npm run release:canary
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
