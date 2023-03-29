@@ -1,10 +1,10 @@
 import { styleCache } from './styleCache';
 import { componentFactory } from './componentFactory';
 
-export type { CSSProperties } from 'jsxstyle/utils/src';
+export type { CSSProperties } from 'jsxstyle/utils';
 export type { StylableComponentProps } from './types';
 export { styleCache as cache };
-export { makeCustomProperties as EXPERIMENTAL_makeCustomProperties } from 'jsxstyle/utils/src/makeCustomProperties';
+export { makeCustomProperties as EXPERIMENTAL_makeCustomProperties } from 'jsxstyle/utils';
 
 // Using ReturnType + explicit typing to prevent Hella Dupes in the generated types
 type JsxstyleComponent = ReturnType<typeof componentFactory>;

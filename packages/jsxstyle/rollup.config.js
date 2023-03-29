@@ -4,26 +4,29 @@ const { DEFAULT_EXTENSIONS } = require('@babel/core');
 const invariant = require('invariant');
 const path = require('path');
 const fs = require('fs').promises;
-const rollupPluginBabel = require('@rollup/plugin-babel').default;
-const rollupPluginResolve = require('@rollup/plugin-node-resolve').default;
-const rollupPluginTypescript = require('@rollup/plugin-typescript').default;
+const { babel } = require('@rollup/plugin-babel');
+const { nodeResolve } = require('@rollup/plugin-node-resolve');
 
-/** @type {import('rollup').ModuleFormat[]} */
+/** @satisfies {import('rollup').ModuleFormat[]} */
 const supportedModuleFormats = ['cjs', 'es'];
 
-const topLevelModules = ['preact', 'solid', 'utils', 'webpack-plugin'];
+const topLevelModules = ['solid', 'utils', 'webpack-plugin'];
 
 /** @type {Record<string, Partial<Record<'require' | 'import' | 'types', string>>>} */
-const exportsObject = {};
+const exportsObject = {
+  '.': {
+    import: '',
+    require: '',
+  },
+};
 
 /** @type {import('rollup').Plugin} */
 const rollupPackageJsonPlugin = {
   name: 'module-package-json-files',
   async renderChunk(code, chunk, options) {
     if (!chunk.facadeModuleId) return null;
-    const jsxstyleDir = path.join(__dirname, 'packages', 'jsxstyle');
 
-    const sourceTSFile = path.relative(jsxstyleDir, chunk.facadeModuleId);
+    const sourceTSFile = path.relative(__dirname, chunk.facadeModuleId);
     invariant(
       sourceTSFile.endsWith('.ts') || sourceTSFile.endsWith('.tsx'),
       'Expected a TypeScript source file'
@@ -66,12 +69,7 @@ const rollupPackageJsonPlugin = {
         .sort(([a], [b]) => a.localeCompare(b))
     );
 
-    const pkgJsonPath = path.join(
-      __dirname,
-      'packages',
-      'jsxstyle',
-      'package.json'
-    );
+    const pkgJsonPath = path.join(__dirname, 'package.json');
     const pkgJsonContent = await fs.readFile(pkgJsonPath, 'utf-8');
     const pkgJson = JSON.parse(pkgJsonContent);
     pkgJson.exports = sortedEntries;
@@ -84,46 +82,43 @@ const rollupPackageJsonPlugin = {
 
 /** @type {import('rollup').RollupOptions} */
 module.exports = {
-  context: 'packages/jsxstyle',
+  context: __dirname,
   // prettier-ignore
   input: {
-    'preact':         'packages/jsxstyle/preact/src/index.ts',
-    'react':          'packages/jsxstyle/react/src/index.ts',
-    'solid':          'packages/jsxstyle/solid/src/index.tsx',
-    'utils':          'packages/jsxstyle/utils/src/index.ts',
+    'react':          './react/src/index.ts',
+    'solid':          './solid/src/index.tsx',
+    'utils':          './utils/src/index.ts',
 
-    'webpack-plugin': 'packages/jsxstyle/webpack-plugin/src/plugin.ts',
-    'webpack-loader': 'packages/jsxstyle/webpack-plugin/src/loader.ts',
+    'webpack-plugin': './webpack-plugin/src/plugin.ts',
+    'webpack-loader': './webpack-plugin/src/loader.ts',
 
-    'base64-loader':  'packages/jsxstyle/webpack-plugin/src/base64Loader.ts',
-    'noop':           'packages/jsxstyle/webpack-plugin/src/noop.ts',
-    'nextjs-plugin':  'packages/jsxstyle/webpack-plugin/src/nextjs.ts',
-    'extract-styles': 'packages/jsxstyle/webpack-plugin/src/utils/ast/extractStyles.ts',
+    'base64-loader':  './webpack-plugin/src/base64Loader.ts',
+    'noop':           './webpack-plugin/src/noop.ts',
+    'nextjs-plugin':  './webpack-plugin/src/nextjs.ts',
+    'extract-styles': './webpack-plugin/src/utils/ast/extractStyles.ts',
   },
   output: supportedModuleFormats.map(
     /** @returns {import('rollup').OutputOptions} */
     (format) => ({
       format,
       interop: 'compat',
-      dir: 'packages/jsxstyle',
+      dir: __dirname,
       entryFileNames: `lib/[name]/index.[format].js`,
       chunkFileNames: `lib/chunks/[name].[hash].[format].js`,
       sourcemap: true,
     })
   ),
   plugins: [
-    rollupPackageJsonPlugin,
-    ['preact', 'react', 'utils', 'solid', 'webpack-plugin'].map((dir) => {
-      return rollupPluginTypescript({
-        tsconfig: `packages/jsxstyle/${dir}/tsconfig.json`,
-      });
+    nodeResolve({
+      preferBuiltins: true,
+      extensions: ['.mjs', '.js', '.json', '.node', '.ts', '.tsx'],
     }),
-    rollupPluginResolve({ preferBuiltins: true }),
-    rollupPluginBabel({
-      cwd: path.join(__dirname, 'packages', 'jsxstyle'),
+    babel({
+      cwd: __dirname,
       babelHelpers: 'bundled',
       extensions: [...DEFAULT_EXTENSIONS, '.ts', '.tsx'],
     }),
+    rollupPackageJsonPlugin,
   ],
   external: [
     '@babel/generator',
@@ -132,6 +127,7 @@ module.exports = {
     '@babel/types',
     'fs',
     'invariant',
+    'jsxstyle/utils',
     'memfs',
     'module',
     'path',

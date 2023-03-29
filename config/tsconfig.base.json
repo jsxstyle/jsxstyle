@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "allowJs": false,
+    "baseUrl": "../",
     "composite": true,
     "declaration": true,
     "declarationMap": true,
@@ -14,7 +15,20 @@
     "resolveJsonModule": true,
     "sourceMap": true,
     "strictNullChecks": true,
-    "suppressImplicitAnyIndexErrors": true,
+    "paths": {
+      "jsxstyle": [
+        "packages/jsxstyle/react"
+      ],
+      "jsxstyle/utils": [
+        "packages/jsxstyle/utils"
+      ],
+      "jsxstyle/solid": [
+        "packages/jsxstyle/solid"
+      ],
+      "jsxstyle/webpack-plugin": [
+        "packages/jsxstyle/webpack-plugin"
+      ],
+    }
   },
   "exclude": [
     "node_modules"

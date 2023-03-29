@@ -1,8 +1,8 @@
 import generate from '@babel/generator';
 import * as t from '@babel/types';
 import invariant from 'invariant';
-import { type CSSProperties, processProps } from 'jsxstyle/utils/src';
-import type { GetClassNameForKeyFn } from 'jsxstyle/utils/src/processProps';
+import { processProps } from 'jsxstyle/utils';
+import type { GetClassNameForKeyFn } from 'jsxstyle/utils';
 
 export interface Ternary {
   name: string;
@@ -30,8 +30,8 @@ t.BinaryExpression | t.ConditionalExpression | null {
     string,
     {
       test: t.Expression;
-      consequentStyles: CSSProperties;
-      alternateStyles: CSSProperties;
+      consequentStyles: Record<string, unknown>;
+      alternateStyles: Record<string, unknown>;
     }
   > = {};
 

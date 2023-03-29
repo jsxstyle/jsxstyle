@@ -2,11 +2,11 @@ import {
   componentStyles,
   DeprecatedJsxstyleComponentName,
   JsxstyleComponentName,
-} from 'jsxstyle/utils/src';
+} from 'jsxstyle/utils';
 import { styleCache } from './styleCache';
 import type { JsxstyleProps, ValidComponentPropValue } from './types';
 import { Dynamic, createComponent, mergeProps } from 'solid-js/web';
-import type { JSX } from 'solid-js/types';
+import type { JSX } from 'solid-js';
 
 type Props<T extends ValidComponentPropValue> = JsxstyleProps<T> & {
   children?: JSX.Element;

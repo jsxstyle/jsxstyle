@@ -33,9 +33,10 @@ export function wrapFileSystem(
     get: (target, prop, receiver) => {
       const value = Reflect.get(target, prop, receiver);
 
-      if (prop in handledMethods) {
+      if ((prop in handledMethods) as any as keyof MemoryFS) {
         return function (this: any, filePath: string, ...args: string[]) {
           if (filePath.endsWith('__jsxstyle.css')) {
+            // @ts-expect-error too complex for typescript
             return memoryFS[prop](filePath, ...args);
           }
           return value.call(this, filePath, ...args);

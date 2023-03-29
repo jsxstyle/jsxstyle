@@ -8,10 +8,48 @@
   "main": "./lib/react/index.cjs.js",
   "module": "./lib/react/index.es.js",
   "types": "./react/lib/index.d.ts",
+  "sideEffects": [
+    "**/*.css"
+  ],
   "files": [
     "lib",
     "**/lib/**/*",
     "!**/lib/**/*.tsbuildinfo"
+  ],
+  "scripts": {
+    "build": "npm run build-types && npm run build-js && npm run format-built-files",
+    "build-js": "rm -rf lib && rollup -c",
+    "build-types": "tsc -b --emitDeclarationOnly",
+    "format-built-files": "prettier --write \"**/lib/**/*.{js,ts}\""
+  },
+  "dependencies": {
+    "@babel/core": "^7.17.9",
+    "@babel/generator": "^7.17.9",
+    "@babel/parser": "^7.17.9",
+    "@babel/traverse": "^7.17.9",
+    "@babel/types": "^7.17.0",
+    "csstype": "^3.0.11",
+    "invariant": "^2.2.4",
+    "memfs": "^3.4.1"
+  },
+  "devDependencies": {
+    "@rollup/plugin-babel": "^6.0.3",
+    "@rollup/plugin-node-resolve": "^15.0.1",
+    "@rollup/plugin-replace": "^5.0.2",
+    "@rollup/plugin-terser": "^0.4.0",
+    "@types/babel__generator": "^7.6.4",
+    "@types/babel__traverse": "^7.17.1",
+    "@types/node": "^18.0.0",
+    "next": "^13.0.4",
+    "rollup": "^3.20.2",
+    "solid-js": "^1.6.16",
+    "webpack": "^5.72.0"
+  },
+  "keywords": [
+    "jsxstyle",
+    "react",
+    "preact",
+    "css-in-js"
   ],
   "exports": {
     ".": {
@@ -44,11 +82,6 @@
       "import": "./lib/webpack-loader/index.es.js",
       "require": "./lib/webpack-loader/index.cjs.js"
     },
-    "./preact": {
-      "types": "./preact/lib/index.d.ts",
-      "import": "./lib/preact/index.es.js",
-      "require": "./lib/preact/index.cjs.js"
-    },
     "./solid": {
       "types": "./solid/lib/index.d.ts",
       "import": "./lib/solid/index.es.js",
@@ -64,32 +97,5 @@
       "import": "./lib/webpack-plugin/index.es.js",
       "require": "./lib/webpack-plugin/index.cjs.js"
     }
-  },
-  "sideEffects": [
-    "**/*.css"
-  ],
-  "dependencies": {
-    "@babel/core": "^7.17.9",
-    "@babel/generator": "^7.17.9",
-    "@babel/parser": "^7.17.9",
-    "@babel/traverse": "^7.17.9",
-    "@babel/types": "^7.17.0",
-    "csstype": "^3.0.11",
-    "invariant": "^2.2.4",
-    "memfs": "^3.4.1"
-  },
-  "devDependencies": {
-    "@types/babel__generator": "^7.6.4",
-    "@types/babel__traverse": "^7.17.1",
-    "@types/node": "^18.0.0",
-    "solid-js": "^1.6.16",
-    "next": "^13.0.4",
-    "webpack": "^5.72.0"
-  },
-  "keywords": [
-    "jsxstyle",
-    "react",
-    "preact",
-    "css-in-js"
-  ]
+  }
 }

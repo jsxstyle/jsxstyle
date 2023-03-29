@@ -1,8 +1,8 @@
-import { canUseDOM } from 'jsxstyle/utils/src/addStyleToHead';
+import { canUseDOM } from './addStyleToHead';
 import {
   generateCustomPropertiesFromVariants,
   type VariantMap,
-} from 'jsxstyle/utils/src/generateCustomPropertiesFromVariants';
+} from './generateCustomPropertiesFromVariants';
 
 declare const __webpack_nonce__: string | undefined;
 
@@ -36,7 +36,7 @@ const makeCustomPropertiesInternal = <
       mediaQuery?: string;
     }
   ) => {
-    variantMap[variantName as any] = props;
+    (variantMap as any)[variantName] = props;
     return makeCustomPropertiesInternal<KPropKey, TVariantName | TName>(
       variantMap as any
     );

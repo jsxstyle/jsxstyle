@@ -41,7 +41,6 @@ module.exports = {
         project: [
           'tsconfig.jest.json',
           'minisite/tsconfig.json',
-          'packages/jsxstyle/preact/tsconfig.json',
           'packages/jsxstyle/react/tsconfig.json',
           'packages/jsxstyle/solid/tsconfig.json',
           'packages/jsxstyle/utils/tsconfig.json',

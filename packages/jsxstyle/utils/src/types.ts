@@ -81,3 +81,9 @@ export interface CSSProperties
     ShorthandProps {
   animation?: BaseCSSProperties['animation'] | JsxstyleAnimation;
 }
+
+/** Cache object used in `jsxstyle/webpack-plugin` */
+export interface CacheObject {
+  [key: string]: string;
+  [key: symbol]: number;
+}

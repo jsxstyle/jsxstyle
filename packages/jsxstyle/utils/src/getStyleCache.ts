@@ -1,4 +1,4 @@
-import type { CacheObject } from 'jsxstyle/webpack-plugin/src/types';
+import type { CacheObject } from './types';
 import { addStyleToHead } from './addStyleToHead';
 import { getStringHash } from './getStringHash';
 import { processProps, type GetClassNameForKeyFn } from './processProps';

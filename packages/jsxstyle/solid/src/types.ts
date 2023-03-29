@@ -1,5 +1,5 @@
-import type { CSSProperties, CommonComponentProp } from 'jsxstyle/utils/src';
-import type { Component, JSX } from 'solid-js/types';
+import type { CSSProperties, CommonComponentProp } from 'jsxstyle/utils';
+import type { Component, JSX } from 'solid-js';
 
 export type IntrinsicElement = keyof JSX.IntrinsicElements;
 

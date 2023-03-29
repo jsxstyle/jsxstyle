@@ -18,14 +18,14 @@ const commonComponentProps = {
   value: true,
 };
 
-const pseudoelements = {
+const pseudoelements: Record<string, true> = {
   after: true,
   before: true,
   placeholder: true,
   selection: true,
 };
 
-const pseudoclasses = {
+const pseudoclasses: Record<string, true> = {
   active: true,
   checked: true,
   disabled: true,
@@ -41,13 +41,13 @@ const pseudoclasses = {
 };
 
 /** Props that are used internally and not passed on to the underlying component */
-const skippedProps = {
+const skippedProps: Record<string, true> = {
   component: true,
   mediaQueries: true,
   props: true,
 };
 
-const doubleSpecificityPrefixes = {
+const doubleSpecificityPrefixes: Record<string, true> = {
   animation: true,
   background: true,
   flex: true,
@@ -175,14 +175,15 @@ export const parseStyleProps = (
       (pseudoelement ? '::' + pseudoelement : '') +
       (pseudoclass ? ':' + pseudoclass : '');
 
-    const propFn = shorthandProps[propName];
+    const propFn = shorthandProps[propName as keyof typeof shorthandProps];
     if (typeof propFn === 'function') {
       const expandedProps = propFn(propValue);
       if (expandedProps == null || typeof expandedProps !== 'object') {
         continue;
       }
       for (const expandedPropName in expandedProps) {
-        const expandedPropValue = expandedProps[expandedPropName];
+        const expandedPropValue =
+          expandedProps[expandedPropName as keyof typeof expandedProps];
         if (expandedPropValue == null || expandedPropValue === false) {
           continue;
         }

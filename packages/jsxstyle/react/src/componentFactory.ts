@@ -2,10 +2,10 @@ import {
   componentStyles,
   DeprecatedJsxstyleComponentName,
   JsxstyleComponentName,
-} from 'jsxstyle/utils/src';
+} from 'jsxstyle/utils';
 import { styleCache } from './styleCache';
 import type { JsxstyleProps, ValidComponentPropValue } from './types';
-import * as React from 'react';
+import { createElement } from 'react';
 
 export function componentFactory(
   displayName: JsxstyleComponentName | DeprecatedJsxstyleComponentName
@@ -18,7 +18,7 @@ export function componentFactory(
   ): React.ReactElement => {
     const Component: any = props.component || tagName;
     const extractedProps = styleCache.getComponentProps(props);
-    return React.createElement(Component, extractedProps);
+    return createElement(Component, extractedProps);
   };
 
   component.displayName = displayName;

@@ -1,4 +1,5 @@
-import type { CacheObject, JsxstyleWebpackPluginOptions } from './types';
+import type { JsxstyleWebpackPluginOptions } from './types';
+import type { CacheObject } from 'jsxstyle/utils';
 import type { NextConfig } from 'next/types';
 import { JsxstyleWebpackPlugin } from './plugin';
 

@@ -2,7 +2,7 @@ import fs from 'fs';
 // @ts-expect-error this export is not exposed in the `compiler.webpack` object
 import NodeWatchFileSystem from 'webpack/lib/node/NodeWatchFileSystem';
 import { Volume } from 'memfs';
-import { createClassNameGetter } from 'jsxstyle/utils/src';
+import { createClassNameGetter } from 'jsxstyle/utils';
 
 import type { PluginContext, JsxstyleWebpackPluginOptions } from './types';
 import { wrapFileSystem } from './utils/wrapFileSystem';

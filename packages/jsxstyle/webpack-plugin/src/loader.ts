@@ -6,8 +6,10 @@ import type * as webpack from 'webpack';
 import type { LoaderOptions, PluginContext } from './types';
 import { extractStyles } from './utils/ast/extractStyles';
 
+const pluginSymbol = Symbol.for('jsxstyle-webpack-plugin');
+
 export default async function jsxstyleLoader(
-  this: webpack.LoaderContext<LoaderOptions>,
+  this: webpack.LoaderContext<LoaderOptions> & { [key: symbol]: PluginContext },
   content: string | Buffer,
   sourceMap?: any
 ) {
@@ -22,8 +24,7 @@ export default async function jsxstyleLoader(
   const callback = this.async();
   invariant(callback, 'Async callback is falsey');
 
-  const pluginContext: PluginContext =
-    this[Symbol.for('jsxstyle-webpack-plugin')];
+  const pluginContext: PluginContext = this[pluginSymbol];
 
   invariant(
     pluginContext,

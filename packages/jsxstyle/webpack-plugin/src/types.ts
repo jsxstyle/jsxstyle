@@ -1,11 +1,6 @@
 import type { UserConfigurableOptions } from './utils/ast/extractStyles';
 import type { Volume } from 'memfs';
-import type { GetClassNameForKeyFn } from 'jsxstyle/utils/src/processProps';
-
-export interface CacheObject {
-  [key: string]: string;
-  [key: symbol]: number;
-}
+import type { CacheObject, GetClassNameForKeyFn } from 'jsxstyle/utils';
 
 export type LoaderOptions = UserConfigurableOptions;
 

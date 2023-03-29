@@ -1,16 +1,16 @@
 import {
   componentStyles,
   type DeprecatedJsxstyleComponentName,
-} from 'jsxstyle/utils/src';
+} from 'jsxstyle/utils';
 import { styleCache } from './styleCache';
 import { createElement } from 'react';
 import { componentFactory } from './componentFactory';
 
-export type { CSSProperties } from 'jsxstyle/utils/src';
+export type { CSSProperties } from 'jsxstyle/utils';
 export type { StylableComponentProps } from './types';
 export { styleCache as cache };
 export { useMatchMedia } from './useMatchMedia';
-export { makeCustomProperties as EXPERIMENTAL_makeCustomProperties } from 'jsxstyle/utils/src/makeCustomProperties';
+export { makeCustomProperties as EXPERIMENTAL_makeCustomProperties } from 'jsxstyle/utils';
 
 let depFactory: any = componentFactory;
 
