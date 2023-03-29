@@ -12,7 +12,7 @@
     ]
   ],
   "ignore": [
-    "minisite",
+    "jsxstyle-minisite",
     "jsxstyle-*-example"
   ]
 }
