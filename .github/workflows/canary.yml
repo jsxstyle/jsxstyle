@@ -1,9 +1,9 @@
-name: Publish release
+name: Publish canary release
 
 on:
   push:
     branches:
-      - main
+      - dev
 
 jobs:
   run-tests:
@@ -15,7 +15,6 @@ jobs:
   canary:
     name: Create and publish a new release
     runs-on: ubuntu-latest
-    needs: run-tests
 
     steps:
       - uses: actions/checkout@v3
@@ -34,13 +33,11 @@ jobs:
       - name: Configure NPM
         run: npm set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }}
 
-      - name: Create release PR or publish to npm
-        id: changesets
-        uses: changesets/action@v1
-        with:
-          commit: Bump versions
-          title: Bump versions
-          publish: npm run release
+      - name: Publish canary release
+        run: |
+          git checkout main
+          npm run version:canary
+          npm run release:canary
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
