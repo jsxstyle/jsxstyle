@@ -10,8 +10,8 @@
   "types": "./react/lib/index.d.ts",
   "files": [
     "lib",
-    "**/lib/*",
-    "!**/lib/*.tsbuildinfo"
+    "**/lib/**/*",
+    "!**/lib/**/*.tsbuildinfo"
   ],
   "exports": {
     ".": {
