@@ -9,7 +9,8 @@
   "module": "./lib/react/index.es.js",
   "types": "./react/lib/index.d.ts",
   "files": [
-    "*/lib",
+    "lib",
+    "**/lib/*",
     "!**/lib/*.tsbuildinfo"
   ],
   "exports": {
