@@ -47,9 +47,9 @@ export const useMonacoEditor = (): ErrorState | PendingState | SuccessState => {
 
         Object.entries({
           // prettier-ignore
-          jsxstyle: require.context('!!raw-loader!jsxstyle/lib/types/react/', true, /\.d\.ts$/),
+          jsxstyle: require.context('../../packages/jsxstyle/lib/', true, /\.d\.ts$/),
           // prettier-ignore
-          react: require.context('!!raw-loader!@types/react/', true, /\.d\.ts$/),
+          react: require.context('../../node_modules/@types/react/', true, /\.d\.ts$/),
         }).forEach(([packageName, req]) => {
           req.keys().forEach((key) => {
             const content: string = req(key).default;

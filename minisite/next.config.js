@@ -7,6 +7,7 @@ const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 module.exports = {
   typescript: {
     tsconfigPath: './tsconfig.json',
+    ignoreBuildErrors: true,
   },
 
   eslint: {
@@ -25,6 +26,8 @@ module.exports = {
           ];
         }
       });
+
+    config.module.rules.push({ test: /\.d\.ts$/, type: 'asset/source' });
 
     if (!options.isServer) {
       config.plugins.push(

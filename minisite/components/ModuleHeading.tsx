@@ -1,6 +1,8 @@
 import { Block } from 'jsxstyle';
 
-export const ModuleHeading: React.FC = ({ children }) => (
+export const ModuleHeading: React.FC<{ children?: React.ReactNode }> = ({
+  children,
+}) => (
   <Block
     flex="0 0 auto"
     height={30}

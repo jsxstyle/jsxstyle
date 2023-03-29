@@ -2,6 +2,7 @@ import Head from 'next/head';
 import { Block } from 'jsxstyle';
 
 interface ChromeProps {
+  children?: React.ReactNode;
   description?: string;
   title?: string;
 }
