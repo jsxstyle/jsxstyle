@@ -7,7 +7,7 @@
   "homepage": "https://github.com/jsxstyle/jsxstyle#readme",
   "scripts": {
     "start": "npm -w minisite run dev",
-    "build": "npm run -w jsxstyle && npm run -w jsxstyle build",
+    "build": "npm run -w jsxstyle build",
     "clean": "find . -name 'node_modules' -type d -prune -exec echo {} \\; -exec rm -rf {} \\;",
     "example": "node examples/run.js",
     "test": "npm run build && jest",

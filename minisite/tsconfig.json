@@ -25,11 +25,16 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "target": "esnext",
-    "module": "esnext"
+    "module": "esnext",
+    "paths": {
+      "jsxstyle": [
+        "../packages/jsxstyle"
+      ]
+    }
   },
   "references": [
     {
-      "path": "../packages/jsxstyle/tsconfig.json"
+      "path": "../packages/tsconfig.json"
     }
   ]
 }

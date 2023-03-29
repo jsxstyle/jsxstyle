@@ -1,5 +1,5 @@
 ---
-'jsxstyle': minor
+'jsxstyle-webpack-plugin': minor
 ---
 
 Added inline CSS import support to `jsxstyle/webpack-plugin`. This officially replaces the virtual filesystem stuff we were doing behind the scenes.

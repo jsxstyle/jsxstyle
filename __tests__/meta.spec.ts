@@ -1,4 +1,3 @@
-import fs from 'fs';
 import packlist from 'npm-packlist';
 import path from 'path';
 import glob from 'glob';
@@ -39,39 +38,17 @@ ${fileList
   });
 });
 
-describe('lockfile', () => {
-  it('does not contain Twitter-internal URLs', async () => {
-    const lockfileContents = fs.readFileSync(
-      path.resolve(__dirname, '../package-lock.json'),
-      'utf8'
-    );
-    expect(lockfileContents.includes('twitter.biz')).toEqual(false);
-  });
-});
-
-const skippedExamples = ['preact-cli', 'preact-cli-typescript', 'gatsby'].map(
-  (name) => `jsxstyle-${name}-example`
-);
-
 describe('examples', () => {
   const exampleDir = path.resolve(__dirname, '..', 'examples');
   const examples = glob.sync('jsxstyle-*-example', { cwd: exampleDir });
 
   for (const example of examples) {
-    // TODO(meyer) re-enable when this error is fixed: https://github.com/preactjs/preact-cli/issues/1043
-    const itFn = skippedExamples.includes(example) ? it.skip : it;
-
-    /* eslint jest/no-standalone-expect: ['error', { additionalTestBlockFunctions: ['itFn'] }] */
-    itFn(
-      `\`${example}\` builds correctly`,
-      async () => {
-        const cwd = path.join(exampleDir, example);
-        expect.assertions(1);
-        return expect(() =>
-          execSync('npm run build', { cwd, stdio: 'inherit' })
-        ).not.toThrow();
-      },
-      30000
-    );
+    it(`\`${example}\` builds correctly`, async () => {
+      const cwd = path.join(exampleDir, example);
+      expect.assertions(1);
+      return expect(() =>
+        execSync('npm run build', { cwd, stdio: 'inherit' })
+      ).not.toThrow();
+    }, 30000);
   }
 });

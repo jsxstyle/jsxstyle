@@ -12,6 +12,8 @@ const supportedModuleFormats = ['cjs', 'es'];
 
 const topLevelModules = ['solid', 'utils', 'webpack-plugin'];
 
+const experimentalModules = ['nextjs-plugin'];
+
 /** @type {Record<string, Partial<Record<'require' | 'import' | 'types', string>>>} */
 const exportsObject = {
   '.': {
@@ -20,24 +22,29 @@ const exportsObject = {
   },
 };
 
+const packagesDir = path.resolve(__dirname, '..');
+
 /** @type {import('rollup').Plugin} */
 const rollupPackageJsonPlugin = {
   name: 'module-package-json-files',
   async renderChunk(code, chunk, options) {
     if (!chunk.facadeModuleId) return null;
 
-    const sourceTSFile = path.relative(__dirname, chunk.facadeModuleId);
+    const sourceTSFile = path.relative(packagesDir, chunk.facadeModuleId);
     invariant(
       sourceTSFile.endsWith('.ts') || sourceTSFile.endsWith('.tsx'),
       'Expected a TypeScript source file'
     );
 
-    const prefix = topLevelModules.includes(chunk.name) ? './' : './lib/';
+    const prefix = topLevelModules.includes(chunk.name)
+      ? './'
+      : experimentalModules.includes(chunk.name)
+      ? './experimental/'
+      : './lib/';
     const modulePath = chunk.name === 'react' ? '.' : prefix + chunk.name;
     const moduleEntry = (exportsObject[modulePath] ||= {});
 
-    moduleEntry['types'] =
-      './' + sourceTSFile.replace('/src/', '/lib/').replace(/\.tsx?$/, '.d.ts');
+    moduleEntry['types'] = './lib/' + sourceTSFile.replace(/\.tsx?$/, '.d.ts');
 
     if (options.format === 'cjs') {
       moduleEntry['require'] = './' + chunk.fileName;
@@ -71,6 +78,7 @@ const rollupPackageJsonPlugin = {
 
     const pkgJsonPath = path.join(__dirname, 'package.json');
     const pkgJsonContent = await fs.readFile(pkgJsonPath, 'utf-8');
+
     const pkgJson = JSON.parse(pkgJsonContent);
     pkgJson.exports = sortedEntries;
     pkgJson.main = exportsObject['.'].require;
@@ -82,20 +90,20 @@ const rollupPackageJsonPlugin = {
 
 /** @type {import('rollup').RollupOptions} */
 module.exports = {
-  context: __dirname,
+  context: packagesDir,
   // prettier-ignore
   input: {
-    'react':          './react/src/index.ts',
-    'solid':          './solid/src/index.tsx',
-    'utils':          './utils/src/index.ts',
+    'react':          '../jsxstyle-react/src/index.ts',
+    'solid':          '../jsxstyle-solid/src/index.tsx',
+    'utils':          '../jsxstyle-utils/src/index.ts',
 
-    'webpack-plugin': './webpack-plugin/src/plugin.ts',
-    'webpack-loader': './webpack-plugin/src/loader.ts',
+    'nextjs-plugin':  '../jsxstyle-nextjs-plugin/src/index.ts',
+    'webpack-plugin': '../jsxstyle-webpack-plugin/src/plugin.ts',
+    'webpack-loader': '../jsxstyle-webpack-plugin/src/loader.ts',
 
-    'base64-loader':  './webpack-plugin/src/base64Loader.ts',
-    'noop':           './webpack-plugin/src/noop.ts',
-    'nextjs-plugin':  './webpack-plugin/src/nextjs.ts',
-    'extract-styles': './webpack-plugin/src/utils/ast/extractStyles.ts',
+    'base64-loader':  '../jsxstyle-webpack-plugin/src/base64Loader.ts',
+    'noop':           '../jsxstyle-webpack-plugin/src/noop.ts',
+    'extract-styles': '../jsxstyle-webpack-plugin/src/utils/ast/extractStyles.ts',
   },
   output: supportedModuleFormats.map(
     /** @returns {import('rollup').OutputOptions} */
@@ -103,8 +111,18 @@ module.exports = {
       format,
       interop: 'compat',
       dir: __dirname,
-      entryFileNames: `lib/[name]/index.[format].js`,
-      chunkFileNames: `lib/chunks/[name].[hash].[format].js`,
+      entryFileNames: (chunkInfo) => {
+        invariant(chunkInfo.facadeModuleId, 'Missing facadeModuleId');
+        const fileName = path.join(
+          'lib',
+          path
+            .relative(packagesDir, chunkInfo.facadeModuleId)
+            .replace(/\.tsx?$/, '.[format].js')
+        );
+        console.log('entryFileNames!', fileName);
+        return fileName;
+      },
+      chunkFileNames: 'lib/chunks/[name].[hash].[format].js',
       sourcemap: true,
     })
   ),
@@ -114,7 +132,7 @@ module.exports = {
       extensions: ['.mjs', '.js', '.json', '.node', '.ts', '.tsx'],
     }),
     babel({
-      cwd: __dirname,
+      cwd: packagesDir,
       babelHelpers: 'bundled',
       extensions: [...DEFAULT_EXTENSIONS, '.ts', '.tsx'],
     }),
@@ -127,7 +145,6 @@ module.exports = {
     '@babel/types',
     'fs',
     'invariant',
-    'jsxstyle/utils',
     'memfs',
     'module',
     'path',

@@ -39,23 +39,17 @@ module.exports = {
       parser: '@typescript-eslint/parser',
       parserOptions: {
         project: [
-          'tsconfig.jest.json',
+          'tsconfig.test.json',
           'minisite/tsconfig.json',
-          'packages/jsxstyle/react/tsconfig.json',
-          'packages/jsxstyle/solid/tsconfig.json',
-          'packages/jsxstyle/utils/tsconfig.json',
-          'packages/jsxstyle/webpack-plugin/tsconfig.json',
+          'packages/jsxstyle-react/tsconfig.json',
+          'packages/jsxstyle-solid/tsconfig.json',
+          'packages/jsxstyle-utils/tsconfig.json',
+          'packages/jsxstyle-nextjs-plugin/tsconfig.json',
+          'packages/jsxstyle-webpack-plugin/tsconfig.json',
           'examples/jsxstyle-typescript-example/tsconfig.json',
         ],
       },
       extends: ['plugin:@typescript-eslint/recommended'],
-    },
-    {
-      files: ['examples/jsxstyle-gatsby-example/**/*'],
-      rules: {
-        'react/react-in-jsx-scope': 2,
-        'react/jsx-uses-react': 2,
-      },
     },
     {
       files: ['**/*.spec.ts', '**/*.spec.tsx'],

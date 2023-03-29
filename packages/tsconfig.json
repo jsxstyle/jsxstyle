@@ -1,0 +1,23 @@
+{
+  "files": [],
+  "compilerOptions": {
+    "composite": true
+  },
+  "references": [
+    {
+      "path": "jsxstyle-react"
+    },
+    {
+      "path": "jsxstyle-solid"
+    },
+    {
+      "path": "jsxstyle-utils"
+    },
+    {
+      "path": "jsxstyle-nextjs-plugin"
+    },
+    {
+      "path": "jsxstyle-webpack-plugin"
+    }
+  ]
+}

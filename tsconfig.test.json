@@ -20,6 +20,20 @@
   ],
   "exclude": [
     "node_modules",
-    "packages/jsxstyle/react/src/__tests__/typescript"
+    "packages/jsxstyle-react/src/__tests__/typescript"
+  ],
+  "references": [
+    {
+      "path": "packages/jsxstyle-react"
+    },
+    {
+      "path": "packages/jsxstyle-solid"
+    },
+    {
+      "path": "packages/jsxstyle-utils"
+    },
+    {
+      "path": "packages/jsxstyle-webpack-plugin"
+    }
   ]
 }
