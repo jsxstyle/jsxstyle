@@ -5,6 +5,7 @@ import {
 } from '../../jsxstyle-utils/src';
 import { styleCache } from './styleCache';
 import type { JsxstyleProps, ValidComponentPropValue } from './types';
+import { createMemo } from 'solid-js';
 import { Dynamic, createComponent, mergeProps } from 'solid-js/web';
 import type { JSX } from 'solid-js';
 
@@ -21,10 +22,13 @@ export function componentFactory(
   const component = <T extends ValidComponentPropValue = 'div'>(
     props: Props<T>
   ): JSX.Element => {
-    const extractedProps = styleCache.getComponentProps(
-      { ...defaultProps, ...props },
-      'class'
-    );
+    const extractedProps = createMemo(() => {
+      return styleCache.getComponentProps(
+        { ...defaultProps, ...props },
+        'class'
+      );
+    });
+
     return createComponent(
       Dynamic,
       mergeProps(
@@ -33,7 +37,7 @@ export function componentFactory(
             return props.component || tagName;
           },
         },
-        extractedProps
+        extractedProps()
       )
     );
   };
