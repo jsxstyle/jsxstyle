@@ -11,6 +11,9 @@
       "path": "jsxstyle-react"
     },
     {
+      "path": "jsxstyle-preact"
+    },
+    {
       "path": "jsxstyle-solid"
     },
     {

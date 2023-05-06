@@ -10,7 +10,7 @@ const { nodeResolve } = require('@rollup/plugin-node-resolve');
 /** @satisfies {import('rollup').ModuleFormat[]} */
 const supportedModuleFormats = ['cjs', 'es'];
 
-const topLevelModules = ['solid', 'utils', 'webpack-plugin'];
+const topLevelModules = ['preact', 'solid', 'utils', 'webpack-plugin'];
 
 const experimentalModules = ['nextjs-plugin'];
 
@@ -93,6 +93,7 @@ module.exports = {
   context: packagesDir,
   // prettier-ignore
   input: {
+    'preact':          '../jsxstyle-preact/src/index.ts',
     'react':          '../jsxstyle-react/src/index.ts',
     'solid':          '../jsxstyle-solid/src/index.tsx',
     'utils':          '../jsxstyle-utils/src/index.ts',

@@ -83,6 +83,11 @@
       "import": "./lib/jsxstyle-webpack-plugin/src/loader.js",
       "require": "./lib/jsxstyle-webpack-plugin/src/loader.cjs"
     },
+    "./preact": {
+      "types": "./lib/jsxstyle-preact/src/index.d.ts",
+      "import": "./lib/jsxstyle-preact/src/index.js",
+      "require": "./lib/jsxstyle-preact/src/index.cjs"
+    },
     "./solid": {
       "types": "./lib/jsxstyle-solid/src/index.d.ts",
       "import": "./lib/jsxstyle-solid/src/index.js",

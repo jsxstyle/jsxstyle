@@ -45,6 +45,7 @@ module.exports = {
           'packages/jsxstyle-bundler-utils/tsconfig.json',
 
           'packages/jsxstyle-react/tsconfig.json',
+          'packages/jsxstyle-preact/tsconfig.json',
           'packages/jsxstyle-solid/tsconfig.json',
           'packages/jsxstyle-utils/tsconfig.json',
 

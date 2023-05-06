@@ -1,0 +1,8 @@
+{
+  "name": "jsxstyle-preact",
+  "version": "2.5.1",
+  "private": true,
+  "peerDependencies": {
+    "preact": "^10.0.0"
+  }
+}
