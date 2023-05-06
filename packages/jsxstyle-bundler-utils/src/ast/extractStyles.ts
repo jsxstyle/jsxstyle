@@ -27,7 +27,7 @@ const validCssModes = [
 
 export interface UserConfigurableOptions {
   parserPlugins?: ParserPlugin[];
-  cssMode?: typeof validCssModes[number];
+  cssMode?: (typeof validCssModes)[number];
 }
 
 export interface ExtractStylesOptions {
@@ -74,7 +74,7 @@ const defaultStyleAttributes = Object.entries(componentStyles).reduce<
 
   attrs[componentName] = Object.entries(styleObj).reduce<t.JSXAttribute[]>(
     (props, [propKey, propValue]) => {
-      if (propValue == null || propValue === '') {
+      if (propValue == null) {
         return props;
       }
 

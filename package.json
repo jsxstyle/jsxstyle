@@ -77,7 +77,7 @@
     "karma-webpack": "^5.0.0",
     "mini-css-extract-plugin": "^2.7.0",
     "npm-packlist": "^5.0.2",
-    "prettier": "^2.7.1",
+    "prettier": "^2.8.8",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "terser": "^5.15.1",

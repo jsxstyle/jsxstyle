@@ -18,10 +18,7 @@ export type DeprecatedJsxstyleComponentName =
   | 'TableCell'
   | 'TableRow';
 
-export const componentStyles: Record<
-  JsxstyleComponentName | DeprecatedJsxstyleComponentName,
-  Pick<CSSProperties, 'display' | 'flexDirection' | 'alignItems'> | null
-> = {
+export const componentStyles = {
   Block: { display: 'block' },
   Box: null,
   Col: { display: 'flex', flexDirection: 'column' },
@@ -42,4 +39,7 @@ export const componentStyles: Record<
   Table: { display: 'table' },
   TableCell: { display: 'table-cell' },
   TableRow: { display: 'table-row' },
-};
+} satisfies Record<
+  JsxstyleComponentName | DeprecatedJsxstyleComponentName,
+  CSSProperties | null
+>;
