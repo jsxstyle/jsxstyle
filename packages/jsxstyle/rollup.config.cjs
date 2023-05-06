@@ -107,22 +107,25 @@ module.exports = {
   },
   output: supportedModuleFormats.map(
     /** @returns {import('rollup').OutputOptions} */
-    (format) => ({
-      format,
-      interop: 'compat',
-      dir: __dirname,
-      entryFileNames: (chunkInfo) => {
-        invariant(chunkInfo.facadeModuleId, 'Missing facadeModuleId');
-        return path.join(
-          'lib',
-          path
-            .relative(packagesDir, chunkInfo.facadeModuleId)
-            .replace(/\.tsx?$/, '.[format].js')
-        );
-      },
-      chunkFileNames: 'lib/chunks/[name].[hash].[format].js',
-      sourcemap: true,
-    })
+    (format) => {
+      const ext = '.' + (format === 'cjs' ? 'cjs' : 'js');
+      return {
+        format,
+        interop: 'compat',
+        dir: __dirname,
+        entryFileNames: (chunkInfo) => {
+          invariant(chunkInfo.facadeModuleId, 'Missing facadeModuleId');
+          return path.join(
+            'lib',
+            path
+              .relative(packagesDir, chunkInfo.facadeModuleId)
+              .replace(/\.tsx?$/, ext)
+          );
+        },
+        chunkFileNames: 'lib/chunks/[name].[hash]' + ext,
+        sourcemap: true,
+      };
+    }
   ),
   plugins: [
     nodeResolve({

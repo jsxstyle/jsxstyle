@@ -4,9 +4,10 @@
   "description": "Inline style system for JSX",
   "author": "Pete Hunt",
   "license": "Apache-2.0",
+  "type": "module",
   "repository": "git@github.com:jsxstyle/jsxstyle.git",
-  "main": "./lib/jsxstyle-react/src/index.cjs.js",
-  "module": "./lib/jsxstyle-react/src/index.es.js",
+  "main": "./lib/jsxstyle-react/src/index.cjs",
+  "module": "./lib/jsxstyle-react/src/index.js",
   "types": "./lib/jsxstyle-react/src/index.d.ts",
   "sideEffects": [
     "**/*.css"
@@ -54,48 +55,48 @@
   "exports": {
     ".": {
       "types": "./lib/jsxstyle-react/src/index.d.ts",
-      "import": "./lib/jsxstyle-react/src/index.es.js",
-      "require": "./lib/jsxstyle-react/src/index.cjs.js"
+      "import": "./lib/jsxstyle-react/src/index.js",
+      "require": "./lib/jsxstyle-react/src/index.cjs"
     },
     "./experimental/nextjs-plugin": {
       "types": "./lib/jsxstyle-nextjs-plugin/src/index.d.ts",
-      "import": "./lib/jsxstyle-nextjs-plugin/src/index.es.js",
-      "require": "./lib/jsxstyle-nextjs-plugin/src/index.cjs.js"
+      "import": "./lib/jsxstyle-nextjs-plugin/src/index.js",
+      "require": "./lib/jsxstyle-nextjs-plugin/src/index.cjs"
     },
     "./lib/base64-loader": {
       "types": "./lib/jsxstyle-webpack-plugin/src/base64Loader.d.ts",
-      "import": "./lib/jsxstyle-webpack-plugin/src/base64Loader.es.js",
-      "require": "./lib/jsxstyle-webpack-plugin/src/base64Loader.cjs.js"
+      "import": "./lib/jsxstyle-webpack-plugin/src/base64Loader.js",
+      "require": "./lib/jsxstyle-webpack-plugin/src/base64Loader.cjs"
     },
     "./lib/extract-styles": {
       "types": "./lib/jsxstyle-bundler-utils/src/ast/extractStyles.d.ts",
-      "import": "./lib/jsxstyle-bundler-utils/src/ast/extractStyles.es.js",
-      "require": "./lib/jsxstyle-bundler-utils/src/ast/extractStyles.cjs.js"
+      "import": "./lib/jsxstyle-bundler-utils/src/ast/extractStyles.js",
+      "require": "./lib/jsxstyle-bundler-utils/src/ast/extractStyles.cjs"
     },
     "./lib/noop": {
       "types": "./lib/jsxstyle-bundler-utils/src/noop.d.ts",
-      "import": "./lib/jsxstyle-bundler-utils/src/noop.es.js",
-      "require": "./lib/jsxstyle-bundler-utils/src/noop.cjs.js"
+      "import": "./lib/jsxstyle-bundler-utils/src/noop.js",
+      "require": "./lib/jsxstyle-bundler-utils/src/noop.cjs"
     },
     "./lib/webpack-loader": {
       "types": "./lib/jsxstyle-webpack-plugin/src/loader.d.ts",
-      "import": "./lib/jsxstyle-webpack-plugin/src/loader.es.js",
-      "require": "./lib/jsxstyle-webpack-plugin/src/loader.cjs.js"
+      "import": "./lib/jsxstyle-webpack-plugin/src/loader.js",
+      "require": "./lib/jsxstyle-webpack-plugin/src/loader.cjs"
     },
     "./solid": {
       "types": "./lib/jsxstyle-solid/src/index.d.ts",
-      "import": "./lib/jsxstyle-solid/src/index.es.js",
-      "require": "./lib/jsxstyle-solid/src/index.cjs.js"
+      "import": "./lib/jsxstyle-solid/src/index.js",
+      "require": "./lib/jsxstyle-solid/src/index.cjs"
     },
     "./utils": {
       "types": "./lib/jsxstyle-utils/src/index.d.ts",
-      "import": "./lib/jsxstyle-utils/src/index.es.js",
-      "require": "./lib/jsxstyle-utils/src/index.cjs.js"
+      "import": "./lib/jsxstyle-utils/src/index.js",
+      "require": "./lib/jsxstyle-utils/src/index.cjs"
     },
     "./webpack-plugin": {
       "types": "./lib/jsxstyle-webpack-plugin/src/plugin.d.ts",
-      "import": "./lib/jsxstyle-webpack-plugin/src/plugin.es.js",
-      "require": "./lib/jsxstyle-webpack-plugin/src/plugin.cjs.js"
+      "import": "./lib/jsxstyle-webpack-plugin/src/plugin.js",
+      "require": "./lib/jsxstyle-webpack-plugin/src/plugin.cjs"
     }
   }
 }

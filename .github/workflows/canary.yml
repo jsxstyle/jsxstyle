@@ -35,7 +35,6 @@ jobs:
 
       - name: Publish canary release
         run: |
-          git checkout main
           npm run version:canary
           npm run release:canary
         env:
