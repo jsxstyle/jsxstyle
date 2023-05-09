@@ -84,7 +84,7 @@ export class JsxstyleWebpackPlugin implements WebpackPluginInstance {
     };
   }
 
-  public static loader = require.resolve('jsxstyle/lib/webpack-loader');
+  public static loader = require.resolve('jsxstyle/private/webpack-loader');
 
   private ctx: PluginContext;
   private memoryFS = new Volume();

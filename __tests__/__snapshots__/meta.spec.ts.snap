@@ -57,6 +57,12 @@ jsxstyle
 - lib/jsxstyle-bundler-utils/src/createModule.d.ts.map
 - lib/jsxstyle-bundler-utils/src/getExportsFromModuleSource.d.ts
 - lib/jsxstyle-bundler-utils/src/getExportsFromModuleSource.d.ts.map
+- lib/jsxstyle-bundler-utils/src/index.cjs
+- lib/jsxstyle-bundler-utils/src/index.cjs.map
+- lib/jsxstyle-bundler-utils/src/index.d.ts
+- lib/jsxstyle-bundler-utils/src/index.d.ts.map
+- lib/jsxstyle-bundler-utils/src/index.js
+- lib/jsxstyle-bundler-utils/src/index.js.map
 - lib/jsxstyle-bundler-utils/src/makePromise.d.ts
 - lib/jsxstyle-bundler-utils/src/makePromise.d.ts.map
 - lib/jsxstyle-bundler-utils/src/noop.cjs

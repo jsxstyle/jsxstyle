@@ -1113,7 +1113,7 @@ const staticProp = 'static';
     );
 
     expect(singleInlineImports.js).toMatchInlineSnapshot(`
-      "import "jsxstyle/cache/mock/evaluateVars.js.css!=!jsxstyle/lib/base64-loader?value=!jsxstyle/lib/noop";
+      "import "jsxstyle/cache/mock/evaluateVars.js.css!=!jsxstyle/private/base64-loader?value=!jsxstyle/private/noop";
       const staticProp = 'static';
       <div className="_x0 _x1 _x2"></div>;
       <div className="_x0 _x3 _x4"></div>;"
@@ -1133,15 +1133,15 @@ const staticProp = 'static';
 
     expect(multipleInlineImports.js).toMatchInlineSnapshot(`
       "// ._x0 { display:block }
-      import "jsxstyle/cache/_x0.css!=!jsxstyle/lib/base64-loader?value=Ll94MCB7IGRpc3BsYXk6YmxvY2sgfQ%3D%3D!jsxstyle/lib/noop";
+      import "jsxstyle/cache/_x0.css!=!jsxstyle/private/base64-loader?value=Ll94MCB7IGRpc3BsYXk6YmxvY2sgfQ%3D%3D!jsxstyle/private/noop";
       // ._x1 { thing1:static }
-      import "jsxstyle/cache/_x1.css!=!jsxstyle/lib/base64-loader?value=Ll94MSB7IHRoaW5nMTpzdGF0aWMgfQ%3D%3D!jsxstyle/lib/noop";
+      import "jsxstyle/cache/_x1.css!=!jsxstyle/private/base64-loader?value=Ll94MSB7IHRoaW5nMTpzdGF0aWMgfQ%3D%3D!jsxstyle/private/noop";
       // ._x2 { thing2:69px }
-      import "jsxstyle/cache/_x2.css!=!jsxstyle/lib/base64-loader?value=Ll94MiB7IHRoaW5nMjo2OXB4IH0%3D!jsxstyle/lib/noop";
+      import "jsxstyle/cache/_x2.css!=!jsxstyle/private/base64-loader?value=Ll94MiB7IHRoaW5nMjo2OXB4IH0%3D!jsxstyle/private/noop";
       // ._x3 { thing3:static }
-      import "jsxstyle/cache/_x3.css!=!jsxstyle/lib/base64-loader?value=Ll94MyB7IHRoaW5nMzpzdGF0aWMgfQ%3D%3D!jsxstyle/lib/noop";
+      import "jsxstyle/cache/_x3.css!=!jsxstyle/private/base64-loader?value=Ll94MyB7IHRoaW5nMzpzdGF0aWMgfQ%3D%3D!jsxstyle/private/noop";
       // ._x4 { thing4:69px }
-      import "jsxstyle/cache/_x4.css!=!jsxstyle/lib/base64-loader?value=Ll94NCB7IHRoaW5nNDo2OXB4IH0%3D!jsxstyle/lib/noop";
+      import "jsxstyle/cache/_x4.css!=!jsxstyle/private/base64-loader?value=Ll94NCB7IHRoaW5nNDo2OXB4IH0%3D!jsxstyle/private/noop";
       const staticProp = 'static';
       <div className="_x0 _x1 _x2"></div>;
       <div className="_x0 _x3 _x4"></div>;"

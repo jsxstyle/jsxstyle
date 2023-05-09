@@ -58,31 +58,6 @@
       "import": "./lib/jsxstyle-react/src/index.js",
       "require": "./lib/jsxstyle-react/src/index.cjs"
     },
-    "./experimental/nextjs-plugin": {
-      "types": "./lib/jsxstyle-nextjs-plugin/src/index.d.ts",
-      "import": "./lib/jsxstyle-nextjs-plugin/src/index.js",
-      "require": "./lib/jsxstyle-nextjs-plugin/src/index.cjs"
-    },
-    "./lib/base64-loader": {
-      "types": "./lib/jsxstyle-webpack-plugin/src/base64Loader.d.ts",
-      "import": "./lib/jsxstyle-webpack-plugin/src/base64Loader.js",
-      "require": "./lib/jsxstyle-webpack-plugin/src/base64Loader.cjs"
-    },
-    "./lib/extract-styles": {
-      "types": "./lib/jsxstyle-bundler-utils/src/ast/extractStyles.d.ts",
-      "import": "./lib/jsxstyle-bundler-utils/src/ast/extractStyles.js",
-      "require": "./lib/jsxstyle-bundler-utils/src/ast/extractStyles.cjs"
-    },
-    "./lib/noop": {
-      "types": "./lib/jsxstyle-bundler-utils/src/noop.d.ts",
-      "import": "./lib/jsxstyle-bundler-utils/src/noop.js",
-      "require": "./lib/jsxstyle-bundler-utils/src/noop.cjs"
-    },
-    "./lib/webpack-loader": {
-      "types": "./lib/jsxstyle-webpack-plugin/src/loader.d.ts",
-      "import": "./lib/jsxstyle-webpack-plugin/src/loader.js",
-      "require": "./lib/jsxstyle-webpack-plugin/src/loader.cjs"
-    },
     "./preact": {
       "types": "./lib/jsxstyle-preact/src/index.d.ts",
       "import": "./lib/jsxstyle-preact/src/index.js",
@@ -102,6 +77,36 @@
       "types": "./lib/jsxstyle-webpack-plugin/src/plugin.d.ts",
       "import": "./lib/jsxstyle-webpack-plugin/src/plugin.js",
       "require": "./lib/jsxstyle-webpack-plugin/src/plugin.cjs"
+    },
+    "./experimental/bundler-utils": {
+      "types": "./lib/jsxstyle-bundler-utils/src/index.d.ts",
+      "import": "./lib/jsxstyle-bundler-utils/src/index.js",
+      "require": "./lib/jsxstyle-bundler-utils/src/index.cjs"
+    },
+    "./experimental/nextjs-plugin": {
+      "types": "./lib/jsxstyle-nextjs-plugin/src/index.d.ts",
+      "import": "./lib/jsxstyle-nextjs-plugin/src/index.js",
+      "require": "./lib/jsxstyle-nextjs-plugin/src/index.cjs"
+    },
+    "./private/base64-loader": {
+      "types": "./lib/jsxstyle-webpack-plugin/src/base64Loader.d.ts",
+      "import": "./lib/jsxstyle-webpack-plugin/src/base64Loader.js",
+      "require": "./lib/jsxstyle-webpack-plugin/src/base64Loader.cjs"
+    },
+    "./private/extract-styles": {
+      "types": "./lib/jsxstyle-bundler-utils/src/ast/extractStyles.d.ts",
+      "import": "./lib/jsxstyle-bundler-utils/src/ast/extractStyles.js",
+      "require": "./lib/jsxstyle-bundler-utils/src/ast/extractStyles.cjs"
+    },
+    "./private/noop": {
+      "types": "./lib/jsxstyle-bundler-utils/src/noop.d.ts",
+      "import": "./lib/jsxstyle-bundler-utils/src/noop.js",
+      "require": "./lib/jsxstyle-bundler-utils/src/noop.cjs"
+    },
+    "./private/webpack-loader": {
+      "types": "./lib/jsxstyle-webpack-plugin/src/loader.d.ts",
+      "import": "./lib/jsxstyle-webpack-plugin/src/loader.js",
+      "require": "./lib/jsxstyle-webpack-plugin/src/loader.cjs"
     }
   }
 }

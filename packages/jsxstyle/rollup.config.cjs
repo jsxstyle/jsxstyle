@@ -12,7 +12,7 @@ const supportedModuleFormats = ['cjs', 'es'];
 
 const topLevelModules = ['preact', 'solid', 'utils', 'webpack-plugin'];
 
-const experimentalModules = ['nextjs-plugin'];
+const experimentalModules = ['nextjs-plugin', 'bundler-utils'];
 
 /** @type {Record<string, Partial<Record<'require' | 'import' | 'types', string>>>} */
 const exportsObject = {
@@ -40,7 +40,7 @@ const rollupPackageJsonPlugin = {
       ? './'
       : experimentalModules.includes(chunk.name)
       ? './experimental/'
-      : './lib/';
+      : './private/';
     const modulePath = chunk.name === 'react' ? '.' : prefix + chunk.name;
     const moduleEntry = (exportsObject[modulePath] ||= {});
 
@@ -73,7 +73,11 @@ const rollupPackageJsonPlugin = {
             ];
           }
         )
-        .sort(([a], [b]) => a.localeCompare(b))
+        .sort(
+          ([a], [b]) =>
+            // sort by number of subfolders, then alphabetically
+            a.split('/').length - b.split('/').length || a.localeCompare(b)
+        )
     );
 
     const pkgJsonPath = path.join(__dirname, 'package.json');
@@ -93,11 +97,12 @@ module.exports = {
   context: packagesDir,
   // prettier-ignore
   input: {
-    'preact':          '../jsxstyle-preact/src/index.ts',
+    'preact':         '../jsxstyle-preact/src/index.ts',
     'react':          '../jsxstyle-react/src/index.ts',
     'solid':          '../jsxstyle-solid/src/index.tsx',
     'utils':          '../jsxstyle-utils/src/index.ts',
 
+    'bundler-utils':  '../jsxstyle-bundler-utils/src/index.ts',
     'nextjs-plugin':  '../jsxstyle-nextjs-plugin/src/index.ts',
     'webpack-plugin': '../jsxstyle-webpack-plugin/src/plugin.ts',
     'webpack-loader': '../jsxstyle-webpack-plugin/src/loader.ts',

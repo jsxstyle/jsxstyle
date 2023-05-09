@@ -1,4 +1,4 @@
-import { extractStyles } from 'jsxstyle/lib/extract-styles';
+import { extractStyles } from 'jsxstyle/private/extract-styles';
 import babelTraverse from '@babel/traverse';
 import generate from '@babel/generator';
 import * as t from '@babel/types';
