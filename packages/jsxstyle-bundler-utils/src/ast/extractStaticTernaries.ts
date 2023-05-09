@@ -1,8 +1,11 @@
-import generate from '@babel/generator';
+import generateImport from '@babel/generator';
 import * as t from '@babel/types';
 import invariant from 'invariant';
 import { processProps } from '../../../jsxstyle-utils/src';
 import type { GetClassNameForKeyFn } from '../../../jsxstyle-utils/src';
+import { esmInterop } from '../esmInterop';
+
+const generate = esmInterop(generateImport);
 
 export interface Ternary {
   name: string;

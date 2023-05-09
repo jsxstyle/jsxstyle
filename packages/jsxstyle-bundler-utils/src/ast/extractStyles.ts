@@ -1,7 +1,8 @@
 /* eslint-disable no-prototype-builtins */
-import generate from '@babel/generator';
+import generateImport from '@babel/generator';
 import type { ParserPlugin } from '@babel/parser';
-import traverse, { type NodePath, type TraverseOptions } from '@babel/traverse';
+import traverseImport from '@babel/traverse';
+import type { NodePath, TraverseOptions } from '@babel/traverse';
 import * as t from '@babel/types';
 import invariant from 'invariant';
 import { componentStyles, processProps } from '../../../jsxstyle-utils/src';
@@ -18,6 +19,10 @@ import { getStaticBindingsForScope } from './getStaticBindingsForScope';
 import { parse } from './parse';
 import { getImportForSource } from './getImportForSource';
 import type { GetClassNameForKeyFn } from '../../../jsxstyle-utils/src';
+import { esmInterop } from '../esmInterop';
+
+const traverse = esmInterop(traverseImport);
+const generate = esmInterop(generateImport);
 
 const validCssModes = [
   'singleInlineImport',
