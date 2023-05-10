@@ -1,11 +1,23 @@
-import { extractStyles } from '../../jsxstyle-bundler-utils/src/ast/extractStyles';
+import {
+  extractStyles,
+  type ExtractStylesOptions,
+  type UserConfigurableOptions,
+} from '../../jsxstyle-bundler-utils/src/ast/extractStyles';
 import fs from 'fs/promises';
 import path from 'path';
 import type { Plugin } from 'vite';
 
-export const vitePlugin = ({
+interface PluginOptions
+  extends UserConfigurableOptions,
+    Pick<ExtractStylesOptions, 'modulesByAbsolutePath'> {
+  extensions?: string[];
+}
+
+export const jsxstyleVitePlugin = ({
   extensions = ['.ts', '.tsx', '.js'],
-} = {}): Plugin => {
+  modulesByAbsolutePath,
+  ...options
+}: PluginOptions): Plugin => {
   const isHandledFile = (id: string) =>
     extensions.some((ext) => id.endsWith(ext));
 
@@ -47,11 +59,17 @@ export const vitePlugin = ({
 
       const fileContent = await fs.readFile(id, 'utf-8');
       const idWithoutStuff = id.replace(/^\0/, '');
-      const result = extractStyles(fileContent, idWithoutStuff, {
-        warnCallback: console.warn,
-        errorCallback: console.error,
-        getClassNameForKey,
-      });
+      const result = extractStyles(
+        fileContent,
+        idWithoutStuff,
+        {
+          warnCallback: console.warn,
+          errorCallback: console.error,
+          getClassNameForKey,
+          modulesByAbsolutePath,
+        },
+        options
+      );
       if (!result || !result.cssFileName) return;
       cssContent[result.cssFileName] = result.css;
       return {
