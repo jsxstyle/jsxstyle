@@ -146,25 +146,17 @@ module.exports = {
     }),
     rollupPackageJsonPlugin,
   ],
-  external: [
-    '@babel/generator',
-    '@babel/parser',
-    '@babel/traverse',
-    '@babel/types',
-    'fs',
-    'invariant',
-    'memfs',
-    'module',
-    'path',
-    'preact',
-    'prop-types',
-    'react',
-    'solid-js',
-    'solid-js/types',
-    'solid-js/web',
-    'util',
-    'vm',
-    'webpack/lib/node/NodeWatchFileSystem',
-  ],
+  external(source, importer) {
+    // ignore local imports
+    if (
+      source.startsWith('.') ||
+      source.startsWith('/') ||
+      importer?.includes('/node_modules/')
+    ) {
+      return;
+    }
+    // mark everything else as external
+    return true;
+  },
   watch: { exclude: ['node_modules/**'] },
 };
