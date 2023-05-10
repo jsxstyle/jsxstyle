@@ -159,6 +159,8 @@ jsxstyle
 - lib/jsxstyle-utils/src/types.d.ts.map
 - lib/jsxstyle-vite-plugin/src/index.cjs
 - lib/jsxstyle-vite-plugin/src/index.cjs.map
+- lib/jsxstyle-vite-plugin/src/index.d.ts
+- lib/jsxstyle-vite-plugin/src/index.d.ts.map
 - lib/jsxstyle-vite-plugin/src/index.js
 - lib/jsxstyle-vite-plugin/src/index.js.map
 - lib/jsxstyle-webpack-plugin/src/base64Loader.cjs

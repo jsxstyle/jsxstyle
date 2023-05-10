@@ -23,6 +23,9 @@
       "path": "jsxstyle-nextjs-plugin"
     },
     {
+      "path": "jsxstyle-vite-plugin"
+    },
+    {
       "path": "jsxstyle-webpack-plugin"
     }
   ]
