@@ -88,6 +88,11 @@
       "import": "./lib/jsxstyle-nextjs-plugin/src/index.js",
       "require": "./lib/jsxstyle-nextjs-plugin/src/index.cjs"
     },
+    "./experimental/vite-plugin": {
+      "types": "./lib/jsxstyle-vite-plugin/src/index.d.ts",
+      "import": "./lib/jsxstyle-vite-plugin/src/index.js",
+      "require": "./lib/jsxstyle-vite-plugin/src/index.cjs"
+    },
     "./private/base64-loader": {
       "types": "./lib/jsxstyle-webpack-plugin/src/base64Loader.d.ts",
       "import": "./lib/jsxstyle-webpack-plugin/src/base64Loader.js",

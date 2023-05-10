@@ -12,7 +12,7 @@ const supportedModuleFormats = ['cjs', 'es'];
 
 const topLevelModules = ['preact', 'solid', 'utils', 'webpack-plugin'];
 
-const experimentalModules = ['nextjs-plugin', 'bundler-utils'];
+const experimentalModules = ['nextjs-plugin', 'bundler-utils', 'vite-plugin'];
 
 /** @type {Record<string, Partial<Record<'require' | 'import' | 'types', string>>>} */
 const exportsObject = {
@@ -104,6 +104,7 @@ module.exports = {
 
     'bundler-utils':  '../jsxstyle-bundler-utils/src/index.ts',
     'nextjs-plugin':  '../jsxstyle-nextjs-plugin/src/index.ts',
+    'vite-plugin':    '../jsxstyle-vite-plugin/src/index.ts',
     'webpack-plugin': '../jsxstyle-webpack-plugin/src/plugin.ts',
     'webpack-loader': '../jsxstyle-webpack-plugin/src/loader.ts',
 

@@ -157,6 +157,10 @@ jsxstyle
 - lib/jsxstyle-utils/src/stringHash.d.ts.map
 - lib/jsxstyle-utils/src/types.d.ts
 - lib/jsxstyle-utils/src/types.d.ts.map
+- lib/jsxstyle-vite-plugin/src/index.cjs
+- lib/jsxstyle-vite-plugin/src/index.cjs.map
+- lib/jsxstyle-vite-plugin/src/index.js
+- lib/jsxstyle-vite-plugin/src/index.js.map
 - lib/jsxstyle-webpack-plugin/src/base64Loader.cjs
 - lib/jsxstyle-webpack-plugin/src/base64Loader.cjs.map
 - lib/jsxstyle-webpack-plugin/src/base64Loader.d.ts

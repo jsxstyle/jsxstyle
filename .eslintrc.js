@@ -50,6 +50,7 @@ module.exports = {
           'packages/jsxstyle-utils/tsconfig.json',
 
           'packages/jsxstyle-nextjs-plugin/tsconfig.json',
+          'packages/jsxstyle-vite-plugin/tsconfig.json',
           'packages/jsxstyle-webpack-plugin/tsconfig.json',
           'examples/jsxstyle-typescript-example/tsconfig.json',
         ],
