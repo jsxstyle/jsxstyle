@@ -37,16 +37,13 @@ describe('the basics', () => {
   it('only extracts styles from valid jsxstyle components', () => {
     const rv1 = runExtractStyles(
       `import {Block as TestBlock, Flex, InlineRow, InlineCol} from "jsxstyle";
-const {Col: TestCol, Row} = require("jsxstyle");
 <Block extract="nope" />;
 <TestBlock extract="yep" />;
-<Row extract="yep" />;
 <Col extract="nope" />;
 <InlineBlock extract="nope" />;
 <Flex extract="yep" />;
 <InlineRow extract="yep" />;
-<InlineCol extract="yep" />;
-<TestCol extract="yep" />;`,
+<InlineCol extract="yep" />;`,
       'mock/validate.js'
     );
 
@@ -54,13 +51,11 @@ const {Col: TestCol, Row} = require("jsxstyle");
       "import "./validate__jsxstyle.css";
       <Block extract="nope" />;
       <div className="_x0 _x1" />;
-      <div className="_x2 _x3 _x4 _x1" />;
       <Col extract="nope" />;
       <InlineBlock extract="nope" />;
       <div className="_x2 _x1" />;
-      <div className="_x5 _x3 _x4 _x1" />;
-      <div className="_x5 _x6 _x1" />;
-      <div className="_x2 _x6 _x1" />;"
+      <div className="_x3 _x4 _x5 _x1" />;
+      <div className="_x3 _x6 _x1" />;"
     `);
 
     expect(rv1.css).toMatchInlineSnapshot(`
@@ -68,9 +63,9 @@ const {Col: TestCol, Row} = require("jsxstyle");
       ._x0 { display:block }
       ._x1 { extract:yep }
       ._x2 { display:flex }
-      ._x3._x3 { flex-direction:row }
-      ._x4 { align-items:center }
-      ._x5 { display:inline-flex }
+      ._x3 { display:inline-flex }
+      ._x4._x4 { flex-direction:row }
+      ._x5 { align-items:center }
       ._x6._x6 { flex-direction:column }
       "
     `);
@@ -778,32 +773,6 @@ export const MyComponent = () => {
       'mock/useMatchMedia-import-renamed.js'
     );
     expect(rv2.js).toContain('/*#__PURE__*/useMM(');
-
-    const rv3 = runExtractStyles(
-      `const { Block, useMatchMedia } = require('jsxstyle');
-
-const MyComponent = () => {
-  const matchesThing = useMatchMedia('thing');
-  return <Block width={matchesThing ? 100 : 200} />;
-};
-
-module.exports = MyComponent;`,
-      'mock/useMatchMedia-required.js'
-    );
-    expect(rv3.js).toContain('/*#__PURE__*/useMatchMedia(');
-
-    const rv4 = runExtractStyles(
-      `const { Block, useMatchMedia: useMM } = require('jsxstyle');
-
-const MyComponent = () => {
-  const matchesThing = useMM('thing');
-  return <Block width={matchesThing ? 100 : 200} />;
-};
-
-module.exports = MyComponent;`,
-      'mock/useMatchMedia-required-renamed.js'
-    );
-    expect(rv4.js).toContain('/*#__PURE__*/useMM(');
   });
 
   it('removes unused hook calls that are marked as "pure"', async () => {
@@ -1191,24 +1160,13 @@ describe('edge cases', () => {
     const rv = runExtractStyles(
       `import 'jsxstyle';
 import { cache, InvalidComponent, Row as RenamedRow } from 'jsxstyle';
-import { Grid } from 'jsxstyle';
-// should probably remove this as well
-require('jsxstyle');
-const { Box } = require('jsxstyle');
-const { Block, Col: RenamedCol } = require('jsxstyle');
-const { invalid, AlsoInvalid, InlineBlock } = require('jsxstyle');`,
+import { Grid } from 'jsxstyle';`,
       'mock/edge-case1.js'
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
       "import "./edge-case1__jsxstyle.css";
-      import { cache, InvalidComponent } from 'jsxstyle';
-      // should probably remove this as well
-      require('jsxstyle');
-      const {
-        invalid,
-        AlsoInvalid
-      } = require('jsxstyle');"
+      import { cache, InvalidComponent } from 'jsxstyle';"
     `);
   });
 
