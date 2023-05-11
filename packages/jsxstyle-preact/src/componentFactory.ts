@@ -21,7 +21,7 @@ export function componentFactory(
     props: PropsWithChildren<JsxstyleProps<T>>
   ): preact.VNode<any> => {
     const Component: any = props.component || tagName;
-    const extractedProps = styleCache.getComponentProps(props);
+    const extractedProps = styleCache.getComponentProps(props, 'class');
     return createElement(Component, extractedProps);
   };
 

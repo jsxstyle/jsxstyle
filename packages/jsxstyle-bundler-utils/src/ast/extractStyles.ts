@@ -60,6 +60,7 @@ const UNTOUCHED_PROPS = {
 
 // props that cannot appear in the props prop (so meta)
 const ALL_SPECIAL_PROPS = {
+  class: true,
   className: true,
   component: true,
   ...UNTOUCHED_PROPS,
@@ -952,12 +953,12 @@ export function extractStyles(
           for (const mediaQuery of mediaQueries) {
             const mediaQueryStyles = {
               ...staticAttributesByMediaQuery[mediaQuery],
-              className: staticAttributes[classPropName],
+              [classPropName]: staticAttributes[classPropName],
             };
 
             const processedProps = processProps(
               mediaQueryStyles,
-              'className',
+              classPropName,
               getClassNameForKey,
               onInsertRule,
               mediaQuery
@@ -967,8 +968,8 @@ export function extractStyles(
               continue;
             }
 
-            if (processedProps.className) {
-              staticAttributes[classPropName] = processedProps.className;
+            if (processedProps[classPropName]) {
+              staticAttributes[classPropName] = processedProps[classPropName];
             }
           }
         }
