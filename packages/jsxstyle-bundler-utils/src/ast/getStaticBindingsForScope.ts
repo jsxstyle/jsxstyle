@@ -7,9 +7,11 @@ import { evaluateAstNode } from './evaluateAstNode';
 import { getSourceModule } from './getSourceModule';
 import { isObject } from '../typePredicates';
 
+export const extensionRegex = /\.(?:[jt]sx?|json)$/;
+
 export function getStaticBindingsForScope(
   scope: Scope,
-  modulesByAbsolutePath: Record<string, unknown>,
+  modulesByAbsolutePath: Record<string, unknown> | undefined,
   sourceFileName: string,
   bindingCache: Record<string, string | null>
 ): Record<string, any> {
@@ -32,16 +34,15 @@ export function getStaticBindingsForScope(
 
       // if modulePath is an absolute or relative path
       if (moduleName.startsWith('.') || moduleName.startsWith('/')) {
-        // if moduleName doesn't end with an extension, add .js
-        if (path.extname(moduleName) === '') {
-          moduleName += '.js';
-        }
         // get absolute path
-        moduleName = path.resolve(sourceDir, moduleName);
+        moduleName = path.resolve(
+          sourceDir,
+          moduleName.replace(extensionRegex, '')
+        );
       }
 
       // eslint-disable-next-line no-prototype-builtins
-      if (modulesByAbsolutePath.hasOwnProperty(moduleName)) {
+      if (modulesByAbsolutePath?.hasOwnProperty(moduleName)) {
         const src = modulesByAbsolutePath[moduleName];
         if (!isObject(src)) {
           continue;

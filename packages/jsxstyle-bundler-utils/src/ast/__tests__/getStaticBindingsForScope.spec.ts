@@ -7,7 +7,7 @@ import { getStaticBindingsForScope } from '../getStaticBindingsForScope';
 import { parse } from '../parse';
 
 const modulesByAbsolutePath = {
-  [require.resolve('./mock/LC')]: require('./mock/LC'),
+  [require.resolve('./mock/LC').replace(/\.js$/, '')]: require('./mock/LC'),
 };
 
 describe('getStaticBindingsForScope', () => {

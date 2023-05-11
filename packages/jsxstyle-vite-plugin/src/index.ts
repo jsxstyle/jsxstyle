@@ -9,7 +9,7 @@ import type { Plugin } from 'vite';
 
 interface PluginOptions
   extends UserConfigurableOptions,
-    Pick<ExtractStylesOptions, 'modulesByAbsolutePath'> {
+    Partial<Pick<ExtractStylesOptions, 'modulesByAbsolutePath'>> {
   extensions?: string[];
   cacheFile?: string;
 }
@@ -19,7 +19,7 @@ export const jsxstyleVitePlugin = ({
   modulesByAbsolutePath,
   cacheFile,
   ...options
-}: PluginOptions): Plugin => {
+}: PluginOptions = {}): Plugin => {
   const isHandledFile = (id: string) =>
     extensions.some((ext) => id.endsWith(ext));
 

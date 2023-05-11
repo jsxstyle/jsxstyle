@@ -3,7 +3,7 @@ import invariant from 'invariant';
 import path from 'path';
 import { getExportsFromModuleSource } from './getExportsFromModuleSource';
 import { makePromise } from './makePromise';
-import { stringHash } from '../../jsxstyle-utils/src';
+import { stringHash } from '../../jsxstyle-utils/src/stringHash';
 
 interface EntrypointMetadata {
   hash: string | null;

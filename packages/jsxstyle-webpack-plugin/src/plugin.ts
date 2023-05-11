@@ -70,7 +70,8 @@ export class JsxstyleWebpackPlugin implements WebpackPluginInstance {
     }
 
     const getModules =
-      this.entrypointCache?.getModules || (() => Promise.resolve({}));
+      this.entrypointCache?.getModules ||
+      (() => Promise.resolve<Record<string, unknown>>({}));
 
     this.memoryFS = new Volume();
 

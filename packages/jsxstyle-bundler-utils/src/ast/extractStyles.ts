@@ -15,7 +15,10 @@ import { extractStaticTernaries, Ternary } from './extractStaticTernaries';
 import { generateUid } from './generatedUid';
 import { getInlineImportString } from './getInlineImportString';
 import { getPropValueFromAttributes } from './getPropValueFromAttributes';
-import { getStaticBindingsForScope } from './getStaticBindingsForScope';
+import {
+  extensionRegex,
+  getStaticBindingsForScope,
+} from './getStaticBindingsForScope';
 import { parse } from './parse';
 import { getImportForSource } from './getImportForSource';
 import type { GetClassNameForKeyFn } from '../../../jsxstyle-utils/src';
@@ -111,13 +114,7 @@ export function extractStyles(
   src: string | Buffer,
   sourceFileName: string,
   /** non-user-configurable options */
-  {
-    warnCallback,
-    errorCallback,
-    modulesByAbsolutePath = {},
-    getClassNameForKey,
-    evaluateVars = true,
-  }: ExtractStylesOptions,
+  extractStylesOptions: ExtractStylesOptions,
   options: UserConfigurableOptions = {}
 ): {
   js: string | Buffer;
@@ -126,6 +123,13 @@ export function extractStyles(
   ast: t.File;
   map: any; // RawSourceMap from 'source-map'
 } {
+  const {
+    warnCallback,
+    errorCallback,
+    getClassNameForKey,
+    evaluateVars = true,
+  } = extractStylesOptions;
+
   invariant(typeof src === 'string', '`src` must be a string of javascript');
 
   invariant(
@@ -150,6 +154,14 @@ export function extractStyles(
     );
     logError = errorCallback;
   }
+
+  const modulesByAbsolutePath = !extractStylesOptions.modulesByAbsolutePath
+    ? undefined
+    : Object.fromEntries(
+        Object.entries(extractStylesOptions.modulesByAbsolutePath).map(
+          ([key, value]) => [key.replace(extensionRegex, ''), value] as const
+        )
+      );
 
   const sourceDir = path.dirname(sourceFileName);
   let cssMap: Record<string, string> = {};
