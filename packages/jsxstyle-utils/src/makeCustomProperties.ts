@@ -1,25 +1,11 @@
 import { canUseDOM } from './addStyleToHead';
 import {
-  generateCustomPropertiesFromVariants,
+  type BuildOptions,
   type VariantMap,
+  generateCustomPropertiesFromVariants,
 } from './generateCustomPropertiesFromVariants';
 
 declare const __webpack_nonce__: string | undefined;
-
-interface BuildOptions {
-  /**
-   * The selector of the DOM node that will receive variant override CSS classes.
-   *
-   * If this value is not set, variant override CSS classes will be added to `<html>` element.
-   */
-  selector?: string;
-  /**
-   * The prefix that will be added to custom property names and the override CSS classes.
-   *
-   * Defaults to `jsxstyle`.
-   */
-  namespace?: string;
-}
 
 const makeCustomPropertiesInternal = <
   KPropKey extends string,
@@ -42,7 +28,9 @@ const makeCustomPropertiesInternal = <
     );
   },
 
-  build: ({ selector, namespace = 'jsxstyle' }: BuildOptions = {}): {
+  build: (
+    buildOptions: BuildOptions = {}
+  ): {
     /** Only available when NODE_ENV is not "production" */
     reset: () => void;
     setVariant: (variantName: TVariantName | null) => void;
@@ -56,7 +44,7 @@ const makeCustomPropertiesInternal = <
     let reset: (() => void) | undefined;
 
     const { customProperties, overrideClasses, styles, variantNames } =
-      generateCustomPropertiesFromVariants(variantMap, namespace);
+      generateCustomPropertiesFromVariants(variantMap, buildOptions);
 
     if (canUseDOM) {
       const styleElement = document.createElement('style');
@@ -80,8 +68,8 @@ const makeCustomPropertiesInternal = <
         reset = () => void document.head.removeChild(styleElement);
       }
 
-      if (selector) {
-        overrideElement = document.querySelector(selector);
+      if (buildOptions.selector) {
+        overrideElement = document.querySelector(buildOptions.selector);
         if (!overrideElement && process.env.NODE_ENV !== 'production') {
           console.error(
             'Selector `%s` does not map to an element that exists in the DOM. Manual variant overrides will not work as expected.'

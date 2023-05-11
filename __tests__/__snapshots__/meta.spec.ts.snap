@@ -7,14 +7,14 @@ jsxstyle
 ========
 - LICENSE
 - README.md
-- lib/chunks/componentStyles.[hash].cjs
-- lib/chunks/componentStyles.[hash].cjs.map
-- lib/chunks/componentStyles.[hash].js
-- lib/chunks/componentStyles.[hash].js.map
 - lib/chunks/createClassNameGetter.[hash].cjs
 - lib/chunks/createClassNameGetter.[hash].cjs.map
 - lib/chunks/createClassNameGetter.[hash].js
 - lib/chunks/createClassNameGetter.[hash].js.map
+- lib/chunks/generateCustomPropertiesFromVariants.[hash].cjs
+- lib/chunks/generateCustomPropertiesFromVariants.[hash].cjs.map
+- lib/chunks/generateCustomPropertiesFromVariants.[hash].js
+- lib/chunks/generateCustomPropertiesFromVariants.[hash].js.map
 - lib/chunks/getStyleCache.[hash].cjs
 - lib/chunks/getStyleCache.[hash].cjs.map
 - lib/chunks/getStyleCache.[hash].js

@@ -10,7 +10,7 @@ export type { CSSProperties } from '../../jsxstyle-utils/src';
 export type { StylableComponentProps } from './types';
 export { styleCache as cache };
 export { useMatchMedia } from './useMatchMedia';
-export { makeCustomProperties as EXPERIMENTAL_makeCustomProperties } from '../../jsxstyle-utils/src';
+export { makeCustomProperties } from '../../jsxstyle-utils/src';
 
 let depFactory: any = componentFactory;
 

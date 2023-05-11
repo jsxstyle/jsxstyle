@@ -1155,6 +1155,50 @@ const staticProp = 'static';
   });
 });
 
+describe('makeCustomProperties', () => {
+  it('extracts styles', () => {
+    const rv = runExtractStyles(
+      `import { makeCustomProperties } from 'jsxstyle';
+const props = makeCustomProperties({
+  prop1: 'prop1 value',
+  prop2: 123,
+}).addVariant('banana', {
+  mediaQuery: 'mq',
+  prop1: 'banana prop1 value',
+}).build()
+`,
+      'mock/custom-properties1.js'
+    );
+
+    expect(rv.js).toMatchInlineSnapshot(`
+      "import "./custom-properties1__jsxstyle.css";
+      const props = {
+        prop1: "var(--jsxstyle-prop1)",
+        prop2: "var(--jsxstyle-prop2)",
+        variants: ["default", "banana"],
+        setVariant: function () {
+          throw new Error("Not yet implemented");
+        },
+        activateDefault: function () {
+          throw new Error("Not yet implemented");
+        },
+        activateBanana: function () {
+          throw new Error("Not yet implemented");
+        },
+        reset: function () {}
+      };"
+    `);
+    expect(rv.css).toMatchInlineSnapshot(`
+      "/* mock/custom-properties1.js */
+      /*0*/ :root { --jsxstyle-prop1: prop1 value;--jsxstyle-prop2: 123px; }
+      /*1*/ @media mq { :root { --jsxstyle-prop1: banana prop1 value; } }
+      /*2*/ :root.jsxstyle-override__default, :root .jsxstyle-override__default { --jsxstyle-prop1: prop1 value;--jsxstyle-prop2: 123px; }
+      /*3*/ :root.jsxstyle-override__banana, :root .jsxstyle-override__banana { --jsxstyle-prop1: banana prop1 value; }
+      "
+    `);
+  });
+});
+
 describe('edge cases', () => {
   it('only removes component imports', () => {
     const rv = runExtractStyles(

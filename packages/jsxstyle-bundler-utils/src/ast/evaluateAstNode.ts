@@ -5,6 +5,10 @@ export function evaluateAstNode(
   exprNode: t.Node,
   evalFn?: (node: t.Node) => any
 ): any {
+  if (exprNode == null) {
+    return exprNode;
+  }
+
   // loop through ObjectExpression keys
   if (t.isObjectExpression(exprNode)) {
     const ret: Record<string, any> = {};

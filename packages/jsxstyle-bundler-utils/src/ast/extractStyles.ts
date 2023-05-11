@@ -23,6 +23,10 @@ import { parse } from './parse';
 import { getImportForSource } from './getImportForSource';
 import type { GetClassNameForKeyFn } from '../../../jsxstyle-utils/src';
 import { esmInterop } from '../esmInterop';
+import {
+  generateCustomPropertiesFromVariants,
+  VariantMap,
+} from '../../../jsxstyle-utils/src/generateCustomPropertiesFromVariants';
 
 const traverse = esmInterop(traverseImport);
 const generate = esmInterop(generateImport);
@@ -74,6 +78,7 @@ const JSXSTYLE_SOURCES = {
 };
 
 const matchMediaHookName = 'useMatchMedia';
+const customPropertiesFunctionName = 'makeCustomProperties';
 
 const defaultStyleAttributes = Object.entries(componentStyles).reduce<
   Record<string, t.JSXAttribute[]>
@@ -194,9 +199,10 @@ export function extractStyles(
   const validComponents: Record<string, string> = {};
   // default to using require syntax
   let useImportSyntax = false;
-  let hasValidComponents = false;
+  let hasValidImports = false;
   let needsRuntimeJsxstyle = false;
   let matchMediaImportName: string | undefined;
+  let customPropertiesImportName: string | undefined;
 
   // Find jsxstyle require in program root
   ast.program.body = ast.program.body.filter((item) => {
@@ -230,7 +236,15 @@ export function extractStyles(
 
         if (specifier.imported.name === matchMediaHookName) {
           matchMediaImportName = specifier.local.name;
+          hasValidImports = true;
           return true;
+        }
+
+        if (specifier.imported.name === customPropertiesFunctionName) {
+          customPropertiesImportName = specifier.local.name;
+          hasValidImports = true;
+          // remove custom properties import
+          return false;
         }
 
         if (
@@ -241,7 +255,7 @@ export function extractStyles(
         }
 
         validComponents[specifier.local.name] = specifier.imported.name;
-        hasValidComponents = true;
+        hasValidImports = true;
         return false;
       });
 
@@ -255,7 +269,7 @@ export function extractStyles(
   });
 
   // jsxstyle isn't included anywhere, so let's bail
-  if (jsxstyleSrc == null || !hasValidComponents) {
+  if (jsxstyleSrc == null || !hasValidImports) {
     return {
       ast,
       css: '',
@@ -318,6 +332,146 @@ export function extractStyles(
 
         // mark hook call as pure so it can be removed if unused
         t.addComment(node, 'leading', '#__PURE__');
+      },
+    };
+
+    traverse(ast, matchMediaTraverseOptions);
+  }
+
+  if (customPropertiesImportName) {
+    // Extract makeCustomProperties calls
+    const matchMediaTraverseOptions: TraverseOptions<any> = {
+      CallExpression(traversePath) {
+        const { node } = traversePath;
+        if (
+          !t.isIdentifier(node.callee) ||
+          // makeCustomProperties
+          node.callee.name !== customPropertiesImportName
+        ) {
+          return;
+        }
+
+        const variantMap: VariantMap<string, string> = {
+          default: evaluateAstNode(node.arguments[0]),
+        };
+
+        let parentPath: NodePath | null = traversePath.parentPath;
+        while (parentPath) {
+          if (parentPath.node.type !== 'MemberExpression') {
+            logError(
+              'Expected a MemberExpression, received `%s`:',
+              parentPath.node.type,
+              generate(parentPath.node).code
+            );
+            break;
+          }
+          const prop = parentPath.node.property;
+          if (prop.type !== 'Identifier') {
+            logError(
+              'Expected an Identified, received `%s`:',
+              prop.type,
+              generate(prop).code
+            );
+            break;
+          }
+
+          const grandparentPath: NodePath | null = parentPath.parentPath;
+          if (!grandparentPath) {
+            logError('Missing parentPath');
+            break;
+          }
+
+          if (grandparentPath.node.type !== 'CallExpression') {
+            logError(
+              'Expected a CallExpression, received `%s`',
+              generate(grandparentPath.node).code
+            );
+            break;
+          }
+
+          if (!grandparentPath.parentPath) {
+            logError('Expected a parentPath');
+            break;
+          }
+          parentPath = grandparentPath.parentPath;
+
+          if (prop.name === 'addVariant') {
+            if (grandparentPath.node.arguments.length !== 2) {
+              logError('Expected two arguments');
+              break;
+            }
+
+            const key = evaluateAstNode(grandparentPath.node.arguments[0]);
+            const props = evaluateAstNode(grandparentPath.node.arguments[1]);
+            variantMap[key] = props;
+            continue;
+          }
+
+          if (prop.name === 'build') {
+            const buildOptions =
+              evaluateAstNode(grandparentPath.node.arguments[0]) || {};
+
+            const result = generateCustomPropertiesFromVariants(
+              variantMap,
+              buildOptions
+            );
+
+            // order is important here
+            for (let i = 0, len = result.styles.length; i < len; i++) {
+              const sortKey = (i + '').padStart((len + '').length, '0');
+              cssMap[`/*${sortKey}*/ ` + result.styles[i]] = '';
+            }
+
+            const wipFunction = t.functionExpression(
+              null,
+              [],
+              t.blockStatement([
+                t.throwStatement(
+                  t.newExpression(t.identifier('Error'), [
+                    t.stringLiteral('Not yet implemented'),
+                  ])
+                ),
+              ])
+            );
+
+            grandparentPath.replaceWith(
+              t.objectExpression([
+                ...Object.entries(result.customProperties).map(
+                  ([propName, propValue]) => {
+                    return t.objectProperty(
+                      t.identifier(propName),
+                      t.stringLiteral(propValue)
+                    );
+                  }
+                ),
+                t.objectProperty(
+                  t.identifier('variants'),
+                  t.arrayExpression(
+                    result.variantNames.map((name) => t.stringLiteral(name))
+                  )
+                ),
+                t.objectProperty(t.identifier('setVariant'), wipFunction),
+                ...result.variantNames.map((name) => {
+                  return t.objectProperty(
+                    t.identifier(
+                      `activate${name[0].toUpperCase()}${name.slice(1)}`
+                    ),
+                    wipFunction
+                  );
+                }),
+                // reset is a noop
+                t.objectProperty(
+                  t.identifier('reset'),
+                  t.functionExpression(null, [], t.blockStatement([]))
+                ),
+              ])
+            );
+
+            break;
+          }
+
+          logError('Unhandled prop: %s', prop.name);
+        }
       },
     };
 

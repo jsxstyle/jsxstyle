@@ -17,7 +17,9 @@ describe('generateCustomPropertiesFromVariants', () => {
             background: '#000',
           },
         },
-        'example-namespace'
+        {
+          namespace: 'example-namespace',
+        }
       )
     ).toMatchInlineSnapshot(`
       {
