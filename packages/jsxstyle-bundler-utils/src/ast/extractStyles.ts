@@ -36,6 +36,8 @@ const validCssModes = [
 export interface UserConfigurableOptions {
   parserPlugins?: ParserPlugin[];
   cssMode?: (typeof validCssModes)[number];
+  /** Emit an error if runtime jsxstyle sticks around */
+  noRuntime?: boolean;
 }
 
 export interface ExtractStylesOptions {
@@ -130,6 +132,8 @@ export function extractStyles(
     getClassNameForKey,
     evaluateVars = true,
   } = extractStylesOptions;
+
+  const leaveNoTrace = options.noRuntime;
 
   invariant(typeof src === 'string', '`src` must be a string of javascript');
 
@@ -470,6 +474,12 @@ export function extractStyles(
             idx < lastSpreadIndex
           ) {
             inlinePropCount++;
+            if (leaveNoTrace) {
+              logError(
+                'JSX attribute `%s` precedes a spread attribute and can therefore not be extracted',
+                generate(attribute).code
+              );
+            }
             return true;
           }
 
@@ -482,12 +492,24 @@ export function extractStyles(
           if (!value) {
             logWarning('`%s` prop does not have a value', name);
             inlinePropCount++;
+            if (leaveNoTrace) {
+              logError(
+                'JSX attribute `%s` could not be extracted',
+                generate(attribute).code
+              );
+            }
             return true;
           }
 
           // if one or more spread operators are present and we haven't hit the last one yet, the prop stays inline
           if (lastSpreadIndex > -1 && idx <= lastSpreadIndex) {
             inlinePropCount++;
+            if (leaveNoTrace) {
+              logError(
+                'JSX attribute `%s` could not be extracted',
+                generate(attribute).code
+              );
+            }
             return true;
           }
 
@@ -513,11 +535,12 @@ export function extractStyles(
                 'or element, specify a `ref` property in the `props` object.'
             );
             inlinePropCount++;
-            return true;
-          }
-
-          // pass key and style props through untouched
-          if (UNTOUCHED_PROPS.hasOwnProperty(name)) {
+            if (leaveNoTrace) {
+              logError(
+                'JSX attribute `%s` could not be extracted',
+                generate(attribute).code
+              );
+            }
             return true;
           }
 
@@ -604,6 +627,12 @@ export function extractStyles(
 
               if (errorCount > 0) {
                 inlinePropCount++;
+                if (leaveNoTrace) {
+                  logError(
+                    'JSX attribute `%s` could not be extracted',
+                    generate(attribute).code
+                  );
+                }
               } else {
                 propsAttributes = attributes;
               }
@@ -627,6 +656,12 @@ export function extractStyles(
             // if props prop is weird-looking, leave it and warn
             logWarning('props prop is an unhandled type: `%s`', value.type);
             inlinePropCount++;
+            if (leaveNoTrace) {
+              logError(
+                'JSX attribute `%s` could not be extracted',
+                generate(attribute).code
+              );
+            }
             return true;
           }
 
@@ -640,6 +675,12 @@ export function extractStyles(
                 generate(value).code
               );
               inlinePropCount++;
+              if (leaveNoTrace) {
+                logError(
+                  'JSX attribute `%s` could not be extracted',
+                  generate(attribute).code
+                );
+              }
               return true;
             }
           }
@@ -725,6 +766,12 @@ export function extractStyles(
 
           // if we've made it this far, the prop stays inline
           inlinePropCount++;
+          if (leaveNoTrace) {
+            logError(
+              'JSX attribute `%s` could not be extracted',
+              generate(attribute).code
+            );
+          }
           return true;
         });
 
@@ -841,6 +888,12 @@ export function extractStyles(
           }
         } else {
           needsRuntimeJsxstyle = true;
+          if (leaveNoTrace) {
+            logError(
+              'JSX element `%s` could not be extracted',
+              generate(node).code
+            );
+          }
           if (lastSpreadIndex > -1) {
             // if only some style props were extracted AND additional props are spread onto the component,
             // add the props back with null values to prevent spread props from incorrectly overwriting the extracted prop value

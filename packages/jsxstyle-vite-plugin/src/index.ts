@@ -4,6 +4,7 @@ import {
   type UserConfigurableOptions,
 } from '../../jsxstyle-bundler-utils/src/ast/extractStyles';
 import fs from 'fs/promises';
+import util from 'util';
 import path from 'path';
 import type { Plugin } from 'vite';
 
@@ -109,8 +110,10 @@ export const jsxstyleVitePlugin = ({
         fileContent,
         idWithoutStuff,
         {
-          warnCallback: console.warn,
-          errorCallback: console.error,
+          warnCallback: (message, ...args) =>
+            this.warn(util.format(message, ...args)),
+          errorCallback: (message, ...args) =>
+            this.error(util.format(message, ...args)),
           getClassNameForKey,
           modulesByAbsolutePath,
         },
