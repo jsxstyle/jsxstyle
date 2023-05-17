@@ -319,8 +319,8 @@ export function extractStyles(
         if (node.callee.name === matchMediaImportName) {
           if (node.arguments.length !== 1) {
             logError(
-              matchMediaImportName +
-                ' import has the wrong number of parameters'
+              '`%s` function call has the wrong number of parameters',
+              matchMediaImportName
             );
             return;
           }
@@ -355,8 +355,8 @@ export function extractStyles(
         ) {
           if (node.arguments.length !== 1) {
             logError(
-              customPropertiesImportName +
-                ' import has the wrong number of parameters'
+              '`%s` import has the wrong number of parameters',
+              customPropertiesImportName
             );
             return;
           }
@@ -494,8 +494,8 @@ export function extractStyles(
         } else if (node.callee.name === cssFunctionImportName && cssFunction) {
           if (node.arguments.length !== 1) {
             logError(
-              cssFunctionImportName +
-                ' import has the wrong number of parameters'
+              '`%s` import has the wrong number of parameters',
+              cssFunctionImportName
             );
             return;
           }
@@ -1285,40 +1285,43 @@ export function extractStyles(
   const cssFileName = path.join(sourceDir, cssRelativeFileName);
 
   let resultCSS = '';
-  const importsToPrepend: t.Statement[] = [];
 
-  if (!cssMode || cssMode === 'singleInlineImport') {
-    const relativeFilePath = path.relative(process.cwd(), sourceFileName);
-    const cssString =
-      `/* ${relativeFilePath} */\n` +
-      Object.entries(cssMap)
-        .sort((a, b) => a[0].localeCompare(b[0]))
-        .map(([cssRule]) => cssRule + '\n')
-        .join('');
+  const cssMapEntries = Object.entries(cssMap);
+  if (cssMapEntries.length > 0) {
+    const importsToPrepend: t.Statement[] = [];
+    if (!cssMode || cssMode === 'singleInlineImport') {
+      const relativeFilePath = path.relative(process.cwd(), sourceFileName);
 
-    if (cssMode === 'singleInlineImport') {
-      importsToPrepend.push(
-        getImportForSource(getInlineImportString(resultCSS, relativeFilePath))
-      );
-    } else {
-      resultCSS = cssString;
-      importsToPrepend.push(getImportForSource(cssRelativeFileName));
-    }
-  } else if (cssMode === 'multipleInlineImports') {
-    Object.entries(cssMap).forEach(([cssRule, key]) => {
-      if (cssRule !== '') {
-        const importNode = getImportForSource(
-          getInlineImportString(cssRule, key)
+      const cssString =
+        `/* ${relativeFilePath} */\n` +
+        cssMapEntries
+          .sort((a, b) => a[0].localeCompare(b[0]))
+          .map(([cssRule]) => cssRule + '\n')
+          .join('');
+
+      if (cssMode === 'singleInlineImport') {
+        importsToPrepend.push(
+          getImportForSource(getInlineImportString(resultCSS, relativeFilePath))
         );
-        cssRule.split('\n').forEach((line) => {
-          t.addComment(importNode, 'leading', ' ' + line, true);
-        });
-        importsToPrepend.push(importNode);
+      } else {
+        resultCSS = cssString;
+        importsToPrepend.push(getImportForSource(cssRelativeFileName));
       }
-    });
+    } else if (cssMode === 'multipleInlineImports') {
+      Object.entries(cssMap).forEach(([cssRule, key]) => {
+        if (cssRule !== '') {
+          const importNode = getImportForSource(
+            getInlineImportString(cssRule, key)
+          );
+          cssRule.split('\n').forEach((line) => {
+            t.addComment(importNode, 'leading', ' ' + line, true);
+          });
+          importsToPrepend.push(importNode);
+        }
+      });
+    }
+    ast.program.body.unshift(...importsToPrepend);
   }
-
-  ast.program.body.unshift(...importsToPrepend);
 
   const result = generate(
     ast,

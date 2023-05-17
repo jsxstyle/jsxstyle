@@ -85,7 +85,8 @@ export const jsxstyleVitePlugin = ({
     buildStart,
     buildEnd,
     resolveId(id, importer) {
-      if (!importer || !id.endsWith('__jsxstyle.css')) return;
+      if (!importer || !id.endsWith('__jsxstyle.css') || id.startsWith('\0'))
+        return;
       const importerDirName = path.dirname(importer);
       const fullPath = path.join(importerDirName, id);
       return '\0' + fullPath;

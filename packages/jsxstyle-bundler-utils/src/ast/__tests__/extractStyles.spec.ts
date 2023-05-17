@@ -702,8 +702,7 @@ const blue = "blueberry";
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
-      "import "./ternary-with-classname__jsxstyle.css";
-      import { Box } from "jsxstyle";
+      "import { Box } from "jsxstyle";
       <Box display="block" color={dynamic ? "red" : "blue"} {...spread} className="cool" />;"
     `);
   });
@@ -1201,6 +1200,8 @@ const props = makeCustomProperties({
 
 describe('css function', () => {
   it('works', () => {
+    const errorCallback = jest.fn();
+
     const rv = runExtractStyles(
       `import { css, Block } from 'jsxstyle';
 css();
@@ -1215,8 +1216,19 @@ const thing = css({
 <div className={css({ color: 'orange' })} />;
 <Block className={css({ color: 'purple' })} color="orange" />;
 `,
-      'mock/custom-properties1.js'
+      'mock/custom-properties1.js',
+      { errorCallback }
     );
+
+    expect(errorCallback).toHaveBeenCalledTimes(1);
+    expect(errorCallback.mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "\`%s\` import has the wrong number of parameters",
+          "css",
+        ],
+      ]
+    `);
 
     expect(rv.js).toMatchInlineSnapshot(`
       "import "./custom-properties1__jsxstyle.css";
@@ -1241,6 +1253,8 @@ const thing = css({
 
 describe('zero runtime mode', () => {
   it('works', () => {
+    const errorCallback = jest.fn();
+
     const rv = runExtractStyles(
       `
 import { Grid, Block } from 'jsxstyle';
@@ -1248,11 +1262,36 @@ import { Grid, Block } from 'jsxstyle';
 <Block color={wow} />;
 `,
       'mock/noRuntime1.js',
-      undefined,
+      {
+        errorCallback,
+      },
       {
         noRuntime: true,
       }
     );
+
+    expect(errorCallback).toHaveBeenCalledTimes(2);
+    expect(errorCallback.mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "Runtime jsxstyle could not be completely removed:
+      %s",
+          "  1 | import { Box } from "jsxstyle";
+        2 | import { Grid, Block } from 'jsxstyle';
+      > 3 | <Box color={wow} className="_x0" />;
+          | ^^^^
+        4 | <Box color={wow} className="_x1" />;",
+        ],
+        [
+          "Runtime jsxstyle could not be completely removed:
+      %s",
+          "  2 | import { Grid, Block } from 'jsxstyle';
+        3 | <Box color={wow} className="_x0" />;
+      > 4 | <Box color={wow} className="_x1" />;
+          | ^^^^^",
+        ],
+      ]
+    `);
 
     expect(rv.js).toMatchInlineSnapshot(`
       "import "./noRuntime1__jsxstyle.css";
@@ -1280,10 +1319,7 @@ import { Grid } from 'jsxstyle';
       'mock/edge-case1.js'
     );
 
-    expect(rv.js).toMatchInlineSnapshot(`
-      "import "./edge-case1__jsxstyle.css";
-      import 'jsxstyle';"
-    `);
+    expect(rv.js).toMatchInlineSnapshot(`"import 'jsxstyle';"`);
   });
 
   it('handles consts with no inits', () => {
