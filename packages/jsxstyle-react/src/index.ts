@@ -8,7 +8,7 @@ export { styleCache as cache };
 export { useMatchMedia } from './useMatchMedia';
 export { makeCustomProperties } from '../../jsxstyle-utils/src';
 
-export const css = makeCssFunction(
+export const css: ReturnType<typeof makeCssFunction> = makeCssFunction(
   classNamePropKey,
   styleCache.getComponentProps
 );
