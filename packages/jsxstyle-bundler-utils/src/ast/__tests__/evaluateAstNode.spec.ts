@@ -3,7 +3,7 @@ import * as t from '@babel/types';
 import vm from 'vm';
 
 import { evaluateAstNode } from '../evaluateAstNode';
-import { parse } from '../parse';
+import { parse } from '../babelUtils';
 
 const staticNamespace = {
   LC: {

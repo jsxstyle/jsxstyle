@@ -4,11 +4,13 @@ import { parseStyleProps } from './parseStyleProps';
 
 export type GetClassNameForKeyFn = (key: string) => string;
 
+export type InsertRuleCallback = (rule: string, key: string) => void;
+
 export function processProps(
   props: Record<string, any>,
   classNamePropKey: string,
   getClassNameForKey: GetClassNameForKeyFn,
-  insertRuleCallback?: (rule: string, key: string) => void,
+  insertRuleCallback?: InsertRuleCallback,
   mediaQuery?: string
 ): Record<string, unknown> | null {
   if (props == null || typeof props !== 'object') {
@@ -24,10 +26,11 @@ export function processProps(
 
   propLoop: for (const key in parsedStyleProps) {
     const mergedProp = parsedStyleProps[key];
-    const { pseudoelement, pseudoclass, propName, propValue } = mergedProp;
+    const { pseudoelement, pseudoclass, propName, propValue, ampersandString } =
+      mergedProp;
 
     let specificity = mergedProp.specificity;
-    let styleValue: any;
+    let styleValue: string;
     let className: string;
     let hyphenatedPropName: string;
 
@@ -106,13 +109,16 @@ export function processProps(
       if (styleValue === '') continue;
 
       className = getClassNameForKey(
-        (mediaQuery ? mediaQuery + '~' : '') + key + ':' + styleValue
+        (ampersandString || '') +
+          (mediaQuery ? mediaQuery + '~' : '') +
+          key +
+          ':' +
+          styleValue
       );
       hyphenatedPropName = hyphenateStyleName(propName);
     }
 
-    const styleRule =
-      (mediaQuery ? '@media ' + mediaQuery + ' { ' : '') +
+    const biz =
       '.' +
       className +
       (specificity > 0 ? '.' + className : '') +
@@ -120,7 +126,13 @@ export function processProps(
       (specificity > 2 ? '.' + className : '') +
       (specificity > 3 ? '.' + className : '') +
       (pseudoclass ? ':' + pseudoclass : '') +
-      (pseudoelement ? '::' + pseudoelement : '') +
+      (pseudoelement ? '::' + pseudoelement : '');
+
+    const wow = ampersandString?.replace('&', biz) || biz;
+
+    const styleRule =
+      (mediaQuery ? '@media ' + mediaQuery + ' { ' : '') +
+      wow +
       ' { ' +
       hyphenatedPropName +
       ':' +

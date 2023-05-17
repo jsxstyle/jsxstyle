@@ -1199,6 +1199,45 @@ const props = makeCustomProperties({
   });
 });
 
+describe('css function', () => {
+  it('works', () => {
+    const rv = runExtractStyles(
+      `import { css, Block } from 'jsxstyle';
+css();
+css({ color: 'blue' });
+const thing = css({
+  color: 'blue',
+  '&:hover': {
+    color: 'blue',
+  }
+});
+
+<div className={css({ color: 'orange' })} />;
+<Block className={css({ color: 'purple' })} color="orange" />;
+`,
+      'mock/custom-properties1.js'
+    );
+
+    expect(rv.js).toMatchInlineSnapshot(`
+      "import "./custom-properties1__jsxstyle.css";
+      css();
+      "_x0";
+      const thing = "_x0 _x1";
+      <div className="_x2" />;
+      <div className="_x3 _x4 _x2" />;"
+    `);
+    expect(rv.css).toMatchInlineSnapshot(`
+      "/* mock/custom-properties1.js */
+      ._x0 { color:blue }
+      ._x1:hover { color:blue }
+      ._x2 { color:orange }
+      ._x3 { color:purple }
+      ._x4 { display:block }
+      "
+    `);
+  });
+});
+
 describe('edge cases', () => {
   it('only removes component imports', () => {
     const rv = runExtractStyles(

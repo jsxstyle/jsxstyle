@@ -28,6 +28,8 @@ if (process.env.NODE_ENV !== 'production') {
   };
 }
 
+export type StyleCache = ReturnType<typeof getStyleCache>;
+
 export function getStyleCache() {
   let classNameCache: CacheObject = {};
   let insertRuleCache: Record<string, true> = {};
@@ -64,7 +66,7 @@ export function getStyleCache() {
 
     getComponentProps(
       props: Record<string, any>,
-      classNamePropKey = 'className'
+      classNamePropKey: string
     ): Record<string, unknown> | null {
       styleCache.injectOptions = cannotInject;
       return processProps(

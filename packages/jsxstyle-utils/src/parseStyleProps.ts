@@ -79,7 +79,9 @@ const shorthandProps = {
 };
 
 export type ShorthandProps = {
-  [K in keyof typeof shorthandProps]?: Parameters<typeof shorthandProps[K]>[0];
+  [K in keyof typeof shorthandProps]?: Parameters<
+    (typeof shorthandProps)[K]
+  >[0];
 };
 
 export interface ParsedStyleProp {
@@ -88,13 +90,15 @@ export interface ParsedStyleProp {
   specificity: number;
   propName: string;
   propValue: any;
+  ampersandString?: string;
 }
 
 export type CommonComponentProp = keyof typeof commonComponentProps;
 
 export const parseStyleProps = (
   props: Record<string, any>,
-  classNamePropKey: string
+  classNamePropKey: string,
+  ampersandString?: string
 ): {
   parsedStyleProps: Record<string, ParsedStyleProp>;
   componentProps: Record<string, any>;
@@ -105,6 +109,16 @@ export const parseStyleProps = (
   const parsedStyleProps: Record<string, ParsedStyleProp> = {};
   for (const originalPropName in props) {
     const propValue = props[originalPropName];
+
+    if (originalPropName.includes('&')) {
+      const result = parseStyleProps(
+        propValue,
+        classNamePropKey,
+        originalPropName
+      );
+      Object.assign(parsedStyleProps, result.parsedStyleProps);
+      continue;
+    }
 
     // separate known component props from style props
     if (commonComponentProps.hasOwnProperty(originalPropName)) {
@@ -139,24 +153,26 @@ export const parseStyleProps = (
       continue;
     }
 
-    // check for pseudoelement prefix
-    if (propNamePrefix && pseudoelements[propNamePrefix]) {
-      pseudoelement = propNamePrefix;
-      splitIndex = capRegex.lastIndex - 1;
-      propNamePrefix =
-        capRegex.test(originalPropName) &&
-        originalPropName[splitIndex].toLowerCase() +
-          originalPropName.slice(splitIndex + 1, capRegex.lastIndex - 1);
-    }
+    if (!ampersandString) {
+      // check for pseudoelement prefix
+      if (propNamePrefix && pseudoelements[propNamePrefix]) {
+        pseudoelement = propNamePrefix;
+        splitIndex = capRegex.lastIndex - 1;
+        propNamePrefix =
+          capRegex.test(originalPropName) &&
+          originalPropName[splitIndex].toLowerCase() +
+            originalPropName.slice(splitIndex + 1, capRegex.lastIndex - 1);
+      }
 
-    // check for pseudoclass prefix
-    if (propNamePrefix && pseudoclasses[propNamePrefix]) {
-      pseudoclass = propNamePrefix;
-      splitIndex = capRegex.lastIndex - 1;
-      propNamePrefix =
-        capRegex.test(originalPropName) &&
-        originalPropName[splitIndex].toLowerCase() +
-          originalPropName.slice(splitIndex + 1, capRegex.lastIndex - 1);
+      // check for pseudoclass prefix
+      if (propNamePrefix && pseudoclasses[propNamePrefix]) {
+        pseudoclass = propNamePrefix;
+        splitIndex = capRegex.lastIndex - 1;
+        propNamePrefix =
+          capRegex.test(originalPropName) &&
+          originalPropName[splitIndex].toLowerCase() +
+            originalPropName.slice(splitIndex + 1, capRegex.lastIndex - 1);
+      }
     }
 
     // check if we need to bump specificity
@@ -173,7 +189,8 @@ export const parseStyleProps = (
 
     const keySuffix =
       (pseudoelement ? '::' + pseudoelement : '') +
-      (pseudoclass ? ':' + pseudoclass : '');
+      (pseudoclass ? ':' + pseudoclass : '') +
+      (ampersandString || '');
 
     const propFn = shorthandProps[propName as keyof typeof shorthandProps];
     if (typeof propFn === 'function') {
@@ -188,26 +205,30 @@ export const parseStyleProps = (
           continue;
         }
 
-        parsedStyleProps[expandedPropName + keySuffix] = {
+        const obj: ParsedStyleProp = (parsedStyleProps[
+          expandedPropName + keySuffix
+        ] = {
           pseudoelement,
           pseudoclass,
           specificity,
           propName: expandedPropName,
           propValue: expandedPropValue,
-        };
+        });
+        if (ampersandString) obj.ampersandString = ampersandString;
       }
     } else {
       if (propValue == null || propValue === false) {
         continue;
       }
 
-      parsedStyleProps[propName + keySuffix] = {
+      const obj: ParsedStyleProp = (parsedStyleProps[propName + keySuffix] = {
         pseudoelement,
         pseudoclass,
         specificity,
         propName,
         propValue,
-      };
+      });
+      if (ampersandString) obj.ampersandString = ampersandString;
     }
   }
 

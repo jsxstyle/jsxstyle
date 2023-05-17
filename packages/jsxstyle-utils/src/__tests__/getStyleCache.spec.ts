@@ -4,27 +4,33 @@ import { kitchenSink } from './kitchenSink';
 describe('getStyleCache', () => {
   it('combines class names if `className` prop is present', () => {
     const styleCache = getStyleCache();
-    const props = styleCache.getComponentProps({
-      display: 'inline',
-      color: 'red',
-      className: 'bla',
-    });
+    const props = styleCache.getComponentProps(
+      {
+        display: 'inline',
+        color: 'red',
+        className: 'bla',
+      },
+      'className'
+    );
     expect(props?.className).toMatchInlineSnapshot(`"bla _1lvn9cc _1jvcvsh"`);
   });
 
   it('generates deterministic class names', () => {
     const styleCache = getStyleCache();
-    const props = styleCache.getComponentProps({ wow: 'cool' });
+    const props = styleCache.getComponentProps({ wow: 'cool' }, 'className');
     expect(props?.className).toMatchInlineSnapshot(`"_1b8zaqn"`);
   });
 
   it('generates a stable classname hash for the specified style object', () => {
     const styleCache = getStyleCache();
-    const props = styleCache.getComponentProps({
-      color: 'red',
-      display: 'block',
-      hoverColor: 'green',
-    });
+    const props = styleCache.getComponentProps(
+      {
+        color: 'red',
+        display: 'block',
+        hoverColor: 'green',
+      },
+      'className'
+    );
     expect(props?.className).toMatchInlineSnapshot(
       `"_1jvcvsh _cmecz0 _hwodt1"`
     );
@@ -44,7 +50,10 @@ describe('getStyleCache', () => {
       name: 'test123',
     };
 
-    const componentProps = styleCache.getComponentProps(exampleProps);
+    const componentProps = styleCache.getComponentProps(
+      exampleProps,
+      'className'
+    );
     expect(componentProps).toEqual(exampleProps);
     expect(insertedRules).toEqual([]);
   });
@@ -58,12 +67,15 @@ describe('getStyleCache', () => {
       },
     });
 
-    const componentProps = styleCache.getComponentProps({
-      color: 'red',
-      display: 'block',
-      id: 'hello',
-      name: 'test123',
-    });
+    const componentProps = styleCache.getComponentProps(
+      {
+        color: 'red',
+        display: 'block',
+        id: 'hello',
+        name: 'test123',
+      },
+      'className'
+    );
 
     expect(componentProps).toMatchInlineSnapshot(`
       {
@@ -89,7 +101,7 @@ describe('getStyleCache', () => {
       },
     });
 
-    styleCache.getComponentProps(kitchenSink);
+    styleCache.getComponentProps(kitchenSink, 'className');
 
     expect(insertedRules).toMatchInlineSnapshot(`
       [
@@ -117,10 +129,10 @@ describe('getStyleCache', () => {
     styleCache.injectOptions({ getClassName: () => 'jsxstyle' + ++idx });
 
     const classNames = [
-      styleCache.getComponentProps({ a: 1 })?.className,
-      styleCache.getComponentProps({ b: 2 })?.className,
-      styleCache.getComponentProps({ c: 3 })?.className,
-      styleCache.getComponentProps({ a: 1 })?.className,
+      styleCache.getComponentProps({ a: 1 }, 'className')?.className,
+      styleCache.getComponentProps({ b: 2 }, 'className')?.className,
+      styleCache.getComponentProps({ c: 3 }, 'className')?.className,
+      styleCache.getComponentProps({ a: 1 }, 'className')?.className,
     ];
 
     expect(classNames).toEqual([
@@ -136,16 +148,16 @@ describe('getStyleCache', () => {
     let idx = -1;
     styleCache.injectOptions({ getClassName: () => 'jsxstyle' + ++idx });
 
-    expect(styleCache.getComponentProps({ a: 1 })?.className).toEqual(
-      'jsxstyle0'
-    );
-    expect(styleCache.getComponentProps({ a: 1 })?.className).toEqual(
-      'jsxstyle0'
-    );
+    expect(
+      styleCache.getComponentProps({ a: 1 }, 'className')?.className
+    ).toEqual('jsxstyle0');
+    expect(
+      styleCache.getComponentProps({ a: 1 }, 'className')?.className
+    ).toEqual('jsxstyle0');
     styleCache.reset();
-    expect(styleCache.getComponentProps({ a: 1 })?.className).toEqual(
-      'jsxstyle1'
-    );
+    expect(
+      styleCache.getComponentProps({ a: 1 }, 'className')?.className
+    ).toEqual('jsxstyle1');
   });
 
   it('throws an errors when injections are added incorrectly', () => {
@@ -160,7 +172,7 @@ describe('getStyleCache', () => {
       `"jsxstyle error: \`injectOptions\` should be called once and only once."`
     );
 
-    styleCache.getComponentProps({ a: 1 });
+    styleCache.getComponentProps({ a: 1 }, 'className');
 
     // no injections after getComponentProps is called
     expect(() =>

@@ -1,35 +1,34 @@
 /* eslint-disable no-prototype-builtins */
-import generateImport from '@babel/generator';
 import type { ParserPlugin } from '@babel/parser';
-import traverseImport from '@babel/traverse';
 import type { NodePath, TraverseOptions } from '@babel/traverse';
 import * as t from '@babel/types';
 import invariant from 'invariant';
 import { componentStyles, processProps } from '../../../jsxstyle-utils/src';
 import path from 'path';
 import util from 'util';
-import vm from 'vm';
 
-import { evaluateAstNode } from './evaluateAstNode';
+import {
+  evaluateAstNode,
+  getEvaluateAstNodeWithScopeFunction,
+} from './evaluateAstNode';
 import { extractStaticTernaries, Ternary } from './extractStaticTernaries';
 import { generateUid } from './generatedUid';
 import { getInlineImportString } from './getInlineImportString';
 import { getPropValueFromAttributes } from './getPropValueFromAttributes';
-import {
-  extensionRegex,
-  getStaticBindingsForScope,
-} from './getStaticBindingsForScope';
-import { parse } from './parse';
+import { extensionRegex } from './getStaticBindingsForScope';
+import { parse } from './babelUtils';
 import { getImportForSource } from './getImportForSource';
 import type { GetClassNameForKeyFn } from '../../../jsxstyle-utils/src';
-import { esmInterop } from '../esmInterop';
 import {
   generateCustomPropertiesFromVariants,
   VariantMap,
 } from '../../../jsxstyle-utils/src/generateCustomPropertiesFromVariants';
-
-const traverse = esmInterop(traverseImport);
-const generate = esmInterop(generateImport);
+import {
+  makeCssFunction,
+  type CssFunction,
+} from '../../../jsxstyle-utils/src/makeCssFunction';
+import { StyleCache } from 'packages/jsxstyle-utils/src/getStyleCache';
+import { generate, traverse } from './babelUtils';
 
 const validCssModes = [
   'singleInlineImport',
@@ -79,6 +78,7 @@ const JSXSTYLE_SOURCES = {
 
 const matchMediaHookName = 'useMatchMedia';
 const customPropertiesFunctionName = 'makeCustomProperties';
+const cssFunctionName = 'css';
 
 const defaultStyleAttributes = Object.entries(componentStyles).reduce<
   Record<string, t.JSXAttribute[]>
@@ -175,6 +175,9 @@ export function extractStyles(
 
   const sourceDir = path.dirname(sourceFileName);
   let cssMap: Record<string, string> = {};
+  const onInsertRule = (rule: string, key: string) => {
+    cssMap[rule] = key;
+  };
 
   const cssMode = options.cssMode;
   if (typeof cssMode !== 'undefined') {
@@ -201,8 +204,10 @@ export function extractStyles(
   let useImportSyntax = false;
   let hasValidImports = false;
   let needsRuntimeJsxstyle = false;
+
   let matchMediaImportName: string | undefined;
   let customPropertiesImportName: string | undefined;
+  let cssFunctionImportName: string | undefined;
 
   // Find jsxstyle require in program root
   ast.program.body = ast.program.body.filter((item) => {
@@ -247,6 +252,13 @@ export function extractStyles(
           return false;
         }
 
+        if (specifier.imported.name === cssFunctionName) {
+          cssFunctionImportName = specifier.local.name;
+          hasValidImports = true;
+          // remove custom properties import
+          return false;
+        }
+
         if (
           !componentStyles.hasOwnProperty(specifier.imported.name) ||
           specifier.local.name[0] !== specifier.local.name[0].toUpperCase()
@@ -283,6 +295,15 @@ export function extractStyles(
   const classPropName =
     jsxstyleSrc === 'jsxstyle/preact' ? 'class' : 'className';
 
+  let cssFunction: CssFunction | undefined;
+  if (cssFunctionImportName) {
+    const getComponentProps: StyleCache['getComponentProps'] = (
+      props,
+      classPropName
+    ) => processProps(props, classPropName, getClassNameForKey, onInsertRule);
+    cssFunction = makeCssFunction(classPropName, getComponentProps);
+  }
+
   // Generate a UID that's unique in the program scope
   let boxComponentName = '';
   traverse(ast, {
@@ -294,192 +315,227 @@ export function extractStyles(
   /** A mapping of binding name to media query string */
   const mediaQueriesByKey: Record<string, string> = {};
 
-  if (matchMediaImportName) {
+  // per-file cache of evaluated bindings
+  const bindingCache: Record<string, string | null> = {};
+
+  if (
+    matchMediaImportName ||
+    customPropertiesImportName ||
+    cssFunctionImportName
+  ) {
     // Extract useMatchMedia calls
     // This needs to be done before JSXElement traversal
-    const matchMediaTraverseOptions: TraverseOptions<any> = {
+    const callExpressionTraverseOptions: TraverseOptions<any> = {
       CallExpression(traversePath) {
         const { node } = traversePath;
-        if (
-          !t.isIdentifier(node.callee) ||
-          node.callee.name !== matchMediaImportName ||
-          node.arguments.length !== 1
-        ) {
-          return;
-        }
+        if (!t.isIdentifier(node.callee)) return;
 
-        const firstArg = node.arguments[0];
-        // only handling inline string literals for now
-        if (!t.isStringLiteral(firstArg)) {
-          return;
-        }
+        if (node.callee.name === matchMediaImportName) {
+          if (node.arguments.length !== 1) {
+            logError(
+              matchMediaImportName +
+                ' import has the wrong number of parameters'
+            );
+            return;
+          }
 
-        const parent = traversePath.parentPath.node;
-        if (!t.isVariableDeclarator(parent) || !t.isIdentifier(parent.id)) {
-          return;
-        }
+          const firstArg = node.arguments[0];
+          // only handling inline string literals for now
+          if (!t.isStringLiteral(firstArg)) {
+            return;
+          }
 
-        // generate a unique ID for this hook call
-        // this saves us from having to do scope shenanigans later on
-        const uid = generateUid(
-          traversePath.parentPath.scope,
-          'useMatchMedia_' + parent.id.name
-        );
-        // rename the hook variable to our generated name
-        traversePath.parentPath.scope.rename(parent.id.name, uid);
+          const parent = traversePath.parentPath.node;
+          if (!t.isVariableDeclarator(parent) || !t.isIdentifier(parent.id)) {
+            return;
+          }
 
-        mediaQueriesByKey[uid] = firstArg.value;
+          // generate a unique ID for this hook call
+          // this saves us from having to do scope shenanigans later on
+          const uid = generateUid(
+            traversePath.parentPath.scope,
+            'useMatchMedia_' + parent.id.name
+          );
+          // rename the hook variable to our generated name
+          traversePath.parentPath.scope.rename(parent.id.name, uid);
 
-        // mark hook call as pure so it can be removed if unused
-        t.addComment(node, 'leading', '#__PURE__');
-      },
-    };
+          mediaQueriesByKey[uid] = firstArg.value;
 
-    traverse(ast, matchMediaTraverseOptions);
-  }
-
-  if (customPropertiesImportName) {
-    // Extract makeCustomProperties calls
-    const matchMediaTraverseOptions: TraverseOptions<any> = {
-      CallExpression(traversePath) {
-        const { node } = traversePath;
-        if (
-          !t.isIdentifier(node.callee) ||
+          // mark hook call as pure so it can be removed if unused
+          t.addComment(node, 'leading', '#__PURE__');
+        } else if (
           // makeCustomProperties
-          node.callee.name !== customPropertiesImportName
+          node.callee.name === customPropertiesImportName
         ) {
-          return;
-        }
-
-        const variantMap: VariantMap<string, string> = {
-          default: evaluateAstNode(node.arguments[0]),
-        };
-
-        let parentPath: NodePath | null = traversePath.parentPath;
-        while (parentPath) {
-          if (parentPath.node.type !== 'MemberExpression') {
+          if (node.arguments.length !== 1) {
             logError(
-              'Expected a MemberExpression, received `%s`:',
-              parentPath.node.type,
-              generate(parentPath.node).code
+              customPropertiesImportName +
+                ' import has the wrong number of parameters'
             );
-            break;
-          }
-          const prop = parentPath.node.property;
-          if (prop.type !== 'Identifier') {
-            logError(
-              'Expected an Identified, received `%s`:',
-              prop.type,
-              generate(prop).code
-            );
-            break;
+            return;
           }
 
-          const grandparentPath: NodePath | null = parentPath.parentPath;
-          if (!grandparentPath) {
-            logError('Missing parentPath');
-            break;
-          }
+          const attemptEval = !evaluateVars
+            ? evaluateAstNode
+            : getEvaluateAstNodeWithScopeFunction(
+                traversePath,
+                modulesByAbsolutePath,
+                sourceFileName,
+                bindingCache
+              );
 
-          if (grandparentPath.node.type !== 'CallExpression') {
-            logError(
-              'Expected a CallExpression, received `%s`',
-              generate(grandparentPath.node).code
-            );
-            break;
-          }
+          const variantMap: VariantMap<string, string> = {
+            default: attemptEval(node.arguments[0]),
+          };
 
-          if (!grandparentPath.parentPath) {
-            logError('Expected a parentPath');
-            break;
-          }
-          parentPath = grandparentPath.parentPath;
-
-          if (prop.name === 'addVariant') {
-            if (grandparentPath.node.arguments.length !== 2) {
-              logError('Expected two arguments');
+          let parentPath: NodePath | null = traversePath.parentPath;
+          while (parentPath) {
+            if (parentPath.node.type !== 'MemberExpression') {
+              logError(
+                'Expected a MemberExpression, received `%s`:',
+                parentPath.node.type,
+                generate(parentPath.node).code
+              );
+              break;
+            }
+            const prop = parentPath.node.property;
+            if (prop.type !== 'Identifier') {
+              logError(
+                'Expected an Identified, received `%s`:',
+                prop.type,
+                generate(prop).code
+              );
               break;
             }
 
-            const key = evaluateAstNode(grandparentPath.node.arguments[0]);
-            const props = evaluateAstNode(grandparentPath.node.arguments[1]);
-            variantMap[key] = props;
-            continue;
-          }
-
-          if (prop.name === 'build') {
-            const buildOptions =
-              evaluateAstNode(grandparentPath.node.arguments[0]) || {};
-
-            const result = generateCustomPropertiesFromVariants(
-              variantMap,
-              buildOptions
-            );
-
-            // order is important here
-            for (let i = 0, len = result.styles.length; i < len; i++) {
-              const sortKey = (i + '').padStart((len + '').length, '0');
-              cssMap[`/*${sortKey}*/ ` + result.styles[i]] = '';
+            const grandparentPath: NodePath | null = parentPath.parentPath;
+            if (!grandparentPath) {
+              logError('Missing parentPath');
+              break;
             }
 
-            const wipFunction = t.functionExpression(
-              null,
-              [],
-              t.blockStatement([
-                t.throwStatement(
-                  t.newExpression(t.identifier('Error'), [
-                    t.stringLiteral('Not yet implemented'),
-                  ])
-                ),
-              ])
-            );
+            if (grandparentPath.node.type !== 'CallExpression') {
+              logError(
+                'Expected a CallExpression, received `%s`',
+                generate(grandparentPath.node).code
+              );
+              break;
+            }
 
-            grandparentPath.replaceWith(
-              t.objectExpression([
-                ...Object.entries(result.customProperties).map(
-                  ([propName, propValue]) => {
+            if (!grandparentPath.parentPath) {
+              logError('Expected a parentPath');
+              break;
+            }
+            parentPath = grandparentPath.parentPath;
+
+            if (prop.name === 'addVariant') {
+              if (grandparentPath.node.arguments.length !== 2) {
+                logError('Expected two arguments');
+                break;
+              }
+
+              const key = evaluateAstNode(grandparentPath.node.arguments[0]);
+              const props = evaluateAstNode(grandparentPath.node.arguments[1]);
+              variantMap[key] = props;
+              continue;
+            }
+
+            if (prop.name === 'build') {
+              const buildOptions =
+                evaluateAstNode(grandparentPath.node.arguments[0]) || {};
+
+              const result = generateCustomPropertiesFromVariants(
+                variantMap,
+                buildOptions
+              );
+
+              // order is important here
+              for (let i = 0, len = result.styles.length; i < len; i++) {
+                const sortKey = (i + '').padStart((len + '').length, '0');
+                cssMap[`/*${sortKey}*/ ` + result.styles[i]] = '';
+              }
+
+              const wipFunction = t.functionExpression(
+                null,
+                [],
+                t.blockStatement([
+                  t.throwStatement(
+                    t.newExpression(t.identifier('Error'), [
+                      t.stringLiteral('Not yet implemented'),
+                    ])
+                  ),
+                ])
+              );
+
+              grandparentPath.replaceWith(
+                t.objectExpression([
+                  ...Object.entries(result.customProperties).map(
+                    ([propName, propValue]) => {
+                      return t.objectProperty(
+                        t.identifier(propName),
+                        t.stringLiteral(propValue)
+                      );
+                    }
+                  ),
+                  t.objectProperty(
+                    t.identifier('variants'),
+                    t.arrayExpression(
+                      result.variantNames.map((name) => t.stringLiteral(name))
+                    )
+                  ),
+                  t.objectProperty(t.identifier('setVariant'), wipFunction),
+                  ...result.variantNames.map((name) => {
                     return t.objectProperty(
-                      t.identifier(propName),
-                      t.stringLiteral(propValue)
+                      t.identifier(
+                        `activate${name[0].toUpperCase()}${name.slice(1)}`
+                      ),
+                      wipFunction
                     );
-                  }
-                ),
-                t.objectProperty(
-                  t.identifier('variants'),
-                  t.arrayExpression(
-                    result.variantNames.map((name) => t.stringLiteral(name))
-                  )
-                ),
-                t.objectProperty(t.identifier('setVariant'), wipFunction),
-                ...result.variantNames.map((name) => {
-                  return t.objectProperty(
-                    t.identifier(
-                      `activate${name[0].toUpperCase()}${name.slice(1)}`
-                    ),
-                    wipFunction
-                  );
-                }),
-                // reset is a noop
-                t.objectProperty(
-                  t.identifier('reset'),
-                  t.functionExpression(null, [], t.blockStatement([]))
-                ),
-              ])
-            );
+                  }),
+                  // reset is a noop
+                  t.objectProperty(
+                    t.identifier('reset'),
+                    t.functionExpression(null, [], t.blockStatement([]))
+                  ),
+                ])
+              );
 
-            break;
+              break;
+            }
+
+            logError('Unhandled prop: %s', prop.name);
+          }
+        } else if (node.callee.name === cssFunctionImportName && cssFunction) {
+          if (node.arguments.length !== 1) {
+            logError(
+              cssFunctionImportName +
+                ' import has the wrong number of parameters'
+            );
+            return;
           }
 
-          logError('Unhandled prop: %s', prop.name);
+          const arg = node.arguments[0];
+          const attemptEval = !evaluateVars
+            ? evaluateAstNode
+            : getEvaluateAstNodeWithScopeFunction(
+                traversePath,
+                modulesByAbsolutePath,
+                sourceFileName,
+                bindingCache
+              );
+          const cssFunctionParam = attemptEval(arg);
+          const className = cssFunction(cssFunctionParam) || '';
+          if (traversePath.parentPath.node.type === 'JSXExpressionContainer') {
+            traversePath.parentPath.replaceWith(t.stringLiteral(className));
+          } else {
+            traversePath.replaceWith(t.stringLiteral(className));
+          }
         }
       },
     };
 
-    traverse(ast, matchMediaTraverseOptions);
+    traverse(ast, callExpressionTraverseOptions);
   }
-
-  // per-file cache of evaluated bindings
-  const bindingCache: Record<string, string | null> = {};
 
   const traverseOptions: TraverseOptions<t.JSXElement> = {
     JSXElement: {
@@ -499,10 +555,6 @@ export function extractStyles(
         const originalNodeName = node.name.name;
         const srcKey = validComponents[originalNodeName];
 
-        const onInsertRule = (rule: string, key: string) => {
-          cssMap[rule] = key;
-        };
-
         let shouldExtractMatchMedia = !!matchMediaImportName;
 
         node.name.name = boxComponentName;
@@ -515,32 +567,12 @@ export function extractStyles(
 
         const attemptEval = !evaluateVars
           ? evaluateAstNode
-          : (() => {
-              // Generate scope object at this level
-              const staticNamespace = getStaticBindingsForScope(
-                traversePath.scope,
-                modulesByAbsolutePath,
-                sourceFileName,
-                bindingCache
-              );
-
-              const evalContext = vm.createContext(staticNamespace);
-
-              // called when evaluateAstNode encounters a dynamic-looking prop
-              const evalFn = (n: t.Node) => {
-                // variable
-                if (t.isIdentifier(n)) {
-                  invariant(
-                    staticNamespace.hasOwnProperty(n.name),
-                    'identifier not in staticNamespace'
-                  );
-                  return staticNamespace[n.name];
-                }
-                return vm.runInContext(`(${generate(n).code})`, evalContext);
-              };
-
-              return (n: t.Node) => evaluateAstNode(n, evalFn);
-            })();
+          : getEvaluateAstNodeWithScopeFunction(
+              traversePath,
+              modulesByAbsolutePath,
+              sourceFileName,
+              bindingCache
+            );
 
         let lastSpreadIndex = -1;
         const flattenedAttributes: Array<

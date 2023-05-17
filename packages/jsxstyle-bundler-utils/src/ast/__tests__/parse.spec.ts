@@ -1,6 +1,6 @@
 import generate from '@babel/generator';
 
-import { parse } from '../parse';
+import { parse } from '../babelUtils';
 import type { ParserPlugin } from '@babel/parser';
 
 // parse helper

@@ -19,6 +19,10 @@ jsxstyle
 - lib/chunks/getStyleCache.[hash].cjs.map
 - lib/chunks/getStyleCache.[hash].js
 - lib/chunks/getStyleCache.[hash].js.map
+- lib/chunks/makeCssFunction.[hash].cjs
+- lib/chunks/makeCssFunction.[hash].cjs.map
+- lib/chunks/makeCssFunction.[hash].js
+- lib/chunks/makeCssFunction.[hash].js.map
 - lib/chunks/makeCustomProperties.[hash].cjs
 - lib/chunks/makeCustomProperties.[hash].cjs.map
 - lib/chunks/makeCustomProperties.[hash].js
@@ -27,6 +31,8 @@ jsxstyle
 - lib/jsxstyle-bundler-utils/src/ModuleCache.d.ts.map
 - lib/jsxstyle-bundler-utils/src/ast/accessSafe.d.ts
 - lib/jsxstyle-bundler-utils/src/ast/accessSafe.d.ts.map
+- lib/jsxstyle-bundler-utils/src/ast/babelUtils.d.ts
+- lib/jsxstyle-bundler-utils/src/ast/babelUtils.d.ts.map
 - lib/jsxstyle-bundler-utils/src/ast/evaluateAstNode.d.ts
 - lib/jsxstyle-bundler-utils/src/ast/evaluateAstNode.d.ts.map
 - lib/jsxstyle-bundler-utils/src/ast/extractStaticTernaries.d.ts
@@ -51,12 +57,8 @@ jsxstyle
 - lib/jsxstyle-bundler-utils/src/ast/getSourceModule.d.ts.map
 - lib/jsxstyle-bundler-utils/src/ast/getStaticBindingsForScope.d.ts
 - lib/jsxstyle-bundler-utils/src/ast/getStaticBindingsForScope.d.ts.map
-- lib/jsxstyle-bundler-utils/src/ast/parse.d.ts
-- lib/jsxstyle-bundler-utils/src/ast/parse.d.ts.map
 - lib/jsxstyle-bundler-utils/src/createModule.d.ts
 - lib/jsxstyle-bundler-utils/src/createModule.d.ts.map
-- lib/jsxstyle-bundler-utils/src/esmInterop.d.ts
-- lib/jsxstyle-bundler-utils/src/esmInterop.d.ts.map
 - lib/jsxstyle-bundler-utils/src/getExportsFromModuleSource.d.ts
 - lib/jsxstyle-bundler-utils/src/getExportsFromModuleSource.d.ts.map
 - lib/jsxstyle-bundler-utils/src/index.cjs
@@ -147,6 +149,8 @@ jsxstyle
 - lib/jsxstyle-utils/src/index.d.ts.map
 - lib/jsxstyle-utils/src/index.js
 - lib/jsxstyle-utils/src/index.js.map
+- lib/jsxstyle-utils/src/makeCssFunction.d.ts
+- lib/jsxstyle-utils/src/makeCssFunction.d.ts.map
 - lib/jsxstyle-utils/src/makeCustomProperties.d.ts
 - lib/jsxstyle-utils/src/makeCustomProperties.d.ts.map
 - lib/jsxstyle-utils/src/parseStyleProps.d.ts

@@ -4,7 +4,7 @@ import * as t from '@babel/types';
 import type { Scope, Binding } from '@babel/traverse';
 
 import { getSourceModule } from '../getSourceModule';
-import { parse } from '../parse';
+import { parse } from '../babelUtils';
 
 function getSourceModuleForItem(itemName: string, scope: Scope) {
   let itemBinding: Binding | null = null;

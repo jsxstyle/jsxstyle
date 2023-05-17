@@ -4,7 +4,7 @@ import generate from '@babel/generator';
 import * as t from '@babel/types';
 
 import { getPropValueFromAttributes } from '../getPropValueFromAttributes';
-import { parse } from '../parse';
+import { parse } from '../babelUtils';
 
 describe('getPropValueFromAttributes', () => {
   it('returns the original prop value if no spread attributes appear before the requested prop', () => {

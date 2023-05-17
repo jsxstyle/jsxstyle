@@ -4,13 +4,19 @@ import {
 } from '../../jsxstyle-utils/src';
 import { styleCache } from './styleCache';
 import { createElement } from 'react';
-import { componentFactory } from './componentFactory';
+import { componentFactory, classNamePropKey } from './componentFactory';
+import { makeCssFunction } from '../../jsxstyle-utils/src/makeCssFunction';
 
 export type { CSSProperties } from '../../jsxstyle-utils/src';
 export type { StylableComponentProps } from './types';
 export { styleCache as cache };
 export { useMatchMedia } from './useMatchMedia';
 export { makeCustomProperties } from '../../jsxstyle-utils/src';
+
+export const css = makeCssFunction(
+  classNamePropKey,
+  styleCache.getComponentProps
+);
 
 let depFactory: any = componentFactory;
 

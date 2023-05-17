@@ -11,6 +11,8 @@ import type {
 } from './types';
 import { createElement } from 'preact';
 
+export const classNamePropKey = 'class';
+
 export function componentFactory(
   displayName: JsxstyleComponentName | DeprecatedJsxstyleComponentName
 ) {
@@ -21,7 +23,10 @@ export function componentFactory(
     props: PropsWithChildren<JsxstyleProps<T>>
   ): preact.VNode<any> => {
     const Component: any = props.component || tagName;
-    const extractedProps = styleCache.getComponentProps(props, 'class');
+    const extractedProps = styleCache.getComponentProps(
+      props,
+      classNamePropKey
+    );
     return createElement(Component, extractedProps);
   };
 

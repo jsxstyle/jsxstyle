@@ -7,6 +7,8 @@ import { styleCache } from './styleCache';
 import type { JsxstyleProps, ValidComponentPropValue } from './types';
 import { createElement } from 'react';
 
+export const classNamePropKey = 'className';
+
 export function componentFactory(
   displayName: JsxstyleComponentName | DeprecatedJsxstyleComponentName
 ) {
@@ -17,7 +19,10 @@ export function componentFactory(
     props: React.PropsWithChildren<JsxstyleProps<T>>
   ): React.ReactElement => {
     const Component: any = props.component || tagName;
-    const extractedProps = styleCache.getComponentProps(props);
+    const extractedProps = styleCache.getComponentProps(
+      props,
+      classNamePropKey
+    );
     return createElement(Component, extractedProps);
   };
 

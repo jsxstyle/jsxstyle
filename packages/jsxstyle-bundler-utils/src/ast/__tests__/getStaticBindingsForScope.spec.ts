@@ -4,7 +4,7 @@ import * as t from '@babel/types';
 import path from 'path';
 
 import { getStaticBindingsForScope } from '../getStaticBindingsForScope';
-import { parse } from '../parse';
+import { parse } from '../babelUtils';
 
 const modulesByAbsolutePath = {
   [require.resolve('./mock/LC').replace(/\.js$/, '')]: require('./mock/LC'),
