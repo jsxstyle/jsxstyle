@@ -13,12 +13,14 @@ interface PluginOptions
     Partial<Pick<ExtractStylesOptions, 'modulesByAbsolutePath'>> {
   extensions?: string[];
   cacheFile?: string;
+  classNamePrefix?: string;
 }
 
 export const jsxstyleVitePlugin = ({
   extensions = ['.ts', '.tsx', '.js'],
-  modulesByAbsolutePath,
   cacheFile,
+  classNamePrefix = '_x',
+  modulesByAbsolutePath,
   ...options
 }: PluginOptions = {}): Plugin => {
   const isHandledFile = (id: string) =>
@@ -32,9 +34,9 @@ export const jsxstyleVitePlugin = ({
 
     return (content: string) => {
       if (!classNameCache[content]) {
-        classNameCache[content] = `_x${(num++).toString(36)}`;
+        classNameCache[content] = (num++).toString(36);
       }
-      return classNameCache[content];
+      return classNamePrefix + classNameCache[content];
     };
   })();
 
