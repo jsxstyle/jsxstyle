@@ -138,7 +138,7 @@ export function extractStyles(
     evaluateVars = true,
   } = extractStylesOptions;
 
-  const leaveNoTrace = options.noRuntime;
+  const noRuntimeMode = options.noRuntime;
 
   invariant(typeof src === 'string', '`src` must be a string of javascript');
 
@@ -500,21 +500,27 @@ export function extractStyles(
             return;
           }
 
-          const arg = node.arguments[0];
-          const attemptEval = !evaluateVars
-            ? evaluateAstNode
-            : getEvaluateAstNodeWithScopeFunction(
-                traversePath,
-                modulesByAbsolutePath,
-                sourceFileName,
-                bindingCache
-              );
-          const cssFunctionParam = attemptEval(arg);
-          const className = cssFunction(cssFunctionParam) || '';
-          if (traversePath.parentPath.node.type === 'JSXExpressionContainer') {
-            traversePath.parentPath.replaceWith(t.stringLiteral(className));
-          } else {
-            traversePath.replaceWith(t.stringLiteral(className));
+          try {
+            const arg = node.arguments[0];
+            const attemptEval = !evaluateVars
+              ? evaluateAstNode
+              : getEvaluateAstNodeWithScopeFunction(
+                  traversePath,
+                  modulesByAbsolutePath,
+                  sourceFileName,
+                  bindingCache
+                );
+            const cssFunctionParam = attemptEval(arg);
+            const className = cssFunction(cssFunctionParam) || '';
+            if (
+              traversePath.parentPath.node.type === 'JSXExpressionContainer'
+            ) {
+              traversePath.parentPath.replaceWith(t.stringLiteral(className));
+            } else {
+              traversePath.replaceWith(t.stringLiteral(className));
+            }
+          } catch (error) {
+            // preserve the css function call
           }
         }
       },
@@ -528,6 +534,7 @@ export function extractStyles(
       exit(programPath) {
         // update reference count for the code we modified
         programPath.scope.crawl();
+
         for (const binding of Object.values(programPath.scope.bindings)) {
           const { node, parentPath } = binding.path;
           if (
@@ -536,7 +543,15 @@ export function extractStyles(
             parentPath.node.source.value === jsxstyleSrc
           ) {
             if (binding.references > 0) {
-              if (leaveNoTrace) {
+              if (
+                noRuntimeMode &&
+                node.imported.type === 'Identifier' &&
+                // component import
+                (componentStyles.hasOwnProperty(node.imported.name) ||
+                  // or `css` function import
+                  (!!cssFunctionImportName &&
+                    node.imported.name === cssFunctionImportName))
+              ) {
                 for (const refPath of binding.referencePaths) {
                   logError(
                     'Runtime jsxstyle could not be completely removed:\n%s',
@@ -557,6 +572,7 @@ export function extractStyles(
         }
       },
     },
+
     JSXElement: {
       enter(traversePath) {
         const node = traversePath.node.openingElement;

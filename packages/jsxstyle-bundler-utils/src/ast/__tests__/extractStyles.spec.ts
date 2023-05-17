@@ -1257,9 +1257,15 @@ describe('zero runtime mode', () => {
 
     const rv = runExtractStyles(
       `
-import { Grid, Block } from 'jsxstyle';
+import { Grid, Block, css, useMatchMedia, cache } from 'jsxstyle';
 <Grid color={wow} />;
 <Block color={wow} />;
+<Block color="red" />;
+css({ color: wow });
+css({ color: 'red' });
+cache.injectOptions({});
+const exampleMQ = useMatchMedia('screen and test');
+<Block color={exampleMQ ? 'red' : 'blue'} />;
 `,
       'mock/no-runtime1.js',
       {
@@ -1270,25 +1276,41 @@ import { Grid, Block } from 'jsxstyle';
       }
     );
 
-    expect(errorCallback).toHaveBeenCalledTimes(2);
+    expect(errorCallback).toHaveBeenCalledTimes(3);
     expect(errorCallback.mock.calls).toMatchInlineSnapshot(`
       [
         [
           "Runtime jsxstyle could not be completely removed:
       %s",
           "  1 | import { Box } from "jsxstyle";
-        2 | import { Grid, Block } from 'jsxstyle';
-      > 3 | <Box color={wow} className="_x0" />;
+        2 | import { Grid, Block, css, useMatchMedia, cache } from 'jsxstyle';
+      > 3 | <Box color={wow} className="_x1" />;
           | ^^^^
-        4 | <Box color={wow} className="_x1" />;",
+        4 | <Box color={wow} className="_x2" />;
+        5 | <div className="_x2 _x0" />;
+        6 | css({",
         ],
         [
           "Runtime jsxstyle could not be completely removed:
       %s",
-          "  2 | import { Grid, Block } from 'jsxstyle';
-        3 | <Box color={wow} className="_x0" />;
-      > 4 | <Box color={wow} className="_x1" />;
-          | ^^^^^",
+          "  2 | import { Grid, Block, css, useMatchMedia, cache } from 'jsxstyle';
+        3 | <Box color={wow} className="_x1" />;
+      > 4 | <Box color={wow} className="_x2" />;
+          | ^^^^^
+        5 | <div className="_x2 _x0" />;
+        6 | css({
+        7 |   color: wow",
+        ],
+        [
+          "Runtime jsxstyle could not be completely removed:
+      %s",
+          "  4 | <Box color={wow} className="_x2" />;
+        5 | <div className="_x2 _x0" />;
+      > 6 | css({
+          | ^^^
+        7 |   color: wow
+        8 | });
+        9 | "_x0";",
         ],
       ]
     `);
@@ -1296,14 +1318,26 @@ import { Grid, Block } from 'jsxstyle';
     expect(rv.js).toMatchInlineSnapshot(`
       "import "./no-runtime1__jsxstyle.css";
       import { Box } from "jsxstyle";
-      <Box color={wow} className="_x0" />;
-      <Box color={wow} className="_x1" />;"
+      import { css, useMatchMedia, cache } from 'jsxstyle';
+      <Box color={wow} className="_x1" />;
+      <Box color={wow} className="_x2" />;
+      <div className="_x2 _x0" />;
+      css({
+        color: wow
+      });
+      "_x0";
+      cache.injectOptions({});
+      const useMatchMedia_exampleMQ = /*#__PURE__*/useMatchMedia('screen and test');
+      <div className="_x3 _x2 _x4" />;"
     `);
 
     expect(rv.css).toMatchInlineSnapshot(`
       "/* mock/no-runtime1.js */
-      ._x0 { display:grid }
-      ._x1 { display:block }
+      ._x0 { color:red }
+      ._x1 { display:grid }
+      ._x2 { display:block }
+      ._x4 { color:blue }
+      @media screen and test { ._x3._x3._x3 { color:red } }
       "
     `);
   });
