@@ -1,6 +1,5 @@
 import {
   componentStyles,
-  DeprecatedJsxstyleComponentName,
   JsxstyleComponentName,
 } from '../../jsxstyle-utils/src';
 import { styleCache } from './styleCache';
@@ -9,9 +8,7 @@ import { createElement } from 'react';
 
 export const classNamePropKey = 'className';
 
-export function componentFactory(
-  displayName: JsxstyleComponentName | DeprecatedJsxstyleComponentName
-) {
+export function componentFactory(displayName: JsxstyleComponentName) {
   const tagName = 'div';
   const defaultProps = componentStyles[displayName];
 

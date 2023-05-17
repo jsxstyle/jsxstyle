@@ -1,9 +1,5 @@
 export { addStyleToHead } from './addStyleToHead';
-export {
-  componentStyles,
-  type JsxstyleComponentName,
-  type DeprecatedJsxstyleComponentName,
-} from './componentStyles';
+export { componentStyles, type JsxstyleComponentName } from './componentStyles';
 export { createClassNameGetter } from './createClassNameGetter';
 export { dangerousStyleValue } from './dangerousStyleValue';
 export { getStyleCache } from './getStyleCache';

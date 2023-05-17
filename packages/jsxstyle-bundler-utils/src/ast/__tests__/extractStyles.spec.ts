@@ -49,24 +49,24 @@ describe('the basics', () => {
 
     expect(rv1.js).toMatchInlineSnapshot(`
       "import "./validate__jsxstyle.css";
+      import { Flex } from "jsxstyle";
       <Block extract="nope" />;
       <div className="_x0 _x1" />;
       <Col extract="nope" />;
       <InlineBlock extract="nope" />;
-      <div className="_x2 _x1" />;
-      <div className="_x3 _x4 _x5 _x1" />;
-      <div className="_x3 _x6 _x1" />;"
+      <Flex extract="yep" />;
+      <div className="_x2 _x3 _x4 _x1" />;
+      <div className="_x2 _x5 _x1" />;"
     `);
 
     expect(rv1.css).toMatchInlineSnapshot(`
       "/* mock/validate.js */
       ._x0 { display:block }
       ._x1 { extract:yep }
-      ._x2 { display:flex }
-      ._x3 { display:inline-flex }
-      ._x4._x4 { flex-direction:row }
-      ._x5 { align-items:center }
-      ._x6._x6 { flex-direction:column }
+      ._x2 { display:inline-flex }
+      ._x3._x3 { flex-direction:row }
+      ._x4 { align-items:center }
+      ._x5._x5 { flex-direction:column }
       "
     `);
   });
