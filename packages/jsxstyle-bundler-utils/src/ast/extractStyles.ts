@@ -8,10 +8,8 @@ import { componentStyles, processProps } from '../../../jsxstyle-utils/src';
 import path from 'path';
 import util from 'util';
 
-import {
-  evaluateAstNode,
-  getEvaluateAstNodeWithScopeFunction,
-} from './evaluateAstNode';
+import { evaluateAstNode } from './evaluateAstNode';
+import { getEvaluateAstNodeWithScopeFunction } from './getEvaluateAstNodeWithScopeFunction';
 import { extractStaticTernaries, Ternary } from './extractStaticTernaries';
 import { generateUid } from './generatedUid';
 import { getInlineImportString } from './getInlineImportString';
