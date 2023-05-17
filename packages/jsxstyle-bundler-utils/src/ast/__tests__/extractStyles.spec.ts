@@ -1260,7 +1260,7 @@ describe('zero runtime mode', () => {
 import { Grid, Block, css, useMatchMedia, cache } from 'jsxstyle';
 <Grid color={wow} />;
 <Block color={wow} />;
-<Block color="red" />;
+<Block component="a" onClick={wow} href="https://jsx.style" color="red" />;
 css({ color: wow });
 css({ color: 'red' });
 cache.injectOptions({});
@@ -1287,7 +1287,7 @@ const exampleMQ = useMatchMedia('screen and test');
       > 3 | <Box color={wow} className="_x1" />;
           | ^^^^
         4 | <Box color={wow} className="_x2" />;
-        5 | <div className="_x2 _x0" />;
+        5 | <a onClick={wow} href="https://jsx.style" className="_x2 _x0" />;
         6 | css({",
         ],
         [
@@ -1297,7 +1297,7 @@ const exampleMQ = useMatchMedia('screen and test');
         3 | <Box color={wow} className="_x1" />;
       > 4 | <Box color={wow} className="_x2" />;
           | ^^^^^
-        5 | <div className="_x2 _x0" />;
+        5 | <a onClick={wow} href="https://jsx.style" className="_x2 _x0" />;
         6 | css({
         7 |   color: wow",
         ],
@@ -1305,7 +1305,7 @@ const exampleMQ = useMatchMedia('screen and test');
           "Runtime jsxstyle could not be completely removed:
       %s",
           "  4 | <Box color={wow} className="_x2" />;
-        5 | <div className="_x2 _x0" />;
+        5 | <a onClick={wow} href="https://jsx.style" className="_x2 _x0" />;
       > 6 | css({
           | ^^^
         7 |   color: wow
@@ -1321,7 +1321,7 @@ const exampleMQ = useMatchMedia('screen and test');
       import { css, useMatchMedia, cache } from 'jsxstyle';
       <Box color={wow} className="_x1" />;
       <Box color={wow} className="_x2" />;
-      <div className="_x2 _x0" />;
+      <a onClick={wow} href="https://jsx.style" className="_x2 _x0" />;
       css({
         color: wow
       });

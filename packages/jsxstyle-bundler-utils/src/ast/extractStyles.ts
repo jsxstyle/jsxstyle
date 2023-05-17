@@ -26,8 +26,9 @@ import {
   makeCssFunction,
   type CssFunction,
 } from '../../../jsxstyle-utils/src/makeCssFunction';
-import { StyleCache } from 'packages/jsxstyle-utils/src/getStyleCache';
+import { StyleCache } from '../../../jsxstyle-utils/src/getStyleCache';
 import { generate, traverse } from './babelUtils';
+import { commonComponentProps } from '../../../jsxstyle-utils/src/parseStyleProps';
 
 const validCssModes = [
   'singleInlineImport',
@@ -718,6 +719,14 @@ export function extractStyles(
 
           // pass ref, key, and style props through untouched
           if (UNTOUCHED_PROPS.hasOwnProperty(name)) {
+            return true;
+          }
+
+          // certain props are passed directly on to the underlying component
+          if (
+            name.startsWith('on') ||
+            commonComponentProps.hasOwnProperty(name)
+          ) {
             return true;
           }
 

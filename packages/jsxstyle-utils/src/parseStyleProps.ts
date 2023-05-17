@@ -4,7 +4,7 @@ import type { AnimatableCSSProperties as CSSProps } from './types';
 // global flag makes subsequent calls of capRegex.test advance to the next match
 const capRegex = /[A-Z]/g;
 
-const commonComponentProps = {
+export const commonComponentProps = {
   // class (preact) and className (React) are handled separately
   checked: true,
   children: true,
