@@ -24,11 +24,12 @@
     "reset": "rm -rf lib"
   },
   "dependencies": {
-    "@babel/core": "^7.17.9",
-    "@babel/generator": "^7.17.9",
-    "@babel/parser": "^7.17.9",
-    "@babel/traverse": "^7.17.9",
-    "@babel/types": "^7.17.0",
+    "@babel/code-frame": "^7.21.4",
+    "@babel/core": "^7.21.8",
+    "@babel/generator": "^7.21.5",
+    "@babel/parser": "^7.21.8",
+    "@babel/traverse": "^7.21.5",
+    "@babel/types": "^7.21.5",
     "csstype": "^3.0.11",
     "invariant": "^2.2.4",
     "memfs": "^3.4.1"
@@ -38,8 +39,9 @@
     "@rollup/plugin-node-resolve": "^15.0.1",
     "@rollup/plugin-replace": "^5.0.2",
     "@rollup/plugin-terser": "^0.4.0",
+    "@types/babel__code-frame": "^7.0.3",
     "@types/babel__generator": "^7.6.4",
-    "@types/babel__traverse": "^7.17.1",
+    "@types/babel__traverse": "^7.18.5",
     "@types/node": "^18.0.0",
     "next": "^13.0.4",
     "rollup": "^3.20.2",

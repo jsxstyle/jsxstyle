@@ -2,6 +2,7 @@
 import type { ParserPlugin } from '@babel/parser';
 import type { NodePath, TraverseOptions } from '@babel/traverse';
 import * as t from '@babel/types';
+import { codeFrameColumns } from '@babel/code-frame';
 import invariant from 'invariant';
 import { componentStyles, processProps } from '../../../jsxstyle-utils/src';
 import path from 'path';
@@ -74,6 +75,7 @@ const ALL_SPECIAL_PROPS = {
 const JSXSTYLE_SOURCES = {
   jsxstyle: true,
   'jsxstyle/preact': true,
+  'jsxstyle/solid': true,
 };
 
 const matchMediaHookName = 'useMatchMedia';
@@ -198,90 +200,66 @@ export function extractStyles(
 
   const ast = parse(src, parserPlugins);
 
-  let jsxstyleSrc: string | null = null;
   const validComponents: Record<string, string> = {};
-  // default to using require syntax
-  let useImportSyntax = false;
-  let hasValidImports = false;
-  let needsRuntimeJsxstyle = false;
 
   let matchMediaImportName: string | undefined;
   let customPropertiesImportName: string | undefined;
   let cssFunctionImportName: string | undefined;
 
   // Find jsxstyle require in program root
-  ast.program.body = ast.program.body.filter((item) => {
-    if (t.isImportDeclaration(item)) {
+  const jsxstyleSrc = ast.program.body.reduce<null | string>((prev, item) => {
+    if (
+      !t.isImportDeclaration(item) ||
       // not imported from jsxstyle? byeeee
-      if (!JSXSTYLE_SOURCES.hasOwnProperty(item.source.value)) {
-        return true;
+      !JSXSTYLE_SOURCES.hasOwnProperty(item.source.value)
+    ) {
+      return prev;
+    }
+
+    if (prev) {
+      invariant(
+        prev === item.source.value,
+        'Expected duplicate `import` to be from "%s", received "%s"',
+        prev,
+        item.source.value
+      );
+    }
+
+    for (const specifier of item.specifiers) {
+      if (
+        !t.isImportSpecifier(specifier) ||
+        !t.isIdentifier(specifier.imported) ||
+        !t.isIdentifier(specifier.local)
+      ) {
+        continue;
       }
 
-      if (jsxstyleSrc) {
-        invariant(
-          jsxstyleSrc === item.source.value,
-          'Expected duplicate `import` to be from "%s", received "%s"',
-          jsxstyleSrc,
-          item.source.value
-        );
+      if (specifier.imported.name === matchMediaHookName) {
+        matchMediaImportName = specifier.local.name;
+        continue;
       }
 
-      jsxstyleSrc = item.source.value;
-      useImportSyntax = true;
+      if (specifier.imported.name === customPropertiesFunctionName) {
+        customPropertiesImportName = specifier.local.name;
+        continue;
+      }
 
-      item.specifiers = item.specifiers.filter((specifier) => {
-        // keep the weird stuff
-        if (
-          !t.isImportSpecifier(specifier) ||
-          !t.isIdentifier(specifier.imported) ||
-          !t.isIdentifier(specifier.local)
-        ) {
-          return true;
-        }
+      if (specifier.imported.name === cssFunctionName) {
+        cssFunctionImportName = specifier.local.name;
+        continue;
+      }
 
-        if (specifier.imported.name === matchMediaHookName) {
-          matchMediaImportName = specifier.local.name;
-          hasValidImports = true;
-          return true;
-        }
-
-        if (specifier.imported.name === customPropertiesFunctionName) {
-          customPropertiesImportName = specifier.local.name;
-          hasValidImports = true;
-          // remove custom properties import
-          return false;
-        }
-
-        if (specifier.imported.name === cssFunctionName) {
-          cssFunctionImportName = specifier.local.name;
-          hasValidImports = true;
-          // remove custom properties import
-          return false;
-        }
-
-        if (
-          !componentStyles.hasOwnProperty(specifier.imported.name) ||
-          specifier.local.name[0] !== specifier.local.name[0].toUpperCase()
-        ) {
-          return true;
-        }
-
+      if (componentStyles.hasOwnProperty(specifier.imported.name)) {
         validComponents[specifier.local.name] = specifier.imported.name;
-        hasValidImports = true;
-        return false;
-      });
-
-      // remove import
-      if (item.specifiers.length === 0) {
-        return false;
+        continue;
       }
     }
 
-    return true;
-  });
+    return item.source.value;
+  }, null);
 
   // jsxstyle isn't included anywhere, so let's bail
-  if (jsxstyleSrc == null || !hasValidImports) {
+  if (jsxstyleSrc == null) {
     return {
       ast,
       css: '',
@@ -309,6 +287,18 @@ export function extractStyles(
   traverse(ast, {
     Program(traversePath) {
       boxComponentName = generateUid(traversePath.scope, 'Box');
+      traversePath.unshiftContainer(
+        'body',
+        t.importDeclaration(
+          [
+            t.importSpecifier(
+              t.identifier(boxComponentName),
+              t.identifier('Box')
+            ),
+          ],
+          t.stringLiteral(jsxstyleSrc)
+        )
+      );
     },
   });
 
@@ -323,8 +313,6 @@ export function extractStyles(
     customPropertiesImportName ||
     cssFunctionImportName
   ) {
-    // Extract useMatchMedia calls
-    // This needs to be done before JSXElement traversal
     const callExpressionTraverseOptions: TraverseOptions<any> = {
       CallExpression(traversePath) {
         const { node } = traversePath;
@@ -537,7 +525,40 @@ export function extractStyles(
     traverse(ast, callExpressionTraverseOptions);
   }
 
-  const traverseOptions: TraverseOptions<t.JSXElement> = {
+  const jsxTraverseOptions: TraverseOptions<t.JSXElement> = {
+    Program: {
+      exit(programPath) {
+        // update reference count for the code we modified
+        programPath.scope.crawl();
+        for (const binding of Object.values(programPath.scope.bindings)) {
+          const { node, parentPath } = binding.path;
+          if (
+            node.type === 'ImportSpecifier' &&
+            parentPath?.node.type === 'ImportDeclaration' &&
+            parentPath.node.source.value === jsxstyleSrc
+          ) {
+            if (binding.references > 0) {
+              if (leaveNoTrace) {
+                for (const refPath of binding.referencePaths) {
+                  logError(
+                    'Runtime jsxstyle could not be completely removed:\n%s',
+                    refPath.node.loc
+                      ? codeFrameColumns(generate(ast).code, refPath.node.loc)
+                      : generate(refPath.node).code
+                  );
+                }
+              }
+            } else {
+              binding.path.remove();
+              // remove empty imports
+              if (parentPath.node.specifiers.length === 0) {
+                parentPath.remove();
+              }
+            }
+          }
+        }
+      },
+    },
     JSXElement: {
       enter(traversePath) {
         const node = traversePath.node.openingElement;
@@ -660,12 +681,6 @@ export function extractStyles(
             idx < lastSpreadIndex
           ) {
             inlinePropCount++;
-            if (leaveNoTrace) {
-              logError(
-                'JSX attribute `%s` precedes a spread attribute and can therefore not be extracted',
-                generate(attribute).code
-              );
-            }
             return true;
           }
 
@@ -678,24 +693,12 @@ export function extractStyles(
           if (!value) {
             logWarning('`%s` prop does not have a value', name);
             inlinePropCount++;
-            if (leaveNoTrace) {
-              logError(
-                'JSX attribute `%s` could not be extracted',
-                generate(attribute).code
-              );
-            }
             return true;
           }
 
           // if one or more spread operators are present and we haven't hit the last one yet, the prop stays inline
           if (lastSpreadIndex > -1 && idx <= lastSpreadIndex) {
             inlinePropCount++;
-            if (leaveNoTrace) {
-              logError(
-                'JSX attribute `%s` could not be extracted',
-                generate(attribute).code
-              );
-            }
             return true;
           }
 
@@ -721,12 +724,6 @@ export function extractStyles(
                 'or element, specify a `ref` property in the `props` object.'
             );
             inlinePropCount++;
-            if (leaveNoTrace) {
-              logError(
-                'JSX attribute `%s` could not be extracted',
-                generate(attribute).code
-              );
-            }
             return true;
           }
 
@@ -813,12 +810,6 @@ export function extractStyles(
 
               if (errorCount > 0) {
                 inlinePropCount++;
-                if (leaveNoTrace) {
-                  logError(
-                    'JSX attribute `%s` could not be extracted',
-                    generate(attribute).code
-                  );
-                }
               } else {
                 propsAttributes = attributes;
               }
@@ -842,12 +833,6 @@ export function extractStyles(
             // if props prop is weird-looking, leave it and warn
             logWarning('props prop is an unhandled type: `%s`', value.type);
             inlinePropCount++;
-            if (leaveNoTrace) {
-              logError(
-                'JSX attribute `%s` could not be extracted',
-                generate(attribute).code
-              );
-            }
             return true;
           }
 
@@ -861,12 +846,6 @@ export function extractStyles(
                 generate(value).code
               );
               inlinePropCount++;
-              if (leaveNoTrace) {
-                logError(
-                  'JSX attribute `%s` could not be extracted',
-                  generate(attribute).code
-                );
-              }
               return true;
             }
           }
@@ -952,12 +931,6 @@ export function extractStyles(
 
           // if we've made it this far, the prop stays inline
           inlinePropCount++;
-          if (leaveNoTrace) {
-            logError(
-              'JSX attribute `%s` could not be extracted',
-              generate(attribute).code
-            );
-          }
           return true;
         });
 
@@ -1073,13 +1046,6 @@ export function extractStyles(
             node.name.name = 'div';
           }
         } else {
-          needsRuntimeJsxstyle = true;
-          if (leaveNoTrace) {
-            logError(
-              'JSX element `%s` could not be extracted',
-              generate(node).code
-            );
-          }
           if (lastSpreadIndex > -1) {
             // if only some style props were extracted AND additional props are spread onto the component,
             // add the props back with null values to prevent spread props from incorrectly overwriting the extracted prop value
@@ -1312,44 +1278,13 @@ export function extractStyles(
       },
     },
   };
-  traverse(ast, traverseOptions);
+  traverse(ast, jsxTraverseOptions);
 
   // path.parse doesn't exist in the webpack'd bundle but path.dirname and path.basename do.
   const extName = path.extname(sourceFileName);
   const baseName = path.basename(sourceFileName, extName);
   const cssRelativeFileName = `./${baseName}__jsxstyle.css`;
   const cssFileName = path.join(sourceDir, cssRelativeFileName);
-
-  // Conditionally add Box import/require to the top of the document
-  if (needsRuntimeJsxstyle) {
-    if (useImportSyntax) {
-      ast.program.body.unshift(
-        t.importDeclaration(
-          [
-            t.importSpecifier(
-              t.identifier(boxComponentName),
-              t.identifier('Box')
-            ),
-          ],
-          t.stringLiteral(jsxstyleSrc)
-        )
-      );
-    } else {
-      ast.program.body.unshift(
-        t.variableDeclaration('var', [
-          t.variableDeclarator(
-            t.identifier(boxComponentName),
-            t.memberExpression(
-              t.callExpression(t.identifier('require'), [
-                t.stringLiteral(jsxstyleSrc),
-              ]),
-              t.identifier('Box')
-            )
-          ),
-        ])
-      );
-    }
-  }
 
   let resultCSS = '';
   const importsToPrepend: t.Statement[] = [];
@@ -1365,23 +1300,17 @@ export function extractStyles(
 
     if (cssMode === 'singleInlineImport') {
       importsToPrepend.push(
-        getImportForSource(
-          getInlineImportString(resultCSS, relativeFilePath),
-          useImportSyntax
-        )
+        getImportForSource(getInlineImportString(resultCSS, relativeFilePath))
       );
     } else {
       resultCSS = cssString;
-      importsToPrepend.push(
-        getImportForSource(cssRelativeFileName, useImportSyntax)
-      );
+      importsToPrepend.push(getImportForSource(cssRelativeFileName));
     }
   } else if (cssMode === 'multipleInlineImports') {
     Object.entries(cssMap).forEach(([cssRule, key]) => {
       if (cssRule !== '') {
         const importNode = getImportForSource(
-          getInlineImportString(cssRule, key),
-          useImportSyntax
+          getInlineImportString(cssRule, key)
         );
         cssRule.split('\n').forEach((line) => {
           t.addComment(importNode, 'leading', ' ' + line, true);

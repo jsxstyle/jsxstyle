@@ -1155,7 +1155,7 @@ const staticProp = 'static';
   });
 });
 
-describe('makeCustomProperties', () => {
+describe('makeCustomProperties function', () => {
   it('extracts styles', () => {
     const rv = runExtractStyles(
       `import { makeCustomProperties } from 'jsxstyle';
@@ -1220,6 +1220,7 @@ const thing = css({
 
     expect(rv.js).toMatchInlineSnapshot(`
       "import "./custom-properties1__jsxstyle.css";
+      import { css } from 'jsxstyle';
       css();
       "_x0";
       const thing = "_x0 _x1";
@@ -1238,18 +1239,50 @@ const thing = css({
   });
 });
 
+describe('zero runtime mode', () => {
+  it('works', () => {
+    const rv = runExtractStyles(
+      `
+import { Grid, Block } from 'jsxstyle';
+<Grid color={wow} />;
+<Block color={wow} />;
+`,
+      'mock/noRuntime1.js',
+      undefined,
+      {
+        noRuntime: true,
+      }
+    );
+
+    expect(rv.js).toMatchInlineSnapshot(`
+      "import "./noRuntime1__jsxstyle.css";
+      import { Box } from "jsxstyle";
+      <Box color={wow} className="_x0" />;
+      <Box color={wow} className="_x1" />;"
+    `);
+
+    expect(rv.css).toMatchInlineSnapshot(`
+      "/* mock/noRuntime1.js */
+      ._x0 { display:grid }
+      ._x1 { display:block }
+      "
+    `);
+  });
+});
+
 describe('edge cases', () => {
   it('only removes component imports', () => {
     const rv = runExtractStyles(
       `import 'jsxstyle';
 import { cache, InvalidComponent, Row as RenamedRow } from 'jsxstyle';
-import { Grid } from 'jsxstyle';`,
+import { Grid } from 'jsxstyle';
+`,
       'mock/edge-case1.js'
     );
 
     expect(rv.js).toMatchInlineSnapshot(`
       "import "./edge-case1__jsxstyle.css";
-      import { cache, InvalidComponent } from 'jsxstyle';"
+      import 'jsxstyle';"
     `);
   });
 
