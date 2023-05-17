@@ -90,6 +90,7 @@ export interface ParsedStyleProp {
   specificity: number;
   propName: string;
   propValue: any;
+  queryString?: string;
   ampersandString?: string;
 }
 
@@ -98,7 +99,8 @@ export type CommonComponentProp = keyof typeof commonComponentProps;
 export const parseStyleProps = (
   props: Record<string, any>,
   classNamePropKey: string,
-  ampersandString?: string
+  ampersandString?: string,
+  queryString?: string
 ): {
   parsedStyleProps: Record<string, ParsedStyleProp>;
   componentProps: Record<string, any>;
@@ -110,11 +112,32 @@ export const parseStyleProps = (
   for (const originalPropName in props) {
     const propValue = props[originalPropName];
 
+    const isMq = originalPropName.startsWith('@media ');
+    const isContainer = originalPropName.startsWith('@container ');
+    if (
+      (isMq || isContainer) &&
+      // infinite nesting isn't supported
+      !ampersandString &&
+      !queryString
+    ) {
+      const result = parseStyleProps(
+        propValue,
+        classNamePropKey,
+        undefined,
+        originalPropName
+      );
+      Object.assign(parsedStyleProps, result.parsedStyleProps);
+      continue;
+    }
+
     if (originalPropName.includes('&')) {
       const result = parseStyleProps(
         propValue,
         classNamePropKey,
-        originalPropName
+        ampersandString
+          ? originalPropName.replace('&', ampersandString)
+          : originalPropName,
+        queryString
       );
       Object.assign(parsedStyleProps, result.parsedStyleProps);
       continue;
@@ -188,6 +211,7 @@ export const parseStyleProps = (
     }
 
     const keySuffix =
+      (queryString || '') +
       (pseudoelement ? '::' + pseudoelement : '') +
       (pseudoclass ? ':' + pseudoclass : '') +
       (ampersandString || '');
@@ -215,6 +239,7 @@ export const parseStyleProps = (
           propValue: expandedPropValue,
         });
         if (ampersandString) obj.ampersandString = ampersandString;
+        if (queryString) obj.queryString = queryString;
       }
     } else {
       if (propValue == null || propValue === false) {
@@ -229,6 +254,7 @@ export const parseStyleProps = (
         propValue,
       });
       if (ampersandString) obj.ampersandString = ampersandString;
+      if (queryString) obj.queryString = queryString;
     }
   }
 

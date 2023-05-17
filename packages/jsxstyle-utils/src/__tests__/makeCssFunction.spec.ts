@@ -1,7 +1,7 @@
 import { makeCssFunction } from '../makeCssFunction';
 import { getStyleCache } from '../getStyleCache';
 
-const makeThing = () => {
+const getCssFunction = () => {
   const insertedCss: string[] = [];
   const styleCache = getStyleCache();
   styleCache.injectOptions({
@@ -20,20 +20,34 @@ const makeThing = () => {
 };
 
 describe('makeCssFunction', () => {
-  it('returns empty values when given an empty props object', () => {
-    const css = makeThing();
+  it('works', () => {
+    const css = getCssFunction();
     const results = css({
       color: 'red',
-      '&': {
+      '@media screen': {
         color: 'red',
+        '&:ok': {
+          color: 'red',
+        },
+      },
+      '&.card h2': {
+        fontSize: '1em',
+      },
+      '@container (max-width: 30em)': {
+        '&.card h2': {
+          fontSize: '2em',
+        },
       },
     });
     expect(results).toMatchInlineSnapshot(`
       {
-        "classNames": "_1jvcvsh _vx2q8h",
+        "classNames": "_1jvcvsh _173elxt _o8m89d _be7p3k _ivsi2b",
         "insertedCss": [
           "._1jvcvsh { color:red }",
-          "._vx2q8h { color:red }",
+          "@media screen { ._173elxt._173elxt._173elxt { color:red } }",
+          "@media screen { ._o8m89d._o8m89d._o8m89d:ok { color:red } }",
+          "._be7p3k._be7p3k.card h2 { font-size:1em }",
+          "@container (max-width: 30em) { ._ivsi2b._ivsi2b._ivsi2b._ivsi2b.card h2 { font-size:2em } }",
         ],
       }
     `);

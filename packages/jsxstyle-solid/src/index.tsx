@@ -1,10 +1,16 @@
 import { styleCache } from './styleCache';
-import { componentFactory } from './componentFactory';
+import { classNamePropKey, componentFactory } from './componentFactory';
+import { makeCssFunction } from '../../jsxstyle-utils/src/makeCssFunction';
 
 export type { CSSProperties } from '../../jsxstyle-utils/src';
 export type { StylableComponentProps } from './types';
 export { styleCache as cache };
-export { makeCustomProperties as EXPERIMENTAL_makeCustomProperties } from '../../jsxstyle-utils/src';
+export { makeCustomProperties } from '../../jsxstyle-utils/src';
+
+export const css = makeCssFunction(
+  classNamePropKey,
+  styleCache.getComponentProps
+);
 
 // Using ReturnType + explicit typing to prevent Hella Dupes in the generated types
 type JsxstyleComponent = ReturnType<typeof componentFactory>;

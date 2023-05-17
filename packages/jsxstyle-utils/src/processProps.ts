@@ -26,15 +26,21 @@ export function processProps(
 
   propLoop: for (const key in parsedStyleProps) {
     const mergedProp = parsedStyleProps[key];
-    const { pseudoelement, pseudoclass, propName, propValue, ampersandString } =
-      mergedProp;
+    const {
+      pseudoelement,
+      pseudoclass,
+      propName,
+      propValue,
+      ampersandString,
+      queryString,
+    } = mergedProp;
 
     let specificity = mergedProp.specificity;
     let styleValue: string;
     let className: string;
     let hyphenatedPropName: string;
 
-    if (mediaQuery) {
+    if (mediaQuery || queryString) {
       specificity += 2;
     }
 
@@ -109,7 +115,8 @@ export function processProps(
       if (styleValue === '') continue;
 
       className = getClassNameForKey(
-        (ampersandString || '') +
+        (queryString || '') +
+          (ampersandString || '') +
           (mediaQuery ? mediaQuery + '~' : '') +
           key +
           ':' +
@@ -131,14 +138,16 @@ export function processProps(
     const wow = ampersandString?.replace('&', biz) || biz;
 
     const styleRule =
-      (mediaQuery ? '@media ' + mediaQuery + ' { ' : '') +
+      ((queryString ? queryString + ' { ' : '') ||
+        (mediaQuery ? '@media ' + mediaQuery + ' { ' : '') ||
+        '') +
       wow +
       ' { ' +
       hyphenatedPropName +
       ':' +
       styleValue +
       ' }' +
-      (mediaQuery ? ' }' : '');
+      (queryString || mediaQuery ? ' }' : '');
 
     classNames += (classNames === '' ? '' : ' ') + className;
 

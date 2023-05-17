@@ -1216,7 +1216,7 @@ const thing = css({
 <div className={css({ color: 'orange' })} />;
 <Block className={css({ color: 'purple' })} color="orange" />;
 `,
-      'mock/custom-properties1.js',
+      'mock/css-function1.js',
       { errorCallback }
     );
 
@@ -1231,7 +1231,7 @@ const thing = css({
     `);
 
     expect(rv.js).toMatchInlineSnapshot(`
-      "import "./custom-properties1__jsxstyle.css";
+      "import "./css-function1__jsxstyle.css";
       import { css } from 'jsxstyle';
       css();
       "_x0";
@@ -1240,7 +1240,7 @@ const thing = css({
       <div className="_x3 _x4 _x2" />;"
     `);
     expect(rv.css).toMatchInlineSnapshot(`
-      "/* mock/custom-properties1.js */
+      "/* mock/css-function1.js */
       ._x0 { color:blue }
       ._x1:hover { color:blue }
       ._x2 { color:orange }
@@ -1261,7 +1261,7 @@ import { Grid, Block } from 'jsxstyle';
 <Grid color={wow} />;
 <Block color={wow} />;
 `,
-      'mock/noRuntime1.js',
+      'mock/no-runtime1.js',
       {
         errorCallback,
       },
@@ -1294,14 +1294,14 @@ import { Grid, Block } from 'jsxstyle';
     `);
 
     expect(rv.js).toMatchInlineSnapshot(`
-      "import "./noRuntime1__jsxstyle.css";
+      "import "./no-runtime1__jsxstyle.css";
       import { Box } from "jsxstyle";
       <Box color={wow} className="_x0" />;
       <Box color={wow} className="_x1" />;"
     `);
 
     expect(rv.css).toMatchInlineSnapshot(`
-      "/* mock/noRuntime1.js */
+      "/* mock/no-runtime1.js */
       ._x0 { display:grid }
       ._x1 { display:block }
       "
@@ -1310,7 +1310,7 @@ import { Grid, Block } from 'jsxstyle';
 });
 
 describe('edge cases', () => {
-  it('only removes component imports', () => {
+  it('removes unused imports', () => {
     const rv = runExtractStyles(
       `import 'jsxstyle';
 import { cache, InvalidComponent, Row as RenamedRow } from 'jsxstyle';

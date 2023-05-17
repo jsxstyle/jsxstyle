@@ -9,6 +9,8 @@ import { createMemo } from 'solid-js';
 import { Dynamic, createComponent, mergeProps } from 'solid-js/web';
 import type { JSX } from 'solid-js';
 
+export const classNamePropKey = 'class';
+
 type Props<T extends ValidComponentPropValue> = JsxstyleProps<T> & {
   children?: JSX.Element;
 };
@@ -25,7 +27,7 @@ export function componentFactory(
     const extractedProps = createMemo(() => {
       return styleCache.getComponentProps(
         { ...defaultProps, ...props },
-        'class'
+        classNamePropKey
       );
     });
 

@@ -1,10 +1,5 @@
-import {
-  componentStyles,
-  type DeprecatedJsxstyleComponentName,
-} from '../../jsxstyle-utils/src';
 import { styleCache } from './styleCache';
-import { createElement } from 'preact';
-import { componentFactory, classNamePropKey } from './componentFactory';
+import { classNamePropKey, componentFactory } from './componentFactory';
 import { makeCssFunction } from '../../jsxstyle-utils/src/makeCssFunction';
 
 export type { CSSProperties } from '../../jsxstyle-utils/src';
@@ -17,31 +12,6 @@ export const css = makeCssFunction(
   classNamePropKey,
   styleCache.getComponentProps
 );
-
-let depFactory: any = componentFactory;
-
-if (process.env.NODE_ENV !== 'production') {
-  depFactory = function (displayName: DeprecatedJsxstyleComponentName) {
-    const defaultProps = componentStyles[displayName];
-    let hasWarned = false;
-
-    const component = (props: Record<string, any>) => {
-      if (!hasWarned) {
-        hasWarned = true;
-        console.error(
-          'jsxstyle\u2019s `%s` component is deprecated and will be removed in future versions of jsxstyle.',
-          displayName
-        );
-      }
-      return createElement(Box as any, props);
-    };
-
-    component.displayName = displayName;
-    component.defaultProps = defaultProps;
-
-    return component;
-  };
-}
 
 // Using ReturnType + explicit typing to prevent Hella Dupes in the generated types
 type JsxstyleComponent = ReturnType<typeof componentFactory>;
@@ -57,11 +27,3 @@ export const InlineRow: JsxstyleComponent = componentFactory('InlineRow');
 export const InlineCol: JsxstyleComponent = componentFactory('InlineCol');
 
 export const Grid: JsxstyleComponent = componentFactory('Grid');
-
-// <Box component="table" />
-export const Table: JsxstyleComponent = depFactory('Table');
-export const TableRow: JsxstyleComponent = depFactory('TableRow');
-export const TableCell: JsxstyleComponent = depFactory('TableCell');
-// <Row display="inline-flex" />
-export const Flex: JsxstyleComponent = depFactory('Flex');
-export const InlineFlex: JsxstyleComponent = depFactory('InlineFlex');
