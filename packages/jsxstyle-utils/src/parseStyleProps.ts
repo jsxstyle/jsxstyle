@@ -135,7 +135,7 @@ export const parseStyleProps = (
         propValue,
         classNamePropKey,
         ampersandString
-          ? originalPropName.replace('&', ampersandString)
+          ? originalPropName.replace(/&/g, ampersandString)
           : originalPropName,
         queryString
       );
