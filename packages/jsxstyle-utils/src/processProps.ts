@@ -17,12 +17,9 @@ export function processProps(
     return null;
   }
 
-  const { parsedStyleProps, componentProps } = parseStyleProps(
-    props,
-    classNamePropKey
-  );
+  const { parsedStyleProps, componentProps } = parseStyleProps(props);
 
-  let classNames: string = props[classNamePropKey] || '';
+  let classNames: string = props.class || props.className || '';
 
   propLoop: for (const key in parsedStyleProps) {
     const mergedProp = parsedStyleProps[key];
@@ -54,7 +51,7 @@ export function processProps(
         const obj = propValue[k];
         let groupStyles = '';
 
-        const animationResult = parseStyleProps(obj, 'className');
+        const animationResult = parseStyleProps(obj);
 
         for (const key in animationResult.parsedStyleProps) {
           const { propName, propValue, pseudoclass, pseudoelement } =

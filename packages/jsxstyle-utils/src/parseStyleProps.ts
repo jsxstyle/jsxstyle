@@ -5,7 +5,8 @@ import type { AnimatableCSSProperties as CSSProps } from './types';
 const capRegex = /[A-Z]/g;
 
 export const commonComponentProps = {
-  // class (preact) and className (React) are handled separately
+  class: true,
+  className: true,
   checked: true,
   children: true,
   disabled: true,
@@ -98,7 +99,6 @@ export type CommonComponentProp = keyof typeof commonComponentProps;
 
 export const parseStyleProps = (
   props: Record<string, any>,
-  classNamePropKey: string,
   ampersandString?: string,
   queryString?: string
 ): {
@@ -120,12 +120,7 @@ export const parseStyleProps = (
       !ampersandString &&
       !queryString
     ) {
-      const result = parseStyleProps(
-        propValue,
-        classNamePropKey,
-        undefined,
-        originalPropName
-      );
+      const result = parseStyleProps(propValue, undefined, originalPropName);
       Object.assign(parsedStyleProps, result.parsedStyleProps);
       continue;
     }
@@ -133,7 +128,6 @@ export const parseStyleProps = (
     if (originalPropName.includes('&')) {
       const result = parseStyleProps(
         propValue,
-        classNamePropKey,
         ampersandString
           ? originalPropName.replace(/&/g, ampersandString)
           : originalPropName,
@@ -151,7 +145,6 @@ export const parseStyleProps = (
 
     if (
       skippedProps.hasOwnProperty(originalPropName) ||
-      originalPropName === classNamePropKey ||
       !props.hasOwnProperty(originalPropName)
     ) {
       continue;

@@ -10,7 +10,7 @@ const formatParsedStyleProps = (
 
 describe('parseStyleProps', () => {
   it('returns empty values when given an empty props object', () => {
-    const results = parseStyleProps({}, 'className');
+    const results = parseStyleProps({});
     expect(results).toEqual({
       componentProps: {},
       parsedStyleProps: {},
@@ -29,18 +29,15 @@ describe('parseStyleProps', () => {
       return new Useless(stuff);
     }
 
-    const { parsedStyleProps } = parseStyleProps(
-      {
-        prop1: 'string',
-        prop2: 1234,
-        prop3: 0,
-        prop4: prototypeTest('wow'),
-        prop5: null,
-        prop6: undefined,
-        prop7: false,
-      },
-      'className'
-    );
+    const { parsedStyleProps } = parseStyleProps({
+      prop1: 'string',
+      prop2: 1234,
+      prop3: 0,
+      prop4: prototypeTest('wow'),
+      prop5: null,
+      prop6: undefined,
+      prop7: false,
+    });
 
     expect(formatParsedStyleProps(parsedStyleProps)).toMatchInlineSnapshot(`
       {
@@ -55,31 +52,40 @@ describe('parseStyleProps', () => {
   });
 
   it('uses classNamePropKey to filter out className prop', () => {
-    const exampleProps = { banana: 'purple', className: 'purple' };
+    const exampleProps = {
+      banana: 'purple',
+      class: 'blue',
+      className: 'purple',
+    };
 
-    const { parsedStyleProps: classNameParsedStyleProps } = parseStyleProps(
-      exampleProps,
-      'className'
-    );
-    const { parsedStyleProps: bananaParsedStyleProps } = parseStyleProps(
-      exampleProps,
-      'banana'
-    );
+    const result = parseStyleProps(exampleProps);
 
-    expect(Object.keys(classNameParsedStyleProps || {})).toEqual(['banana']);
-    expect(Object.keys(bananaParsedStyleProps || {})).toEqual(['className']);
+    expect(result).toMatchInlineSnapshot(`
+      {
+        "componentProps": {
+          "class": "blue",
+          "className": "purple",
+        },
+        "parsedStyleProps": {
+          "banana": {
+            "propName": "banana",
+            "propValue": "purple",
+            "pseudoclass": undefined,
+            "pseudoelement": undefined,
+            "specificity": 0,
+          },
+        },
+      }
+    `);
   });
 
   it('splits out pseudoelements and pseudoclasses', () => {
-    const { parsedStyleProps } = parseStyleProps(
-      {
-        activeColor: 'purple',
-        hoverColor: 'orange',
-        placeholderColor: 'blue',
-        selectionBackgroundColor: 'red',
-      },
-      'className'
-    );
+    const { parsedStyleProps } = parseStyleProps({
+      activeColor: 'purple',
+      hoverColor: 'orange',
+      placeholderColor: 'blue',
+      selectionBackgroundColor: 'red',
+    });
 
     expect(formatParsedStyleProps(parsedStyleProps)).toMatchInlineSnapshot(`
       {
@@ -92,17 +98,18 @@ describe('parseStyleProps', () => {
   });
 
   it('splits out known component props', () => {
-    const { componentProps, parsedStyleProps } = parseStyleProps(
-      {
-        name: 'name prop',
-        id: 'id prop',
-        href: 'https://jsx.style',
-      },
-      'className'
-    );
+    const { componentProps, parsedStyleProps } = parseStyleProps({
+      name: 'name prop',
+      id: 'id prop',
+      href: 'https://jsx.style',
+      class: 'wow ok',
+      className: 'wow1 ok1',
+    });
 
     expect(componentProps).toMatchInlineSnapshot(`
       {
+        "class": "wow ok",
+        "className": "wow1 ok1",
         "href": "https://jsx.style",
         "id": "id prop",
         "name": "name prop",
@@ -113,18 +120,15 @@ describe('parseStyleProps', () => {
   });
 
   it('splits out props starting with `on`', () => {
-    const parsedProps = parseStyleProps(
-      {
-        // these props will be passed through as component props
-        onBanana: 'purple',
-        onClick: () => null,
-        onNonExistentEventHandler: 123,
+    const parsedProps = parseStyleProps({
+      // these props will be passed through as component props
+      onBanana: 'purple',
+      onClick: () => null,
+      onNonExistentEventHandler: 123,
 
-        // this should be considered a style
-        ontological: 456,
-      },
-      'className'
-    );
+      // this should be considered a style
+      ontological: 456,
+    });
 
     expect(parsedProps).toMatchInlineSnapshot(`
       {
@@ -147,16 +151,13 @@ describe('parseStyleProps', () => {
   });
 
   it('expands horizontal/vertical margin/padding shorthand props', () => {
-    const { parsedStyleProps } = parseStyleProps(
-      {
-        aaa: 123,
-        zzz: 123,
-        margin: 1,
-        marginH: 2,
-        marginLeft: 3,
-      },
-      'className'
-    );
+    const { parsedStyleProps } = parseStyleProps({
+      aaa: 123,
+      zzz: 123,
+      margin: 1,
+      marginH: 2,
+      marginLeft: 3,
+    });
 
     expect(formatParsedStyleProps(parsedStyleProps)).toMatchInlineSnapshot(`
       {
@@ -170,19 +171,16 @@ describe('parseStyleProps', () => {
   });
 
   it('supports pseudo-prefixed horizontal/vertical margin/padding shorthand props', () => {
-    const { parsedStyleProps } = parseStyleProps(
-      {
-        margin: 1,
-        marginH: 2,
-        marginLeft: 3,
-        hoverMarginLeft: 4,
-        activeMarginV: 5,
-        placeholderPaddingV: 6,
-        placeholderPadding: 7,
-        placeholderPaddingTop: 8,
-      },
-      'className'
-    );
+    const { parsedStyleProps } = parseStyleProps({
+      margin: 1,
+      marginH: 2,
+      marginLeft: 3,
+      hoverMarginLeft: 4,
+      activeMarginV: 5,
+      placeholderPaddingV: 6,
+      placeholderPadding: 7,
+      placeholderPaddingTop: 8,
+    });
 
     expect(formatParsedStyleProps(parsedStyleProps)).toMatchInlineSnapshot(`
       {
@@ -200,21 +198,15 @@ describe('parseStyleProps', () => {
   });
 
   it('creates different sets of styles for differently ordered props', () => {
-    const { parsedStyleProps: parsedStyleProps1 } = parseStyleProps(
-      {
-        marginH: 1,
-        marginLeft: 2,
-      },
-      'className'
-    );
+    const { parsedStyleProps: parsedStyleProps1 } = parseStyleProps({
+      marginH: 1,
+      marginLeft: 2,
+    });
 
-    const { parsedStyleProps: parsedStyleProps2 } = parseStyleProps(
-      {
-        marginLeft: 2,
-        marginH: 1,
-      },
-      'className'
-    );
+    const { parsedStyleProps: parsedStyleProps2 } = parseStyleProps({
+      marginLeft: 2,
+      marginH: 1,
+    });
 
     expect(formatParsedStyleProps(parsedStyleProps1)).toMatchInlineSnapshot(`
       {
