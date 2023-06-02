@@ -1199,22 +1199,12 @@ const props = makeCustomProperties({
 });
 
 describe('css function', () => {
-  it('works', () => {
+  it('logs an error if the css function is called incorrectly', () => {
     const errorCallback = jest.fn();
 
     const rv = runExtractStyles(
-      `import { css, Block } from 'jsxstyle';
+      `import { css } from 'jsxstyle';
 css();
-css({ color: 'blue' });
-const thing = css({
-  color: 'blue',
-  '&:hover': {
-    color: 'blue',
-  }
-});
-
-<div className={css({ color: 'orange' })} />;
-<Block className={css({ color: 'purple' })} color="orange" />;
 `,
       'mock/css-function1.js',
       { errorCallback }
@@ -1231,21 +1221,46 @@ const thing = css({
     `);
 
     expect(rv.js).toMatchInlineSnapshot(`
-      "import "./css-function1__jsxstyle.css";
-      import { css } from 'jsxstyle';
-      css();
-      "_x0";
-      const thing = "_x0 _x1";
-      <div className="_x2" />;
-      <div className="_x3 _x4 _x2" />;"
+      "import { css } from 'jsxstyle';
+      css();"
+    `);
+    expect(rv.css).toMatchInlineSnapshot(`""`);
+  });
+
+  it('does not generate a string wrapped in a JSX expression container', () => {
+    const rv = runExtractStyles(
+      `import { css } from 'jsxstyle';
+<div className={css({ color: 'blue' })} />;
+`,
+      'mock/css-function2.js'
+    );
+
+    expect(rv.js).toMatchInlineSnapshot(`
+      "import "./css-function2__jsxstyle.css";
+      <div className="_x0" />;"
     `);
     expect(rv.css).toMatchInlineSnapshot(`
-      "/* mock/css-function1.js */
+      "/* mock/css-function2.js */
       ._x0 { color:blue }
-      ._x1:hover { color:blue }
-      ._x2 { color:orange }
-      ._x3 { color:purple }
-      ._x4 { display:block }
+      "
+    `);
+  });
+
+  it('works', () => {
+    const rv = runExtractStyles(
+      `import { css } from 'jsxstyle';
+css({ display: 'contents' });
+`,
+      'mock/css-function3.js'
+    );
+
+    expect(rv.js).toMatchInlineSnapshot(`
+      "import "./css-function3__jsxstyle.css";
+      "_x0";"
+    `);
+    expect(rv.css).toMatchInlineSnapshot(`
+      "/* mock/css-function3.js */
+      ._x0 { display:contents }
       "
     `);
   });
