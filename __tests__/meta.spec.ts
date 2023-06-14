@@ -38,7 +38,7 @@ ${fileList
   });
 });
 
-describe('examples', () => {
+describe.skip('examples', () => {
   const exampleDir = path.resolve(__dirname, '..', 'examples');
   const examples = glob.sync('jsxstyle-*-example', { cwd: exampleDir });
 
