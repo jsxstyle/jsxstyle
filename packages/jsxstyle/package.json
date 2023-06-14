@@ -24,7 +24,6 @@
     "reset": "rm -rf lib"
   },
   "dependencies": {
-    "@babel/code-frame": "^7.21.4",
     "@babel/core": "^7.21.8",
     "@babel/generator": "^7.21.5",
     "@babel/parser": "^7.21.8",
@@ -39,7 +38,6 @@
     "@rollup/plugin-node-resolve": "^15.0.1",
     "@rollup/plugin-replace": "^5.0.2",
     "@rollup/plugin-terser": "^0.4.0",
-    "@types/babel__code-frame": "^7.0.3",
     "@types/babel__generator": "^7.6.4",
     "@types/babel__traverse": "^7.18.5",
     "@types/node": "^18.0.0",

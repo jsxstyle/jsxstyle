@@ -43,7 +43,7 @@ export function evaluateAstNode(
         'key must be either a string or a number'
       );
 
-      ret[key] = evaluateAstNode(value.value);
+      ret[key] = evaluateAstNode(value.value, evalFn);
     }
     return ret;
   }
@@ -76,6 +76,10 @@ export function evaluateAstNode(
 
   if (t.isNullLiteral(exprNode)) {
     return null;
+  }
+
+  if (t.isIdentifier(exprNode) && exprNode.name === 'undefined') {
+    return undefined;
   }
 
   if (t.isNumericLiteral(exprNode) || t.isStringLiteral(exprNode)) {

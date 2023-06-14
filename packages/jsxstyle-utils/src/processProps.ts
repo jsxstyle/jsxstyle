@@ -122,7 +122,7 @@ export function processProps(
       hyphenatedPropName = hyphenateStyleName(propName);
     }
 
-    const biz =
+    const classNameSelector =
       '.' +
       className +
       (specificity > 0 ? '.' + className : '') +
@@ -132,13 +132,14 @@ export function processProps(
       (pseudoclass ? ':' + pseudoclass : '') +
       (pseudoelement ? '::' + pseudoelement : '');
 
-    const wow = ampersandString?.replace('&', biz) || biz;
+    const selector =
+      ampersandString?.replace(/&/g, classNameSelector) || classNameSelector;
 
     const styleRule =
       ((queryString ? queryString + ' { ' : '') ||
         (mediaQuery ? '@media ' + mediaQuery + ' { ' : '') ||
         '') +
-      wow +
+      selector +
       ' { ' +
       hyphenatedPropName +
       ':' +

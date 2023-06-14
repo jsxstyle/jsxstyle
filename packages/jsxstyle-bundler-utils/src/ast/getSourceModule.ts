@@ -9,10 +9,10 @@ export interface SourceModule {
   usesImportSyntax: boolean;
 }
 
-export function getSourceModule(
+export const getSourceModule = (
   itemName: string,
   itemBinding: Binding
-): SourceModule | null {
+): SourceModule | null => {
   // TODO: deal with reassignment
   if (!itemBinding.constant) {
     return null;
@@ -101,4 +101,4 @@ export function getSourceModule(
     sourceModule,
     usesImportSyntax,
   };
-}
+};

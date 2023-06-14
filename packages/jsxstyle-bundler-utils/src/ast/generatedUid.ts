@@ -1,7 +1,7 @@
 import * as t from '@babel/types';
 import invariant from 'invariant';
 
-// A clone of path.scope.generateUid that doesn't prepend underscores
+/** A clone of `path.scope.generateUid` that doesn't prepend underscores */
 export function generateUid(scope: any, name: string): string {
   invariant(
     scope != null,

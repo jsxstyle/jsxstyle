@@ -27,7 +27,7 @@ it('can parse Flow', () => {
 import { Block } from 'jsxstyle';
 type Props = {
   foo: number,
-  bar?: string,
+  bar?: ?string,
 };
 class MyComponent extends React.Component<Props> {
   render() {
