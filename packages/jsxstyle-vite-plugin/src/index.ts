@@ -23,9 +23,6 @@ export const jsxstyleVitePlugin = ({
   modulesByAbsolutePath,
   ...options
 }: PluginOptions = {}): Plugin => {
-  const isHandledFile = (id: string) =>
-    extensions.some((ext) => id.endsWith(ext));
-
   const cssContent: Record<string, string> = {};
   const classNameCache: Record<string, string> = {};
 
@@ -86,6 +83,7 @@ export const jsxstyleVitePlugin = ({
     name: 'jsxstyle-vite-plugin',
     buildStart,
     buildEnd,
+
     resolveId(id, importer) {
       if (!importer || !id.endsWith('__jsxstyle.css') || id.startsWith('\0'))
         return;
@@ -93,6 +91,7 @@ export const jsxstyleVitePlugin = ({
       const fullPath = path.join(importerDirName, id);
       return '\0' + fullPath;
     },
+
     async load(id) {
       if (id.endsWith('__jsxstyle.css')) {
         const idWithoutStuff = id.replace(/^\0/, '');
@@ -102,12 +101,22 @@ export const jsxstyleVitePlugin = ({
         }
         return {
           code: content,
+          moduleSideEffects: 'no-treeshake',
+        };
+      }
+      return;
+    },
+
+    async transform(fileContent, id) {
+      if (modulesByAbsolutePath && id in modulesByAbsolutePath) {
+        return {
+          code: fileContent,
+          moduleSideEffects: 'no-treeshake',
         };
       }
 
-      if (!isHandledFile(id)) return;
+      if (!extensions.some((ext) => id.endsWith(ext))) return;
 
-      const fileContent = await fs.readFile(id, 'utf-8');
       const idWithoutStuff = id.replace(/^\0/, '');
       const result = extractStyles(
         fileContent,
