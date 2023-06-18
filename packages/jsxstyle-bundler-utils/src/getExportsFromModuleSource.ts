@@ -4,19 +4,16 @@ import vm from 'vm';
 
 export const getExportsFromModuleSource = (
   modulePath: string,
-  moduleContent: string
+  moduleContent: string,
+  requireFn = (importPath: any) => {
+    throw new Error(`Unhandled module import: '${importPath}'`);
+  }
 ) => {
   if (!path.isAbsolute(modulePath)) {
     throw new Error(`Expected an absolute path, received ${modulePath}`);
   }
   const moduleObj: { exports: Record<string, unknown> } = { exports: {} };
-
-  const requireFn = (importPath: any) => {
-    throw new Error(`Unhandled module import: '${importPath}'`);
-  };
-
   const wrappedModuleContent = Module.wrap(moduleContent);
-
   const moduleFunction = vm.runInThisContext(wrappedModuleContent);
 
   // `runInThisContext` returns a function (our string of JS wrapped with Module.wrap).
