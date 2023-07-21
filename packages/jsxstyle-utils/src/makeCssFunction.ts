@@ -14,12 +14,9 @@ type CSSParams = CSSProperties &
 export type CssFunction = ReturnType<typeof makeCssFunction>;
 
 export const makeCssFunction =
-  (
-    classNamePropKey: string,
-    getComponentProps: StyleCache['getComponentProps']
-  ) =>
+  (classNamePropKey: string, cache: Pick<StyleCache, 'getComponentProps'>) =>
   (params: CSSParams) => {
-    const result = getComponentProps(params, classNamePropKey);
+    const result = cache.getComponentProps(params, classNamePropKey);
     const classNameString = result?.[classNamePropKey];
     return typeof classNameString === 'string' ? classNameString : undefined;
   };

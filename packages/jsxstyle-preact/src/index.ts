@@ -10,7 +10,7 @@ export { makeCustomProperties } from '../../jsxstyle-utils/src';
 
 export const css: ReturnType<typeof makeCssFunction> = makeCssFunction(
   classNamePropKey,
-  styleCache.getComponentProps
+  styleCache
 );
 
 // Using ReturnType + explicit typing to prevent Hella Dupes in the generated types
