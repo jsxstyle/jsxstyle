@@ -182,6 +182,9 @@ export const jsxstyleVitePlugin = ({
         };
       }
 
+      // ignore modules that have already been resolved
+      if (id.startsWith('\0')) return;
+
       if (!extensions.some((ext) => id.endsWith(ext))) return;
 
       const idWithoutStuff = id.replace(/^\0/, '');
