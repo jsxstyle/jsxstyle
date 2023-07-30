@@ -301,195 +301,56 @@ export function extractStyles(
     cssFunctionImportName
   ) {
     const callExpressionTraverseOptions: TraverseOptions<any> = {
-      CallExpression(traversePath) {
-        const { node } = traversePath;
-        if (!t.isIdentifier(node.callee)) return;
+      CallExpression: {
+        exit(traversePath) {
+          const { node } = traversePath;
+          if (!t.isIdentifier(node.callee)) return;
 
-        if (node.callee.name === matchMediaImportName) {
-          if (node.arguments.length !== 1) {
-            logError(
-              '`%s` function call has the wrong number of parameters',
-              matchMediaImportName
-            );
-            return;
-          }
-
-          const firstArg = node.arguments[0];
-          // only handling inline string literals for now
-          if (!t.isStringLiteral(firstArg)) {
-            return;
-          }
-
-          const parent = traversePath.parentPath.node;
-          if (!t.isVariableDeclarator(parent) || !t.isIdentifier(parent.id)) {
-            return;
-          }
-
-          // generate a unique ID for this hook call
-          // this saves us from having to do scope shenanigans later on
-          const uid = generateUid(
-            traversePath.parentPath.scope,
-            'useMatchMedia_' + parent.id.name
-          );
-          // rename the hook variable to our generated name
-          traversePath.parentPath.scope.rename(parent.id.name, uid);
-
-          mediaQueriesByKey[uid] = firstArg.value;
-
-          // mark hook call as pure so it can be removed if unused
-          t.addComment(node, 'leading', '#__PURE__');
-        } else if (
-          // makeCustomProperties
-          node.callee.name === customPropertiesImportName
-        ) {
-          if (node.arguments.length !== 1) {
-            logError(
-              '`%s` import has the wrong number of parameters',
-              customPropertiesImportName
-            );
-            return;
-          }
-
-          const attemptEval = !evaluateVars
-            ? evaluateAstNode
-            : getEvaluateAstNodeWithScopeFunction(
-                traversePath,
-                modulesByAbsolutePath,
-                sourceFileName,
-                bindingCache
-              );
-
-          const variantMap: VariantMap<string, string> = {
-            default: attemptEval(node.arguments[0]),
-          };
-
-          let parentPath: NodePath | null = traversePath.parentPath;
-          while (parentPath) {
-            if (parentPath.node.type !== 'MemberExpression') {
+          if (node.callee.name === matchMediaImportName) {
+            if (node.arguments.length !== 1) {
               logError(
-                'Expected a MemberExpression, received `%s`:',
-                parentPath.node.type,
-                generate(parentPath.node).code
+                '`%s` function call has the wrong number of parameters',
+                matchMediaImportName
               );
-              break;
-            }
-            const prop = parentPath.node.property;
-            if (prop.type !== 'Identifier') {
-              logError(
-                'Expected an Identified, received `%s`:',
-                prop.type,
-                generate(prop).code
-              );
-              break;
+              return;
             }
 
-            const grandparentPath: NodePath | null = parentPath.parentPath;
-            if (!grandparentPath) {
-              logError('Missing parentPath');
-              break;
+            const firstArg = node.arguments[0];
+            // only handling inline string literals for now
+            if (!t.isStringLiteral(firstArg)) {
+              return;
             }
 
-            if (grandparentPath.node.type !== 'CallExpression') {
-              logError(
-                'Expected a CallExpression, received `%s`',
-                generate(grandparentPath.node).code
-              );
-              break;
+            const parent = traversePath.parentPath.node;
+            if (!t.isVariableDeclarator(parent) || !t.isIdentifier(parent.id)) {
+              return;
             }
 
-            if (!grandparentPath.parentPath) {
-              logError('Expected a parentPath');
-              break;
-            }
-            parentPath = grandparentPath.parentPath;
-
-            if (prop.name === 'addVariant') {
-              if (grandparentPath.node.arguments.length !== 2) {
-                logError('Expected two arguments');
-                break;
-              }
-
-              const key = evaluateAstNode(grandparentPath.node.arguments[0]);
-              const props = evaluateAstNode(grandparentPath.node.arguments[1]);
-              variantMap[key] = props;
-              continue;
-            }
-
-            if (prop.name === 'build') {
-              const buildOptions =
-                evaluateAstNode(grandparentPath.node.arguments[0]) || {};
-
-              const result = generateCustomPropertiesFromVariants(
-                variantMap,
-                buildOptions
-              );
-
-              // order is important here
-              for (let i = 0, len = result.styles.length; i < len; i++) {
-                const sortKey = (i + '').padStart((len + '').length, '0');
-                cssMap[`/*${sortKey}*/ ` + result.styles[i]] = '';
-              }
-
-              const wipFunction = t.functionExpression(
-                null,
-                [],
-                t.blockStatement([
-                  t.throwStatement(
-                    t.newExpression(t.identifier('Error'), [
-                      t.stringLiteral('Not yet implemented'),
-                    ])
-                  ),
-                ])
-              );
-
-              grandparentPath.replaceWith(
-                t.objectExpression([
-                  ...Object.entries(result.customProperties).map(
-                    ([propName, propValue]) => {
-                      return t.objectProperty(
-                        t.identifier(propName),
-                        t.stringLiteral(propValue)
-                      );
-                    }
-                  ),
-                  t.objectProperty(
-                    t.identifier('variants'),
-                    t.arrayExpression(
-                      result.variantNames.map((name) => t.stringLiteral(name))
-                    )
-                  ),
-                  t.objectProperty(t.identifier('setVariant'), wipFunction),
-                  ...result.variantNames.map((name) => {
-                    return t.objectProperty(
-                      t.identifier(
-                        `activate${name[0].toUpperCase()}${name.slice(1)}`
-                      ),
-                      wipFunction
-                    );
-                  }),
-                  // reset is a noop
-                  t.objectProperty(
-                    t.identifier('reset'),
-                    t.functionExpression(null, [], t.blockStatement([]))
-                  ),
-                ])
-              );
-
-              break;
-            }
-
-            logError('Unhandled prop: %s', prop.name);
-          }
-        } else if (node.callee.name === cssFunctionImportName) {
-          if (node.arguments.length !== 1) {
-            logError(
-              '`%s` import has the wrong number of parameters',
-              cssFunctionImportName
+            // generate a unique ID for this hook call
+            // this saves us from having to do scope shenanigans later on
+            const uid = generateUid(
+              traversePath.parentPath.scope,
+              'useMatchMedia_' + parent.id.name
             );
-            return;
-          }
+            // rename the hook variable to our generated name
+            traversePath.parentPath.scope.rename(parent.id.name, uid);
 
-          try {
+            mediaQueriesByKey[uid] = firstArg.value;
+
+            // mark hook call as pure so it can be removed if unused
+            t.addComment(node, 'leading', '#__PURE__');
+          } else if (
+            // makeCustomProperties
+            node.callee.name === customPropertiesImportName
+          ) {
+            if (node.arguments.length !== 1) {
+              logError(
+                '`%s` import has the wrong number of parameters',
+                customPropertiesImportName
+              );
+              return;
+            }
+
             const attemptEval = !evaluateVars
               ? evaluateAstNode
               : getEvaluateAstNodeWithScopeFunction(
@@ -499,29 +360,164 @@ export function extractStyles(
                   bindingCache
                 );
 
-            const newCssFunctionNode = handleCssFunction(node, {
-              attemptEval,
-              classPropName,
-              mediaQueriesByKey,
-              getClassNameForKey,
-              onInsertRule,
-              logError,
-              logWarning,
-              noRuntime: !!noRuntimeMode,
-            });
+            const variantMap: VariantMap<string, string> = {
+              default: attemptEval(node.arguments[0]),
+            };
 
-            if (
-              traversePath.parentPath.node.type === 'JSXExpressionContainer'
-            ) {
-              traversePath.parentPath.replaceWith(newCssFunctionNode);
-            } else {
-              traversePath.replaceWith(newCssFunctionNode);
+            let parentPath: NodePath | null = traversePath.parentPath;
+            while (parentPath) {
+              if (parentPath.node.type !== 'MemberExpression') {
+                logError(
+                  'Expected a MemberExpression, received `%s`:',
+                  parentPath.node.type,
+                  generate(parentPath.node).code
+                );
+                break;
+              }
+              const prop = parentPath.node.property;
+              if (prop.type !== 'Identifier') {
+                logError(
+                  'Expected an Identified, received `%s`:',
+                  prop.type,
+                  generate(prop).code
+                );
+                break;
+              }
+
+              const grandparentPath: NodePath | null = parentPath.parentPath;
+              if (!grandparentPath) {
+                logError('Missing parentPath');
+                break;
+              }
+
+              if (grandparentPath.node.type !== 'CallExpression') {
+                logError(
+                  'Expected a CallExpression, received `%s`',
+                  generate(grandparentPath.node).code
+                );
+                break;
+              }
+
+              if (!grandparentPath.parentPath) {
+                logError('Expected a parentPath');
+                break;
+              }
+              parentPath = grandparentPath.parentPath;
+
+              if (prop.name === 'addVariant') {
+                if (grandparentPath.node.arguments.length !== 2) {
+                  logError('Expected two arguments');
+                  break;
+                }
+
+                const key = evaluateAstNode(grandparentPath.node.arguments[0]);
+                const props = evaluateAstNode(
+                  grandparentPath.node.arguments[1]
+                );
+                variantMap[key] = props;
+                continue;
+              }
+
+              if (prop.name === 'build') {
+                const buildOptions =
+                  evaluateAstNode(grandparentPath.node.arguments[0]) || {};
+
+                const result = generateCustomPropertiesFromVariants(
+                  variantMap,
+                  buildOptions
+                );
+
+                // order is important here
+                for (let i = 0, len = result.styles.length; i < len; i++) {
+                  const sortKey = (i + '').padStart((len + '').length, '0');
+                  cssMap[`/*${sortKey}*/ ` + result.styles[i]] = '';
+                }
+
+                const wipFunction = t.functionExpression(
+                  null,
+                  [],
+                  t.blockStatement([
+                    t.throwStatement(
+                      t.newExpression(t.identifier('Error'), [
+                        t.stringLiteral('Not yet implemented'),
+                      ])
+                    ),
+                  ])
+                );
+
+                grandparentPath.replaceWith(
+                  t.objectExpression([
+                    ...Object.entries(result.customProperties).map(
+                      ([propName, propValue]) => {
+                        return t.objectProperty(
+                          t.identifier(propName),
+                          t.stringLiteral(propValue)
+                        );
+                      }
+                    ),
+                    t.objectProperty(
+                      t.identifier('variants'),
+                      t.arrayExpression(
+                        result.variantNames.map((name) => t.stringLiteral(name))
+                      )
+                    ),
+                    t.objectProperty(t.identifier('setVariant'), wipFunction),
+                    ...result.variantNames.map((name) => {
+                      return t.objectProperty(
+                        t.identifier(
+                          `activate${name[0].toUpperCase()}${name.slice(1)}`
+                        ),
+                        wipFunction
+                      );
+                    }),
+                    // reset is a noop
+                    t.objectProperty(
+                      t.identifier('reset'),
+                      t.functionExpression(null, [], t.blockStatement([]))
+                    ),
+                  ])
+                );
+
+                break;
+              }
+
+              logError('Unhandled prop: %s', prop.name);
             }
-            skipChildren(traversePath);
-          } catch (error) {
-            // preserve the css function call
+          } else if (node.callee.name === cssFunctionImportName) {
+            try {
+              const attemptEval = !evaluateVars
+                ? evaluateAstNode
+                : getEvaluateAstNodeWithScopeFunction(
+                    traversePath,
+                    modulesByAbsolutePath,
+                    sourceFileName,
+                    bindingCache
+                  );
+
+              const newCssFunctionNode = handleCssFunction(node, {
+                attemptEval,
+                classPropName,
+                mediaQueriesByKey,
+                getClassNameForKey,
+                onInsertRule,
+                logError,
+                logWarning,
+                noRuntime: !!noRuntimeMode,
+              });
+
+              if (
+                traversePath.parentPath.node.type === 'JSXExpressionContainer'
+              ) {
+                traversePath.parentPath.replaceWith(newCssFunctionNode);
+              } else {
+                traversePath.replaceWith(newCssFunctionNode);
+              }
+              skipChildren(traversePath);
+            } catch (error) {
+              // preserve the css function call
+            }
           }
-        }
+        },
       },
     };
 

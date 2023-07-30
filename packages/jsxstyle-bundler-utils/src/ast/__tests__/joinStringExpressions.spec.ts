@@ -25,7 +25,7 @@ undefined;
     expect(
       generate(joinStringExpressions(...expressions)).code
     ).toMatchInlineSnapshot(
-      `""" + 1 + 1 + " " + 123 + " hello " + (a ? 'b' : 'c')"`
+      `""hello " + 1 + 1 + " " + 123 + " " + (a ? 'b' : 'c')"`
     );
   });
 });

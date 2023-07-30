@@ -30,6 +30,15 @@ export const joinStringExpressions = (
           !(item.type === 'BooleanLiteral' && item.value === false)
         );
       })
+      .sort((a, b) => {
+        if (a.type === 'StringLiteral' && b.type === 'StringLiteral') {
+          return a.value.localeCompare(b.value);
+        }
+        // sort string literals to the front
+        if (a.type === 'StringLiteral') return -1;
+        if (b.type === 'StringLiteral') return 1;
+        return 0;
+      })
       .reduce<t.Expression[]>((p, c, index) => {
         // join each expression together with a space in between
         if (index !== 0) {

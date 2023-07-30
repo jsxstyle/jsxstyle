@@ -7,6 +7,35 @@ import { flattenSpreadAttributes } from './flattenSpreadAttributes';
 import { evaluateAttributes } from './evaluateAttributes';
 import type { OptionsObject } from './extractStyles';
 import { generate } from './babelUtils';
+import { normalizeTernary } from './normalizeTernary';
+import invariant from 'invariant';
+
+const addTestToProps = (
+  test: t.Expression,
+  properties: t.ObjectExpression['properties']
+): t.ObjectProperty[] => {
+  const objectProperties: t.ObjectProperty[] = [];
+  for (const prop of properties) {
+    invariant(
+      prop.type === 'ObjectProperty',
+      'Unsupported property type `%s',
+      prop.type
+    );
+    invariant(
+      prop.value.type !== 'RestElement' &&
+        prop.value.type !== 'AssignmentPattern' &&
+        prop.value.type !== 'ArrayPattern' &&
+        prop.value.type !== 'ObjectPattern',
+      'Unsupported property value type `%s`',
+      prop.value.type
+    );
+    objectProperties.push({
+      ...prop,
+      value: t.logicalExpression('&&', test, prop.value),
+    });
+  }
+  return objectProperties;
+};
 
 /**
  * This function extracts all static styles from the AST node for a `css`
@@ -30,31 +59,6 @@ export const handleCssFunction = (
 
   const logFn = noRuntime ? logError : logWarning;
 
-  if (callExpression.arguments.length !== 1) {
-    logFn(
-      'CSS function has an unexpected number of arguments (%d). Extraction will be skipped.',
-      callExpression.arguments.length
-    );
-    return callExpression;
-  }
-
-  const firstArg = callExpression.arguments[0];
-  if (firstArg?.type !== 'ObjectExpression') {
-    logFn(
-      'CSS funtion argument 1 cannot be extracted from the following expression: `%s`',
-      generate(callExpression).code
-    );
-    return callExpression;
-  }
-
-  const properties = firstArg.properties;
-
-  const attributeMap = flattenSpreadAttributes(properties, attemptEval);
-  const { componentProps, runtimeRequired, styleObj } = evaluateAttributes(
-    attributeMap,
-    options
-  );
-
   const getClassNameNode = (props: Record<string, any>) => {
     const processedProps = processProps(
       props,
@@ -67,23 +71,101 @@ export const handleCssFunction = (
     return t.stringLiteral(className);
   };
 
-  const classNameExpression = convertStyleObjectToClassNameNode(
-    getClassNameNode,
-    styleObj
-  );
+  // expressions that must stay as css function params
+  const unextractables: t.CallExpression['arguments'] = [];
+  const extractedClassNames: t.Expression[] = [];
 
-  if (!runtimeRequired) {
-    return classNameExpression;
+  const normalizedArguments: t.CallExpression['arguments'] = [];
+
+  // flatten ternaries with object-type alternates/consequents down to an object with the ternary test on each key
+  for (const arg of callExpression.arguments) {
+    if (
+      arg.type === 'LogicalExpression' ||
+      arg.type === 'ConditionalExpression'
+    ) {
+      try {
+        const { test, consequent, alternate } = normalizeTernary(arg);
+        const normalizedProperties: t.ObjectProperty[] = [];
+
+        if (consequent.type === 'ObjectExpression') {
+          normalizedProperties.push(
+            ...addTestToProps(test, consequent.properties)
+          );
+        } else if (consequent.type !== 'NullLiteral') {
+          normalizedArguments.push(t.logicalExpression('&&', test, consequent));
+        }
+
+        const flippedTest = t.unaryExpression('!', test);
+        if (alternate.type === 'ObjectExpression') {
+          normalizedProperties.push(
+            ...addTestToProps(flippedTest, alternate.properties)
+          );
+        } else if (alternate.type !== 'NullLiteral') {
+          normalizedArguments.push(
+            t.logicalExpression('&&', flippedTest, alternate)
+          );
+        }
+
+        if (normalizedProperties.length > 0) {
+          normalizedArguments.push(t.objectExpression(normalizedProperties));
+        }
+      } catch (error) {
+        normalizedArguments.push(arg);
+      }
+    } else {
+      normalizedArguments.push(arg);
+    }
   }
 
-  return joinStringExpressions(
-    classNameExpression,
-    t.callExpression(callExpression.callee, [
-      t.objectExpression(
-        Array.from(componentProps.entries()).map((entry) =>
-          getObjectProperty(...entry)
-        )
-      ),
-    ])
-  );
+  for (const arg of normalizedArguments) {
+    if (arg.type === 'ObjectExpression') {
+      const properties = arg.properties;
+
+      const attributeMap = flattenSpreadAttributes(properties, attemptEval);
+      const { componentProps, runtimeRequired, styleObj } = evaluateAttributes(
+        attributeMap,
+        options
+      );
+
+      const classNameExpression = convertStyleObjectToClassNameNode(
+        getClassNameNode,
+        styleObj
+      );
+
+      extractedClassNames.push(classNameExpression);
+      if (runtimeRequired) {
+        unextractables.push(
+          t.objectExpression(
+            Array.from(componentProps.entries()).map((entry) =>
+              getObjectProperty(...entry)
+            )
+          )
+        );
+      }
+    } else if (arg.type === 'StringLiteral') {
+      extractedClassNames.push(arg);
+    } else {
+      logFn(
+        'Argument `%s` cannot be extracted from the following expression: `%s`',
+        generate(arg).code,
+        generate(callExpression).code
+      );
+      if (
+        arg.type === 'SpreadElement' ||
+        arg.type === 'JSXNamespacedName' ||
+        arg.type === 'ArgumentPlaceholder'
+      ) {
+        return callExpression;
+      }
+      unextractables.push(arg);
+    }
+  }
+
+  if (unextractables.length > 0) {
+    extractedClassNames.push(
+      t.callExpression(callExpression.callee, unextractables)
+    );
+  }
+
+  return joinStringExpressions(...extractedClassNames);
 };

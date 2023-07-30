@@ -54,6 +54,12 @@ export const normalizeTernary = (
     consequent = oldAlternate;
   }
 
+  if (consequent.type === 'StringLiteral' && consequent.value === '')
+    consequent = t.nullLiteral();
+
+  if (alternate.type === 'StringLiteral' && alternate.value === '')
+    alternate = t.nullLiteral();
+
   return {
     test,
     consequent,

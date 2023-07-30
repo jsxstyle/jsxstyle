@@ -535,7 +535,7 @@ function Test({ component, thing }) {
       "import "./class-name1__jsxstyle.css";
       import { Row } from "jsxstyle";
       <Row className={member.expression} {...spread} />;
-      <div className="orange _x0" />;"
+      <div className="_x0 orange" />;"
     `);
   });
 
@@ -1243,32 +1243,81 @@ const props = makeCustomProperties({
 });
 
 describe('css function', () => {
-  it('logs an error if the css function is called incorrectly', () => {
-    const errorCallback = jest.fn();
-
+  it('handles nested CSS function calls', () => {
     const rv = runExtractStyles(
       `import { css } from 'jsxstyle';
-css();
+const kitchenSink = css(
+  {
+    display: 'block',
+  },
+  css(
+    { color: 'red' },
+    css(
+      { color: 'green' },
+      css(
+        { color: 'blue' }
+      )
+    )
+  )
+);
 `,
-      'mock/css-function1.js',
-      { errorCallback }
+      'mock/css-function1.js'
     );
 
-    expect(errorCallback).toHaveBeenCalledTimes(1);
-    expect(errorCallback.mock.calls).toMatchInlineSnapshot(`
-      [
-        [
-          "\`%s\` import has the wrong number of parameters",
-          "css",
-        ],
-      ]
+    expect(rv.js).toMatchInlineSnapshot(`
+      "import "./css-function1__jsxstyle.css";
+      const kitchenSink = "_x0 _x1 _x2 _x3";"
     `);
+    expect(rv.css).toMatchInlineSnapshot(`
+      "/* mock/css-function1.js */
+      ._x0 { color:blue }
+      ._x1 { color:green }
+      ._x2 { color:red }
+      ._x3 { display:block }
+      "
+    `);
+  });
+
+  it('handles multiple params', () => {
+    const rv = runExtractStyles(
+      `import { css } from 'jsxstyle';
+const kitchenSink = css(
+  {
+    display: 'block',
+    conditionalProp: condition && 'conditionalValue',
+    unextractable: mysteryValue,
+  },
+  condition && {
+    item1: 'value1',
+    item2: 'value2',
+  },
+  someValue,
+  condition && 'string value',
+  condition ? 'another value' : '',
+  css({
+    color: 'red'
+  })
+);
+`,
+      'mock/css-function1.js'
+    );
 
     expect(rv.js).toMatchInlineSnapshot(`
-      "import { css } from 'jsxstyle';
-      css();"
+      "import "./css-function1__jsxstyle.css";
+      import { css } from 'jsxstyle';
+      const kitchenSink = "_x0 _x1 " + (condition ? "_x2" : "") + " " + (condition ? "_x3 _x4" : "") + " " + css({
+        "unextractable": mysteryValue
+      }, someValue, condition && 'string value', condition && 'another value');"
     `);
-    expect(rv.css).toMatchInlineSnapshot(`""`);
+    expect(rv.css).toMatchInlineSnapshot(`
+      "/* mock/css-function1.js */
+      ._x0 { color:red }
+      ._x1 { display:block }
+      ._x2 { conditional-prop:conditionalValue }
+      ._x3 { item1:value1 }
+      ._x4 { item2:value2 }
+      "
+    `);
   });
 
   it('does not generate a string wrapped in a JSX expression container', () => {

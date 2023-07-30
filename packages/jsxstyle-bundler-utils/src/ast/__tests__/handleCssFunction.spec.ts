@@ -28,7 +28,7 @@ const classNameString = css({
   normalProp: 'propValue',
 });
 
-const classNameString2 = css({
+const classNameString2 = css('class2', {
   dynamicProp: someValue * 2,
   staticProp: 123,
   '@media test': {
@@ -37,7 +37,7 @@ const classNameString2 = css({
   '& banana': {
     color: 'blue'
   },
-});
+}, 'class1');
 `);
 
     const getClassNameForKey = createClassNameGetter({});
@@ -76,7 +76,7 @@ const classNameString2 = css({
       const classNameString =
         "_x0 _x1 _x2 _x3 _x4 " + (condition ? "_x5 _x6" : "_x7 _x8");
       const classNameString2 =
-        "_x9 _xa _xb " +
+        "_x9 _xa _xb class1 class2 " +
         css({
           dynamicProp: someValue * 2,
         });
