@@ -7,7 +7,9 @@ export type { CSSProperties } from '../../jsxstyle-utils/src';
 export type { StylableComponentProps } from './types';
 export { styleCache as cache };
 
-export const makeCustomProperties = getCustomPropertiesFunction(styleCache);
+export const makeCustomProperties: ReturnType<
+  typeof getCustomPropertiesFunction
+> = getCustomPropertiesFunction(styleCache);
 
 export const css: ReturnType<typeof makeCssFunction> = makeCssFunction(
   classNamePropKey,
