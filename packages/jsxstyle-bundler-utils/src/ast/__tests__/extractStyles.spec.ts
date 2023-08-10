@@ -1261,7 +1261,7 @@ const props = makeCustomProperties({
     expect(rv.js).toMatchInlineSnapshot(`
       "import "./custom-properties1__jsxstyle.css";
       const props = {
-        prop1: "var(--test2)",
+        prop1: "var(--test0)",
         prop2: "var(--test1)",
         variants: ["default", "banana"],
         setVariant: function () {
@@ -1279,9 +1279,9 @@ const props = makeCustomProperties({
     expect(rv.css).toMatchInlineSnapshot(`
       "/* mock/custom-properties1.js */
       /*0*/ :root { --test0: prop1 value;--test1: 123px; }
-      /*1*/ @media mq { :root { --test2: banana prop1 value; } }
+      /*1*/ @media mq { :root { --test0: banana prop1 value; } }
       /*2*/ :root.test-override__default, :root .test-override__default { --test0: prop1 value;--test1: 123px; }
-      /*3*/ :root.test-override__banana, :root .test-override__banana { --test2: banana prop1 value; }
+      /*3*/ :root.test-override__banana, :root .test-override__banana { --test0: banana prop1 value; }
       "
     `);
   });

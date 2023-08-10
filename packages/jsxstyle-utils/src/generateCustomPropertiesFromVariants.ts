@@ -68,7 +68,7 @@ export const generateCustomPropertiesFromVariants = <
       const customPropName =
         `--${namespace}` +
         (mangle
-          ? (mangleMap[propKey] ||= mangleIndex++).toString(36)
+          ? (mangleMap[propKey] ??= mangleIndex++).toString(36)
           : `-${propKey}`);
       customProperties[propKey] = `var(${customPropName})`;
       const propValue = dangerousStyleValue('', variant[propKey]);
