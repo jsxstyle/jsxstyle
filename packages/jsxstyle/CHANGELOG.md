@@ -1,5 +1,11 @@
 # jsxstyle
 
+## 2.5.2
+
+### Patch Changes
+
+- 2e6560e: Fixed Preact typing issue
+
 ## 2.5.1
 
 ### Patch Changes
