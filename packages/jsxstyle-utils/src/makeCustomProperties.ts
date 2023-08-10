@@ -1,3 +1,4 @@
+import type { StyleCache } from './getStyleCache';
 import { canUseDOM } from './addStyleToHead';
 import {
   type BuildOptions,
@@ -5,13 +6,12 @@ import {
   generateCustomPropertiesFromVariants,
 } from './generateCustomPropertiesFromVariants';
 
-declare const __webpack_nonce__: string | undefined;
-
 const makeCustomPropertiesInternal = <
   KPropKey extends string,
   TVariantName extends string
 >(
-  variantMap: VariantMap<TVariantName, KPropKey>
+  variantMap: VariantMap<TVariantName, KPropKey>,
+  cache: StyleCache
 ) => ({
   addVariant: <TName extends string>(
     variantName: TName,
@@ -24,18 +24,14 @@ const makeCustomPropertiesInternal = <
   ) => {
     (variantMap as any)[variantName] = props;
     return makeCustomPropertiesInternal<KPropKey, TVariantName | TName>(
-      variantMap as any
+      variantMap as any,
+      cache
     );
   },
 
   build: (
     buildOptions: BuildOptions = {}
   ): {
-    /**
-     * Remove the style element from the DOM.
-     * Only available when NODE_ENV is not "production".
-     */
-    reset: () => void;
     setVariant: (variantName: TVariantName | null) => void;
     variants: readonly TVariantName[];
   } & {
@@ -44,33 +40,13 @@ const makeCustomPropertiesInternal = <
     [K in TVariantName as `activate${Capitalize<K>}`]: () => void;
   } => {
     let overrideElement: Element | null = null;
-    let reset: (() => void) | undefined;
 
     const { customProperties, overrideClasses, styles, variantNames } =
       generateCustomPropertiesFromVariants(variantMap, buildOptions);
 
+    styles.forEach(cache.insertRule);
+
     if (canUseDOM) {
-      const styleElement = document.createElement('style');
-      if (typeof __webpack_nonce__ !== 'undefined') {
-        styleElement.nonce = __webpack_nonce__;
-      }
-      styleElement.appendChild(
-        document.createTextNode('/* jsxstyle custom properties */')
-      );
-      document.head.appendChild(styleElement);
-
-      const sheet = styleElement.sheet;
-      if (sheet) {
-        styles.forEach((cssRule) =>
-          sheet.insertRule(cssRule, sheet.cssRules.length)
-        );
-      }
-
-      // don't want folks resetting this in prod
-      if (process.env.NODE_ENV !== 'production') {
-        reset = () => void document.head.removeChild(styleElement);
-      }
-
       if (buildOptions.selector) {
         overrideElement = document.querySelector(buildOptions.selector);
         if (!overrideElement && process.env.NODE_ENV !== 'production') {
@@ -100,8 +76,6 @@ const makeCustomPropertiesInternal = <
       ] = () => void setVariant(variantName);
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    returnValue.reset = reset || (() => {});
     returnValue.setVariant = setVariant;
     returnValue.variants = variantNames;
 
@@ -109,6 +83,7 @@ const makeCustomPropertiesInternal = <
   },
 });
 
-export const makeCustomProperties = <KPropKeys extends string>(
-  props: Record<KPropKeys, string | number>
-) => makeCustomPropertiesInternal({ default: props });
+export const getCustomPropertiesFunction =
+  (cache: StyleCache) =>
+  <KPropKeys extends string>(props: Record<KPropKeys, string | number>) =>
+    makeCustomPropertiesInternal({ default: props }, cache);

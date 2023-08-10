@@ -470,11 +470,6 @@ export function extractStyles(
                         wipFunction
                       );
                     }),
-                    // reset is a noop
-                    t.objectProperty(
-                      t.identifier('reset'),
-                      t.functionExpression(null, [], t.blockStatement([]))
-                    ),
                   ])
                 );
 

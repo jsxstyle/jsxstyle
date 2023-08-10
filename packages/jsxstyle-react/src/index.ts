@@ -1,12 +1,14 @@
 import { styleCache } from './styleCache';
 import { classNamePropKey, componentFactory } from './componentFactory';
 import { makeCssFunction } from '../../jsxstyle-utils/src/makeCssFunction';
+import { getCustomPropertiesFunction } from '../../jsxstyle-utils/src';
 
 export type { CSSProperties } from '../../jsxstyle-utils/src';
 export type { StylableComponentProps } from './types';
 export { styleCache as cache };
 export { useMatchMedia } from './useMatchMedia';
-export { makeCustomProperties } from '../../jsxstyle-utils/src';
+
+export const makeCustomProperties = getCustomPropertiesFunction(styleCache);
 
 export const css: ReturnType<typeof makeCssFunction> = makeCssFunction(
   classNamePropKey,

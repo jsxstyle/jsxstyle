@@ -144,9 +144,10 @@ describe('getStyleCache', () => {
   });
 
   it('resets', () => {
-    const styleCache = getStyleCache();
     let idx = -1;
-    styleCache.injectOptions({ getClassName: () => 'jsxstyle' + ++idx });
+    const styleCache = getStyleCache({
+      getClassName: () => 'jsxstyle' + ++idx,
+    });
 
     expect(
       styleCache.getComponentProps({ a: 1 }, 'className')?.className

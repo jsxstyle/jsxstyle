@@ -1227,8 +1227,7 @@ const props = makeCustomProperties({
         },
         activateBanana: function () {
           throw new Error("Not yet implemented");
-        },
-        reset: function () {}
+        }
       };"
     `);
     expect(rv.css).toMatchInlineSnapshot(`
@@ -1272,8 +1271,7 @@ const props = makeCustomProperties({
         },
         activateBanana: function () {
           throw new Error("Not yet implemented");
-        },
-        reset: function () {}
+        }
       };"
     `);
     expect(rv.css).toMatchInlineSnapshot(`

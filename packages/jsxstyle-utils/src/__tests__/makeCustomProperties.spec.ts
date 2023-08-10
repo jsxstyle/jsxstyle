@@ -1,6 +1,10 @@
 /** @jest-environment jsdom */
 
-import { makeCustomProperties } from '../makeCustomProperties';
+import { getCustomPropertiesFunction } from '../makeCustomProperties';
+import { getStyleCache } from '../getStyleCache';
+
+const cache = getStyleCache();
+const makeCustomProperties = getCustomPropertiesFunction(cache);
 
 const getStyleSheetContents = () => {
   return Array.from(document.querySelectorAll('style')).map((node) => {
@@ -33,10 +37,6 @@ describe('makeCustomProperties', () => {
     expect(getStyleSheetContents()).toMatchInlineSnapshot(`
       [
         {
-          "styles": [],
-          "text": "/* jsxstyle */",
-        },
-        {
           "styles": [
             "#banana {--exampleNamespace0: 123px; --exampleNamespace1: wow;}",
             "@media screen and example {#banana {--exampleNamespace0: 456px;}}",
@@ -44,7 +44,7 @@ describe('makeCustomProperties', () => {
             "#banana.exampleNamespace-override__exampleVariant, #banana .exampleNamespace-override__exampleVariant {--exampleNamespace1: variantWow;}",
             "#banana.exampleNamespace-override__variantWithMQ, #banana .exampleNamespace-override__variantWithMQ {--exampleNamespace0: 456px;}",
           ],
-          "text": "/* jsxstyle custom properties */",
+          "text": "/* jsxstyle */",
         },
       ]
     `);
@@ -56,7 +56,6 @@ describe('makeCustomProperties', () => {
         "activateVariantWithMQ": [Function],
         "exampleNumber": "var(--exampleNamespace0)",
         "exampleString": "var(--exampleNamespace1)",
-        "reset": [Function],
         "setVariant": [Function],
         "variants": [
           "default",
@@ -65,6 +64,5 @@ describe('makeCustomProperties', () => {
         ],
       }
     `);
-    example.reset();
   });
 });

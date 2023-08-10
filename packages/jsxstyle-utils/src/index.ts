@@ -8,5 +8,5 @@ export { hyphenateStyleName } from './hyphenateStyleName';
 export { stringHash } from './stringHash';
 export type { CSSProperties, AnimatableCSSProperties } from './types';
 export type { CommonComponentProp } from './parseStyleProps';
-export { makeCustomProperties } from './makeCustomProperties';
+export { getCustomPropertiesFunction } from './makeCustomProperties';
 export type { CacheObject } from './types';
