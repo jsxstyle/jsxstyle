@@ -24,6 +24,13 @@ export interface BuildOptions {
    * Defaults to `jsxstyle`.
    */
   namespace?: string;
+  /**
+   * Whether or not to crunch custom property names down to something compact.
+   * If you’re referencing these custom properties outside of the official API (i.e. in plain CSS), you should not enable this option.
+   *
+   * Defaults to `false`.
+   */
+  mangle?: boolean;
 }
 
 export const generateCustomPropertiesFromVariants = <
@@ -33,14 +40,15 @@ export const generateCustomPropertiesFromVariants = <
   variantMap: VariantMap<TVariantName, KPropKey>,
   buildOptions: BuildOptions = {}
 ) => {
-  const { namespace = 'jsxstyle', selector = ':root' } = buildOptions;
+  const {
+    namespace = 'jsxstyle',
+    selector = ':root',
+    mangle = false,
+  } = buildOptions;
   /** Prefix for the override class name */
   const overrideClassNamePrefix = namespace + '-override__';
 
-  /** Prefix for the CSS custom property names */
-  const customPropPrefix = `--${namespace}-`;
-
-  const propNames: KPropKey[] = Object.keys(variantMap.default) as any;
+  const propKeys: KPropKey[] = Object.keys(variantMap.default) as any;
   const variantNames: TVariantName[] = Object.keys(variantMap) as any;
 
   const initialStyles: string[] = [];
@@ -48,17 +56,24 @@ export const generateCustomPropertiesFromVariants = <
 
   const customProperties: Record<KPropKey, string> = {} as any;
   const overrideClasses: Record<TVariantName, string> = {} as any;
+  const mangleMap: Partial<Record<KPropKey, number>> = {};
+  let mangleIndex = 0;
 
   for (const variantName of variantNames) {
     const variant: PropMap<KPropKey> =
       variantMap[variantName as keyof typeof variantMap];
     let cssBody = '';
-    for (const propName of propNames) {
-      if (propName === 'mediaQuery') break;
-      customProperties[propName] = `var(${customPropPrefix}${propName})`;
-      const propValue = dangerousStyleValue('', variant[propName]);
+    for (const propKey of propKeys) {
+      if (propKey === 'mediaQuery') break;
+      const customPropName =
+        `--${namespace}` +
+        (mangle
+          ? (mangleMap[propKey] ||= mangleIndex++).toString(36)
+          : `-${propKey}`);
+      customProperties[propKey] = `var(${customPropName})`;
+      const propValue = dangerousStyleValue('', variant[propKey]);
       if (propValue) {
-        cssBody += `${customPropPrefix}${propName}: ${propValue};`;
+        cssBody += `${customPropName}: ${propValue};`;
       }
     }
 

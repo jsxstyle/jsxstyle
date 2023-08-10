@@ -616,7 +616,7 @@ export function extractStyles(
       },
       exit(traversePath) {
         if (cssMode === 'styled-jsx') {
-          if (!t.isJSXElement(traversePath.parentPath)) {
+          if (traversePath.parentPath.type !== 'JSXElement') {
             const cssContent = Object.keys(cssMap).join(' ');
             cssMap = {};
 

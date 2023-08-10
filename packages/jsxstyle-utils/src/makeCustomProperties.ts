@@ -31,7 +31,10 @@ const makeCustomPropertiesInternal = <
   build: (
     buildOptions: BuildOptions = {}
   ): {
-    /** Only available when NODE_ENV is not "production" */
+    /**
+     * Remove the style element from the DOM.
+     * Only available when NODE_ENV is not "production".
+     */
     reset: () => void;
     setVariant: (variantName: TVariantName | null) => void;
     variants: readonly TVariantName[];

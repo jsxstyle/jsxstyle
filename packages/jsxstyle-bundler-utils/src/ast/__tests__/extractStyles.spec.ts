@@ -1240,6 +1240,51 @@ const props = makeCustomProperties({
       "
     `);
   });
+
+  it('extracts styles with options', () => {
+    const rv = runExtractStyles(
+      `import { makeCustomProperties } from 'jsxstyle';
+const props = makeCustomProperties({
+  prop1: 'prop1 value',
+  prop2: 123,
+}).addVariant('banana', {
+  mediaQuery: 'mq',
+  prop1: 'banana prop1 value',
+}).build({
+  namespace: 'test',
+  mangle: true,
+})
+`,
+      'mock/custom-properties1.js'
+    );
+
+    expect(rv.js).toMatchInlineSnapshot(`
+      "import "./custom-properties1__jsxstyle.css";
+      const props = {
+        prop1: "var(--test2)",
+        prop2: "var(--test1)",
+        variants: ["default", "banana"],
+        setVariant: function () {
+          throw new Error("Not yet implemented");
+        },
+        activateDefault: function () {
+          throw new Error("Not yet implemented");
+        },
+        activateBanana: function () {
+          throw new Error("Not yet implemented");
+        },
+        reset: function () {}
+      };"
+    `);
+    expect(rv.css).toMatchInlineSnapshot(`
+      "/* mock/custom-properties1.js */
+      /*0*/ :root { --test0: prop1 value;--test1: 123px; }
+      /*1*/ @media mq { :root { --test2: banana prop1 value; } }
+      /*2*/ :root.test-override__default, :root .test-override__default { --test0: prop1 value;--test1: 123px; }
+      /*3*/ :root.test-override__banana, :root .test-override__banana { --test2: banana prop1 value; }
+      "
+    `);
+  });
 });
 
 describe('css function', () => {
