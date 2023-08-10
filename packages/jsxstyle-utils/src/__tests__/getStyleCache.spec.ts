@@ -182,4 +182,118 @@ describe('getStyleCache', () => {
       `"jsxstyle error: \`injectOptions\` must be called before any jsxstyle components mount."`
     );
   });
+
+  describe('run', () => {
+    it('works with synchronous callbacks', async () => {
+      const styleCache = getStyleCache();
+
+      await expect(
+        styleCache.run(() => {
+          return [
+            styleCache.getComponentProps({ color: 'red' }, 'x')?.x,
+            styleCache.getComponentProps({ color: 'blue' }, 'x')?.x,
+            styleCache.getComponentProps({ color: 'red' }, 'x')?.x,
+          ];
+        })
+      ).resolves.toMatchInlineSnapshot(`
+        {
+          "css": "._1jvcvsh { color:red }._1mb383g { color:blue }",
+          "returnValue": [
+            "_1jvcvsh",
+            "_1mb383g",
+            "_1jvcvsh",
+          ],
+        }
+      `);
+
+      expect(styleCache.classNameCache).toMatchInlineSnapshot(`
+        {
+          "color:blue": "_1mb383g",
+          "color:red": "_1jvcvsh",
+        }
+      `);
+      expect(styleCache.insertRuleCache).toMatchInlineSnapshot(`
+        {
+          "._1jvcvsh { color:red }": true,
+          "._1mb383g { color:blue }": true,
+        }
+      `);
+    });
+
+    it('works with asynchronous callbacks', async () => {
+      const styleCache = getStyleCache();
+
+      await expect(
+        styleCache.run(() => {
+          return [
+            styleCache.getComponentProps({ color: 'red' }, 'x')?.x,
+            styleCache.getComponentProps({ color: 'blue' }, 'x')?.x,
+            styleCache.getComponentProps({ color: 'red' }, 'x')?.x,
+          ];
+        })
+      ).resolves.toMatchInlineSnapshot(`
+        {
+          "css": "._1jvcvsh { color:red }._1mb383g { color:blue }",
+          "returnValue": [
+            "_1jvcvsh",
+            "_1mb383g",
+            "_1jvcvsh",
+          ],
+        }
+      `);
+
+      expect(styleCache.classNameCache).toMatchInlineSnapshot(`
+        {
+          "color:blue": "_1mb383g",
+          "color:red": "_1jvcvsh",
+        }
+      `);
+      expect(styleCache.insertRuleCache).toMatchInlineSnapshot(`
+        {
+          "._1jvcvsh { color:red }": true,
+          "._1mb383g { color:blue }": true,
+        }
+      `);
+    });
+
+    it('allows class names to be customised', async () => {
+      const styleCache = getStyleCache();
+      let index = 0;
+
+      await expect(
+        styleCache.run(
+          async () => {
+            return [
+              styleCache.getComponentProps({ color: 'red' }, 'x')?.x,
+              styleCache.getComponentProps({ color: 'blue' }, 'x')?.x,
+              styleCache.getComponentProps({ color: 'red' }, 'x')?.x,
+            ];
+          },
+          () => 'test' + (index++).toString(36)
+        )
+      ).resolves.toMatchInlineSnapshot(`
+        {
+          "css": ".test0 { color:red }.test1 { color:blue }",
+          "returnValue": [
+            "test0",
+            "test1",
+            "test0",
+          ],
+        }
+      `);
+
+      expect(styleCache.classNameCache).toMatchInlineSnapshot(`
+        {
+          "color:blue": "test1",
+          "color:red": "test0",
+        }
+      `);
+      expect(styleCache.insertRuleCache).toMatchInlineSnapshot(`
+        {
+          ".test0 { color:red }": true,
+          ".test1 { color:blue }": true,
+        }
+      `);
+    });
+  });
 });

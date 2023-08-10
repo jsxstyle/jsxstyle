@@ -69,9 +69,56 @@ export function getStyleCache({
       styleCache.injectOptions = injectOptions;
     },
 
+    get classNameCache() {
+      return { ...classNameCache };
+    },
+
+    get insertRuleCache() {
+      return { ...insertRuleCache };
+    },
+
     injectOptions,
     insertRule: memoizedOnInsertRule,
 
+    /**
+     * Given a synchronous or asynchronous callback, this functions execute the
+     * callback and collects all styles that were injected as a side effect of
+     * the callback running. It returns both the injected styles and the
+     * return value of the callback.
+     */
+    async run<T>(
+      callback: () => T,
+      getClassName?: GetClassNameForKeyFn
+    ): Promise<{
+      returnValue: Awaited<T>;
+      css: string;
+    }> {
+      let css = '';
+      // stash old callbacks
+      const oldInsertRuleCallback = onInsertRule;
+      const oldGetClassNameCallback = getClassNameForKey;
+      insertRuleCache = {};
+
+      // set new callbacks
+      if (getClassName) getClassNameForKey = getClassName;
+      onInsertRule = (rule) => void (css += rule);
+
+      // do the thing
+      const returnValue = await callback();
+
+      // reset callbacks
+      onInsertRule = oldInsertRuleCallback;
+      getClassNameForKey = oldGetClassNameCallback;
+
+      return { returnValue, css };
+    },
+
+    /**
+     * Given an object of component props, this function splits style props and
+     * component props, turns style props into CSS, and calls `onInsertRule`
+     * for each generated CSS rule.
+     * It returns an object of updated component props.
+     */
     getComponentProps(
       props: Record<string, any>,
       classNamePropKey: string

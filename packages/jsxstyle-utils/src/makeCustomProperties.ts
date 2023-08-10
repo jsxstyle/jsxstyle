@@ -51,7 +51,8 @@ const makeCustomPropertiesInternal = <
         overrideElement = document.querySelector(buildOptions.selector);
         if (!overrideElement && process.env.NODE_ENV !== 'production') {
           console.error(
-            'Selector `%s` does not map to an element that exists in the DOM. Manual variant overrides will not work as expected.'
+            'Selector `%s` does not map to an element that exists in the DOM. Manual variant overrides will not work as expected.',
+            buildOptions.selector
           );
         }
       } else {
