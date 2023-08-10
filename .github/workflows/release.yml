@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     branches:
-      - main
+      - 2.x
 
 jobs:
   canary:
@@ -47,18 +47,8 @@ jobs:
         uses: changesets/action@master
         with:
           commit: Bump versions
-          title: Bump versions
+          title: Bump versions (2.x)
           publish: yarn release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Publishing canary release
-        if: steps.changesets.outputs.published != 'true'
-        run: |
-          git checkout main
-          yarn version:canary
-          yarn release:canary
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
