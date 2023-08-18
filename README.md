@@ -2,15 +2,37 @@
 
 ### Inline styles for JSX—React, Preact, Solid… any JSX-centric JavaScript syntax, really.
 
-jsxstyle is a styling toolkit built on a few fundamental principles:
+jsxstyle is a styling toolkit built on three fundamental principles:
 
 1. Styles should be colocated with the elements they’re styling.
 2. A great developer experience should _never_ come at the cost of a great user experience.
 3. New contributors to a codebase should be able to contribute without having to understand the entire codebase.
 
-jsxstyle consists of a set of building block components and a few helpful utility functions.
+jsxstyle consists of a set of layout primitives—`Block`, `Row`, `Col`, and more—and a function called `css` that’s a thin wrapper around the core that powers these components.
 
-## Building block components
+## CSS feature support
+
+- ✅ Media/container queries
+- ✅ Pseudoclasses/pseudoelements
+- ✅ Descendant selectors
+- ✅ Custom properties
+
+- **Team-friendly**: styles you write with jsxstyle only ever affect the elements that you’re styling.
+- **Fantastic developer experience**: if you know CSS, you know how to use jsxstyle. If you don’t know CSS, jsxstyle is strongly typed, which means TypeScript and your code editor can lend a hand.
+- Utilities for generating **CSS custom properties** and **subscribing to media query events**.
+- Generated CSS is **atomic** by default.
+
+### Bundler plugins for advanced build-time optimizations
+
+jsxstyle ships with plugins for Vite, Webpack, and Next.js, all powered by a style extraction engine that that analyzes your code for static styles and extracts them out at build time. This can reduce or, in many cases, _entirely remove_ the need for runtime jsxstyle
+
+### Managed specificity
+
+The CSS that jsxstyle generates will always apply the same styles regardless of the order of the CSS rules.
+
+## What’s in the box
+
+jsxstyle exports a number of building block components that set some default styles:
 
 | Component | Styles                                   |
 | :-------- | :--------------------------------------- |
@@ -18,7 +40,6 @@ jsxstyle consists of a set of building block components and a few helpful utilit
 | `Col`     | `display: flex; flex-direction: column;` |
 | `Row`     | `display: flex; flex-direction: row;`    |
 | `Grid`    | `display: grid;`                         |
-| `Box`     | _no default styles_                      |
 
 Additional styles can be passed to these components as props:
 
@@ -105,50 +126,6 @@ And here’s an example of descendant selectors:
 The ampersand (`&`) indicates to jsxstyle where the generated selector should go. Any string is valid as a key, as long as it contains one or more ampersands.
 
 ## Utility functions
-
-### `css`
-
-The `css` function is a thin wrapper around the heart of jsxstyle. It takes one or more style objects or strings and it returns a string of space-separated class names.
-
-```jsx
-import { css } from 'jsxstyle/preact';
-
-css({ color: 'red' });
-
-// Output: 'x0'
-```
-
-You can pass in class name strings and this function will append them to the generated
-
-```jsx
-css('hello', { color: 'red' }, 'world');
-
-// Output: 'hello x0 world'
-```
-
-If you’re using a jsxstyle bundler plugin, `css` function calls will be optimized at build time.
-
-Input:
-
-```jsx
-import { dynamicValue } from './externalModule';
-import { css } from 'jsxstyle/solid';
-
-const staticValue = 'hello';
-
-css(staticValue, dynamicValue, { fontWeight: 600 });
-```
-
-Approximate build output:
-
-```jsx
-import { dynamicValue } from './externalModule';
-import { css } from 'jsxstyle/solid';
-
-const staticValue = 'hello';
-
-'hello x0 ' + css(dynamicValue);
-```
 
 ### `useMatchMedia`
 
