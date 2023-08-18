@@ -13,8 +13,6 @@ export type ValidComponentPropValue =
   | IntrinsicElement
   | Component;
 
-type CommonSolidJsComponentProp = 'class' | CommonComponentProp;
-
 /**
  * Generic that returns either the extracted props type for a React component
  * or the props type for an IntrinsicElement.
@@ -43,7 +41,7 @@ type EventHandlerKeys = `on${UpperCaseLetter}${string}`;
 /** Props that will be passed through to whatever component is specified */
 export type StylableComponentProps<T extends ValidComponentPropValue> = Pick<
   ExtractProps<T>,
-  Extract<keyof ExtractProps<T>, CommonSolidJsComponentProp | EventHandlerKeys>
+  Extract<keyof ExtractProps<T>, CommonComponentProp | EventHandlerKeys>
 >;
 
 /** Props for jsxstyle components that have a `component` prop set */
@@ -51,7 +49,7 @@ interface JsxstylePropsWithComponent<C extends ValidComponentPropValue> {
   /** Component value can be either a React component or a tag name string. Defaults to `div`. */
   component: C;
   /** Object of props that will be passed down to the component specified in the `component` prop */
-  props?: Omit<ExtractProps<C>, CommonSolidJsComponentProp | EventHandlerKeys>;
+  props?: ExtractProps<C>;
 }
 
 /** Props for jsxstyle components that have no `component` prop set */
@@ -59,10 +57,7 @@ interface JsxstyleDefaultProps {
   /** Component value can be either a React component or a tag name string. Defaults to `div`. */
   component?: undefined;
   /** Object of props that will be passed down to the underlying div */
-  props?: Omit<
-    JSX.IntrinsicElements['div'],
-    CommonSolidJsComponentProp | EventHandlerKeys
-  >;
+  props?: JSX.IntrinsicElements['div'];
 }
 
 export type JsxstyleProps<T extends ValidComponentPropValue = 'div'> = (

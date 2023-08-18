@@ -11,8 +11,6 @@ type CSSParams = CSSProperties &
     [key: `@media ${string}`]: CSSProperties & AmpersandStyles;
   };
 
-export type CssFunction = ReturnType<typeof makeCssFunction>;
-
 export const makeCssFunction =
   (classNamePropKey: string, cache: Pick<StyleCache, 'getComponentProps'>) =>
   (...params: Array<CSSParams | string | null | undefined | false>): string => {
