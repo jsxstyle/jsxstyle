@@ -1,340 +1,237 @@
-# jsxstyle & friends
-
-This repository is the monorepo for runtime versions jsxstyle as well as a few tools designed to be used with jsxstyle.
-
-<!-- prettier-ignore -->
-| Package | Description |
-| :-- | :-- |
-| [`jsxstyle`][jsxstyle] | stylable React/Preact components |
-| [`jsxstyle/webpack-plugin`][jsxstyle-webpack-plugin] | webpack plugin that extracts static styles from jsxstyle components at build time |
-
-[jsxstyle]: https://github.com/jsxstyle/jsxstyle/tree/main/packages/jsxstyle
-[jsxstyle-webpack-plugin]: https://github.com/jsxstyle/jsxstyle/tree/main/packages/jsxstyle/src/webpack-plugin
-
----
-
 # jsxstyle [<img src="https://badgen.net/bundlephobia/minzip/jsxstyle">](https://npmjs.com/package/jsxstyle) [![Sauce Test Status](https://app.saucelabs.com/buildstatus/jsxstyle)](https://app.saucelabs.com/u/jsxstyle)
 
-jsxstyle is an inline style system for React and Preact. It provides a best-in-class developer experience without sacrificing performance.
+### Inline styles for JSX—React, Preact, Solid… any JSX-centric JavaScript syntax, really.
 
-Styles are written _inline_ on a special set of components exported by jsxstyle. Inline styles on these components are converted to CSS rules and added to the document right as they’re needed.
+jsxstyle is a styling toolkit built on a few fundamental principles:
 
-With `jsxstyle`, your component code looks like this:
+1. Styles should be colocated with the elements they’re styling.
+2. A great developer experience should _never_ come at the cost of a great user experience.
+3. New contributors to a codebase should be able to contribute without having to understand the entire codebase.
+
+jsxstyle consists of a set of building block components and a few helpful utility functions.
+
+## Building block components
+
+| Component | Styles                                   |
+| :-------- | :--------------------------------------- |
+| `Block`   | `display: block;`                        |
+| `Col`     | `display: flex; flex-direction: column;` |
+| `Row`     | `display: flex; flex-direction: row;`    |
+| `Grid`    | `display: grid;`                         |
+| `Box`     | _no default styles_                      |
+
+Additional styles can be passed to these components as props:
 
 ```jsx
-<Row padding={15}>
-  <Block
-    backgroundColor="#EEE"
-    boxShadow="inset 0 0 0 1px rgba(0,0,0,0.15)"
-    borderRadius={5}
-    height={64}
-    width={64}
-    marginRight={15}
-    backgroundSize="contain"
-    backgroundImage="url(http://graph.facebook.com/justinbieber/picture?type=large)"
-  />
-  <Col fontFamily="sans-serif" fontSize={16} lineHeight="24px">
-    <Block fontWeight={600}>Justin Bieber</Block>
-    <Block fontStyle="italic">Canadian</Block>
-  </Col>
+<Block color="red" fontWeight="bold">
+  This text is red and bold
+</Block>
+```
+
+Each building block component renders a `div` by default, but the component can be customized with the `component` prop:
+
+```jsx
+<Row component="label" cursor="pointer">
+  <input type="checkbox" />
+  <p>Confirm</p>
 </Row>
 ```
 
-## ⚡️ Style as fast as you can think.
-
-Jumping between JS and CSS in your editor is no longer necessary. Since style are inline, you can determine at a glance exactly how an element is styled. jsxstyle frees you up to do what you do best—write styles.
-
-## ✅ Inline styles done right.
-
-Just because styles are _written_ inline doesn’t mean they _stay_ inline. jsxstyle’s approach to inline styles ensures that a best-in-class developer experience comes with no performance cost.
-
-## 😪 No more naming fatigue.
-
-Naming components is hard enough, and there are only so many synonyms for “wrapper”. jsxstyle provides a set of stylable components, each with a few default styles set. These primitive stylable components form a set of _building blocks_ that you can reuse throughout your application. You can still create named stylable components if you wish, by utilizing a paradigm you’re already familiar with: composition. No funky syntax necessary:
+Any component that accepts a `class` (Preact, Solid) or `className` (React) prop can be passed as the `component` prop too:
 
 ```jsx
-const RedBlock = (props) => <Block {...props} color="red" />;
+const InputComponent = ({ className, value }) => (
+  <input className={className} type="text" value={value} />
+);
+
+<Block component={InputComponent} border="1px solid #AAA" />;
 ```
 
-## 🍱 Scoped styles right out the box.
-
-Styles written on jsxstyle components are scoped to _component instances_ instead of abstract reusable class names. That’s not to say we’ve abandoned class names, though; styles on jsxstyle components are extracted into CSS rules and assigned a _hashed, content-based class name_ that is intentionally unlike a human-written name.
-
-## 👯 Team friendly by design.
-
-jsxstyle’s mental model is easy to teach and easy to learn, which means onboarding new frontend contributors takes _seconds_, not hours. Since styles applied by jsxstyle are scoped to component instances, frontend contributors don’t need a complete knowledge of the system in order to be 100% productive right from the start.
-
-## 🛠 Powerful build-time optimizations.
-
-Styles written inline on a set of components from a known source can very easily be statically analyzed, which opens up new possibilities for tooling and optimization. One such optimization is the built-in [webpack-plugin][jsxstyle-webpack-plugin] that extracts static styles from jsxstyle components _at build time_. This plugin reduces and in some cases _entirely removes_ the need for runtime jsxstyle.
-
-# Getting started
-
-Install the `jsxstyle` package with your preferred node package manager. Components for React can be imported from `jsxstyle`, and components for Preact can be imported from `jsxstyle/preact`.
-
-jsxstyle provides the following seven components:
-
-| Component     | Default styles                                  |
-| :------------ | :---------------------------------------------- |
-| `Block`       | `display: block;`                               |
-| `Inline`      | `display: inline;`                              |
-| `InlineBlock` | `display: inline-block;`                        |
-| `Row`         | `display: flex; flex-direction: row;`           |
-| `Col`         | `display: flex; flex-direction: column;`        |
-| `InlineRow`   | `display: inline-flex; flex-direction: row;`    |
-| `InlineCol`   | `display: inline-flex; flex-direction: column;` |
-| `Grid`        | `display: grid;`                                |
-| `Box`         | _No default styles_                             |
-
-Most props passed to these components are assumed to be CSS properties.
-There are some exceptions to this rule:
-
-- `component`: the underlying HTML tag or component to render. Defaults&nbsp;to&nbsp;`'div'`.
-- `props`: an object of props to pass directly to the underlying tag&nbsp;or&nbsp;component.
-- `mediaQueries`: an object of media query strings keyed by prefix. More&nbsp;on&nbsp;that&nbsp;[below](#media-queries).
-
-Additionally, the following component props can also be set at the top level if the `component` you specify supports these props:
-
-- `checked`
-- `className`
-- `href`
-- `id`
-- `name`
-- `placeholder`
-- `style`
-- `type`
-- `value`
-- Any event handler prop starting with `on`
-
-This list is fairly arbitrary. If there’s a prop that you think is missing, feel free to [request an addition to this list][request-new-component-prop].
-
-## Features
-
-### Pseudoelements and pseudoclasses
-
-To specify a pseudoelement or pseudoclass on a style property, prefix the prop with the name of the applicable pseudoelement or pseudoclass. If you’d like to specify a pseudoelement _and_ a pseudoclass for a style prop, start with the pseudoclass—i.e., `hoverPlaceholderColor`, not `placeholderHoverColor`.
-
-```jsx
-import { Block } from 'jsxstyle/preact';
-
-<Block
-  component="input"
-  color="#888"
-  activeColor="#333"
-  placeholderColor="#BBB"
-/>;
-```
-
-<!-- prettier-ignore -->
-| Supported Pseudoclasses | Supported Pseudoelements |
-| -- | -- |
-| `active`, `checked`, `disabled`, `empty`, `enabled`, `focus`, `hover`, `invalid`, `link`, `required`, `target`, `valid` | `placeholder`, `selection`, `before`, `after` |
-
-<br>
-
-### Media queries
-
-Define a `mediaQueries` property with an object of media queries keyed by whatever prefixes you want to use. Prepend these media query keys to any style props that should be contained within media query blocks. Note that only one media query prefix can be applied at a time.
+Since props passed to a jsxstyle component are assumed to be style props, component props are passed a different way—the `props` prop. It’s sort of like how the `style` prop can be used to pass styles on non-jsxstyle components, except style props and component props have changed places.
 
 ```jsx
 <Block
-  mediaQueries={{
-    sm: 'screen and (max-width: 640px)',
-    lg: 'screen and (min-width: 1280px)',
+  component={InputComponent}
+  props={{
+    value: inputValue,
+    onChange: handleInputChange,
   }}
-  color="red"
-  smColor="blue"
-  lgColor="green"
+  border="1px solid #AAA"
 />
 ```
 
-#### `useMatchMedia` hook
-
-jsxstyle exports a hook, `useMatchMedia`, that enables the developer to subscribe to media query change events and react accordingly. Here’s the hook in action:
+Common component props and all `on`-prefixed props are filtered out of the style props and can be passed at the top level:
 
 ```jsx
-import { Block, useMatchMedia } from 'jsxstyle';
+<Block
+  component={InputComponent}
+  value={inputValue}
+  onChange={handleInputChange}
+  border="1px solid #AAA"
+/>
+```
 
-export const RedOrBlueComponent = ({ children }) => {
-  const isSmallScreen = useMatchMedia('screen and (max-width: 800px)');
+For props that are more syntactically complex than a simple key and value, you can use the `css` prop. For example, here’s how you specify media queries and container queries:
 
-  // text color is red when viewport <= 800px, blue when viewport > 800px
-  return <Block color={isSmallScreen ? 'red' : 'blue'}>{children}</Block>;
+```jsx
+<Block
+  padding={20}
+  css={{
+    '@media screen and (some-condition: some-value)': {
+      padding: 10,
+    },
+    '@container (min-width: 1000px)': {
+      padding: 30,
+    },
+  }}
+/>
+```
+
+And here’s an example of descendant selectors:
+
+```jsx
+<Block
+  css={{
+    '& > *': {
+      border: '1px solid red',
+    },
+    '&:hover > *': {
+      border: '1px solid blue',
+    },
+  }}
+/>
+```
+
+The ampersand (`&`) indicates to jsxstyle where the generated selector should go. Any string is valid as a key, as long as it contains one or more ampersands.
+
+## Utility functions
+
+### `css`
+
+The `css` function is a thin wrapper around the heart of jsxstyle. It takes one or more style objects or strings and it returns a string of space-separated class names.
+
+```jsx
+import { css } from 'jsxstyle/preact';
+
+css({ color: 'red' });
+
+// Output: 'x0'
+```
+
+You can pass in class name strings and this function will append them to the generated
+
+```jsx
+css('hello', { color: 'red' }, 'world');
+
+// Output: 'hello x0 world'
+```
+
+If you’re using a jsxstyle bundler plugin, `css` function calls will be optimized at build time.
+
+Input:
+
+```jsx
+import { dynamicValue } from './externalModule';
+import { css } from 'jsxstyle/solid';
+
+const staticValue = 'hello';
+
+css(staticValue, dynamicValue, { fontWeight: 600 });
+```
+
+Approximate build output:
+
+```jsx
+import { dynamicValue } from './externalModule';
+import { css } from 'jsxstyle/solid';
+
+const staticValue = 'hello';
+
+'hello x0 ' + css(dynamicValue);
+```
+
+### `useMatchMedia`
+
+In environments where hooks are supported, you can import the `useMatchMedia` hook to subscribe to media query events:
+
+```jsx
+import { useMatchMedia } from 'jsxstyle/preact';
+
+const ExampleComponent: preact.FunctionComponent = () => {
+  const isSmallScreen = useMatchMedia('screen and max-width: 1000px');
+  return <div>{isSmallScreen ? 'Small' : 'Big'} screen!</div>;
 };
 ```
 
-When this hook is used in combination with jsxstyle’s webpack plugin, prop values will be extracted if the prop passed to the component is a ternary and if the alternate and consequent values of the ternary are both [static][].
+`useMatchMedia` has a unique interaction with jsxstyle components when paired with a jsxstyle bundler plugin. The `useMatchMedia` variable will be marked as static, and any static styles that use the variable as a condition will be extracted out as media queries.
 
-<br>
-
-### Convenient animation support
-
-You can define an animation inline using object syntax, where the key is the specific keyframe name and the value is an object of styles:
-
-```tsx
-<Block
-  animation={{
-    from: { opacity: 0 },
-    to: { opacity: 1 },
-  }}
-  animationDuration="600ms"
-  animationDirection="alternate"
-/>
-```
-
-### Shorthand properties for same-axis `padding` and `margin`
-
-You can set margin or padding on the same axis—either horizontal or vertical—by setting `marginH`/`marginV` or `paddingH`/`paddingV`.
-
-Note: shortcut props should not be used with in combination with -Top/Left/Bottom/Right variants. Prop names on jsxstyle components are sorted alphabetically before the styles are stringified, which means that styles will be applied alphabetically.
-
-<br>
-
-# FAQs
-
-## Why write styles inline with jsxstyle?
-
-<details>
-<summary>Writing styles inline does away with name fatigue and constantly bouncing between CSS and component code in your editor, and jsxstyle’s approach to inline styles ensures that a best-in-class developer experience comes with no performance cost.</summary>
-
-1.  ### Naming things is hard.
-
-    jsxstyle manages CSS and corresponding generated class names, which means that _what those class names actually are becomes unimportant_. jsxstyle can generate short, production-optimized class names and retain a mapping of those class names to corresponding style objects. All you have to do is worry about actual style properties.
-
-2.  ### Jumping between JS and CSS in your editor wastes time.
-
-    There’s no need to constantly jump between components and the CSS file(s) that define how those components are styled because styles are defined right at the component level. CSS has always been a language that describes what HTML elements look like. With jsxstyle, those descriptions are right where you need them.
-
-3.  ### Styles are… _inline_.
-
-    With inline styles, any frontend contributor can look at an element and know in a matter of seconds _exactly_ how it’s styled. Inline styles describe an element’s appearance better than CSS classes ever could, and because you don’t have to worry about the class abstraction, there’s no fear of you or another frontend contributor taking a pure CSS class (like `.red { color: tomato }`) and corrupting it by modifying its styles.
-
-    Also, because styles are inline, when you delete a component, you delete its style properties along with it. Dead CSS is no longer a concern.
-
-4.  ### Styles written inline don’t _remain_ inline.
-
-    jsxstyle is first and foremost _syntax_ for styling components at a particular scope. The styles you specify on jsxstyle components are added to the document and a `div` or component you specify is output with a class name that points to the added styles.
-
-5.  ### Building tooling around inline styles is simple and straightforward.
-
-    Statically analyzing inline styles on known components is trivial. Most of the styles you’ll end up writing on jsxstyle primitive components are static. Once you’re done perusing this README, check out [`jsxstyle/webpack-plugin`][jsxstyle-webpack-plugin]. It’s a webpack plugin that, at build time, extracts static styles defined on jsxstyle components into separate CSS files. This plugin reduces and in some cases _entirely removes_ the need for runtime jsxstyle. jsxstyle becomes nothing more than syntactic sugar for styling components, much like how JSX itself is syntactic sugar for nested function calls. Dude, that’s next level!
-
-</details>
-
-## Why use jsxstyle instead of BEM/SMACSS/OOCSS/etc.?
-
-<details>
-<summary>jsxstyle provides all the benefits of a CSS class naming/organization system, but <em>without the system</em>.</summary><br>
-
-[Writing CSS at scale is hard][scalable css]. Overly specific selectors cause specificity collisions. More generic selectors cause overstyling. Being a responsible frontend contributor in a shared codebase means you have to have a working knowledge of the system before you can contribute new code without introducing redundancies or errors.
-
-Countless systems have been developed to either solve or circumvent inherent problems with writing CSS in a team environment. Most of these systems attempt to solve the complexity of writing CSS with _even more complex systems_. Once a system is implemented it has to be closely adhered to. CSS systems are fantastic in theory, but in practice, a CSS system is only as good as the most negligent frontend contributor on your team.
-
-jsxstyle provides all the benefits of a good CSS class-naming system, with the added benefit of _not having to learn or remember a CSS class-naming system_.
-
-- ### No more specificity issues, collisions, accidental overstyling, or inscrutable class names.
-
-  jsxstyle manages class names and generated styles, leaving you to do what you do best… write styles. Selector complexity is a thing of the past. Each jsxstyle component gets a single class name based on the inline styles specified on the component. The class name is reused when repeat instances of that set of style props are encountered.
-
-- ### No more bikeshedding!
-
-  No more extended discussions about which CSS class naming strategy is best! I cannot emphasize enough how much time and mental energy this saves. Code review is simple as well. CSS-related nits only involve _actual style properties_. Conversations about how to style a thing begin and end with _the actual CSS properties that need to be written_.
-
-- ### Onboarding new frontend contributors takes seconds, not hours.
-  A knowledge of existing styles is _not required_ for a new frontend contributor to be 100% productive right from the start. In codebases without jsxstyle, in order for someone to be able to contribute, they usually have to know what styles to put where and where to look to put new styles. There are usually mixins and variables they don’t know exist because they don’t yet “know their way around the place”. With jsxstyle, you’re just writing styles on components.
-  </details>
-
-## Can I use jsxstyle with existing CSS?
-
-Yes! jsxstyle is designed to work _alongside_ existing styles and style systems. In order to avoid class name collisions, class names generated by jsxstyle are hashed names that are _intentionally unlike_ class names that a human would write. As far as specificity is concerned, jsxstyle uses single class names as selectors, which makes overriding styles in your existing system easy (though not recommended).
-
-## Does jsxstyle support server rendering?
-
-<details>
-<summary>Yep!</summary><br>
-
-jsxstyle exports a `cache` object with a few functions that make adding support for server rendering a breeze. Two things you need to know:
-
-1.  In a server environment, the function that adds styles to the document is a noop, but it can be replaced with any arbitrary function. When server rendering, you can aggregate jsxstyle-injected styles when rendering your app to a string, and then add those styles to the response you send to the client.
-
-2.  jsxstyle builds a cache of styles that have been added to the document to ensure they’re added exactly once. When server rendering, this cache will need to be reset between each render.
-
-Here’s a minimal (untested!) example of jsxstyle server rendering with Koa:
+Input:
 
 ```jsx
-import { cache } from 'jsxstyle';
-import * as Koa from 'koa';
-import * as React from 'react';
-import { renderToString } from 'react-dom';
+import { Block, useMatchMedia } from 'jsxstyle/preact';
 
-import App from './App';
-
-// aggregate styles as they’re added to the document
-let styles = '';
-cache.injectOptions({
-  onInsertRule(css) {
-    styles += css;
-  },
-});
-
-const app = new Koa();
-app.use(async (ctx) => {
-  // Reset cache and style string before each call to `renderToString`
-  cache.reset();
-  styles = '';
-  const html = renderToString(<App path={ctx.request.path} />);
-
-  ctx.body = `<!doctype html>
-<style>${styles}</style>
-<div id=".app-root">${html}</div>
-<script src="/bundle.js"></script>
-`;
-});
+const ExampleComponent = () => {
+  const isSmallScreen = useMatchMedia('screen and (max-width: 1000px)');
+  return <Block fontSize={isSmallScreen ? 18 : 36}>Hello</Block>;
+};
 ```
 
-</details>
+Approximate built output:
 
-## Does jsxstyle support autoprefixing?
+```jsx
+const ExampleComponent = () => {
+  return <div className="x0 x1 x2">Hello</div>;
+};
+```
 
-Runtime jsxstyle does not bundle an autoprefixer, but autoprefixing is easily doable if you use webpack. We recommend combining [jsxstyle’s built-in webpack plugin][jsxstyle-webpack-plugin] with a CSS loader that handles provides autoprefixing. At Smyte, we use `postcss-loader` with `postcss-cssnext`. Not using `webpack` and you’d like to see runtime autoprefixing supported? [Open an issue][new issue] and let us know!
+<!-- prettier-ignore -->
+```css
+.x0 { display: block }
+@media screen and (max-width: 1000px) { .x1.x1 { font-size: 18px } }
+.x2 { font-size: 36px }
+```
 
-## What about global styles?
+_(More on the double `.x1` selector below)_
 
-jsxstyle only manages styles written on jsxstyle components. Where you put global styles is entirely up to you. At Smyte, we use a separate shared style sheet that contains a few reset styles.
+# Assorted commentary
 
-# Browser support
+## Managed specificity
 
-jsxstyle is tested [on every push][github-actions] in [a wide array of browsers, both old and new][sauce]. Shout out to **Sauce Labs** for making cross browser testing _free_ for open source projects. Sauce Labs is _shockingly easy_ to integrate with other services. I’m not gonna say it’s simple to get set up, because it’s not, but once it’s up and running, damn, it’s easy. They even make an SVG test matrix you can drop into your README:
+There’s nothing worse than a CSS issue that only happens in production. CSS rule order matters and since bundlers can bundle CSS in non-deterministic ways, it’s surprisingly easy to accidentally clobber styles if you’ve got more than one CSS file in your project.
 
-[![Sauce Test Status](https://app.saucelabs.com/browser-matrix/jsxstyle.svg)](https://saucelabs.com/u/jsxstyle)
+jsxstyle employs a simple system to keep CSS rule order from affecting styles:
 
-# Contributing
+- jsxstyle selectors only ever use class names. Selector specificity is increased by repeating the class name selector. (`.x1` is less specific than `.x1.x1`).
+- All CSS rules have a base specificity of 1.
+- Props with shorthand equivalents (for example: `font-size`) have a specificity of 2.
+- Styles contained in media queries are granted +3 specificity.
 
-Got an idea for jsxstyle? Did you encounter a bug? [Open an issue][new issue] and let’s talk it through. [PRs welcome too][pr]!
+What this looks like:
 
-# Alternatives
+<!-- prettier-ignore -->
+```css
+.x0 { padding: 20px }
+.x1.x1 { padding-left: 30px }
+@media screen { .x2.x2.x2 { padding: 20px } }
+@media screen { .x3.x3.x3.x3 { padding-left: 30px } }
+```
 
-So you don’t think jsxstyle is the thing for you? That’s quite alright. It’s a good time to be picky about exactly how and where your styles are written. We’re in the golden age of component-based web frameworks, and a lot of ancient “best practices” that were set in place by the old guard are being rethought, to everyone’s benefit. It’s a weird and exciting time to be making stuff for the web.
+## Why write styles inline?
 
-Sorting through the myriad CSS-in-JS solutions out there can get tiring, but there are a few projects out there that have stuck out to me:
+Keeping styles separated from styled code has a few inherent pitfalls:
 
-- [Tachyons][tachyons] by [Adam Morse][mrmrs] enables a lot of the the same benefits as jsxstyle but allows you to still use CSS classes. I love the “no new CSS” concept behind Tachyons. Tachyons elegantly solves the issues that Adam covers in [his excellent blog post on scalable CSS][scalable css].
+1. **Dead CSS**: If you delete styled code, you have to remember to delete corresponding styles that are no longer needed. This cruft is a form of tech debt and it affects both developers (more code to sift through) and your end users (more bytes sent).
+2. **CSS house of cards**: If you modify shared CSS rules, it’s possible that your modification will affect unrelated code that’s styled using the same CSS rules.
+3. **Specificity wars**: let’s say two selectors set the same style. If the specificity of both selectors is the same, whichever CSS selector appears last in your CSS is the one that wins. If the specificity is different, CSS rules get clobbered.
 
-- [Rebass][rebass] by [Brent Jackson][jxnblk] is “a functional React UI component library, built with `styled-components`”. Rebass has similar API to jsxstyle, but is a bit more opinionated when it comes to separation of presentation and logic. Syntactically it’s more compact, and it has a few more tricks. We don’t like tricks over here at jsxstyle dot com but we do give Rebass two meaty thumbs up.
+Potential solutions to these problems usually involve one or more solutions:
 
-[`styled-components`][styled-components] and (more recently) [`emotion`][emotion] have both gained serious traction in the frontend JS community. I can’t do either system justice in a single sentence and I’ve never used either system, but they both seem like reasonable jsxstyle alternatives that embrace the funky things you can do with tagged template literals.
+1. A well thought out **naming scheme** for CSS classes. Historically this includes things like BEM, SMACSS, and OOCSS.
 
-[emotion]: https://github.com/emotion-js/emotion
-[jsxstyle-webpack-plugin]: https://github.com/jsxstyle/jsxstyle/tree/main/packages/jsxstyle/src/webpack-plugin
-[jxnblk]: https://github.com/jxnblk
-[mrmrs]: https://github.com/mrmrs
-[new issue]: https://github.com/jsxstyle/jsxstyle/issues/new
-[pr]: https://github.com/jsxstyle/jsxstyle/pulls
-[rebass]: https://github.com/jxnblk/rebass
-[sauce]: https://saucelabs.com/u/jsxstyle
-[scalable css]: http://mrmrs.github.io/writing/2016/03/24/scalable-css/
-[static]: https://github.com/jsxstyle/jsxstyle/blob/main/packages/jsxstyle/src/webpack-plugin/#what-are-static-style-props
-[styled-components]: https://www.styled-components.com
-[tachyons]: http://tachyons.io
-[github-actions]: https://github.com/jsxstyle/jsxstyle/actions
-[request-new-component-prop]: https://github.com/jsxstyle/jsxstyle/issues/new?assignees=meyer&labels=enhancement&template=component+prop+allowlist+addition.yml&title=New+top-level+component+prop%3A+
+   **Problem**: In addition to learning CSS, **you must now learn a naming scheme on top of CSS**. Naming things is hard. Each named rule you create requires some brainpower. New contributors can’t contribute at 100% until they fully understand the naming scheme. People will mess it up and it’ll become a topic of conversation in code review. It’s mental overhead that can be completely avoided.
+
+2. **Atomic CSS**—one classname per style. One concept with many different implementations.
+
+   **Problem**: In addition to learning CSS, **you must now learn a meta-syntax on top of CSS**. In the case of ACSS, there are short versions of every CSS property; for example, `background-color: #fff` becomes `Bgc(#fff)`.
+
+Here at jsx dot style, we like the end result of atomic CSS, but we aren’t wild about how you get there. With jsxstyle, you just write plain old CSS and jsxstyle will create your atomic CSS classes under the hood. All you have to know is how to convert kebab-case property names to camelCase.
