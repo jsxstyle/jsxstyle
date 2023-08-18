@@ -10,25 +10,15 @@ jsxstyle is a styling toolkit built on three fundamental principles:
 
 jsxstyle consists of a set of layout primitives—`Block`, `Row`, `Col`, and more—and a function called `css` that’s a thin wrapper around the core that powers these components.
 
-## CSS feature support
+## Features
 
-- ✅ Media/container queries
-- ✅ Pseudoclasses/pseudoelements
-- ✅ Descendant selectors
-- ✅ Custom properties
-
-- **Team-friendly**: styles you write with jsxstyle only ever affect the elements that you’re styling.
+- **Team-friendly**: styles you write with jsxstyle only ever affect the element that you’re styling.
 - **Fantastic developer experience**: if you know CSS, you know how to use jsxstyle. If you don’t know CSS, jsxstyle is strongly typed, which means TypeScript and your code editor can lend a hand.
+- Support for **media queries**, **container queries**, **pseudoclasses**, **pseudoelements**, and **descendant selectors**.
 - Utilities for generating **CSS custom properties** and **subscribing to media query events**.
 - Generated CSS is **atomic** by default.
-
-### Bundler plugins for advanced build-time optimizations
-
-jsxstyle ships with plugins for Vite, Webpack, and Next.js, all powered by a style extraction engine that that analyzes your code for static styles and extracts them out at build time. This can reduce or, in many cases, _entirely remove_ the need for runtime jsxstyle
-
-### Managed specificity
-
-The CSS that jsxstyle generates will always apply the same styles regardless of the order of the CSS rules.
+- **Bundler plugins** for advanced build-time optimizations: jsxstyle ships with plugins for Vite, Webpack, and Next.js, all powered by a style extraction engine that that analyzes your code for static styles and extracts them out at build time, thus reducing or entirely removing the need for runtime jsxstyle.
+- **Managed specificity**: the CSS that jsxstyle generates will always apply the same styles regardless of the order of the CSS rules.
 
 ## What’s in the box
 
