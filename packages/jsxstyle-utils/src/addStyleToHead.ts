@@ -53,7 +53,10 @@ export function addStyleToHead(rule: string): void {
     } catch (insertError) {
       // insertRule will fail for rules with pseudoelements the browser doesn't support.
       // see: https://github.com/jsxstyle/jsxstyle/issues/75
-      if (process.env.NODE_ENV !== 'production') {
+      if (
+        typeof process !== 'undefined' &&
+        process.env.NODE_ENV !== 'production'
+      ) {
         console.error(
           '[jsxstyle] Could not insert rule at position ' +
             sheet.cssRules.length +

@@ -4,7 +4,7 @@ import type { NodeValue, PrimitiveValue } from '../styleObjectUtils';
 import { evaluateAstNode } from '../evaluateAstNode';
 import * as t from '@babel/types';
 import { generate } from '../babelUtils';
-import vm from 'vm';
+import * as vm from 'vm';
 
 const context = vm.createContext({
   evalIdentifier: 'eval identifier value',

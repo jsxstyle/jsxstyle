@@ -1,11 +1,7 @@
 {
   "extends": "../config/tsconfig.base.json",
   "include": [
-    "components",
-    "hooks",
-    "pages",
-    "utilities",
-    "next-env.d.ts"
+    "src"
   ],
   "compilerOptions": {
     "rootDir": ".",
@@ -15,15 +11,9 @@
       "dom.iterable",
       "esnext"
     ],
-    "skipLibCheck": true,
     "strict": true,
-    "types": [
-      "webpack-env"
-    ],
-    "noEmit": true,
-    "incremental": true,
-    "isolatedModules": true,
-    "jsx": "preserve",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
     "target": "esnext",
     "module": "esnext",
     "paths": {
@@ -34,7 +24,10 @@
   },
   "references": [
     {
-      "path": "../packages/tsconfig.json"
-    }
+      "path": "../packages/jsxstyle-bundler-utils"
+    },
+    {
+      "path": "../packages/jsxstyle-react"
+    },
   ]
 }

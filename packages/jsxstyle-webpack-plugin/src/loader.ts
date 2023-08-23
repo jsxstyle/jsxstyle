@@ -1,5 +1,5 @@
 import invariant from 'invariant';
-import path from 'path';
+import * as path from 'path';
 import util from 'util';
 import type * as webpack from 'webpack';
 

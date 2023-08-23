@@ -1,4 +1,4 @@
-import path from 'path';
+import * as path from 'path';
 import webpack from 'webpack';
 import { Volume } from 'memfs';
 // @ts-expect-error JS file

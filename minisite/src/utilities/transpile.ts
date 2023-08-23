@@ -1,4 +1,4 @@
-import { extractStyles } from 'jsxstyle/private/extract-styles';
+import { extractStyles } from '../../../packages/jsxstyle-bundler-utils/src/ast/extractStyles';
 import babelTraverse from '@babel/traverse';
 import generate from '@babel/generator';
 import * as t from '@babel/types';
@@ -115,7 +115,9 @@ export const transpile = (code: string) => {
             ]);
           } else {
             throw new Error(
-              'Unhandled specifier type: ' + (specifier as any).type
+              'Unhandled specifier type: ' +
+                // @ts-expect-error type is not set
+                specifier.type
             );
           }
         })
@@ -194,7 +196,11 @@ export const transpile = (code: string) => {
 
             prev.push(t.objectProperty(t.identifier(name), value));
           } else {
-            throw new Error('Unhandled attribute type: ' + (attr as any).type);
+            throw new Error(
+              'Unhandled attribute type: ' +
+                // @ts-expect-error type is not set
+                attr.type
+            );
           }
 
           return prev;

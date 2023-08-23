@@ -1,6 +1,6 @@
-import { EXPERIMENTAL_makeCustomProperties } from 'jsxstyle';
+import { makeCustomProperties } from 'jsxstyle';
 
-export const styleConstants = EXPERIMENTAL_makeCustomProperties({
+export const styleConstants = makeCustomProperties({
   foreground: '#333',
   background: '#FFF',
   pageBackground: '#EEE',
@@ -18,5 +18,3 @@ export const styleConstants = EXPERIMENTAL_makeCustomProperties({
     insetBackground: '#000',
   })
   .build();
-
-module.hot?.dispose(styleConstants.reset);

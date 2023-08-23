@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite';
 import { jsxstyleVitePlugin } from 'jsxstyle/experimental/vite-plugin';
-import path from 'path';
+import * as path from 'path';
 import reactPlugin from '@vitejs/plugin-react';
 
 export default defineConfig({

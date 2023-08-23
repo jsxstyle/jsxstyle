@@ -1,6 +1,6 @@
 /* eslint-disable no-prototype-builtins */
 import invariant from 'invariant';
-import path from 'path';
+import * as path from 'path';
 import { getExportsFromModuleSource } from './getExportsFromModuleSource';
 import { makePromise } from './makePromise';
 import { stringHash } from '../../jsxstyle-utils/src/stringHash';

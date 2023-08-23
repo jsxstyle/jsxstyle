@@ -2,8 +2,8 @@ import * as React from 'react';
 import * as jsxstyle from 'jsxstyle';
 import * as jsxRuntime from 'react/jsx-runtime';
 
-import { useEffect, useReducer } from 'react';
-import { Row, Col, Block } from 'jsxstyle';
+import { useEffect, useReducer, useRef } from 'react';
+import { Row, Col, Block, css } from 'jsxstyle';
 import { useAsyncModule } from '../hooks/useAsyncModule';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import { CodeModule } from '../components/CodeModule';
@@ -27,7 +27,8 @@ const DefaultComponent: React.FC = () => null;
 
 interface TranspileResult {
   component: React.FC;
-  dispose?: (() => {}) | null;
+  dispose?: (() => void) | null;
+  js: string;
   css: string;
 }
 
@@ -38,11 +39,31 @@ const reducer: React.Reducer<TranspileResult, TranspileResult> = (
 ) => {
   try {
     prevState.dispose?.();
-  } catch {}
+  } catch {
+    //
+  }
   return action;
 };
 
-const CodePreviewPage: React.FC = () => {
+const Button: React.FC<
+  React.PropsWithChildren<JSX.IntrinsicElements['button']>
+> = (props) => {
+  return (
+    <Block
+      component="button"
+      border="none"
+      color={styleConstants.background}
+      backgroundColor={styleConstants.foreground}
+      padding="5px 10px"
+      borderRadius={4}
+      cursor="pointer"
+      className={props.className}
+      props={props}
+    />
+  );
+};
+
+export const CodePreviewPage: React.FC = () => {
   const transpileModule = useAsyncModule(
     () => import('../utilities/transpile')
   );
@@ -50,8 +71,22 @@ const CodePreviewPage: React.FC = () => {
   const [transpileResult, setTranspileResult] = useReducer(reducer, {
     component: DefaultComponent,
     dispose: null,
+    js: '',
     css: '',
   });
+
+  const styleElementRef = useRef<HTMLStyleElement | null>(null);
+
+  useEffect(() => {
+    const element = document.createElement('style');
+    styleElementRef.current = element;
+    document.head.appendChild(element);
+
+    return () => {
+      document.head.removeChild(element);
+      styleElementRef.current = null;
+    };
+  }, []);
 
   useEffect(() => {
     if (transpileModule.state === 'pending') return;
@@ -66,15 +101,15 @@ const CodePreviewPage: React.FC = () => {
       if (typeof code !== 'string') return;
 
       try {
-        const {
-          // js,
-          css,
-          // cssFileName,
-          browserFriendlyJs,
-        } = transpile(code);
+        const { css: extractedCss, js, browserFriendlyJs } = transpile(code);
+
+        if (styleElementRef.current) {
+          styleElementRef.current.innerText = extractedCss;
+        }
+
         const moduleExports: {
           default: React.ComponentType | null;
-          dispose?: (() => {}) | null;
+          dispose?: (() => void) | null;
         } = {
           default: null,
           dispose: null,
@@ -99,7 +134,8 @@ const CodePreviewPage: React.FC = () => {
           const dispose = moduleExports.dispose;
           if (ExportedComponent) {
             setTranspileResult({
-              css,
+              js,
+              css: extractedCss,
               dispose,
               component: () => (
                 <ErrorBoundary>
@@ -109,6 +145,7 @@ const CodePreviewPage: React.FC = () => {
             });
           } else {
             setTranspileResult({
+              js,
               css: '',
               component: () => (
                 <Block>Your code is missing a default export.</Block>
@@ -117,6 +154,7 @@ const CodePreviewPage: React.FC = () => {
           }
         } catch (error) {
           setTranspileResult({
+            js,
             css: '',
             component: () => (
               <Block>Could not evaluate your code: {error + ''}</Block>
@@ -126,6 +164,7 @@ const CodePreviewPage: React.FC = () => {
       } catch (error) {
         console.error('Transpile error: %o', error);
         setTranspileResult({
+          js: '',
           css: '',
           component: () => (
             <Block>Something really went wrong: {error + ''}</Block>
@@ -145,49 +184,30 @@ const CodePreviewPage: React.FC = () => {
       <Row
         border="1px solid"
         borderColor={styleConstants.border}
-        padding={3}
-        gap={3}
+        padding={10}
+        gap={5}
       >
-        {styleConstants.variants.map((variantName) => (
-          <button
-            key={variantName}
-            onClick={() => styleConstants.setVariant(variantName)}
-          >
-            {variantName}
-          </button>
-        ))}
-        <button onClick={() => styleConstants.setVariant(null)}>
+        {styleConstants.variantNames.map((variantName) => {
+          const variant = styleConstants.variants[variantName];
+          return (
+            <Button
+              className={css({
+                [`.${variant.className} &`]: { outline: '3px solid red' },
+              })}
+              key={variantName}
+              onClick={variant.activate}
+            >
+              {variantName}
+            </Button>
+          );
+        })}
+        <Button onClick={() => styleConstants.setVariant(null)}>
           remove override
-        </button>
+        </Button>
       </Row>
       <transpileResult.component />
       <CodeModule title="Extracted CSS" code={transpileResult.css} />
-      <style jsx global>
-        {`
-          ${transpileResult.css}
-        `}
-      </style>
-      <style jsx global>{`
-        html,
-        body {
-          font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
-            Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue,
-            sans-serif;
-          font-size: 16px;
-          line-height: 1.2;
-          background-color: var(--jsxstyle-pageBackground);
-        }
-
-        * {
-          box-sizing: border-box;
-          padding: 0;
-          margin: 0;
-          font-size: inherit;
-          line-height: inherit;
-        }
-      `}</style>
+      <CodeModule title="Transformed JS" code={transpileResult.js} />
     </Col>
   );
 };
-
-export default CodePreviewPage;

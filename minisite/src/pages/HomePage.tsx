@@ -1,10 +1,10 @@
 import { Chrome } from '../components/Chrome';
 import { LiveEditor } from '../components/LiveEditor';
 
-export default function HomePage() {
+export const HomePage: React.FC = () => {
   return (
     <Chrome>
       <LiveEditor />
     </Chrome>
   );
-}
+};

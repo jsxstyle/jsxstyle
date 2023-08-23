@@ -5,7 +5,7 @@ import {
 import { getExportsFromModuleSource } from '../../jsxstyle-bundler-utils/src/getExportsFromModuleSource';
 import fs from 'fs/promises';
 import util from 'util';
-import path from 'path';
+import * as path from 'path';
 import type { Plugin } from 'vite';
 import esbuild from 'esbuild';
 import invariant from 'invariant';

@@ -1,5 +1,5 @@
 import packlist from 'npm-packlist';
-import path from 'path';
+import * as path from 'path';
 import glob from 'glob';
 import { execSync } from 'child_process';
 import { getPackages } from '@manypkg/get-packages';

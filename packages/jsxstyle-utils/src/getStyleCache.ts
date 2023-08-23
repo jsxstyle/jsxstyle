@@ -12,7 +12,7 @@ const throwProdError = () => {
 let cannotInject = throwProdError;
 let alreadyInjected = throwProdError;
 
-if (process.env.NODE_ENV !== 'production') {
+if (typeof process !== 'undefined' && process.env.NODE_ENV !== 'production') {
   cannotInject = () => {
     throw new Error(
       'jsxstyle error: `injectOptions` must be called before any jsxstyle components mount.'

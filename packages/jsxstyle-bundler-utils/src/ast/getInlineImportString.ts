@@ -1,4 +1,4 @@
-import path from 'path';
+import * as path from 'path';
 
 /** Generate an import statement with CSS passed as a base64-encoded loader option */
 export const getInlineImportString = (css: string, key: string) =>

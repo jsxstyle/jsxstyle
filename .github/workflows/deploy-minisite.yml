@@ -1,16 +1,17 @@
 name: Deploy to GitHub Pages
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - 'minisite/**'
     branches:
       - 'main'
-
-  workflow_dispatch:
+      - 'dev'
 
 jobs:
-  deployment:
+  build:
+    name: 'Build the minisite'
     runs-on: ubuntu-latest
 
     steps:
@@ -20,28 +21,29 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18.x
-          cache: 'npm'
+          cache: npm
 
       - run: npm install
       - run: npm run build
-      - run: npm -w minisite run export
+      - run: npm -w minisite run build
 
-      - name: Fetch gh-pages branch
-        uses: actions/checkout@v3
+      - uses: actions/upload-pages-artifact@v2
         with:
-          ref: gh-pages
-          path: gh-pages-temp
+          path: 'minisite/dist/'
 
-      - name: Update gh-pages branch
-        run: |
-          export COMMIT_TITLE="$(git show --pretty=format:%s -s HEAD)"
-          export GIT_COMMITTER_DATE="$(git show -s --format=%ci HEAD)"
-          export GIT_AUTHOR_DATE="$(git show -s --format=%ai HEAD)"
-          cd gh-pages-temp
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git rm -rf .
-          cp -r ../minisite/dist/. .
-          git add -A
-          git commit -m "$COMMIT_TITLE"
-          git push origin HEAD
+  deploy:
+    name: 'Deploy to GitHub Pages'
+    needs: build
+    runs-on: ubuntu-latest
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v2

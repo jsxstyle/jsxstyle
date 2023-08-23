@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Code preview</title>
+  </head>
+  <body>
+    <div id="jsx.style"></div>
+    <script type="module">
+      import { CodePreviewPage } from './src/pages/CodePreviewPage';
+      import { createRoot } from 'react-dom/client';
+      import { createElement } from 'react';
+      import './src/style.css';
+
+      const root = createRoot(document.getElementById('jsx.style'));
+      root.render(createElement(CodePreviewPage));
+    </script>
+  </body>
+</html>

@@ -1,5 +1,5 @@
 import * as t from '@babel/types';
-import path from 'path';
+import * as path from 'path';
 import invariant from 'invariant';
 import type { Scope, Binding } from '@babel/traverse';
 

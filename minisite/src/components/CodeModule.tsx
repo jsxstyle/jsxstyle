@@ -33,9 +33,10 @@ export const CodeModule: React.FC<CodeModuleProps> = ({ code, title }) => {
         lineHeight="20px"
         fontFamily="Menlo, Monaco, monospace"
         component="code"
-        whiteSpace="pre-wrap"
+        whiteSpace="nowrap"
+        overflowY="scroll"
       >
-        {code}
+        <pre>{code}</pre>
       </Block>
     </Col>
   );

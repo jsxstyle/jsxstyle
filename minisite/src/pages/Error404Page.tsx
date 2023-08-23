@@ -1,9 +1,9 @@
 import { Chrome } from '../components/Chrome';
 
-export default function Error404Page() {
+export const Error404Page: React.FC = () => {
   return (
-    <Chrome title="404: Page not found">
+    <Chrome>
       <p>404: Page not found</p>
     </Chrome>
   );
-}
+};

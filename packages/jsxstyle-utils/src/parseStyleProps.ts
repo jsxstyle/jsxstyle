@@ -5,15 +5,16 @@ import type { AnimatableCSSProperties as CSSProps } from './types';
 const capRegex = /[A-Z]/g;
 
 export const commonComponentProps = {
-  class: true,
-  className: true,
   checked: true,
   children: true,
+  class: true,
+  className: true,
   disabled: true,
   href: true,
   id: true,
   name: true,
   placeholder: true,
+  src: true,
   style: true,
   type: true,
   value: true,

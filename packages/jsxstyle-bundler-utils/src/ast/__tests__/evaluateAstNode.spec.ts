@@ -1,6 +1,6 @@
 import generate from '@babel/generator';
 import * as t from '@babel/types';
-import vm from 'vm';
+import * as vm from 'vm';
 
 import { evaluateAstNode } from '../evaluateAstNode';
 import { parse } from '../babelUtils';

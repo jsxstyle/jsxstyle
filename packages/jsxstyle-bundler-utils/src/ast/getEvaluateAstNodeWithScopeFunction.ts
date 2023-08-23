@@ -2,7 +2,7 @@
 import * as t from '@babel/types';
 import { getStaticBindingsForScope } from './getStaticBindingsForScope';
 import type { NodePath } from '@babel/traverse';
-import vm from 'vm';
+import * as vm from 'vm';
 import { generate } from './babelUtils';
 import { evaluateAstNode } from './evaluateAstNode';
 import { isObject } from '../typePredicates';

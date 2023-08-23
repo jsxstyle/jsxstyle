@@ -1,6 +1,6 @@
 import Module from 'module';
-import path from 'path';
-import vm from 'vm';
+import * as path from 'path';
+import * as vm from 'vm';
 
 export const getExportsFromModuleSource = (
   modulePath: string,

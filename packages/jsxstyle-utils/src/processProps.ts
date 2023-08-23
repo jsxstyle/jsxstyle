@@ -57,7 +57,10 @@ export function processProps(
           const { propName, propValue, pseudoclass, pseudoelement } =
             animationResult.parsedStyleProps[key];
           if (pseudoclass || pseudoelement) {
-            if (process.env.NODE_ENV !== 'production') {
+            if (
+              typeof process !== 'undefined' &&
+              process.env.NODE_ENV !== 'production'
+            ) {
               console.error(
                 '[jsxstyle] Encountered a pseudo-prefixed prop in animation value: %s%s%s',
                 propName,
@@ -77,7 +80,10 @@ export function processProps(
         }
 
         if (groupStyles === '') {
-          if (process.env.NODE_ENV !== 'production') {
+          if (
+            typeof process !== 'undefined' &&
+            process.env.NODE_ENV !== 'production'
+          ) {
             console.error(
               '[jsxstyle] Animation value `%s` contained no valid style props:',
               k,

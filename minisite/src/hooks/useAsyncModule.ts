@@ -1,9 +1,5 @@
 import { useEffect, useState } from 'react';
 
-interface UseAsyncModuleOptions {
-  ssr?: boolean;
-}
-
 interface ErrorState {
   state: 'error';
   error: unknown;
@@ -19,21 +15,19 @@ interface PendingState {
 }
 
 export const useAsyncModule = <T>(
-  getter: () => Promise<T>,
-  options: UseAsyncModuleOptions = {}
+  getter: () => Promise<T>
 ): ErrorState | PendingState | SuccessState<T> => {
   const [error, setError] = useState<unknown>();
   const [result, setResult] = useState<T>();
 
   useEffect(() => {
-    if (options.ssr !== false || typeof window !== 'undefined') {
-      getter()
-        .then((result) => setResult(result))
-        .catch((error) => setError(error));
-    }
-  }, [options.ssr]);
+    getter()
+      .then((result) => setResult(result))
+      .catch((error) => setError(error));
+  }, []);
 
   if (error) {
+    console.error('useAsyncModule error:', error);
     return { state: 'error', error };
   }
 

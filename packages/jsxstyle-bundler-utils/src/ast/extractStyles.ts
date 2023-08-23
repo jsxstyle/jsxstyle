@@ -4,8 +4,7 @@ import type { NodePath, TraverseOptions } from '@babel/traverse';
 import * as t from '@babel/types';
 import invariant from 'invariant';
 import { componentStyles } from '../../../jsxstyle-utils/src';
-import path from 'path';
-import util from 'util';
+import * as path from 'path';
 
 import { evaluateAstNode } from './evaluateAstNode';
 import { getEvaluateAstNodeWithScopeFunction } from './getEvaluateAstNodeWithScopeFunction';
@@ -22,8 +21,8 @@ import {
 import { generate, traverse } from './babelUtils';
 import { handleJsxElement } from './handleJsxAttributes';
 import { handleCssFunction } from './handleCssFunction';
-
 import { VISITOR_KEYS } from '@babel/types';
+
 function skipChildren(path: NodePath) {
   for (const key of VISITOR_KEYS[path.type]) {
     path.skipKey(key);
@@ -98,12 +97,11 @@ const defaultStyleAttributes = Object.entries(componentStyles).reduce<
       } else if (typeof propValue === 'string') {
         valueEx = t.stringLiteral(propValue);
       } else {
-        throw new Error(
-          util.format(
-            'Unhandled type `%s` for `%s` component styles',
-            typeof propValue,
-            componentName
-          )
+        invariant(
+          false,
+          'Unhandled type `%s` for `%s` component styles',
+          typeof propValue,
+          componentName
         );
       }
 
@@ -672,7 +670,10 @@ export function extractStyles(
   if (cssMapEntries.length > 0) {
     const importsToPrepend: t.Statement[] = [];
     if (!cssMode || cssMode === 'singleInlineImport') {
-      const relativeFilePath = path.relative(process.cwd(), sourceFileName);
+      const relativeFilePath =
+        typeof process === 'undefined'
+          ? sourceFileName
+          : path.relative(process.cwd(), sourceFileName);
 
       const cssString =
         `/* ${relativeFilePath} */\n` +

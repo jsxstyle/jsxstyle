@@ -91,7 +91,10 @@ export function dangerousStyleValue(name: string, value: unknown): string {
   if (!(value as any).toString) {
     // values that lack a toString method on their prototype will throw a TypeError
     // see https://github.com/jsxstyle/jsxstyle/issues/112
-    if (process.env.NODE_ENV === 'development') {
+    if (
+      typeof process !== 'undefined' &&
+      process.env.NODE_ENV === 'development'
+    ) {
       console.error(
         'Value for prop `%s` (`%o`) cannot be stringified.',
         name,
