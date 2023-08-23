@@ -15,16 +15,18 @@ describe('generateCustomPropertiesFromVariants', () => {
           "exampleNumber": "var(--jsxstyle-exampleNumber)",
           "exampleString": "var(--jsxstyle-exampleString)",
         },
-        "overrideClasses": {
-          "default": "jsxstyle-override__default",
-        },
         "styles": [
           ":root { --jsxstyle-exampleNumber: 123px;--jsxstyle-exampleString: wow; }",
-          ":root.jsxstyle-override__default, :root .jsxstyle-override__default { --jsxstyle-exampleNumber: 123px;--jsxstyle-exampleString: wow; }",
+          ":root:not(.\\9).jsxstyle_default { --jsxstyle-exampleNumber: 123px;--jsxstyle-exampleString: wow; }",
         ],
         "variantNames": [
           "default",
         ],
+        "variants": {
+          "default": {
+            "className": "jsxstyle_default",
+          },
+        },
       }
     `);
   });
@@ -47,19 +49,23 @@ describe('generateCustomPropertiesFromVariants', () => {
           "exampleNumber": "var(--jsxstyle-exampleNumber)",
           "exampleString": "var(--jsxstyle-exampleString)",
         },
-        "overrideClasses": {
-          "default": "jsxstyle-override__default",
-          "exampleVariant": "jsxstyle-override__exampleVariant",
-        },
         "styles": [
           ":root { --jsxstyle-exampleNumber: 123px;--jsxstyle-exampleString: wow; }",
-          ":root.jsxstyle-override__default, :root .jsxstyle-override__default { --jsxstyle-exampleNumber: 123px;--jsxstyle-exampleString: wow; }",
-          ":root.jsxstyle-override__exampleVariant, :root .jsxstyle-override__exampleVariant { --jsxstyle-exampleNumber: 456px;--jsxstyle-exampleString: ok; }",
+          ":root:not(.\\9).jsxstyle_default { --jsxstyle-exampleNumber: 123px;--jsxstyle-exampleString: wow; }",
+          ":root:not(.\\9).jsxstyle_exampleVariant { --jsxstyle-exampleNumber: 456px;--jsxstyle-exampleString: ok; }",
         ],
         "variantNames": [
           "default",
           "exampleVariant",
         ],
+        "variants": {
+          "default": {
+            "className": "jsxstyle_default",
+          },
+          "exampleVariant": {
+            "className": "jsxstyle_exampleVariant",
+          },
+        },
       }
     `);
   });
@@ -72,16 +78,18 @@ describe('generateCustomPropertiesFromVariants', () => {
     expect(example).toMatchInlineSnapshot(`
       {
         "customProperties": {},
-        "overrideClasses": {
-          "default": "jsxstyle-override__default",
-        },
         "styles": [
           ":root {  }",
-          ":root.jsxstyle-override__default, :root .jsxstyle-override__default {  }",
+          ":root:not(.\\9).jsxstyle_default {  }",
         ],
         "variantNames": [
           "default",
         ],
+        "variants": {
+          "default": {
+            "className": "jsxstyle_default",
+          },
+        },
       }
     `);
   });
@@ -109,19 +117,23 @@ describe('generateCustomPropertiesFromVariants', () => {
           "exampleNumber": "var(--exampleNamespace-exampleNumber)",
           "exampleString": "var(--exampleNamespace-exampleString)",
         },
-        "overrideClasses": {
-          "default": "exampleNamespace-override__default",
-          "exampleVariant": "exampleNamespace-override__exampleVariant",
-        },
         "styles": [
           ":root { --exampleNamespace-exampleNumber: 123px;--exampleNamespace-exampleString: wow; }",
-          ":root.exampleNamespace-override__default, :root .exampleNamespace-override__default { --exampleNamespace-exampleNumber: 123px;--exampleNamespace-exampleString: wow; }",
-          ":root.exampleNamespace-override__exampleVariant, :root .exampleNamespace-override__exampleVariant { --exampleNamespace-exampleNumber: 456px;--exampleNamespace-exampleString: ok; }",
+          ":root:not(.\\9).exampleNamespace_default { --exampleNamespace-exampleNumber: 123px;--exampleNamespace-exampleString: wow; }",
+          ":root:not(.\\9).exampleNamespace_exampleVariant { --exampleNamespace-exampleNumber: 456px;--exampleNamespace-exampleString: ok; }",
         ],
         "variantNames": [
           "default",
           "exampleVariant",
         ],
+        "variants": {
+          "default": {
+            "className": "exampleNamespace_default",
+          },
+          "exampleVariant": {
+            "className": "exampleNamespace_exampleVariant",
+          },
+        },
       }
     `);
   });
@@ -149,19 +161,23 @@ describe('generateCustomPropertiesFromVariants', () => {
           "exampleNumber": "var(--x0)",
           "exampleString": "var(--x1)",
         },
-        "overrideClasses": {
-          "default": "x-override__default",
-          "exampleVariant": "x-override__exampleVariant",
-        },
         "styles": [
           ":root { --x0: 123px;--x1: wow; }",
-          ":root.x-override__default, :root .x-override__default { --x0: 123px;--x1: wow; }",
-          ":root.x-override__exampleVariant, :root .x-override__exampleVariant { --x1: ok; }",
+          ":root:not(.\\9).x_default { --x0: 123px;--x1: wow; }",
+          ":root:not(.\\9).x_exampleVariant { --x1: ok; }",
         ],
         "variantNames": [
           "default",
           "exampleVariant",
         ],
+        "variants": {
+          "default": {
+            "className": "x_default",
+          },
+          "exampleVariant": {
+            "className": "x_exampleVariant",
+          },
+        },
       }
     `);
   });
@@ -186,19 +202,23 @@ describe('generateCustomPropertiesFromVariants', () => {
         "customProperties": {
           "exampleString": "var(--jsxstyle-exampleString)",
         },
-        "overrideClasses": {
-          "default": "jsxstyle-override__default",
-          "exampleVariant": "jsxstyle-override__exampleVariant",
-        },
         "styles": [
           "#test { --jsxstyle-exampleString: wow; }",
-          "#test.jsxstyle-override__default, #test .jsxstyle-override__default { --jsxstyle-exampleString: wow; }",
-          "#test.jsxstyle-override__exampleVariant, #test .jsxstyle-override__exampleVariant { --jsxstyle-exampleString: ok; }",
+          "#test:not(.\\9).jsxstyle_default { --jsxstyle-exampleString: wow; }",
+          "#test:not(.\\9).jsxstyle_exampleVariant { --jsxstyle-exampleString: ok; }",
         ],
         "variantNames": [
           "default",
           "exampleVariant",
         ],
+        "variants": {
+          "default": {
+            "className": "jsxstyle_default",
+          },
+          "exampleVariant": {
+            "className": "jsxstyle_exampleVariant",
+          },
+        },
       }
     `);
   });
@@ -219,20 +239,25 @@ describe('generateCustomPropertiesFromVariants', () => {
         "customProperties": {
           "exampleString": "var(--jsxstyle-exampleString)",
         },
-        "overrideClasses": {
-          "default": "jsxstyle-override__default",
-          "exampleVariant": "jsxstyle-override__exampleVariant",
-        },
         "styles": [
           ":root { --jsxstyle-exampleString: wow; }",
-          "@media screen and example-media-query { :root { --jsxstyle-exampleString: ok; } }",
-          ":root.jsxstyle-override__default, :root .jsxstyle-override__default { --jsxstyle-exampleString: wow; }",
-          ":root.jsxstyle-override__exampleVariant, :root .jsxstyle-override__exampleVariant { --jsxstyle-exampleString: ok; }",
+          ":root:not(.\\9).jsxstyle_default { --jsxstyle-exampleString: wow; }",
+          ":root:not(.\\9).jsxstyle_exampleVariant { --jsxstyle-exampleString: ok; }",
+          "@media screen and example-media-query { :root:not(.\\9) { --jsxstyle-exampleString: ok; } }",
         ],
         "variantNames": [
           "default",
           "exampleVariant",
         ],
+        "variants": {
+          "default": {
+            "className": "jsxstyle_default",
+          },
+          "exampleVariant": {
+            "className": "jsxstyle_exampleVariant",
+            "mediaQuery": "@media screen and example-media-query",
+          },
+        },
       }
     `);
   });

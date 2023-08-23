@@ -17,7 +17,7 @@ import { getImportForSource } from './getImportForSource';
 import type { GetClassNameForKeyFn } from '../../../jsxstyle-utils/src';
 import {
   generateCustomPropertiesFromVariants,
-  VariantMap,
+  type VariantMap,
 } from '../../../jsxstyle-utils/src/generateCustomPropertiesFromVariants';
 import { generate, traverse } from './babelUtils';
 import { handleJsxElement } from './handleJsxAttributes';
@@ -429,8 +429,7 @@ export function extractStyles(
 
                 // order is important here
                 for (let i = 0, len = result.styles.length; i < len; i++) {
-                  const sortKey = (i + '').padStart((len + '').length, '0');
-                  cssMap[`/*${sortKey}*/ ` + result.styles[i]] = '';
+                  cssMap[result.styles[i]] = '';
                 }
 
                 const wipFunction = t.functionExpression(
@@ -456,20 +455,32 @@ export function extractStyles(
                       }
                     ),
                     t.objectProperty(
-                      t.identifier('variants'),
+                      t.identifier('variantNames'),
                       t.arrayExpression(
                         result.variantNames.map((name) => t.stringLiteral(name))
                       )
                     ),
                     t.objectProperty(t.identifier('setVariant'), wipFunction),
-                    ...result.variantNames.map((name) => {
-                      return t.objectProperty(
-                        t.identifier(
-                          `activate${name[0].toUpperCase()}${name.slice(1)}`
-                        ),
-                        wipFunction
-                      );
-                    }),
+                    t.objectProperty(
+                      t.identifier('variants'),
+                      t.objectExpression(
+                        result.variantNames.map((name) => {
+                          return t.objectProperty(
+                            t.identifier(name),
+                            t.objectExpression([
+                              t.objectProperty(
+                                t.identifier('className'),
+                                t.stringLiteral(result.variants[name].className)
+                              ),
+                              t.objectProperty(
+                                t.identifier('activate'),
+                                wipFunction
+                              ),
+                            ])
+                          );
+                        })
+                      )
+                    ),
                   ])
                 );
 

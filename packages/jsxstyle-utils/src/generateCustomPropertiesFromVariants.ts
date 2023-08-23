@@ -33,6 +33,11 @@ export interface BuildOptions {
   mangle?: boolean;
 }
 
+export interface CustomPropertyVariant {
+  className: string;
+  mediaQuery?: `@media ${string}`;
+}
+
 export const generateCustomPropertiesFromVariants = <
   KPropKey extends string,
   TVariantName extends string
@@ -46,18 +51,18 @@ export const generateCustomPropertiesFromVariants = <
     mangle = false,
   } = buildOptions;
   /** Prefix for the override class name */
-  const overrideClassNamePrefix = namespace + '-override__';
+  const overrideClassNamePrefix = namespace + '_';
 
   const propKeys: KPropKey[] = Object.keys(variantMap.default) as any;
   const variantNames: TVariantName[] = Object.keys(variantMap) as any;
 
-  const initialStyles: string[] = [];
-  const overrideStyles: string[] = [];
+  const styles: string[] = [];
 
   const customProperties: Record<KPropKey, string> = {} as any;
-  const overrideClasses: Record<TVariantName, string> = {} as any;
   const mangleMap: Partial<Record<KPropKey, number>> = {};
   let mangleIndex = 0;
+
+  const variants: Record<TVariantName, CustomPropertyVariant> = {} as any;
 
   for (const variantName of variantNames) {
     const variant: PropMap<KPropKey> =
@@ -77,17 +82,22 @@ export const generateCustomPropertiesFromVariants = <
       }
     }
 
-    const overrideClassName = `${overrideClassNamePrefix}${variantName}`;
-    overrideClasses[variantName] = overrideClassName;
+    const overrideClassName = overrideClassNamePrefix + variantName;
+
+    const variantObj: CustomPropertyVariant = {
+      className: overrideClassName,
+    };
+    variants[variantName] = variantObj;
+
     if (variantName === 'default') {
-      initialStyles.unshift(`${selector} { ${cssBody} }`);
+      styles.unshift(`${selector} { ${cssBody} }`);
     }
-    overrideStyles.push(
-      `${selector}.${overrideClassName}, ${selector} .${overrideClassName} { ${cssBody} }`
-    );
+    // `:not(.\\9)` bumps specificity, +1 class for each `.\\9`
+    styles.push(`${selector}:not(.\\9).${overrideClassName} { ${cssBody} }`);
     if (variant.mediaQuery) {
-      initialStyles.push(
-        `@media ${variant.mediaQuery} { ${selector} { ${cssBody} } }`
+      variantObj.mediaQuery = `@media ${variant.mediaQuery}`;
+      styles.push(
+        `@media ${variant.mediaQuery} { ${selector}:not(.\\9) { ${cssBody} } }`
       );
     }
   }
@@ -95,7 +105,7 @@ export const generateCustomPropertiesFromVariants = <
   return {
     customProperties,
     variantNames,
-    overrideClasses,
-    styles: [...initialStyles, ...overrideStyles],
+    variants,
+    styles,
   };
 };

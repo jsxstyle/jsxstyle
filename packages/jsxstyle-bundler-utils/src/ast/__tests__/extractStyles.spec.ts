@@ -1,5 +1,5 @@
 import { createClassNameGetter } from '../../../../jsxstyle-utils/src';
-import path from 'path';
+import * as path from 'path';
 import {
   extractStyles,
   ExtractStylesOptions,
@@ -1218,24 +1218,32 @@ const props = makeCustomProperties({
       const props = {
         prop1: "var(--jsxstyle-prop1)",
         prop2: "var(--jsxstyle-prop2)",
-        variants: ["default", "banana"],
+        variantNames: ["default", "banana"],
         setVariant: function () {
           throw new Error("Not yet implemented");
         },
-        activateDefault: function () {
-          throw new Error("Not yet implemented");
-        },
-        activateBanana: function () {
-          throw new Error("Not yet implemented");
+        variants: {
+          default: {
+            className: "jsxstyle_default",
+            activate: function () {
+              throw new Error("Not yet implemented");
+            }
+          },
+          banana: {
+            className: "jsxstyle_banana",
+            activate: function () {
+              throw new Error("Not yet implemented");
+            }
+          }
         }
       };"
     `);
     expect(rv.css).toMatchInlineSnapshot(`
       "/* mock/custom-properties1.js */
-      /*0*/ :root { --jsxstyle-prop1: prop1 value;--jsxstyle-prop2: 123px; }
-      /*1*/ @media mq { :root { --jsxstyle-prop1: banana prop1 value; } }
-      /*2*/ :root.jsxstyle-override__default, :root .jsxstyle-override__default { --jsxstyle-prop1: prop1 value;--jsxstyle-prop2: 123px; }
-      /*3*/ :root.jsxstyle-override__banana, :root .jsxstyle-override__banana { --jsxstyle-prop1: banana prop1 value; }
+      :root { --jsxstyle-prop1: prop1 value;--jsxstyle-prop2: 123px; }
+      :root:not(.\\9).jsxstyle_banana { --jsxstyle-prop1: banana prop1 value; }
+      :root:not(.\\9).jsxstyle_default { --jsxstyle-prop1: prop1 value;--jsxstyle-prop2: 123px; }
+      @media mq { :root:not(.\\9) { --jsxstyle-prop1: banana prop1 value; } }
       "
     `);
   });
@@ -1262,24 +1270,32 @@ const props = makeCustomProperties({
       const props = {
         prop1: "var(--test0)",
         prop2: "var(--test1)",
-        variants: ["default", "banana"],
+        variantNames: ["default", "banana"],
         setVariant: function () {
           throw new Error("Not yet implemented");
         },
-        activateDefault: function () {
-          throw new Error("Not yet implemented");
-        },
-        activateBanana: function () {
-          throw new Error("Not yet implemented");
+        variants: {
+          default: {
+            className: "test_default",
+            activate: function () {
+              throw new Error("Not yet implemented");
+            }
+          },
+          banana: {
+            className: "test_banana",
+            activate: function () {
+              throw new Error("Not yet implemented");
+            }
+          }
         }
       };"
     `);
     expect(rv.css).toMatchInlineSnapshot(`
       "/* mock/custom-properties1.js */
-      /*0*/ :root { --test0: prop1 value;--test1: 123px; }
-      /*1*/ @media mq { :root { --test0: banana prop1 value; } }
-      /*2*/ :root.test-override__default, :root .test-override__default { --test0: prop1 value;--test1: 123px; }
-      /*3*/ :root.test-override__banana, :root .test-override__banana { --test0: banana prop1 value; }
+      :root { --test0: prop1 value;--test1: 123px; }
+      :root:not(.\\9).test_banana { --test0: banana prop1 value; }
+      :root:not(.\\9).test_default { --test0: prop1 value;--test1: 123px; }
+      @media mq { :root:not(.\\9) { --test0: banana prop1 value; } }
       "
     `);
   });

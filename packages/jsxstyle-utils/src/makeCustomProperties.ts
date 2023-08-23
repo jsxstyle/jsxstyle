@@ -3,8 +3,13 @@ import { canUseDOM } from './addStyleToHead';
 import {
   type BuildOptions,
   type VariantMap,
+  type CustomPropertyVariant,
   generateCustomPropertiesFromVariants,
 } from './generateCustomPropertiesFromVariants';
+
+interface CustomPropertyVariantWithSetMethod extends CustomPropertyVariant {
+  activate: () => void;
+}
 
 const makeCustomPropertiesInternal = <
   KPropKey extends string,
@@ -29,19 +34,10 @@ const makeCustomPropertiesInternal = <
     );
   },
 
-  build: (
-    buildOptions: BuildOptions = {}
-  ): {
-    setVariant: (variantName: TVariantName | null) => void;
-    variants: readonly TVariantName[];
-  } & {
-    [K in KPropKey]: string;
-  } & {
-    [K in TVariantName as `activate${Capitalize<K>}`]: () => void;
-  } => {
+  build: (buildOptions: BuildOptions = {}) => {
     let overrideElement: Element | null = null;
 
-    const { customProperties, overrideClasses, styles, variantNames } =
+    const { customProperties, styles, variants, variantNames } =
       generateCustomPropertiesFromVariants(variantMap, buildOptions);
 
     styles.forEach(cache.insertRule);
@@ -49,7 +45,11 @@ const makeCustomPropertiesInternal = <
     if (canUseDOM) {
       if (buildOptions.selector) {
         overrideElement = document.querySelector(buildOptions.selector);
-        if (!overrideElement && process.env.NODE_ENV !== 'production') {
+        if (
+          !overrideElement &&
+          typeof process !== 'undefined' &&
+          process.env.NODE_ENV !== 'production'
+        ) {
           console.error(
             'Selector `%s` does not map to an element that exists in the DOM. Manual variant overrides will not work as expected.',
             buildOptions.selector
@@ -63,24 +63,30 @@ const makeCustomPropertiesInternal = <
     const setVariant = (variantName: TVariantName | null): void => {
       if (!overrideElement) return;
       overrideElement.classList.remove(
-        ...variantNames.map((key) => overrideClasses[key])
+        ...variantNames.map((key) => variants[key].className)
       );
       if (variantName) {
-        overrideElement.classList.add(overrideClasses[variantName]);
+        overrideElement.classList.add(variants[variantName].className);
       }
     };
 
-    const returnValue: Record<string, any> = { ...customProperties };
+    const variantsObj: Record<
+      TVariantName,
+      CustomPropertyVariantWithSetMethod
+    > = {} as any;
     for (const variantName of variantNames) {
-      returnValue[
-        `activate${variantName[0].toUpperCase()}${variantName.slice(1)}`
-      ] = () => void setVariant(variantName);
+      variantsObj[variantName] = {
+        ...variants[variantName],
+        activate: () => void setVariant(variantName),
+      };
     }
 
-    returnValue.setVariant = setVariant;
-    returnValue.variants = variantNames;
-
-    return returnValue as any;
+    return {
+      ...customProperties,
+      setVariant,
+      variantNames,
+      variants: variantsObj,
+    };
   },
 });
 

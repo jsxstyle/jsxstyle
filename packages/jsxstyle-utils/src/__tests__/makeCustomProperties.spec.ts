@@ -39,10 +39,10 @@ describe('makeCustomProperties', () => {
         {
           "styles": [
             "#banana {--exampleNamespace0: 123px; --exampleNamespace1: wow;}",
-            "@media screen and example {#banana {--exampleNamespace0: 456px;}}",
-            "#banana.exampleNamespace-override__default, #banana .exampleNamespace-override__default {--exampleNamespace0: 123px; --exampleNamespace1: wow;}",
-            "#banana.exampleNamespace-override__exampleVariant, #banana .exampleNamespace-override__exampleVariant {--exampleNamespace1: variantWow;}",
-            "#banana.exampleNamespace-override__variantWithMQ, #banana .exampleNamespace-override__variantWithMQ {--exampleNamespace0: 456px;}",
+            "#banana:not(.\\9).exampleNamespace_default {--exampleNamespace0: 123px; --exampleNamespace1: wow;}",
+            "#banana:not(.\\9).exampleNamespace_exampleVariant {--exampleNamespace1: variantWow;}",
+            "#banana:not(.\\9).exampleNamespace_variantWithMQ {--exampleNamespace0: 456px;}",
+            "@media screen and example {#banana:not(.\\9) {--exampleNamespace0: 456px;}}",
           ],
           "text": "/* jsxstyle */",
         },
@@ -51,17 +51,29 @@ describe('makeCustomProperties', () => {
 
     expect(example).toMatchInlineSnapshot(`
       {
-        "activateDefault": [Function],
-        "activateExampleVariant": [Function],
-        "activateVariantWithMQ": [Function],
         "exampleNumber": "var(--exampleNamespace0)",
         "exampleString": "var(--exampleNamespace1)",
         "setVariant": [Function],
-        "variants": [
+        "variantNames": [
           "default",
           "exampleVariant",
           "variantWithMQ",
         ],
+        "variants": {
+          "default": {
+            "activate": [Function],
+            "className": "exampleNamespace_default",
+          },
+          "exampleVariant": {
+            "activate": [Function],
+            "className": "exampleNamespace_exampleVariant",
+          },
+          "variantWithMQ": {
+            "activate": [Function],
+            "className": "exampleNamespace_variantWithMQ",
+            "mediaQuery": "@media screen and example",
+          },
+        },
       }
     `);
   });
