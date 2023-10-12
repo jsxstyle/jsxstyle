@@ -14,7 +14,7 @@ it('builds without issue', () => {
   compiler.outputFileSystem = fs;
 
   expect.assertions(4);
-  return new Promise((resolve, reject) => {
+  return new Promise<void>((resolve, reject) => {
     compiler.run((err, stats) => {
       if (err) {
         console.error(err.stack || err);
