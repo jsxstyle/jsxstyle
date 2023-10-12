@@ -29,6 +29,9 @@ jobs:
 
       - name: Run jest
         run: yarn run test
+        env:
+          # workaround for obsolete SSL in obsolete version of webpack
+          NODE_OPTIONS: --openssl-legacy-provider
 
       - name: Run karma
         run: yarn run karma
