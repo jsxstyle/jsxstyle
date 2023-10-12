@@ -16,6 +16,7 @@
     "jsxstyle"
   ],
   "dependencies": {
-    "csstype": "^2.6.7"
+    "csstype": "^2.6.7",
+    "type-fest": "^4.2.0"
   }
 }
