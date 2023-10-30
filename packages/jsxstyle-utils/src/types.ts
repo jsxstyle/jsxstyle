@@ -18,9 +18,8 @@ interface JsxstyleAnimation {
 
 type Pseudoelements = keyof typeof pseudoelements;
 type Pseudoclasses = keyof typeof pseudoclasses;
-type PrefixString<P extends string, K extends string> = `${P}${K}`;
 type PrefixKeys<P extends string, T> = {
-  [K in keyof T as PrefixString<P, Capitalize<Extract<K, string>>>]: T[K];
+  [K in keyof T as `${P}${Capitalize<Extract<K, string>>}`]: T[K];
 };
 
 type CSSPropsPseudoelements = PrefixKeys<Pseudoelements, BaseCSSProperties>;
