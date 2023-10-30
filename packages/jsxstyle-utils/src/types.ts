@@ -1,5 +1,7 @@
 import { Properties } from 'csstype';
 
+import { pseudoclasses, pseudoelements } from './getStyleKeysForProps';
+
 /**
  * Make all properties in `T` potentially `null` or `false`.
  *
@@ -14,7 +16,22 @@ interface JsxstyleAnimation {
   [key: string]: BaseCSSProperties;
 }
 
-interface CSSPropsInternal extends Omit<BaseCSSProperties, 'animation'> {
+type Pseudoelements = keyof typeof pseudoelements;
+type Pseudoclasses = keyof typeof pseudoclasses;
+type PrefixKeys<P extends string, T> = {
+  [K in keyof T as `${P}${Capitalize<Extract<K, string>>}`]: T[K];
+};
+
+type CSSPropsPseudoelements = PrefixKeys<Pseudoelements, BaseCSSProperties>;
+type CSSPropsPseudoclasses = PrefixKeys<
+  Pseudoclasses,
+  BaseCSSProperties & CSSPropsPseudoelements
+>;
+
+interface CSSPropsInternal
+  extends Omit<BaseCSSProperties, 'animation'>,
+    CSSPropsPseudoelements,
+    CSSPropsPseudoclasses {
   // custom animation prop
   animation?: BaseCSSProperties['animation'] | JsxstyleAnimation;
 
@@ -23,62 +40,6 @@ interface CSSPropsInternal extends Omit<BaseCSSProperties, 'animation'> {
   marginV?: BaseCSSProperties['margin'];
   paddingH?: BaseCSSProperties['padding'];
   paddingV?: BaseCSSProperties['padding'];
-
-  // commonly used pseudo-prefixed style names
-  activeOpacity?: BaseCSSProperties['opacity'];
-  disabledOpacity?: BaseCSSProperties['opacity'];
-  focusOpacity?: BaseCSSProperties['opacity'];
-  hoverOpacity?: BaseCSSProperties['opacity'];
-
-  activeColor?: BaseCSSProperties['color'];
-  hoverColor?: BaseCSSProperties['color'];
-
-  activeBackgroundColor?: BaseCSSProperties['backgroundColor'];
-  focusBackgroundColor?: BaseCSSProperties['backgroundColor'];
-  hoverBackgroundColor?: BaseCSSProperties['backgroundColor'];
-
-  hoverTextDecoration?: BaseCSSProperties['textDecoration'];
-  hoverTextDecorationColor?: BaseCSSProperties['textDecorationColor'];
-
-  activeBoxShadow?: BaseCSSProperties['boxShadow'];
-  focusBoxShadow?: BaseCSSProperties['boxShadow'];
-  hoverBoxShadow?: BaseCSSProperties['boxShadow'];
-
-  placeholderColor?: BaseCSSProperties['color'];
-  disabledPlaceholderColor?: BaseCSSProperties['color'];
-  focusPlaceholderColor?: BaseCSSProperties['color'];
-
-  selectionColor?: BaseCSSProperties['color'];
-  selectionBackgroundColor?: BaseCSSProperties['backgroundColor'];
 }
 
-/**
- * jsxstyle-compatible CSS properties interface provided by `csstype`.
- *
- * Note: this interface does not support prefixed style props (media query or pseudoclass/pseudoelement).
- * Support for these props can be added as needed with module augmentation. Example:
- *
-```typescript
-  import { CSSProperties } from 'jsxstyle';
-
-  declare module 'jsxstyle' {
-    interface CSSProperties {
-      hoverBackgroundColor: CSSProperties['backgroundColor'];
-    }
-  }
-```
-
- * or if you’re feeling adventurous:
-
-```typescript
-  import { CSSProperties } from 'jsxstyle';
-
-  declare module 'jsxstyle' {
-    interface CSSProperties {
-      [key: string]: any;
-    }
-  }
-```
- * For further reading, see the TypeScript docs: https://www.typescriptlang.org/docs/handbook/declaration-merging.html#module-augmentation
- */
 export interface CSSProperties extends Falsey<CSSPropsInternal> {}

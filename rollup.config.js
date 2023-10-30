@@ -1,3 +1,4 @@
+import babelPluginClassProperties from '@babel/plugin-transform-class-properties';
 import rollupPluginTypescript from 'rollup-plugin-typescript2';
 import rollupPluginBabel from '@rollup/plugin-babel';
 import { DEFAULT_EXTENSIONS } from '@babel/core';
@@ -36,6 +37,7 @@ export default [
         extensions: [...DEFAULT_EXTENSIONS, '.ts', '.tsx'],
         presets: [['@babel/preset-env', { loose: true }]],
         plugins: [
+          [babelPluginClassProperties],
           [
             require.resolve('./misc/babel-plugin-pure-annotation'),
             {

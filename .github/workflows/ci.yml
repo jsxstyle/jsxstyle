@@ -18,16 +18,20 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Use Node 12
-        uses: actions/setup-node@v2
+      - name: Use Node 18
+        uses: actions/setup-node@v3
         with:
-          node-version: 12.x
+          node-version: 18.x
+          cache: 'yarn'
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
       - name: Run jest
         run: yarn run test
+        env:
+          # workaround for obsolete SSL in obsolete version of webpack
+          NODE_OPTIONS: --openssl-legacy-provider
 
       - name: Run karma
         run: yarn run karma
