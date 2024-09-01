@@ -1,14 +1,14 @@
-import {
-  extractStyles,
-  type UserConfigurableOptions,
-} from '../../jsxstyle-bundler-utils/src/ast/extractStyles';
-import { getExportsFromModuleSource } from '../../jsxstyle-bundler-utils/src/getExportsFromModuleSource';
-import fs from 'fs/promises';
-import util from 'util';
-import * as path from 'path';
-import type { Plugin } from 'vite';
+import fs from 'node:fs/promises';
+import * as path from 'node:path';
+import util from 'node:util';
 import esbuild from 'esbuild';
 import invariant from 'invariant';
+import type { Plugin } from 'vite';
+import {
+  type UserConfigurableOptions,
+  extractStyles,
+} from '../../jsxstyle-bundler-utils/src/ast/extractStyles';
+import { getExportsFromModuleSource } from '../../jsxstyle-bundler-utils/src/getExportsFromModuleSource';
 
 interface PluginOptions extends UserConfigurableOptions {
   staticModulePaths?: string[];
@@ -28,8 +28,8 @@ class ModuleBundler {
     this.modulesByAbsolutePath = result.outputFiles.reduce<
       Record<string, unknown>
     >((prev, file) => {
-      const index = parseInt(path.basename(file.path), 10);
-      invariant(!isNaN(index), 'Invalid file path: %s', file.path);
+      const index = Number.parseInt(path.basename(file.path), 10);
+      invariant(!Number.isNaN(index), 'Invalid file path: %s', file.path);
       const absPath = this.staticModulePaths[index];
       invariant(
         absPath,
@@ -124,17 +124,19 @@ export const jsxstyleVitePlugin = ({
 
           // create mapping of unique CSS strings to class names
           const lines = new Set<string>(cacheFileContents.trim().split('\n'));
-          lines.forEach((line) => {
+          for (const line of lines) {
             const trimmedLine = line.trim();
             if (trimmedLine) {
               // add each line of CSS to the cache
               getClassNameForKey(trimmedLine);
             }
-          });
+          }
         } catch (error) {
           if (error.code === 'EISDIR') {
             throw new Error('Value of cacheFile is a directory');
-          } else if (error.code === 'ENOENT') {
+          }
+
+          if (error.code === 'ENOENT') {
             console.log('Cache file does not exist and will be created');
           } else {
             throw error;

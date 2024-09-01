@@ -1,4 +1,4 @@
-const path = require('path');
+const path = require('node:path');
 
 require('dotenv').config();
 
@@ -87,19 +87,19 @@ const customLaunchers = [
 ].reduce((prev, curr) => {
   const keyPrefix = `sl_${curr.browserName.toLowerCase()}_${curr.platformName.toLowerCase()}`;
 
-  [0, 1, 2, 3].forEach((num) => {
-    const browserVersion = 'latest' + (num ? '-' + num : '');
+  for (const num of [0, 1, 2, 3]) {
+    const browserVersion = `latest${num ? '-' + num : ''}`;
     const obj = {
       ...curr,
       base: 'SauceLabs',
       browserVersion,
       'sauce:options': {
-        name: curr.browserName + ' on ' + curr.platformName + ' @ ' + when,
+        name: `${curr.browserName} on ${curr.platformName} @ ${when}`,
       },
     };
 
     prev[keyPrefix + '_' + browserVersion] = obj;
-  });
+  }
 
   return prev;
 }, {});

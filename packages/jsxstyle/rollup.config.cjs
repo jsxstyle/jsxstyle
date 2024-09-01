@@ -2,8 +2,8 @@
 
 const { DEFAULT_EXTENSIONS } = require('@babel/core');
 const invariant = require('invariant');
-const path = require('path');
-const fs = require('fs').promises;
+const path = require('node:path');
+const fs = require('node:fs').promises;
 const { babel } = require('@rollup/plugin-babel');
 const { nodeResolve } = require('@rollup/plugin-node-resolve');
 
@@ -39,17 +39,18 @@ const rollupPackageJsonPlugin = {
     const prefix = topLevelModules.includes(chunk.name)
       ? './'
       : experimentalModules.includes(chunk.name)
-      ? './experimental/'
-      : './private/';
+        ? './experimental/'
+        : './private/';
     const modulePath = chunk.name === 'react' ? '.' : prefix + chunk.name;
+    // biome-ignore lint/suspicious/noAssignInExpressions: chill
     const moduleEntry = (exportsObject[modulePath] ||= {});
 
-    moduleEntry['types'] = './lib/' + sourceTSFile.replace(/\.tsx?$/, '.d.ts');
+    moduleEntry.types = './lib/' + sourceTSFile.replace(/\.tsx?$/, '.d.ts');
 
     if (options.format === 'cjs') {
-      moduleEntry['require'] = './' + chunk.fileName;
+      moduleEntry.require = './' + chunk.fileName;
     } else if (options.format === 'es') {
-      moduleEntry['import'] = './' + chunk.fileName;
+      moduleEntry.import = './' + chunk.fileName;
     } else {
       throw new Error('Unhandled format: ' + options.format);
     }
@@ -95,21 +96,20 @@ const rollupPackageJsonPlugin = {
 /** @type {import('rollup').RollupOptions} */
 module.exports = {
   context: packagesDir,
-  // prettier-ignore
   input: {
-    'preact':         '../jsxstyle-preact/src/index.ts',
-    'react':          '../jsxstyle-react/src/index.ts',
-    'solid':          '../jsxstyle-solid/src/index.tsx',
-    'utils':          '../jsxstyle-utils/src/index.ts',
+    preact: '../jsxstyle-preact/src/index.ts',
+    react: '../jsxstyle-react/src/index.ts',
+    solid: '../jsxstyle-solid/src/index.tsx',
+    utils: '../jsxstyle-utils/src/index.ts',
 
-    'bundler-utils':  '../jsxstyle-bundler-utils/src/index.ts',
-    'nextjs-plugin':  '../jsxstyle-nextjs-plugin/src/index.ts',
-    'vite-plugin':    '../jsxstyle-vite-plugin/src/index.ts',
+    'bundler-utils': '../jsxstyle-bundler-utils/src/index.ts',
+    'nextjs-plugin': '../jsxstyle-nextjs-plugin/src/index.ts',
+    'vite-plugin': '../jsxstyle-vite-plugin/src/index.ts',
     'webpack-plugin': '../jsxstyle-webpack-plugin/src/plugin.ts',
     'webpack-loader': '../jsxstyle-webpack-plugin/src/loader.ts',
 
-    'base64-loader':  '../jsxstyle-webpack-plugin/src/base64Loader.ts',
-    'noop':           '../jsxstyle-bundler-utils/src/noop.ts',
+    'base64-loader': '../jsxstyle-webpack-plugin/src/base64Loader.ts',
+    noop: '../jsxstyle-bundler-utils/src/noop.ts',
     'extract-styles': '../jsxstyle-bundler-utils/src/ast/extractStyles.ts',
   },
   output: supportedModuleFormats.map(

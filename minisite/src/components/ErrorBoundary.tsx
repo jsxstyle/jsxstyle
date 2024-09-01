@@ -1,5 +1,5 @@
-import * as React from 'react';
 import { Block } from 'jsxstyle';
+import * as React from 'react';
 
 interface ErrorBoundaryProps {
   children?: React.ReactNode;

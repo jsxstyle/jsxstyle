@@ -1,6 +1,6 @@
+import { createClassNameGetter } from '../createClassNameGetter';
 import { processProps } from '../processProps';
 import { kitchenSink } from './kitchenSink';
-import { createClassNameGetter } from '../createClassNameGetter';
 
 const runProcessProps = (...args: Parameters<typeof processProps>) => {
   const rules: string[] = [];

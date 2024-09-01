@@ -1,0 +1,56 @@
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "vcs": {
+    "clientKind": "git",
+    "defaultBranch": "main",
+    "useIgnoreFile": true
+  },
+  "organizeImports": {
+    "enabled": true
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "style": {
+        "useTemplate": "off"
+      },
+      "suspicious": {
+        "noExplicitAny": "off",
+        "noPrototypeBuiltins": "off"
+      }
+    }
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    // using VS Code's JSON formatting instead since it's basically JSON.stringify
+    "ignore": ["**/*.json"]
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single",
+      "trailingCommas": "es5"
+    }
+  },
+  "files": {
+    // gitignore is being.... ignored, even though I've set vcs.useIgnoreFile to true
+    "ignore": ["**/build", "**/dist", "**/lib", "./misc/saucelabs-data.json"]
+  },
+  "overrides": [
+    {
+      "include": [
+        "*.jsonc",
+        "**/tsconfig.json",
+        ".vscode/settings.json",
+        ".vscode/tasks.json"
+      ],
+      "json": {
+        "parser": {
+          "allowComments": true,
+          "allowTrailingCommas": true
+        }
+      }
+    }
+  ]
+}

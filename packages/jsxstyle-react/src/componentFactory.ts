@@ -1,10 +1,10 @@
+import { createElement } from 'react';
 import {
+  type JsxstyleComponentName,
   componentStyles,
-  JsxstyleComponentName,
 } from '../../jsxstyle-utils/src';
 import { styleCache } from './styleCache';
 import type { JsxstyleProps, ValidComponentPropValue } from './types';
-import { createElement } from 'react';
 
 export const classNamePropKey = 'className';
 

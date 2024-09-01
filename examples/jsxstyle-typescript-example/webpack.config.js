@@ -1,7 +1,7 @@
 // @ts-check
 
 const { JsxstyleWebpackPlugin } = require('jsxstyle/webpack-plugin');
-const path = require('path');
+const path = require('node:path');
 const { ReactIndexPlugin } = require('../ReactIndexPlugin');
 
 const appSrc = path.join(__dirname, 'src');

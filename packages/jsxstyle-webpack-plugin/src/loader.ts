@@ -1,10 +1,10 @@
+import * as path from 'node:path';
+import util from 'node:util';
 import invariant from 'invariant';
-import * as path from 'path';
-import util from 'util';
 import type * as webpack from 'webpack';
 
-import type { LoaderOptions, PluginContext } from './types';
 import { extractStyles } from '../../jsxstyle-bundler-utils/src/ast/extractStyles';
+import type { LoaderOptions, PluginContext } from './types';
 
 const pluginSymbol = Symbol.for('jsxstyle-webpack-plugin');
 

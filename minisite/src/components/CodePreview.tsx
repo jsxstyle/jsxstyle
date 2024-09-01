@@ -25,8 +25,10 @@ export const CodePreview: React.FC<CodePreviewProps> = ({ code }) => {
   }, []);
 
   useEffect(() => {
-    iframeRef.current?.contentWindow?.postMessage(code);
-  }, [iframeReady, code, iframeRef.current]);
+    if (iframeReady) {
+      iframeRef.current?.contentWindow?.postMessage(code);
+    }
+  }, [iframeReady, code]);
 
   return (
     <Block

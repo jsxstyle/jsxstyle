@@ -1,9 +1,8 @@
-/* eslint-disable no-prototype-builtins */
+import * as path from 'node:path';
 import invariant from 'invariant';
-import * as path from 'path';
+import { stringHash } from '../../jsxstyle-utils/src/stringHash';
 import { getExportsFromModuleSource } from './getExportsFromModuleSource';
 import { makePromise } from './makePromise';
-import { stringHash } from '../../jsxstyle-utils/src/stringHash';
 
 interface EntrypointMetadata {
   hash: string | null;

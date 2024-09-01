@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 interface ErrorState {
   state: 'error';
@@ -15,6 +15,7 @@ interface PendingState {
 }
 
 export const useAsyncModule = <T>(
+  /** This function should be stable (i.e. memoised) */
   getter: () => Promise<T>
 ): ErrorState | PendingState | SuccessState<T> => {
   const [error, setError] = useState<unknown>();
@@ -24,16 +25,18 @@ export const useAsyncModule = <T>(
     getter()
       .then((result) => setResult(result))
       .catch((error) => setError(error));
-  }, []);
+  }, [getter]);
 
-  if (error) {
-    console.error('useAsyncModule error:', error);
-    return { state: 'error', error };
-  }
+  return useMemo(() => {
+    if (error) {
+      console.error('useAsyncModule error:', error);
+      return { state: 'error', error };
+    }
 
-  if (result) {
-    return { state: 'success', result };
-  }
+    if (result) {
+      return { state: 'success', result };
+    }
 
-  return { state: 'pending' };
+    return { state: 'pending' };
+  }, [error, result]);
 };

@@ -1,4 +1,6 @@
 {
   "git.enabled": true,
-  "typescript.tsdk": "node_modules/typescript/lib/"
+  "typescript.tsdk": "node_modules/typescript/lib/",
+  "biome.enabled": true,
+  "editor.defaultFormatter": "biomejs.biome"
 }

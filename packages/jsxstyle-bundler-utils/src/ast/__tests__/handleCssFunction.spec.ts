@@ -1,10 +1,10 @@
-import { generate, parse, traverse } from '../babelUtils';
-import { getEvaluateAstNodeWithScopeFunction } from '../getEvaluateAstNodeWithScopeFunction';
+import type * as t from '@babel/types';
+import { format } from 'prettier';
 import { createClassNameGetter } from '../../../../jsxstyle-utils/src';
 import type { InsertRuleCallback } from '../../../../jsxstyle-utils/src/processProps';
+import { generate, parse, traverse } from '../babelUtils';
+import { getEvaluateAstNodeWithScopeFunction } from '../getEvaluateAstNodeWithScopeFunction';
 import { handleCssFunction } from '../handleCssFunction';
-import { format } from 'prettier';
-import * as t from '@babel/types';
 
 const generateAndFormat = (node: t.Node) => {
   return format(generate(node).code, {

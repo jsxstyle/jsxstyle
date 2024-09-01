@@ -1,11 +1,11 @@
-/* eslint-disable no-prototype-builtins */
-import * as t from '@babel/types';
-import { getStaticBindingsForScope } from './getStaticBindingsForScope';
+import * as vm from 'node:vm';
 import type { NodePath } from '@babel/traverse';
-import * as vm from 'vm';
+/* eslint-disable no-prototype-builtins */
+import type * as t from '@babel/types';
+import { isObject } from '../typePredicates';
 import { generate } from './babelUtils';
 import { evaluateAstNode } from './evaluateAstNode';
-import { isObject } from '../typePredicates';
+import { getStaticBindingsForScope } from './getStaticBindingsForScope';
 
 export function getEvaluateAstNodeWithScopeFunction(
   traversePath: NodePath,
@@ -31,7 +31,7 @@ export function getEvaluateAstNodeWithScopeFunction(
     }
 
     // easy bail case number two: simple member expressions
-    else if (
+    if (
       n.type === 'MemberExpression' &&
       n.object.type === 'Identifier' &&
       n.property.type === 'Identifier'

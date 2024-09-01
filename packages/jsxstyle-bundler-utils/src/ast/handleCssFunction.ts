@@ -1,14 +1,14 @@
 import * as t from '@babel/types';
+import invariant from 'invariant';
 import { processProps } from '../../../jsxstyle-utils/src/processProps';
-import { getObjectProperty } from './getObjectProperty';
-import { convertStyleObjectToClassNameNode } from './styleObjectUtils';
-import { joinStringExpressions } from './joinStringExpressions';
-import { flattenSpreadAttributes } from './flattenSpreadAttributes';
+import { generate } from './babelUtils';
 import { evaluateAttributes } from './evaluateAttributes';
 import type { OptionsObject } from './extractStyles';
-import { generate } from './babelUtils';
+import { flattenSpreadAttributes } from './flattenSpreadAttributes';
+import { getObjectProperty } from './getObjectProperty';
+import { joinStringExpressions } from './joinStringExpressions';
 import { normalizeTernary } from './normalizeTernary';
-import invariant from 'invariant';
+import { convertStyleObjectToClassNameNode } from './styleObjectUtils';
 
 const addTestToProps = (
   test: t.Expression,

@@ -12,18 +12,18 @@ export function generateUid(scope: any, name: string): string {
     'generateUid expects a valid name as its second parameter'
   );
 
-  name = t
+  const formattedName = t
     .toIdentifier(name)
     .replace(/^_+/, '')
     .replace(/[0-9]+$/g, '');
 
-  let uid;
+  let uid: string;
   let i = 0;
   do {
     if (i > 1) {
-      uid = name + i;
+      uid = formattedName + i;
     } else {
-      uid = name;
+      uid = formattedName;
     }
     i++;
   } while (

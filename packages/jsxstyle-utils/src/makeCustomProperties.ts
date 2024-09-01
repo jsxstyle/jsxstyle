@@ -1,11 +1,11 @@
-import type { StyleCache } from './getStyleCache';
 import { canUseDOM } from './addStyleToHead';
-import {
-  type BuildOptions,
-  type VariantMap,
-  type CustomPropertyVariant,
-  generateCustomPropertiesFromVariants,
+import { generateCustomPropertiesFromVariants } from './generateCustomPropertiesFromVariants';
+import type {
+  BuildOptions,
+  CustomPropertyVariant,
+  VariantMap,
 } from './generateCustomPropertiesFromVariants';
+import type { StyleCache } from './getStyleCache';
 
 interface CustomPropertyVariantWithSetMethod extends CustomPropertyVariant {
   activate: () => void;
@@ -13,7 +13,7 @@ interface CustomPropertyVariantWithSetMethod extends CustomPropertyVariant {
 
 const makeCustomPropertiesInternal = <
   KPropKey extends string,
-  TVariantName extends string
+  TVariantName extends string,
 >(
   variantMap: VariantMap<TVariantName, KPropKey>,
   cache: StyleCache

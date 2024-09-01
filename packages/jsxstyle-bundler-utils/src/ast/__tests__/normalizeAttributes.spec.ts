@@ -1,4 +1,4 @@
-import { parse, generate, traverse } from '../babelUtils';
+import { generate, parse, traverse } from '../babelUtils';
 import { flattenSpreadAttributes } from '../flattenSpreadAttributes';
 import { getEvaluateAstNodeWithScopeFunction } from '../getEvaluateAstNodeWithScopeFunction';
 

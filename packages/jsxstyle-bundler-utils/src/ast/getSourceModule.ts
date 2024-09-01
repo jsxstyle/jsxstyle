@@ -1,5 +1,5 @@
-import * as t from '@babel/types';
 import type { Binding } from '@babel/traverse';
+import * as t from '@babel/types';
 
 export interface SourceModule {
   sourceModule?: string;

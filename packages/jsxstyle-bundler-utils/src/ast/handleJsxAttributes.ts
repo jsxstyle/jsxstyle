@@ -1,12 +1,12 @@
 import * as t from '@babel/types';
 import { processProps } from '../../../jsxstyle-utils/src/processProps';
-import { getJsxAttribute } from './getJsxAttribute';
-import { convertStyleObjectToClassNameNode } from './styleObjectUtils';
-import { joinStringExpressions } from './joinStringExpressions';
-import { flattenSpreadAttributes } from './flattenSpreadAttributes';
+import { generate } from './babelUtils';
 import { evaluateAttributes } from './evaluateAttributes';
 import type { OptionsObject } from './extractStyles';
-import { generate } from './babelUtils';
+import { flattenSpreadAttributes } from './flattenSpreadAttributes';
+import { getJsxAttribute } from './getJsxAttribute';
+import { joinStringExpressions } from './joinStringExpressions';
+import { convertStyleObjectToClassNameNode } from './styleObjectUtils';
 
 /**
  * This function extracts all static styles from the provided `JSXElement`
@@ -18,7 +18,7 @@ import { generate } from './babelUtils';
  */
 export const handleJsxElement = (
   jsxElement: t.JSXElement,
-  initialStyles: t.JSXAttribute[] | undefined = [],
+  initialStyles: t.JSXAttribute[],
   boxComponentName: string,
   options: OptionsObject
 ): t.JSXElement => {

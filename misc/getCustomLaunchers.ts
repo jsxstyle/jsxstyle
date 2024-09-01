@@ -29,11 +29,11 @@ export type Launcher = WebdriverLauncher | AppiumLauncher;
 
 /** Left pads a number with zeros. will fail on numbers greater than 10,000 */
 const padNum = (num: string): string => {
-  const numInt = parseInt(num, 10);
-  if (isNaN(numInt)) {
+  const numInt = Number.parseInt(num, 10);
+  if (Number.isNaN(numInt)) {
     return 'NaN_';
   }
-  return ('' + (parseInt(num, 10) + 10000)).slice(1);
+  return `${Number.parseInt(num, 10) + 10000}`.slice(1);
 };
 
 /** Turns each segment of a semver number into a left-padded number */
@@ -60,11 +60,13 @@ export function getCustomLaunchers(): Record<string, Launcher> {
       );
 
       const osVersions = Object.keys(groupedByOsVersion)
-        .filter((f) => !isNaN(parseInt(f, 10)))
+        .filter((f) => !Number.isNaN(Number.parseInt(f, 10)))
         .sort(semverSort)
         // reversing so that uniqBy sees the largest number first
         .reverse();
-      const latestOSVersions = uniqBy(osVersions, (v) => parseInt(v, 10));
+      const latestOSVersions = uniqBy(osVersions, (v) =>
+        Number.parseInt(v, 10)
+      );
 
       const sauceObjs = latestOSVersions
         .slice(0, 4)
@@ -77,7 +79,8 @@ export function getCustomLaunchers(): Record<string, Launcher> {
   const customLaunchers: Record<string, Launcher> = {};
 
   // mobile devices
-  devices.forEach((data) => {
+  for (const data of devices) {
+    if (!data) continue;
     const key = `sl_${data.api_name}_${data.short_version}`;
 
     // make sure there aren't any key collisions
@@ -88,12 +91,12 @@ export function getCustomLaunchers(): Record<string, Launcher> {
     );
 
     if (data.api_name !== 'android') {
-      return;
+      continue;
     }
 
     let browserName: string;
 
-    const androidVersion = parseInt(data.short_version, 10);
+    const androidVersion = Number.parseInt(data.short_version, 10);
     if (androidVersion < 6) {
       browserName = 'Browser';
     } else {
@@ -113,7 +116,7 @@ export function getCustomLaunchers(): Record<string, Launcher> {
         `${data.long_name} ${data.short_version}`,
       platformVersion: data.short_version,
     };
-  });
+  }
 
   // // IE 9-11
   // [11, 10, 9].forEach((v) => {
@@ -125,27 +128,31 @@ export function getCustomLaunchers(): Record<string, Launcher> {
   // });
 
   // browsers that support the `latest` field
-  ['MicrosoftEdge', 'Safari', 'Firefox', 'Chrome', 'iPhone'].forEach(
-    (browserName) => {
-      for (let idx = -1; ++idx < 2; ) {
-        const k = `sl_${browserName}_latest${
-          idx > 0 ? `-${idx}` : ''
-        }`.toLowerCase();
-        const browserVersion = `latest${idx > 0 ? `-${idx}` : ''}`;
-        let platformName: string | undefined;
-        if (browserName !== 'Safari') {
-          platformName = 'Windows 10';
-        }
-
-        customLaunchers[k] = {
-          base: 'SauceLabs',
-          browserName: browserName,
-          platformName,
-          browserVersion,
-        };
+  for (const browserName of [
+    'MicrosoftEdge',
+    'Safari',
+    'Firefox',
+    'Chrome',
+    'iPhone',
+  ]) {
+    for (let idx = -1; ++idx < 2; ) {
+      const k = `sl_${browserName}_latest${
+        idx > 0 ? `-${idx}` : ''
+      }`.toLowerCase();
+      const browserVersion = `latest${idx > 0 ? `-${idx}` : ''}`;
+      let platformName: string | undefined;
+      if (browserName !== 'Safari') {
+        platformName = 'Windows 10';
       }
+
+      customLaunchers[k] = {
+        base: 'SauceLabs',
+        browserName: browserName,
+        platformName,
+        browserVersion,
+      };
     }
-  );
+  }
 
   const tzOffset = new Date().getTimezoneOffset();
   const [dateString, timeString] = new Date(Date.now() - tzOffset * 60000)
@@ -155,7 +162,7 @@ export function getCustomLaunchers(): Record<string, Launcher> {
 
   for (const launcherName in customLaunchers) {
     customLaunchers[launcherName].testName =
-      +when + customLaunchers[launcherName].testName;
+      when + customLaunchers[launcherName].testName;
   }
 
   return customLaunchers;

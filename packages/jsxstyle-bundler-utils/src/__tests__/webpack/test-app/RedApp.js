@@ -1,6 +1,6 @@
 import { Inline } from 'jsxstyle';
-import Shared from './Shared';
 import { colorRed } from './LayoutConstants';
+import Shared from './Shared';
 
 export default function RedApp() {
   return (

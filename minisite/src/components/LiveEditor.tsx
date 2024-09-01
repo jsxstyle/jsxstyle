@@ -1,9 +1,9 @@
 import { Block, Box, css, useMatchMedia } from 'jsxstyle';
-import { MonacoEditor } from './MonacoEditor';
-import { CodePreview } from './CodePreview';
 import { useState } from 'react';
-import { styleConstants } from '../utilities/constants';
 import codeSample from '../codeSample?raw';
+import { styleConstants } from '../utilities/constants';
+import { CodePreview } from './CodePreview';
+import { MonacoEditor } from './MonacoEditor';
 
 export const LiveEditor: React.FC = () => {
   const isSmallScreen = useMatchMedia('screen and (max-width: 1000px)');

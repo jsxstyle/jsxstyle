@@ -1,10 +1,13 @@
-import { parseStyleProps, ParsedStyleProp } from '../parseStyleProps';
+import { type ParsedStyleProp, parseStyleProps } from '../parseStyleProps';
 
 const formatParsedStyleProps = (
   value: Record<string, ParsedStyleProp> | null | undefined
 ) =>
-  Object.entries(value || {}).reduce<Record<string, any>>(
-    (prev, [k, v]) => ((prev[k] = v.propValue), prev),
+  Object.entries(value || {}).reduce<Record<string, unknown>>(
+    (prev, [k, v]) => {
+      prev[k] = v.propValue;
+      return prev;
+    },
     {}
   );
 

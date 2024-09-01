@@ -1,6 +1,6 @@
 import { Inline } from 'jsxstyle';
-import Shared from './Shared';
 import { colorBlue } from './LayoutConstants';
+import Shared from './Shared';
 
 export default function BlueApp() {
   return (

@@ -1,7 +1,7 @@
-import { styleCache } from './styleCache';
-import { classNamePropKey, componentFactory } from './componentFactory';
-import { makeCssFunction } from '../../jsxstyle-utils/src/makeCssFunction';
 import { getCustomPropertiesFunction } from '../../jsxstyle-utils/src';
+import { makeCssFunction } from '../../jsxstyle-utils/src/makeCssFunction';
+import { classNamePropKey, componentFactory } from './componentFactory';
+import { styleCache } from './styleCache';
 
 export type { CSSProperties } from '../../jsxstyle-utils/src';
 export type { StylableComponentProps } from './types';

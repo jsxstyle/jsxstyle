@@ -1,5 +1,5 @@
-import { primitiveValueToNode } from '../primitiveValueToNode';
 import { generate } from '../babelUtils';
+import { primitiveValueToNode } from '../primitiveValueToNode';
 
 const doTheThing = (value: unknown) => {
   return generate(primitiveValueToNode(value)).code;

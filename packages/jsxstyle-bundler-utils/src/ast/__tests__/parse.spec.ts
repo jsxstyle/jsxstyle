@@ -1,7 +1,7 @@
 import generate from '@babel/generator';
 
-import { parse } from '../babelUtils';
 import type { ParserPlugin } from '@babel/parser';
+import { parse } from '../babelUtils';
 
 // parse helper
 const p = (code: string, ...plugins: ParserPlugin[]): string =>

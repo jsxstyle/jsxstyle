@@ -1,6 +1,6 @@
-import * as t from '@babel/types';
+import type * as t from '@babel/types';
 import invariant from 'invariant';
-import type { PrimitiveValue, NodeValue } from './styleObjectUtils';
+import type { NodeValue, PrimitiveValue } from './styleObjectUtils';
 
 /**
  * Given an array of JSX attributes or object properties,

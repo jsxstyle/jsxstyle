@@ -66,7 +66,8 @@ export const joinStringExpressions = (
             a.right.type === 'StringLiteral' &&
             b.type === 'StringLiteral'
           ) {
-            return { ...a, right: t.stringLiteral(a.right.value + b.value) };
+            a.right = t.stringLiteral(a.right.value + b.value);
+            return a;
           }
           return t.binaryExpression('+', a, b);
         },

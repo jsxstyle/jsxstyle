@@ -1,5 +1,5 @@
-import { parse, generate } from '../babelUtils';
-import * as t from '@babel/types';
+import type * as t from '@babel/types';
+import { generate, parse } from '../babelUtils';
 import { joinStringExpressions } from '../joinStringExpressions';
 
 describe('joinStringExpressions', () => {

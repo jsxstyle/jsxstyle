@@ -1,4 +1,4 @@
-import * as t from '@babel/types';
+import type * as t from '@babel/types';
 import { generate, parse } from '../babelUtils';
 import { normalizeTernary } from '../normalizeTernary';
 

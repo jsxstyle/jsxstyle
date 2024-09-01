@@ -1,6 +1,6 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-import * as React from 'react';
 import { Block } from 'jsxstyle';
+/* eslint-disable @typescript-eslint/no-empty-function */
+import type * as React from 'react';
 
 const TestComponent: React.FC<{
   /** Test comment */

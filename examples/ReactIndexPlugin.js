@@ -1,5 +1,3 @@
-'use strict';
-
 const indexFileContents = `<!doctype html>
 <title>jsxstyle demo</title>
 <div id=".jsxstyle-demo"></div>

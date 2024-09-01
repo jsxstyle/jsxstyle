@@ -34,6 +34,8 @@ window.MonacoEnvironment = {
   },
 };
 
+const getCustomMonaco = () => import('./customMonaco');
+
 export const MonacoEditor: React.FC<MonacoEditorProps> = ({
   className,
   onChange,
@@ -43,13 +45,14 @@ export const MonacoEditor: React.FC<MonacoEditorProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor>();
   const isDarkMode = useMatchMedia('screen and (prefers-color-scheme: dark)');
-  const monacoImport = useAsyncModule(() => import('./customMonaco'));
+  const monacoImport = useAsyncModule(getCustomMonaco);
 
   const theme = isDarkMode ? 'vs-dark' : 'vs';
   useEffect(() => {
     editorRef.current?.updateOptions({ theme });
-  }, [editorRef.current, theme]);
+  }, [theme]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: this is only for initial setup
   useEffect(() => {
     if (monacoImport.state !== 'success' || !containerRef.current) return;
 
@@ -99,7 +102,7 @@ export const MonacoEditor: React.FC<MonacoEditorProps> = ({
       onChangeModelContentSubscription.dispose();
       resizeObserver.disconnect();
     };
-  }, [containerRef.current, monacoImport.state]);
+  }, [monacoImport.state]);
 
   return <div className={className} ref={containerRef} />;
 };

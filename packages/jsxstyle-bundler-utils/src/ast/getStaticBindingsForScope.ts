@@ -1,11 +1,11 @@
+import * as path from 'node:path';
+import type { Binding, Scope } from '@babel/traverse';
 import * as t from '@babel/types';
-import * as path from 'path';
 import invariant from 'invariant';
-import type { Scope, Binding } from '@babel/traverse';
 
+import { isObject } from '../typePredicates';
 import { evaluateAstNode } from './evaluateAstNode';
 import { getSourceModule } from './getSourceModule';
-import { isObject } from '../typePredicates';
 
 export const extensionRegex = /\.(?:[jt]sx?|json)$/;
 
@@ -54,7 +54,7 @@ export function getStaticBindingsForScope(
         } else {
           // crude esmodule check
           // TODO: make sure this actually works
-          if (src && src.__esModule) {
+          if (src?.__esModule) {
             ret[k] = src.default;
           } else {
             ret[k] = src;
@@ -113,7 +113,6 @@ export function getStaticBindingsForScope(
     try {
       ret[k] = evaluateAstNode(dec.init);
       bindingCache[cacheKey] = ret[k];
-      continue;
     } catch (e) {
       // console.error('evaluateAstNode could not eval dec.init:', e);
     }

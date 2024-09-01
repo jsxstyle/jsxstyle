@@ -1,12 +1,12 @@
+import { createMemo } from 'solid-js';
+import type { JSX } from 'solid-js';
+import { Dynamic, createComponent, mergeProps } from 'solid-js/web';
 import {
+  type JsxstyleComponentName,
   componentStyles,
-  JsxstyleComponentName,
 } from '../../jsxstyle-utils/src';
 import { styleCache } from './styleCache';
 import type { JsxstyleProps, ValidComponentPropValue } from './types';
-import { createMemo } from 'solid-js';
-import { Dynamic, createComponent, mergeProps } from 'solid-js/web';
-import type { JSX } from 'solid-js';
 
 export const classNamePropKey = 'class';
 

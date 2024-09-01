@@ -29,7 +29,7 @@ const getReleaseLine = async (
   return (
     commitLine +
     (needsNewline ? '\n  ' : ' ') +
-    lines.map((line, index) => (index === 0 ? line : '  ' + line)).join('\n')
+    lines.map((line, index) => (index === 0 ? line : `  ${line}`)).join('\n')
   );
 };
 

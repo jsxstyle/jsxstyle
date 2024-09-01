@@ -1,8 +1,8 @@
 // @ts-check
 
-import { defineConfig } from 'vite';
-import * as path from 'path';
+import * as path from 'node:path';
 import injectPlugin from '@rollup/plugin-inject';
+import { defineConfig } from 'vite';
 
 export default defineConfig((env) => ({
   resolve: {

@@ -1,27 +1,27 @@
+import * as path from 'node:path';
 /* eslint-disable no-prototype-builtins, @typescript-eslint/no-explicit-any */
 import type { ParserPlugin } from '@babel/parser';
 import type { NodePath, TraverseOptions } from '@babel/traverse';
 import * as t from '@babel/types';
 import invariant from 'invariant';
 import { componentStyles } from '../../../jsxstyle-utils/src';
-import * as path from 'path';
 
-import { evaluateAstNode } from './evaluateAstNode';
-import { getEvaluateAstNodeWithScopeFunction } from './getEvaluateAstNodeWithScopeFunction';
-import { generateUid } from './generatedUid';
-import { getInlineImportString } from './getInlineImportString';
-import { extensionRegex } from './getStaticBindingsForScope';
-import { parse } from './babelUtils';
-import { getImportForSource } from './getImportForSource';
+import { VISITOR_KEYS } from '@babel/types';
 import type { GetClassNameForKeyFn } from '../../../jsxstyle-utils/src';
 import {
-  generateCustomPropertiesFromVariants,
   type VariantMap,
+  generateCustomPropertiesFromVariants,
 } from '../../../jsxstyle-utils/src/generateCustomPropertiesFromVariants';
+import { parse } from './babelUtils';
 import { generate, traverse } from './babelUtils';
-import { handleJsxElement } from './handleJsxAttributes';
+import { evaluateAstNode } from './evaluateAstNode';
+import { generateUid } from './generatedUid';
+import { getEvaluateAstNodeWithScopeFunction } from './getEvaluateAstNodeWithScopeFunction';
+import { getImportForSource } from './getImportForSource';
+import { getInlineImportString } from './getInlineImportString';
+import { extensionRegex } from './getStaticBindingsForScope';
 import { handleCssFunction } from './handleCssFunction';
-import { VISITOR_KEYS } from '@babel/types';
+import { handleJsxElement } from './handleJsxAttributes';
 
 function skipChildren(path: NodePath) {
   for (const key of VISITOR_KEYS[path.type]) {
@@ -245,7 +245,6 @@ export function extractStyles(
 
       if (componentStyles.hasOwnProperty(specifier.imported.name)) {
         validComponents[specifier.local.name] = specifier.imported.name;
-        continue;
       }
     }
 
@@ -691,17 +690,17 @@ export function extractStyles(
         importsToPrepend.push(getImportForSource(cssRelativeFileName));
       }
     } else if (cssMode === 'multipleInlineImports') {
-      Object.entries(cssMap).forEach(([cssRule, key]) => {
+      for (const [cssRule, key] of Object.entries(cssMap)) {
         if (cssRule !== '') {
           const importNode = getImportForSource(
             getInlineImportString(cssRule, key)
           );
-          cssRule.split('\n').forEach((line) => {
+          for (const line of cssRule.split('\n')) {
             t.addComment(importNode, 'leading', ' ' + line, true);
-          });
+          }
           importsToPrepend.push(importNode);
         }
-      });
+      }
     }
     ast.program.body.unshift(...importsToPrepend);
   }

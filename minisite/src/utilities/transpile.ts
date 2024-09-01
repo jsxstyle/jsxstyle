@@ -1,7 +1,7 @@
-import { extractStyles } from '../../../packages/jsxstyle-bundler-utils/src/ast/extractStyles';
-import babelTraverse from '@babel/traverse';
 import generate from '@babel/generator';
+import babelTraverse from '@babel/traverse';
 import * as t from '@babel/types';
+import { extractStyles } from '../../../packages/jsxstyle-bundler-utils/src/ast/extractStyles';
 
 const convertMemberExpression = (
   expression: t.JSXMemberExpression
@@ -23,7 +23,7 @@ export const transpile = (code: string) => {
     errorCallback: (error) => errors.push(error),
     getClassNameForKey: (() => {
       let index = 0;
-      return () => 'x' + (++index).toString(36);
+      return () => `x${(++index).toString(36)}`;
     })(),
   });
 
@@ -100,11 +100,15 @@ export const transpile = (code: string) => {
                 thing
               ),
             ]);
-          } else if (specifier.type === 'ImportNamespaceSpecifier') {
+          }
+
+          if (specifier.type === 'ImportNamespaceSpecifier') {
             return t.variableDeclaration('const', [
               t.variableDeclarator(t.identifier(specifier.local.name), thing),
             ]);
-          } else if (specifier.type === 'ImportSpecifier') {
+          }
+
+          if (specifier.type === 'ImportSpecifier') {
             return t.variableDeclaration('const', [
               t.variableDeclarator(
                 t.objectPattern([
@@ -113,13 +117,13 @@ export const transpile = (code: string) => {
                 thing
               ),
             ]);
-          } else {
-            throw new Error(
-              'Unhandled specifier type: ' +
-                // @ts-expect-error type is not set
-                specifier.type
-            );
           }
+
+          throw new Error(
+            'Unhandled specifier type: ' +
+              // @ts-expect-error type is not set
+              specifier.type
+          );
         })
       );
     },
@@ -155,7 +159,7 @@ export const transpile = (code: string) => {
         param1 = convertMemberExpression(elName);
       } else {
         throw new Error(
-          'Opening element of type ' + elName.type + ' is not supported'
+          `Opening element of type ${elName.type} is not supported`
         );
       }
 
@@ -218,13 +222,14 @@ export const transpile = (code: string) => {
                     return t.nullLiteral();
                   }
                   return child.expression;
-                } else if (child.type === 'JSXElement') {
-                  return child;
-                } else if (child.type === 'JSXText') {
-                  return t.stringLiteral(child.value);
-                } else {
-                  throw new Error('Unhandled child type: ' + child.type);
                 }
+                if (child.type === 'JSXElement') {
+                  return child;
+                }
+                if (child.type === 'JSXText') {
+                  return t.stringLiteral(child.value);
+                }
+                throw new Error('Unhandled child type: ' + child.type);
               })
             )
           )

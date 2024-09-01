@@ -1,9 +1,9 @@
+import * as vm from 'node:vm';
 import generate from '@babel/generator';
 import * as t from '@babel/types';
-import * as vm from 'vm';
 
-import { evaluateAstNode } from '../evaluateAstNode';
 import { parse } from '../babelUtils';
+import { evaluateAstNode } from '../evaluateAstNode';
 
 const staticNamespace = {
   LC: {
@@ -39,9 +39,9 @@ describe('evaluateAstNode', () => {
     const errors: string[] = [];
     const statement = ast.program.body[0] as t.ExpressionStatement;
     const jsxElement = statement.expression as t.JSXElement;
-    jsxElement.openingElement.attributes.forEach((attr) => {
+    for (const attr of jsxElement.openingElement.attributes) {
       if (t.isJSXSpreadAttribute(attr)) {
-        return;
+        continue;
       }
 
       try {
@@ -54,7 +54,7 @@ describe('evaluateAstNode', () => {
       } catch (e) {
         //
       }
-    });
+    }
     expect(errors).toEqual([]);
   });
 
@@ -75,7 +75,7 @@ describe('evaluateAstNode', () => {
     const errors: string[] = [];
     const statement = ast.program.body[0] as t.ExpressionStatement;
     const jsxElement = statement.expression as t.JSXElement;
-    jsxElement.openingElement.attributes.forEach((attr) => {
+    for (const attr of jsxElement.openingElement.attributes) {
       if (!t.isJSXSpreadAttribute(attr)) {
         try {
           evaluateAstNode(
@@ -86,7 +86,7 @@ describe('evaluateAstNode', () => {
           errors.push(`'${attr.name.name}' should be evaluated`);
         }
       }
-    });
+    }
 
     expect(errors).toEqual([]);
   });
@@ -114,7 +114,7 @@ describe('evaluateAstNode', () => {
     const errors: string[] = [];
     const statement = ast.program.body[0] as t.ExpressionStatement;
     const jsxElement = statement.expression as t.JSXElement;
-    jsxElement.openingElement.attributes.forEach((attr) => {
+    for (const attr of jsxElement.openingElement.attributes) {
       if (!t.isJSXSpreadAttribute(attr)) {
         try {
           evaluateAstNode(
@@ -125,7 +125,7 @@ describe('evaluateAstNode', () => {
           errors.push(`'${attr.name.name}' should be evaluated`);
         }
       }
-    });
+    }
 
     expect(errors).toEqual([]);
   });

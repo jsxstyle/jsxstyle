@@ -1,12 +1,12 @@
-import * as React from 'react';
 import * as jsxstyle from 'jsxstyle';
+import * as React from 'react';
 import * as jsxRuntime from 'react/jsx-runtime';
 
+import { Block, Col, Row, css } from 'jsxstyle';
 import { useEffect, useReducer, useRef } from 'react';
-import { Row, Col, Block, css } from 'jsxstyle';
-import { useAsyncModule } from '../hooks/useAsyncModule';
-import { ErrorBoundary } from '../components/ErrorBoundary';
 import { CodeModule } from '../components/CodeModule';
+import { ErrorBoundary } from '../components/ErrorBoundary';
+import { useAsyncModule } from '../hooks/useAsyncModule';
 import { styleConstants } from '../utilities/constants';
 
 const modules = {
@@ -16,7 +16,6 @@ const modules = {
 };
 
 const requireFn = (moduleName: string) => {
-  // eslint-disable-next-line no-prototype-builtins
   if (!modules.hasOwnProperty(moduleName)) {
     throw new Error('Unsupported module: ' + moduleName);
   }
@@ -177,7 +176,7 @@ export const CodePreviewPage: React.FC = () => {
     window.parent.postMessage('code preview ready!');
 
     return () => window.removeEventListener('message', handleMessage);
-  }, [transpileModule.state === 'success']);
+  }, [transpileModule]);
 
   return (
     <Col gap={20} padding={20}>

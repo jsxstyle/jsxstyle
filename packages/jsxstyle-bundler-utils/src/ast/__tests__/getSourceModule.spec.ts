@@ -1,10 +1,10 @@
 import generate from '@babel/generator';
 import traverse from '@babel/traverse';
+import type { Binding, Scope } from '@babel/traverse';
 import * as t from '@babel/types';
-import type { Scope, Binding } from '@babel/traverse';
 
-import { getSourceModule } from '../getSourceModule';
 import { parse } from '../babelUtils';
+import { getSourceModule } from '../getSourceModule';
 
 function getSourceModuleForItem(itemName: string, scope: Scope) {
   let itemBinding: Binding | null = null;

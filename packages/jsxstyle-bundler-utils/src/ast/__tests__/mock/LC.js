@@ -1,4 +1,3 @@
-'use strict';
 module.exports = {
   staticValue: 'ok',
   red: 'strawberry',

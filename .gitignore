@@ -1,3 +1,7 @@
+**/node_modules/**
+**/build/**
+**/dist/**
+**/lib/**
 *.log
 /.rpt2_cache
 /.vscode
@@ -7,3 +11,6 @@ size-plugin.json
 misc/saucelabs-data.json
 /.rollup.cache
 *.tsbuildinfo
+/examples/jsxstyle-typescript-example/build
+/packages/jsxstyle/lib
+/packages/jsxstyle/preact/lib

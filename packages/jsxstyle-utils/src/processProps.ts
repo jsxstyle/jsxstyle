@@ -98,6 +98,7 @@ export function processProps(
       }
 
       if (animationValue === '') {
+        // biome-ignore lint/complexity/noUselessLabel: explicit continue
         continue propLoop;
       }
 
@@ -108,11 +109,10 @@ export function processProps(
       styleValue = animationKey;
       specificity++;
 
-      insertRuleCallback &&
-        insertRuleCallback(
-          `@keyframes ${animationKey} { ${animationValue}}`,
-          '@' + animationKey
-        );
+      insertRuleCallback?.(
+        `@keyframes ${animationKey} { ${animationValue}}`,
+        '@' + animationKey
+      );
     } else {
       styleValue = dangerousStyleValue(propName, propValue);
       if (styleValue === '') continue;
@@ -155,7 +155,7 @@ export function processProps(
 
     classNames += (classNames === '' ? '' : ' ') + className;
 
-    insertRuleCallback && insertRuleCallback(styleRule, className);
+    insertRuleCallback?.(styleRule, className);
   }
 
   if (classNames) {

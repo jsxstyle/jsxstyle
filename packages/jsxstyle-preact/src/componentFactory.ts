@@ -1,14 +1,14 @@
+import { createElement } from 'preact';
 import {
+  type JsxstyleComponentName,
   componentStyles,
-  JsxstyleComponentName,
 } from '../../jsxstyle-utils/src';
 import { styleCache } from './styleCache';
 import type {
-  PropsWithChildren,
   JsxstyleProps,
+  PropsWithChildren,
   ValidComponentPropValue,
 } from './types';
-import { createElement } from 'preact';
 
 export const classNamePropKey = 'class';
 

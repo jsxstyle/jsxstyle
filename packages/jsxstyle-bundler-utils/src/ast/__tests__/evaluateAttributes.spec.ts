@@ -1,10 +1,10 @@
-import type { OptionsObject } from '../extractStyles';
-import { evaluateAttributes } from '../evaluateAttributes';
-import type { NodeValue, PrimitiveValue } from '../styleObjectUtils';
-import { evaluateAstNode } from '../evaluateAstNode';
+import * as vm from 'node:vm';
 import * as t from '@babel/types';
 import { generate } from '../babelUtils';
-import * as vm from 'vm';
+import { evaluateAstNode } from '../evaluateAstNode';
+import { evaluateAttributes } from '../evaluateAttributes';
+import type { OptionsObject } from '../extractStyles';
+import type { NodeValue, PrimitiveValue } from '../styleObjectUtils';
 
 const context = vm.createContext({
   evalIdentifier: 'eval identifier value',
@@ -61,8 +61,9 @@ describe('evaluateAttributes', () => {
       },
     };
 
-    expect(evaluateAttributes(new Map(Object.entries(styles)), options))
-      .toMatchInlineSnapshot(`
+    expect(
+      evaluateAttributes(new Map(Object.entries(styles)), options)
+    ).toMatchInlineSnapshot(`
       {
         "classNameNode": {
           "type": "StringLiteral",

@@ -25,19 +25,44 @@ export type ExtractProps<T extends ValidComponentPropValue> = T extends
   | undefined
   ? JSX.IntrinsicElements['div']
   : T extends IntrinsicElement
-  ? JSX.IntrinsicElements[T]
-  : T extends React.FunctionComponent<infer FCProps>
-  ? keyof FCProps extends never
-    ? Record<string, unknown>
-    : FCProps
-  : T extends React.ComponentClass<infer ClassProps>
-  ? keyof ClassProps extends never
-    ? Record<string, unknown>
-    : ClassProps
-  : Record<string, unknown>;
+    ? JSX.IntrinsicElements[T]
+    : T extends React.FunctionComponent<infer FCProps>
+      ? keyof FCProps extends never
+        ? Record<string, unknown>
+        : FCProps
+      : T extends React.ComponentClass<infer ClassProps>
+        ? keyof ClassProps extends never
+          ? Record<string, unknown>
+          : ClassProps
+        : Record<string, unknown>;
 
-// prettier-ignore
-type UpperCaseLetter = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X' | 'Y' | 'Z';
+type UpperCaseLetter =
+  | 'A'
+  | 'B'
+  | 'C'
+  | 'D'
+  | 'E'
+  | 'F'
+  | 'G'
+  | 'H'
+  | 'I'
+  | 'J'
+  | 'K'
+  | 'L'
+  | 'M'
+  | 'N'
+  | 'O'
+  | 'P'
+  | 'Q'
+  | 'R'
+  | 'S'
+  | 'T'
+  | 'U'
+  | 'V'
+  | 'W'
+  | 'X'
+  | 'Y'
+  | 'Z';
 
 /** Union of patterns that match event handler names. */
 type EventHandlerKeys = `on${UpperCaseLetter}${string}`;

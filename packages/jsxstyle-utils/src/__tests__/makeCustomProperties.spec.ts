@@ -1,7 +1,7 @@
 /** @jest-environment jsdom */
 
-import { getCustomPropertiesFunction } from '../makeCustomProperties';
 import { getStyleCache } from '../getStyleCache';
+import { getCustomPropertiesFunction } from '../makeCustomProperties';
 
 const cache = getStyleCache();
 const makeCustomProperties = getCustomPropertiesFunction(cache);
@@ -10,7 +10,9 @@ const getStyleSheetContents = () => {
   return Array.from(document.querySelectorAll('style')).map((node) => {
     return {
       text: node.innerHTML,
-      styles: Array.from(node.sheet!.cssRules).map((rule) => rule.cssText),
+      styles: node.sheet?.cssRules
+        ? Array.from(node.sheet.cssRules).map((rule) => rule.cssText)
+        : null,
     };
   });
 };

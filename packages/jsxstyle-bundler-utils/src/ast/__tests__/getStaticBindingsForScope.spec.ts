@@ -1,10 +1,10 @@
+import * as path from 'node:path';
 import generate from '@babel/generator';
 import traverse from '@babel/traverse';
 import * as t from '@babel/types';
-import * as path from 'path';
 
-import { getStaticBindingsForScope } from '../getStaticBindingsForScope';
 import { parse } from '../babelUtils';
+import { getStaticBindingsForScope } from '../getStaticBindingsForScope';
 
 const modulesByAbsolutePath = {
   [require.resolve('./mock/LC').replace(/\.js$/, '')]: require('./mock/LC'),
@@ -52,7 +52,7 @@ function outerFunction(innerParam1, innerParam2) {
         scope: traversePath.scope,
       };
 
-      node.attributes.forEach((attr) => {
+      for (const attr of node.attributes) {
         if (
           !t.isJSXAttribute(attr) ||
           typeof attr.name.name !== 'string' ||
@@ -63,7 +63,7 @@ function outerFunction(innerParam1, innerParam2) {
           );
         }
         testItems[nodeName.name].attrs[attr.name.name] = attr.value.expression;
-      });
+      }
     },
   });
 

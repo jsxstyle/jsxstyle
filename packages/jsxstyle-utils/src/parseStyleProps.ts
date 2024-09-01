@@ -223,6 +223,7 @@ export const parseStyleProps = (
           continue;
         }
 
+        // biome-ignore lint/suspicious/noAssignInExpressions: chill
         const obj: ParsedStyleProp = (parsedStyleProps[
           expandedPropName + keySuffix
         ] = {
@@ -240,6 +241,7 @@ export const parseStyleProps = (
         continue;
       }
 
+      // biome-ignore lint/suspicious/noAssignInExpressions: chill
       const obj: ParsedStyleProp = (parsedStyleProps[propName + keySuffix] = {
         pseudoelement,
         pseudoclass,

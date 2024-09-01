@@ -1,11 +1,11 @@
-import Module from 'module';
-import * as path from 'path';
-import * as vm from 'vm';
+import Module from 'node:module';
+import * as path from 'node:path';
+import * as vm from 'node:vm';
 
 export const getExportsFromModuleSource = (
   modulePath: string,
   moduleContent: string,
-  requireFn = (importPath: any) => {
+  requireFn = (importPath: string) => {
     throw new Error(`Unhandled module import: '${importPath}'`);
   }
 ) => {

@@ -1,4 +1,4 @@
-import { Block, useMatchMedia, makeCustomProperties } from 'jsxstyle';
+import { Block, makeCustomProperties, useMatchMedia } from 'jsxstyle';
 
 const styleProps = makeCustomProperties({
   foreground: 'black',

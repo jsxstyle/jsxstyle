@@ -1,7 +1,7 @@
 // @ts-check
 
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const path = require('path');
+const path = require('node:path');
 const { JsxstyleWebpackPlugin } = require('jsxstyle/webpack-plugin');
 
 /** @type {import('webpack').Configuration} */

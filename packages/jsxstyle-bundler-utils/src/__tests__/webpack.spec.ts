@@ -1,6 +1,6 @@
-import * as path from 'path';
-import webpack from 'webpack';
+import * as path from 'node:path';
 import { Volume } from 'memfs';
+import webpack from 'webpack';
 // @ts-expect-error JS file
 import webpackConfig from './webpack/webpack.config';
 

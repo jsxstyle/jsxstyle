@@ -1,7 +1,7 @@
-import type { JsxstyleWebpackPluginOptions } from '../../jsxstyle-webpack-plugin/src/types';
-import type { CacheObject } from '../../jsxstyle-utils/src';
 import type { NextConfig } from 'next/types';
+import type { CacheObject } from '../../jsxstyle-utils/src';
 import { JsxstyleWebpackPlugin } from '../../jsxstyle-webpack-plugin/src/plugin';
+import type { JsxstyleWebpackPluginOptions } from '../../jsxstyle-webpack-plugin/src/types';
 
 export const jsxstyleNextjsPlugin = (
   pluginOptions: Omit<JsxstyleWebpackPluginOptions, 'cacheObject'> = {}

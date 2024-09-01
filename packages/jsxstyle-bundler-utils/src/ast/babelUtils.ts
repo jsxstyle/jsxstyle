@@ -1,7 +1,6 @@
-/* eslint-disable no-prototype-builtins */
 import generateImport from '@babel/generator';
+import { type ParserPlugin, parse as babelParse } from '@babel/parser';
 import traverseImport from '@babel/traverse';
-import { parse as babelParse, type ParserPlugin } from '@babel/parser';
 import type { File } from '@babel/types';
 
 // TODO(meyer) rollup should do this automatically

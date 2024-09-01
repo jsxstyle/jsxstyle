@@ -1,8 +1,8 @@
+import type { Component, JSX } from 'solid-js';
 import type {
   CSSProperties,
   CommonComponentProp,
 } from '../../jsxstyle-utils/src';
-import type { Component, JSX } from 'solid-js';
 
 export type IntrinsicElement = keyof JSX.IntrinsicElements;
 
@@ -25,15 +25,40 @@ export type ExtractProps<T extends ValidComponentPropValue> = T extends
   | undefined
   ? JSX.IntrinsicElements['div']
   : T extends IntrinsicElement
-  ? JSX.IntrinsicElements[T]
-  : T extends Component<infer FCProps>
-  ? keyof FCProps extends never
-    ? Record<string, unknown>
-    : FCProps
-  : Record<string, unknown>;
+    ? JSX.IntrinsicElements[T]
+    : T extends Component<infer FCProps>
+      ? keyof FCProps extends never
+        ? Record<string, unknown>
+        : FCProps
+      : Record<string, unknown>;
 
-// prettier-ignore
-type UpperCaseLetter = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X' | 'Y' | 'Z';
+type UpperCaseLetter =
+  | 'A'
+  | 'B'
+  | 'C'
+  | 'D'
+  | 'E'
+  | 'F'
+  | 'G'
+  | 'H'
+  | 'I'
+  | 'J'
+  | 'K'
+  | 'L'
+  | 'M'
+  | 'N'
+  | 'O'
+  | 'P'
+  | 'Q'
+  | 'R'
+  | 'S'
+  | 'T'
+  | 'U'
+  | 'V'
+  | 'W'
+  | 'X'
+  | 'Y'
+  | 'Z';
 
 /** Union of patterns that match event handler names. */
 type EventHandlerKeys = `on${UpperCaseLetter}${string}`;

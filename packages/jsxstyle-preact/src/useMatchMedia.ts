@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from 'preact/hooks';
+import { useEffect, useMemo, useState } from 'preact/hooks';
 
 /**
  * Hook that returns the `true` if the provided media query matches.
@@ -10,8 +10,7 @@ export const useMatchMedia = (mediaQuery: string): boolean => {
     return false;
   }
 
-  const deps = [mediaQuery];
-  const mqList = useMemo(() => window.matchMedia(mediaQuery), deps);
+  const mqList = useMemo(() => window.matchMedia(mediaQuery), [mediaQuery]);
   const [matches, setMatches] = useState(mqList.matches);
 
   useEffect(() => {
@@ -27,7 +26,7 @@ export const useMatchMedia = (mediaQuery: string): boolean => {
       mqList.addEventListener('change', changeEventListener);
       return () => mqList.removeEventListener('change', changeEventListener);
     }
-  }, deps);
+  }, [mqList]);
 
   return matches;
 };

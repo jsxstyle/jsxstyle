@@ -1,6 +1,6 @@
 import * as ReactDOMClient from 'react-dom/client';
 
-import { Block, cache, InlineBlock, Row } from 'jsxstyle';
+import { Block, InlineBlock, Row, cache } from 'jsxstyle';
 
 import './polyfills';
 

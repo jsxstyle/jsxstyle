@@ -1,13 +1,13 @@
-import fs from 'fs';
+import fs from 'node:fs';
+import { Volume } from 'memfs';
 // @ts-expect-error this export is not exposed in the `compiler.webpack` object
 import NodeWatchFileSystem from 'webpack/lib/node/NodeWatchFileSystem';
-import { Volume } from 'memfs';
 import { createClassNameGetter } from '../../jsxstyle-utils/src';
 
-import type { PluginContext, JsxstyleWebpackPluginOptions } from './types';
-import { wrapFileSystem } from '../../jsxstyle-bundler-utils/src/wrapFileSystem';
-import { ModuleCache } from '../../jsxstyle-bundler-utils/src/ModuleCache';
 import invariant from 'invariant';
+import { ModuleCache } from '../../jsxstyle-bundler-utils/src/ModuleCache';
+import { wrapFileSystem } from '../../jsxstyle-bundler-utils/src/wrapFileSystem';
+import type { JsxstyleWebpackPluginOptions, PluginContext } from './types';
 
 type Compilation = import('webpack').Compilation;
 type Compiler = import('webpack').Compiler;
@@ -38,13 +38,13 @@ export class JsxstyleWebpackPlugin implements WebpackPluginInstance {
 
         // create mapping of unique CSS strings to class names
         const lines = new Set<string>(cacheFileContents.trim().split('\n'));
-        lines.forEach((line) => {
+        for (const line of lines) {
           const trimmedLine = line.trim();
           if (trimmedLine) {
             // add each line of CSS to the cache
             getClassNameForKey(trimmedLine);
           }
-        });
+        }
       } catch (err) {
         invariant(
           err.code !== 'EISDIR',
@@ -129,15 +129,15 @@ export class JsxstyleWebpackPlugin implements WebpackPluginInstance {
         childCompiler.context = compiler.context;
         childCompiler.options.output.library = { type: 'commonjs2' };
 
-        Object.entries(moduleCache.entrypoints).forEach(
-          ([modulePath, metadata]) => {
-            new compiler.webpack.EntryPlugin(
-              compiler.context,
-              modulePath,
-              metadata.key
-            ).apply(childCompiler);
-          }
-        );
+        for (const [modulePath, metadata] of Object.entries(
+          moduleCache.entrypoints
+        )) {
+          new compiler.webpack.EntryPlugin(
+            compiler.context,
+            modulePath,
+            metadata.key
+          ).apply(childCompiler);
+        }
 
         // delete all emitted chunks
         childCompiler.hooks.thisCompilation.tap(pluginName, (compilation) => {
@@ -148,10 +148,10 @@ export class JsxstyleWebpackPlugin implements WebpackPluginInstance {
                 compiler.webpack.Compilation.PROCESS_ASSETS_STAGE_ADDITIONS,
             },
             (assets) => {
-              Object.keys(assets).forEach((key) => {
+              for (const key of Object.keys(assets)) {
                 resultObject[key] = assets[key].source().toString();
                 compilation.deleteAsset(key);
-              });
+              }
             }
           );
         });

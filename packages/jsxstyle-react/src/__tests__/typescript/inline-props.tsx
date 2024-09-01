@@ -1,5 +1,5 @@
-import * as React from 'react';
 import { Block } from 'jsxstyle';
+import type * as React from 'react';
 
 const TestComponent: React.FC<{
   /** Test comment */

@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, no-prototype-builtins */
-import * as t from '@babel/types';
+import type * as t from '@babel/types';
 import { generate } from './babelUtils';
-import { normalizeTernary } from './normalizeTernary';
+import type { OptionsObject } from './extractStyles';
+import type { flattenSpreadAttributes } from './flattenSpreadAttributes';
 import { getValue } from './getValue';
-import { StaticStyleObject, updateStyleObject } from './styleObjectUtils';
-import { flattenSpreadAttributes } from './flattenSpreadAttributes';
-import { OptionsObject } from './extractStyles';
+import { normalizeTernary } from './normalizeTernary';
 import { primitiveValueToNode } from './primitiveValueToNode';
+import { type StaticStyleObject, updateStyleObject } from './styleObjectUtils';
 
 const eventHandlerRegex = /^on[A-Z]/;
 
@@ -84,7 +84,9 @@ export const evaluateAttributes = (
         if (normalizedValue.test.type === 'Identifier') {
           const mq = mediaQueryIdentifierMap[normalizedValue.test.name];
           if (mq) {
+            // biome-ignore lint/suspicious/noAssignInExpressions: chill
             const styles = (styleObj.styles ||= {});
+            // biome-ignore lint/suspicious/noAssignInExpressions: chill
             const mqStyles = (styles[`@media ${mq}`] ||= {});
             styles[key] = attemptEval(normalizedValue.alternate);
             mqStyles[key] = attemptEval(normalizedValue.consequent);
@@ -117,7 +119,6 @@ export const evaluateAttributes = (
       runtimeRequired = true;
       componentProps.set(key, value.value);
     }
-    continue;
   }
 
   // jsxstyle components are function components and therefore cannot accept refs.

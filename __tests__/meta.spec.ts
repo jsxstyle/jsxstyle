@@ -1,8 +1,8 @@
-import packlist from 'npm-packlist';
-import * as path from 'path';
-import glob from 'glob';
-import { execSync } from 'child_process';
+import { execSync } from 'node:child_process';
+import * as path from 'node:path';
 import { getPackages } from '@manypkg/get-packages';
+import glob from 'glob';
+import packlist from 'npm-packlist';
 
 const JSXSTYLE_ROOT = path.resolve(__dirname, '..');
 

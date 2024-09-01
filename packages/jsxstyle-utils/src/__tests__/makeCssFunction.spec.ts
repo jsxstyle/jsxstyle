@@ -1,5 +1,5 @@
-import { makeCssFunction } from '../makeCssFunction';
 import { getStyleCache } from '../getStyleCache';
+import { makeCssFunction } from '../makeCssFunction';
 
 const getCssFunction = () => {
   const insertedCss: string[] = [];

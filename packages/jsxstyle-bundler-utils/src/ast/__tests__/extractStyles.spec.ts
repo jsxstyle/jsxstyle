@@ -1,9 +1,9 @@
+import * as path from 'node:path';
 import { createClassNameGetter } from '../../../../jsxstyle-utils/src';
-import * as path from 'path';
 import {
+  type ExtractStylesOptions,
+  type UserConfigurableOptions,
   extractStyles,
-  ExtractStylesOptions,
-  UserConfigurableOptions,
 } from '../extractStyles';
 
 const modulesByAbsolutePath = {

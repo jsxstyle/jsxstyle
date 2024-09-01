@@ -1,6 +1,6 @@
-import type { CacheObject } from './types';
 import type { GetClassNameForKeyFn } from './processProps';
 import { stringHash } from './stringHash';
+import type { CacheObject } from './types';
 
 export const createClassNameGetter = (
   cacheObject: CacheObject,
@@ -19,8 +19,7 @@ export const createClassNameGetter = (
   }
 
   return (key) => {
-    const className = (cacheObject[key] =
-      cacheObject[key] || getClassName(key));
-    return className;
+    // biome-ignore lint/suspicious/noAssignInExpressions: chill
+    return (cacheObject[key] = cacheObject[key] || getClassName(key));
   };
 };

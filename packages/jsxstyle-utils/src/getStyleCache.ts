@@ -1,7 +1,8 @@
-import type { CacheObject } from './types';
 import { addStyleToHead } from './addStyleToHead';
 import { getStringHash } from './getStringHash';
-import { processProps, type GetClassNameForKeyFn } from './processProps';
+import type { GetClassNameForKeyFn } from './processProps';
+import { processProps } from './processProps';
+import type { CacheObject } from './types';
 
 type InsertRuleCallback = (rule: string) => void;
 
@@ -43,6 +44,7 @@ export function getStyleCache({
   let onInsertRule: InsertRuleCallback | undefined = defaultOnInsertRule;
 
   const memoizedGetClassNameForKey: GetClassNameForKeyFn = (key) => {
+    // biome-ignore lint/suspicious/noAssignInExpressions: chill
     return (classNameCache[key] ||= getClassNameForKey(key));
   };
 
@@ -101,7 +103,9 @@ export function getStyleCache({
 
       // set new callbacks
       if (getClassName) getClassNameForKey = getClassName;
-      onInsertRule = (rule) => void (css += rule);
+      onInsertRule = (rule) => {
+        css += rule;
+      };
 
       // do the thing
       const returnValue = await callback();

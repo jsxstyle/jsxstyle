@@ -1,9 +1,9 @@
-import { OutputOptions, rollup, RollupOptions } from 'rollup';
+import { promisify } from 'node:util';
+import zlib from 'node:zlib';
 import rollupNodeResolve from '@rollup/plugin-node-resolve';
 import rollupReplace from '@rollup/plugin-replace';
 import rollupTerser from '@rollup/plugin-terser';
-import zlib from 'zlib';
-import { promisify } from 'util';
+import { type OutputOptions, type RollupOptions, rollup } from 'rollup';
 
 const gzipAsync = promisify(zlib.gzip);
 

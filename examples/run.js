@@ -1,9 +1,9 @@
 // @ts-check
 
 const { getPackages } = require('@manypkg/get-packages');
-const { spawn } = require('child_process');
+const { spawn } = require('node:child_process');
 const inquirer = require('inquirer');
-const path = require('path');
+const path = require('node:path');
 
 const JSXSTYLE_ROOT = path.resolve(__dirname, '..');
 
@@ -52,13 +52,12 @@ const npmCommand = (example, ...args) =>
       },
     ]);
     return npmCommand(example, 'start');
-  } else {
-    const examplePkg = examplePkgs.find((pkg) =>
-      pkg.packageJson.name.includes(searchString)
-    );
-    if (!examplePkg) {
-      throw new Error('Could not find example matching "' + searchString + '"');
-    }
-    return npmCommand(examplePkg.packageJson.name, 'start');
   }
+  const examplePkg = examplePkgs.find((pkg) =>
+    pkg.packageJson.name.includes(searchString)
+  );
+  if (!examplePkg) {
+    throw new Error(`Could not find example matching "${searchString}"`);
+  }
+  return npmCommand(examplePkg.packageJson.name, 'start');
 })(process.argv.slice(2).join(' ')).catch(console.error);
