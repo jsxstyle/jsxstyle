@@ -11,6 +11,7 @@
     "outDir": "jsxstyle/lib",
     "module": "ESNext",
     "moduleResolution": "bundler",
+    "noUncheckedIndexedAccess": true,
     "target": "ESNext",
     "types": [
       "node"

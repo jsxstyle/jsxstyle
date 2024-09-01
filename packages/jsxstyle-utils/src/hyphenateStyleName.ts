@@ -3,7 +3,6 @@ const msPattern = /^ms-/;
 const hyphenateCache: Record<string, string> = {};
 
 export function hyphenateStyleName(styleName: string): string {
-  // eslint-disable-next-line no-prototype-builtins
   if (!hyphenateCache.hasOwnProperty(styleName)) {
     const hyphenatedString = styleName
       .replace(uppercasePattern, '-$1')
@@ -12,5 +11,6 @@ export function hyphenateStyleName(styleName: string): string {
 
     hyphenateCache[styleName] = hyphenatedString;
   }
-  return hyphenateCache[styleName];
+  // biome-ignore lint/style/noNonNullAssertion: value is set above
+  return hyphenateCache[styleName]!;
 }

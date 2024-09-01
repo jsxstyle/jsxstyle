@@ -177,7 +177,8 @@ export const parseStyleProps = (
         splitIndex = capRegex.lastIndex - 1;
         propNamePrefix =
           capRegex.test(originalPropName) &&
-          originalPropName[splitIndex].toLowerCase() +
+          // biome-ignore lint/style/noNonNullAssertion: always valid
+          originalPropName[splitIndex]!.toLowerCase() +
             originalPropName.slice(splitIndex + 1, capRegex.lastIndex - 1);
       }
 
@@ -187,7 +188,8 @@ export const parseStyleProps = (
         splitIndex = capRegex.lastIndex - 1;
         propNamePrefix =
           capRegex.test(originalPropName) &&
-          originalPropName[splitIndex].toLowerCase() +
+          // biome-ignore lint/style/noNonNullAssertion: always valid
+          originalPropName[splitIndex]!.toLowerCase() +
             originalPropName.slice(splitIndex + 1, capRegex.lastIndex - 1);
       }
     }
@@ -200,7 +202,8 @@ export const parseStyleProps = (
     // trim prefixes off propName
     if (splitIndex > 0) {
       propName =
-        originalPropName[splitIndex].toLowerCase() +
+        // biome-ignore lint/style/noNonNullAssertion: always valid
+        originalPropName[splitIndex]!.toLowerCase() +
         originalPropName.slice(splitIndex + 1);
     }
 

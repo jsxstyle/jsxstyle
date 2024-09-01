@@ -24,7 +24,7 @@ export default async function jsxstyleLoader(
   const callback = this.async();
   invariant(callback, 'Async callback is falsey');
 
-  const pluginContext: PluginContext = this[pluginSymbol];
+  const pluginContext = this[pluginSymbol];
 
   invariant(
     pluginContext,

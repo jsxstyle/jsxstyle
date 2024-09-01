@@ -22,7 +22,8 @@ export function processProps(
   let classNames: string = props.class || props.className || '';
 
   propLoop: for (const key in parsedStyleProps) {
-    const mergedProp = parsedStyleProps[key];
+    // biome-ignore lint/style/noNonNullAssertion: we know key is in parsedStyleProps
+    const mergedProp = parsedStyleProps[key]!;
     const {
       pseudoelement,
       pseudoclass,
@@ -55,7 +56,8 @@ export function processProps(
 
         for (const key in animationResult.parsedStyleProps) {
           const { propName, propValue, pseudoclass, pseudoelement } =
-            animationResult.parsedStyleProps[key];
+            // biome-ignore lint/style/noNonNullAssertion: we know key is in parsedStyleProps
+            animationResult.parsedStyleProps[key]!;
           if (pseudoclass || pseudoelement) {
             if (
               typeof process !== 'undefined' &&

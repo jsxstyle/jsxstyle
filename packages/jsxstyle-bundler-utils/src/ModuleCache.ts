@@ -35,14 +35,12 @@ export class ModuleCache {
           : '') +
         ext;
 
-      this.entrypoints[modulePath] = {
+      this.modulesByKey[key] = this.entrypoints[modulePath] = {
         key,
         modulePath,
         hash: null,
         module: null,
       };
-
-      this.modulesByKey[key] = this.entrypoints[modulePath];
     }
   }
 

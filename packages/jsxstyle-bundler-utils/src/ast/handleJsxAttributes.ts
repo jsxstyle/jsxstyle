@@ -47,12 +47,12 @@ export const handleJsxElement = (
       componentName = t.jsxIdentifier('div');
     } else if (
       componentProp.type === 'Identifier' &&
-      componentProp.name[0].toUpperCase() === componentProp.name[0]
+      componentProp.name[0]?.toUpperCase() === componentProp.name[0]
     ) {
       componentName = t.jsxIdentifier(componentProp.name);
     } else if (
       componentProp.type === 'StringLiteral' &&
-      componentProp.value[0].toLowerCase() === componentProp.value[0]
+      componentProp.value[0]?.toLowerCase() === componentProp.value[0]
     ) {
       componentName = t.jsxIdentifier(componentProp.value);
     } else if (

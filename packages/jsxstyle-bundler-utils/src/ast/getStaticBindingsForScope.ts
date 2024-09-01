@@ -21,9 +21,7 @@ export function getStaticBindingsForScope(
 
   invariant(bindingCache, 'bindingCache is a required param');
 
-  for (const k in bindings) {
-    const binding = bindings[k];
-
+  for (const [k, binding] of Object.entries(bindings)) {
     // check to see if the item is a module
     const sourceModule = getSourceModule(k, binding);
     if (sourceModule) {

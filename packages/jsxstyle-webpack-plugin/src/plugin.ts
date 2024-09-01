@@ -148,8 +148,8 @@ export class JsxstyleWebpackPlugin implements WebpackPluginInstance {
                 compiler.webpack.Compilation.PROCESS_ASSETS_STAGE_ADDITIONS,
             },
             (assets) => {
-              for (const key of Object.keys(assets)) {
-                resultObject[key] = assets[key].source().toString();
+              for (const [key, asset] of Object.entries(assets)) {
+                resultObject[key] = asset.source().toString();
                 compilation.deleteAsset(key);
               }
             }

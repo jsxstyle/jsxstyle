@@ -1,5 +1,4 @@
 import * as path from 'node:path';
-/* eslint-disable no-prototype-builtins, @typescript-eslint/no-explicit-any */
 import type { ParserPlugin } from '@babel/parser';
 import type { NodePath, TraverseOptions } from '@babel/traverse';
 import * as t from '@babel/types';
@@ -24,7 +23,9 @@ import { handleCssFunction } from './handleCssFunction';
 import { handleJsxElement } from './handleJsxAttributes';
 
 function skipChildren(path: NodePath) {
-  for (const key of VISITOR_KEYS[path.type]) {
+  const keys = VISITOR_KEYS[path.type];
+  if (!keys) return;
+  for (const key of keys) {
     path.skipKey(key);
   }
 }
@@ -358,7 +359,9 @@ export function extractStyles(
                 );
 
             const variantMap: VariantMap<string, string> = {
-              default: attemptEval(node.arguments[0]),
+              default: node.arguments[0]
+                ? attemptEval(node.arguments[0])
+                : null,
             };
 
             let parentPath: NodePath | null = traversePath.parentPath;
@@ -407,17 +410,22 @@ export function extractStyles(
                   break;
                 }
 
-                const key = evaluateAstNode(grandparentPath.node.arguments[0]);
-                const props = evaluateAstNode(
-                  grandparentPath.node.arguments[1]
-                );
+                const [keyNode, propsNode] = grandparentPath.node.arguments;
+
+                if (!keyNode || !propsNode) {
+                  // TODO(meyer) log error?
+                  continue;
+                }
+                const key = evaluateAstNode(keyNode);
+                const props = evaluateAstNode(propsNode);
                 variantMap[key] = props;
                 continue;
               }
 
               if (prop.name === 'build') {
+                const optionsNode = grandparentPath.node.arguments[0];
                 const buildOptions =
-                  evaluateAstNode(grandparentPath.node.arguments[0]) || {};
+                  (optionsNode && evaluateAstNode(optionsNode)) || {};
 
                 const result = generateCustomPropertiesFromVariants(
                   variantMap,
@@ -425,8 +433,8 @@ export function extractStyles(
                 );
 
                 // order is important here
-                for (let i = 0, len = result.styles.length; i < len; i++) {
-                  cssMap[result.styles[i]] = '';
+                for (const style of result.styles) {
+                  cssMap[style] = '';
                 }
 
                 const wipFunction = t.functionExpression(
@@ -467,7 +475,10 @@ export function extractStyles(
                             t.objectExpression([
                               t.objectProperty(
                                 t.identifier('className'),
-                                t.stringLiteral(result.variants[name].className)
+                                // biome-ignore lint/style/noNonNullAssertion: variant name is always present in variants object
+                                t.stringLiteral(
+                                  result.variants[name]!.className
+                                )
                               ),
                               t.objectProperty(
                                 t.identifier('activate'),
@@ -585,7 +596,7 @@ export function extractStyles(
         // Remember the source component
         const originalNodeName = openingElement.name.name;
         const srcKey = validComponents[originalNodeName];
-        const initialStyles = defaultStyleAttributes[srcKey];
+        const initialStyles = (srcKey && defaultStyleAttributes[srcKey]) || [];
 
         const attemptEval = !evaluateVars
           ? evaluateAstNode

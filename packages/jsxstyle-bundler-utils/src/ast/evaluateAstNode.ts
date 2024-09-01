@@ -54,10 +54,12 @@ export function evaluateAstNode(
 
   if (t.isTemplateLiteral(exprNode)) {
     let ret = '';
-    for (let idx = -1, len = exprNode.quasis.length; ++idx < len; ) {
+    for (let idx = 0, len = exprNode.quasis.length; idx < len; idx++) {
       const quasi = exprNode.quasis[idx];
       const expr = exprNode.expressions[idx];
-      ret += quasi.value.raw;
+      if (quasi) {
+        ret += quasi.value.raw;
+      }
       if (expr) {
         ret += evaluateAstNode(expr, evalFn);
       }

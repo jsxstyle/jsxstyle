@@ -35,8 +35,7 @@ describe('jsxstyle', () => {
 
         const style = window.getComputedStyle(item);
         const styleObj: Record<string, string> = {};
-        for (let idx = -1, len = style.length; ++idx < len; ) {
-          const k = style[idx];
+        for (const k of style) {
           styleObj[k] = style.getPropertyValue(k);
         }
         expect(styleObj).toEqual(
