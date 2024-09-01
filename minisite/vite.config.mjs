@@ -7,7 +7,7 @@ import { defineConfig } from 'vite';
 export default defineConfig((env) => ({
   resolve: {
     alias: ['path', 'vm'].map((moduleName) => ({
-      find: moduleName,
+      find: 'node:' + moduleName,
       replacement: path.resolve(__dirname, `./src/polyfills/${moduleName}.ts`),
     })),
   },
@@ -29,13 +29,18 @@ export default defineConfig((env) => ({
         path.resolve(__dirname, 'code-preview.html'),
       ],
       plugins: [
-        injectPlugin({
-          // a namespace import gives us nice error messages if we missed an export
-          Buffer: [path.resolve(__dirname, './src/polyfills/buffer.ts'), '*'],
-          process: [path.resolve(__dirname, './src/polyfills/process.ts'), '*'],
-          // monaco-editor has guards in place for process.* usage
-          exclude: /\/monaco-editor\//,
-        }),
+        /** @type {any} */ (
+          injectPlugin({
+            // a namespace import gives us nice error messages if we missed an export
+            Buffer: [path.resolve(__dirname, './src/polyfills/buffer.ts'), '*'],
+            process: [
+              path.resolve(__dirname, './src/polyfills/process.ts'),
+              '*',
+            ],
+            // monaco-editor has guards in place for process.* usage
+            exclude: /\/monaco-editor\//,
+          })
+        ),
       ],
     },
   },

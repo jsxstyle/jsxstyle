@@ -3,6 +3,6 @@
   "version": "2.5.1",
   "private": true,
   "peerDependencies": {
-    "vite": "^4.3.5"
+    "vite": "^5.4.2"
   }
 }
