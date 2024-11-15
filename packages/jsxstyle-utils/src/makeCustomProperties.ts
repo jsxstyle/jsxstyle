@@ -7,7 +7,8 @@ import type {
 } from './generateCustomPropertiesFromVariants';
 import type { StyleCache } from './getStyleCache';
 
-interface CustomPropertyVariantWithSetMethod extends CustomPropertyVariant {
+export interface CustomPropertyVariantWithSetMethod
+  extends CustomPropertyVariant {
   activate: () => void;
 }
 
