@@ -15,16 +15,16 @@ export function componentFactory(displayName: JsxstyleComponentName) {
   const component = <T extends ValidComponentPropValue = 'div'>(
     props: React.PropsWithChildren<JsxstyleProps<T>>
   ): React.ReactElement => {
-    const Component: any = props.component || tagName;
+    const mergedProps = { ...defaultProps, ...props };
+    const Component: any = mergedProps.component || tagName;
     const extractedProps = styleCache.getComponentProps(
-      props,
+      mergedProps,
       classNamePropKey
     );
     return createElement(Component, extractedProps);
   };
 
   component.displayName = displayName;
-  component.defaultProps = defaultProps;
 
   return component;
 }
