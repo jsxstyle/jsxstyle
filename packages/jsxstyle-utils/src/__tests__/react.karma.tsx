@@ -28,7 +28,7 @@ describe('jsxstyle', () => {
           throw new Error('Could not find an element with ID `' + id + '`');
         }
         expect(item.getAttribute('class')).toEqual(
-          '_1mb383g _15ze4s2 _cky7la _pl5woq _1tjz4hu _1qo33y1 _tx589f _4d7esz _cmecz0'
+          '_cmecz0 _1mb383g _15ze4s2 _cky7la _pl5woq _1tjz4hu _1qo33y1 _tx589f _4d7esz'
         );
         expect(item.getAttribute('href')).toEqual('#wow');
         expect(item.children.length).toEqual(1);
