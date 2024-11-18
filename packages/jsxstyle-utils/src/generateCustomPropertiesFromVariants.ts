@@ -68,6 +68,7 @@ export const generateCustomPropertiesFromVariants = <
     const variant: PropMap<KPropKey> =
       variantMap[variantName as keyof typeof variantMap];
     let cssBody = '';
+    let delimiter = '';
     for (const propKey of propKeys) {
       if (propKey === 'mediaQuery') break;
       const customPropName =
@@ -79,7 +80,8 @@ export const generateCustomPropertiesFromVariants = <
       customProperties[propKey] = `var(${customPropName})`;
       const propValue = dangerousStyleValue('', variant[propKey]);
       if (propValue) {
-        cssBody += `${customPropName}: ${propValue};`;
+        cssBody += delimiter + `${customPropName}: ${propValue}`;
+        delimiter = ';';
       }
     }
 

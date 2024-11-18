@@ -475,8 +475,8 @@ export function extractStyles(
                             t.objectExpression([
                               t.objectProperty(
                                 t.identifier('className'),
-                                // biome-ignore lint/style/noNonNullAssertion: variant name is always present in variants object
                                 t.stringLiteral(
+                                  // biome-ignore lint/style/noNonNullAssertion: variant name is always present in variants object
                                   result.variants[name]!.className
                                 )
                               ),

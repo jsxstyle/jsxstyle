@@ -1240,10 +1240,10 @@ const props = makeCustomProperties({
     `);
     expect(rv.css).toMatchInlineSnapshot(`
       "/* mock/custom-properties1.js */
-      :root { --jsxstyle-prop1: prop1 value;--jsxstyle-prop2: 123px; }
-      :root:not(.\\9).jsxstyle_banana { --jsxstyle-prop1: banana prop1 value; }
-      :root:not(.\\9).jsxstyle_default { --jsxstyle-prop1: prop1 value;--jsxstyle-prop2: 123px; }
-      @media mq { :root:not(.\\9) { --jsxstyle-prop1: banana prop1 value; } }
+      :root { --jsxstyle-prop1: prop1 value;--jsxstyle-prop2: 123px }
+      :root:not(.\\9).jsxstyle_banana { --jsxstyle-prop1: banana prop1 value }
+      :root:not(.\\9).jsxstyle_default { --jsxstyle-prop1: prop1 value;--jsxstyle-prop2: 123px }
+      @media mq { :root:not(.\\9) { --jsxstyle-prop1: banana prop1 value } }
       "
     `);
   });
@@ -1292,10 +1292,10 @@ const props = makeCustomProperties({
     `);
     expect(rv.css).toMatchInlineSnapshot(`
       "/* mock/custom-properties1.js */
-      :root { --test0: prop1 value;--test1: 123px; }
-      :root:not(.\\9).test_banana { --test0: banana prop1 value; }
-      :root:not(.\\9).test_default { --test0: prop1 value;--test1: 123px; }
-      @media mq { :root:not(.\\9) { --test0: banana prop1 value; } }
+      :root { --test0: prop1 value;--test1: 123px }
+      :root:not(.\\9).test_banana { --test0: banana prop1 value }
+      :root:not(.\\9).test_default { --test0: prop1 value;--test1: 123px }
+      @media mq { :root:not(.\\9) { --test0: banana prop1 value } }
       "
     `);
   });
