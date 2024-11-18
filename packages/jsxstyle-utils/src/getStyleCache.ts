@@ -58,7 +58,9 @@ export function getStyleCache({
     if (options.getClassName) {
       getClassNameForKey = options.getClassName;
     }
-    onInsertRule = options.onInsertRule;
+    if (options.onInsertRule) {
+      onInsertRule = options.onInsertRule;
+    }
     styleCache.injectOptions = alreadyInjected;
   };
 
