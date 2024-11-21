@@ -1,53 +1,45 @@
+import { isObject } from './typePredicates';
 /* eslint-disable no-prototype-builtins */
 import type { AnimatableCSSProperties as CSSProps } from './types';
 
 // global flag makes subsequent calls of capRegex.test advance to the next match
 const capRegex = /[A-Z]/g;
 
-export const commonComponentProps = {
-  checked: true,
-  children: true,
-  class: true,
-  className: true,
-  disabled: true,
-  href: true,
-  id: true,
-  name: true,
-  placeholder: true,
-  src: true,
-  style: true,
-  type: true,
-  value: true,
-};
+export const commonComponentProps = new Set([
+  'checked',
+  'children',
+  'class',
+  'className',
+  'disabled',
+  'href',
+  'id',
+  'name',
+  'placeholder',
+  'src',
+  'style',
+  'type',
+  'value',
+]);
 
-const pseudoelements: Record<string, true> = {
-  after: true,
-  before: true,
-  placeholder: true,
-  selection: true,
-};
+const pseudoelements = new Set(['after', 'before', 'placeholder', 'selection']);
 
-const pseudoclasses: Record<string, true> = {
-  active: true,
-  checked: true,
-  disabled: true,
-  empty: true,
-  enabled: true,
-  focus: true,
-  hover: true,
-  invalid: true,
-  link: true,
-  required: true,
-  target: true,
-  valid: true,
-};
+const pseudoclasses = new Set([
+  'active',
+  'checked',
+  'disabled',
+  'empty',
+  'enabled',
+  'focus',
+  'hover',
+  'invalid',
+  'link',
+  'required',
+  'target',
+  'valid',
+]);
 
 /** Props that are used internally and not passed on to the underlying component */
-const skippedProps: Record<string, true> = {
-  component: true,
-  mediaQueries: true,
-  props: true,
-};
+const skippedProps = new Set(['component', 'mediaQueries', 'props']);
 
 const doubleSpecificityPrefixes: Record<string, true> = {
   animation: true,
@@ -99,7 +91,7 @@ export interface ParsedStyleProp {
 export type CommonComponentProp = keyof typeof commonComponentProps;
 
 export const parseStyleProps = (
-  props: Record<string, any>,
+  props: Record<string, unknown>,
   ampersandString?: string,
   queryString?: string
 ): {
@@ -119,14 +111,15 @@ export const parseStyleProps = (
       (isMq || isContainer) &&
       // infinite nesting isn't supported
       !ampersandString &&
-      !queryString
+      !queryString &&
+      isObject(propValue)
     ) {
       const result = parseStyleProps(propValue, undefined, originalPropName);
       Object.assign(parsedStyleProps, result.parsedStyleProps);
       continue;
     }
 
-    if (originalPropName.includes('&')) {
+    if (originalPropName.includes('&') && isObject(propValue)) {
       const result = parseStyleProps(
         propValue,
         ampersandString
@@ -139,13 +132,13 @@ export const parseStyleProps = (
     }
 
     // separate known component props from style props
-    if (commonComponentProps.hasOwnProperty(originalPropName)) {
+    if (commonComponentProps.has(originalPropName)) {
       componentProps[originalPropName] = props[originalPropName];
       continue;
     }
 
     if (
-      skippedProps.hasOwnProperty(originalPropName) ||
+      skippedProps.has(originalPropName) ||
       !props.hasOwnProperty(originalPropName)
     ) {
       continue;
@@ -172,7 +165,7 @@ export const parseStyleProps = (
 
     if (!ampersandString) {
       // check for pseudoelement prefix
-      if (propNamePrefix && pseudoelements[propNamePrefix]) {
+      if (propNamePrefix && pseudoelements.has(propNamePrefix)) {
         pseudoelement = propNamePrefix;
         splitIndex = capRegex.lastIndex - 1;
         propNamePrefix =
@@ -183,7 +176,7 @@ export const parseStyleProps = (
       }
 
       // check for pseudoclass prefix
-      if (propNamePrefix && pseudoclasses[propNamePrefix]) {
+      if (propNamePrefix && pseudoclasses.has(propNamePrefix)) {
         pseudoclass = propNamePrefix;
         splitIndex = capRegex.lastIndex - 1;
         propNamePrefix =
@@ -215,8 +208,8 @@ export const parseStyleProps = (
 
     const propFn = shorthandProps[propName as keyof typeof shorthandProps];
     if (typeof propFn === 'function') {
-      const expandedProps = propFn(propValue);
-      if (expandedProps == null || typeof expandedProps !== 'object') {
+      const expandedProps = propFn(propValue as any);
+      if (!isObject(expandedProps)) {
         continue;
       }
       for (const expandedPropName in expandedProps) {

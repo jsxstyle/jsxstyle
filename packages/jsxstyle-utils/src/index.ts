@@ -11,3 +11,4 @@ export type { CommonComponentProp } from './parseStyleProps';
 export { getCustomPropertiesFunction } from './makeCustomProperties';
 export type { CustomPropertyVariantWithSetMethod } from './makeCustomProperties';
 export type { CacheObject } from './types';
+export { isObject } from './typePredicates';

@@ -10,25 +10,25 @@ import { type StaticStyleObject, updateStyleObject } from './styleObjectUtils';
 
 const eventHandlerRegex = /^on[A-Z]/;
 
-const knownComponentProps = {
-  checked: true,
-  children: true,
-  class: true,
-  className: true,
-  component: true,
-  disabled: true,
-  href: true,
-  id: true,
-  key: true,
-  mediaQueries: true,
-  name: true,
-  placeholder: true,
-  props: true,
-  ref: true,
-  style: true,
-  type: true,
-  value: true,
-};
+const knownComponentProps = new Set([
+  'checked',
+  'children',
+  'class',
+  'className',
+  'component',
+  'disabled',
+  'href',
+  'id',
+  'key',
+  'mediaQueries',
+  'name',
+  'placeholder',
+  'props',
+  'ref',
+  'style',
+  'type',
+  'value',
+]);
 
 export const evaluateAttributes = (
   attributeMap: ReturnType<typeof flattenSpreadAttributes>,
@@ -49,7 +49,7 @@ export const evaluateAttributes = (
 
   for (const [key, value] of attributeMap.entries()) {
     const isComponentProp =
-      eventHandlerRegex.test(key) || knownComponentProps.hasOwnProperty(key);
+      eventHandlerRegex.test(key) || knownComponentProps.has(key);
 
     if (isComponentProp) {
       let nodeValue: t.Expression;

@@ -2,8 +2,8 @@ import * as path from 'node:path';
 import type { Binding, Scope } from '@babel/traverse';
 import * as t from '@babel/types';
 import invariant from 'invariant';
+import { isObject } from 'jsxstyle/utils';
 
-import { isObject } from '../typePredicates';
 import { evaluateAstNode } from './evaluateAstNode';
 import { getSourceModule } from './getSourceModule';
 

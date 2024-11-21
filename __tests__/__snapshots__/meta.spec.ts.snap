@@ -93,8 +93,6 @@ jsxstyle
 - lib/jsxstyle-bundler-utils/src/noop.d.ts.map
 - lib/jsxstyle-bundler-utils/src/noop.js
 - lib/jsxstyle-bundler-utils/src/noop.js.map
-- lib/jsxstyle-bundler-utils/src/typePredicates.d.ts
-- lib/jsxstyle-bundler-utils/src/typePredicates.d.ts.map
 - lib/jsxstyle-bundler-utils/src/types.d.ts
 - lib/jsxstyle-bundler-utils/src/types.d.ts.map
 - lib/jsxstyle-bundler-utils/src/wrapFileSystem.d.ts
@@ -177,6 +175,8 @@ jsxstyle
 - lib/jsxstyle-utils/src/processProps.d.ts.map
 - lib/jsxstyle-utils/src/stringHash.d.ts
 - lib/jsxstyle-utils/src/stringHash.d.ts.map
+- lib/jsxstyle-utils/src/typePredicates.d.ts
+- lib/jsxstyle-utils/src/typePredicates.d.ts.map
 - lib/jsxstyle-utils/src/types.d.ts
 - lib/jsxstyle-utils/src/types.d.ts.map
 - lib/jsxstyle-vite-plugin/src/index.cjs
