@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, no-prototype-builtins */
 import * as t from '@babel/types';
 import { generate } from './babelUtils';
 import { joinStringExpressions } from './joinStringExpressions';

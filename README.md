@@ -2,7 +2,6 @@
 
 This repository is the monorepo for runtime versions jsxstyle as well as a few tools designed to be used with jsxstyle.
 
-<!-- prettier-ignore -->
 | Package | Description |
 | :-- | :-- |
 | [`jsxstyle`][jsxstyle] | stylable React/Preact components |
@@ -125,7 +124,6 @@ import { Block } from 'jsxstyle/preact';
 />;
 ```
 
-<!-- prettier-ignore -->
 | Supported Pseudoclasses | Supported Pseudoelements |
 | -- | -- |
 | `active`, `checked`, `disabled`, `empty`, `enabled`, `focus`, `hover`, `invalid`, `link`, `required`, `target`, `valid` | `placeholder`, `selection`, `before`, `after` |

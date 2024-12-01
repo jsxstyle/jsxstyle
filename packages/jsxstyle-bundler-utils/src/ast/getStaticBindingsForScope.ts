@@ -39,7 +39,6 @@ export function getStaticBindingsForScope(
         );
       }
 
-      // eslint-disable-next-line no-prototype-builtins
       if (modulesByAbsolutePath?.hasOwnProperty(moduleName)) {
         const src = modulesByAbsolutePath[moduleName];
         if (!isObject(src)) {
@@ -93,7 +92,6 @@ export function getStaticBindingsForScope(
     const cacheKey = `${dec.id.name}_${dec.id.start}-${dec.id.end}`;
 
     // retrieve value from cache
-    // eslint-disable-next-line no-prototype-builtins
     if (bindingCache.hasOwnProperty(cacheKey)) {
       ret[k] = bindingCache[cacheKey];
       continue;

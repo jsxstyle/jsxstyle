@@ -1,6 +1,5 @@
 import * as vm from 'node:vm';
 import type { NodePath } from '@babel/traverse';
-/* eslint-disable no-prototype-builtins */
 import type * as t from '@babel/types';
 import { isObject } from 'jsxstyle/utils';
 import { generate } from './babelUtils';

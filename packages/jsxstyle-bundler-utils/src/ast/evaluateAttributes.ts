@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, no-prototype-builtins */
 import type * as t from '@babel/types';
 import { generate } from './babelUtils';
 import type { OptionsObject } from './extractStyles';

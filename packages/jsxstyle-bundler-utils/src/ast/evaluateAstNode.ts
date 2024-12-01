@@ -1,4 +1,3 @@
-/* eslint-disable no-prototype-builtins */
 import * as t from '@babel/types';
 import invariant from 'invariant';
 import { generate } from './babelUtils';

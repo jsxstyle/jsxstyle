@@ -4,9 +4,7 @@ import { Block, InlineBlock, Row, cache } from 'jsxstyle';
 
 import './polyfills';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const reactVersion = require('react/package').version;
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const reactDomVersion = require('react-dom/package').version;
 
 describe('jsxstyle', () => {
