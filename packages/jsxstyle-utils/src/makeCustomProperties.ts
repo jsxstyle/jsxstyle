@@ -87,6 +87,7 @@ const makeCustomPropertiesInternal = <
       setVariant,
       variantNames,
       variants: variantsObj,
+      styles,
     };
   },
 });
