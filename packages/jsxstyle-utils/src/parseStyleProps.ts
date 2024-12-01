@@ -1,25 +1,24 @@
 import { isObject } from './typePredicates';
-/* eslint-disable no-prototype-builtins */
 import type { AnimatableCSSProperties as CSSProps } from './types';
 
 // global flag makes subsequent calls of capRegex.test advance to the next match
 const capRegex = /[A-Z]/g;
 
-export const commonComponentProps = new Set([
-  'checked',
-  'children',
-  'class',
-  'className',
-  'disabled',
-  'href',
-  'id',
-  'name',
-  'placeholder',
-  'src',
-  'style',
-  'type',
-  'value',
-]);
+export const commonComponentProps = {
+  checked: true,
+  children: true,
+  class: true,
+  className: true,
+  disabled: true,
+  href: true,
+  id: true,
+  name: true,
+  placeholder: true,
+  src: true,
+  style: true,
+  type: true,
+  value: true,
+};
 
 const pseudoelements = new Set(['after', 'before', 'placeholder', 'selection']);
 
@@ -132,7 +131,7 @@ export const parseStyleProps = (
     }
 
     // separate known component props from style props
-    if (commonComponentProps.has(originalPropName)) {
+    if (commonComponentProps.hasOwnProperty(originalPropName)) {
       componentProps[originalPropName] = props[originalPropName];
       continue;
     }
