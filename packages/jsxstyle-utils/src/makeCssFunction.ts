@@ -5,7 +5,7 @@ type AmpersandStyles = {
   [key: `${string}&${string}`]: CSSProperties;
 };
 
-type CSSParams = CSSProperties &
+export type CSSParams = CSSProperties &
   AmpersandStyles & {
     [key: `@container ${string}`]: CSSProperties & AmpersandStyles;
     [key: `@media ${string}`]: CSSProperties & AmpersandStyles;
