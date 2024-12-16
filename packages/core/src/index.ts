@@ -21,3 +21,4 @@ export type { CSSProperties, AnimatableCSSProperties } from './types.js';
 export type { CustomPropertyVariantWithSetMethod } from './makeCustomProperties.js';
 export type { VariantMap } from './generateCustomPropertiesFromVariants.js';
 export type { InsertRuleCallback } from './processProps.js';
+export type { MakeCustomPropertiesFunction } from './makeCustomProperties.js';

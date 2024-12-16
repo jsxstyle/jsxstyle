@@ -7,16 +7,14 @@ import type { JsxstyleProps, ValidComponentPropValue } from './types.js';
 
 export const classNamePropKey = 'class';
 
-type Props<T extends ValidComponentPropValue> = JsxstyleProps<T> & {
-  children?: JSX.Element;
-};
-
-export function componentFactory(displayName: JsxstyleComponentName) {
+export function componentFactory<T extends JsxstyleComponentName>(
+  displayName: T
+) {
   const tagName = 'div';
   const defaultProps = componentStyles[displayName];
 
   const component = <T extends ValidComponentPropValue = 'div'>(
-    props: Props<T>
+    props: JsxstyleProps<T>
   ): JSX.Element => {
     const extractedProps = createMemo(() => {
       return styleCache.getComponentProps(

@@ -7,26 +7,19 @@ export type { CSSProperties } from '@jsxstyle/core';
 export type { StylableComponentProps } from './types.js';
 export { styleCache as cache };
 
-export const makeCustomProperties: ReturnType<
-  typeof getCustomPropertiesFunction
-> = getCustomPropertiesFunction(styleCache);
+export const makeCustomProperties =
+  /*#__PURE__*/ getCustomPropertiesFunction(styleCache);
 
-export const css: ReturnType<typeof makeCssFunction> = makeCssFunction(
-  classNamePropKey,
-  styleCache
-);
+export const css = /*#__PURE__*/ makeCssFunction(classNamePropKey, styleCache);
 
-// Using ReturnType + explicit typing to prevent Hella Dupes in the generated types
-type JsxstyleComponent = ReturnType<typeof componentFactory>;
+export const Box = /*#__PURE__*/ componentFactory('Box');
+export const Block = /*#__PURE__*/ componentFactory('Block');
+export const Inline = /*#__PURE__*/ componentFactory('Inline');
+export const InlineBlock = /*#__PURE__*/ componentFactory('InlineBlock');
 
-export const Box: JsxstyleComponent = componentFactory('Box');
-export const Block: JsxstyleComponent = componentFactory('Block');
-export const Inline: JsxstyleComponent = componentFactory('Inline');
-export const InlineBlock: JsxstyleComponent = componentFactory('InlineBlock');
+export const Row = /*#__PURE__*/ componentFactory('Row');
+export const Col = /*#__PURE__*/ componentFactory('Col');
+export const InlineRow = /*#__PURE__*/ componentFactory('InlineRow');
+export const InlineCol = /*#__PURE__*/ componentFactory('InlineCol');
 
-export const Row: JsxstyleComponent = componentFactory('Row');
-export const Col: JsxstyleComponent = componentFactory('Col');
-export const InlineRow: JsxstyleComponent = componentFactory('InlineRow');
-export const InlineCol: JsxstyleComponent = componentFactory('InlineCol');
-
-export const Grid: JsxstyleComponent = componentFactory('Grid');
+export const Grid = /*#__PURE__*/ componentFactory('Grid');

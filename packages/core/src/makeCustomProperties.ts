@@ -12,13 +12,53 @@ export interface CustomPropertyVariantWithSetMethod
   activate: () => void;
 }
 
+export interface MakeCustomPropertiesFunction<
+  KPropKey extends Exclude<
+    string,
+    'setVariant' | 'variantNames' | 'variants' | 'styles'
+  >,
+  TVariantName extends string,
+> {
+  /** Add a variant to this variant group */
+  addVariant: <TName extends string>(
+    /** The name for your new variant. You’ll reference the variant by name when manually activating it. */
+    variantName: TName,
+    /** The props that will change when this variant is active */
+    props: {
+      [Key in KPropKey]?: string | number;
+    } & {
+      /** An optional media query that will activate this variant */
+      mediaQuery?: string;
+    }
+  ) => MakeCustomPropertiesFunction<KPropKey, TVariantName | TName>;
+
+  build: (buildOptions?: BuildOptions) => {
+    [Key in Exclude<
+      KPropKey,
+      'setVariant' | 'variantNames' | 'variants' | 'styles'
+    >]: string;
+  } & {
+    /** Manually enable a variant. Only one variant in this group can be active at a time. */
+    setVariant: (variantName: TVariantName | null) => void;
+    /** All variant names */
+    variantNames: TVariantName[];
+    /**
+     * Variant metadata keyed by variant name.
+     * There’s a curried `set` method in there too.
+     */
+    variants: Record<TVariantName, CustomPropertyVariantWithSetMethod>;
+    /** All variant styles, one array item per CSS class */
+    styles: string[];
+  };
+}
+
 const makeCustomPropertiesInternal = <
   KPropKey extends string,
   TVariantName extends string,
 >(
   variantMap: VariantMap<TVariantName, KPropKey>,
   cache: StyleCache
-) => ({
+): MakeCustomPropertiesFunction<KPropKey, TVariantName> => ({
   addVariant: <TName extends string>(
     variantName: TName,
     props: {

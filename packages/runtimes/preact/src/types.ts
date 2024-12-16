@@ -3,8 +3,6 @@ import type { JSX } from 'preact';
 
 export type IntrinsicElement = keyof JSX.IntrinsicElements;
 
-export type PropsWithChildren<T> = T & { children?: preact.ComponentChildren };
-
 export type ValidComponentPropValue =
   | false
   | null

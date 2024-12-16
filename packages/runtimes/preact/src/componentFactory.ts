@@ -1,20 +1,18 @@
 import { type JsxstyleComponentName, componentStyles } from '@jsxstyle/core';
 import { createElement } from 'preact';
 import { styleCache } from './styleCache.js';
-import type {
-  JsxstyleProps,
-  PropsWithChildren,
-  ValidComponentPropValue,
-} from './types.js';
+import type { JsxstyleProps, ValidComponentPropValue } from './types.js';
 
 export const classNamePropKey = 'class';
 
-export function componentFactory(displayName: JsxstyleComponentName) {
+export function componentFactory<T extends JsxstyleComponentName>(
+  displayName: T
+) {
   const tagName = 'div';
   const defaultProps = componentStyles[displayName];
 
   const component = <T extends ValidComponentPropValue = 'div'>(
-    props: PropsWithChildren<JsxstyleProps<T>>
+    props: JsxstyleProps<T>
   ): preact.VNode<any> => {
     const mergedProps = { ...defaultProps, ...props };
     const Component: any = mergedProps.component || tagName;
