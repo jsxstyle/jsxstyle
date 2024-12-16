@@ -1,0 +1,19 @@
+{
+  "extends": "@jsxstyle/internal/tsconfig.esm.json",
+  "include": ["*.ts"],
+  "references": [
+    {
+      "path": "../packages/internal"
+    }
+  ],
+  "compilerOptions": {
+    "rootDir": ".",
+    "module": "NodeNext",
+    "moduleResolution": "nodenext",
+    "paths": {
+      "@jsxstyle/internal": [
+        "../packages/internal/src"
+      ]
+    }
+  }
+}

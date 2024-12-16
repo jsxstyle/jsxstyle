@@ -1,4 +1,4 @@
-import { Block, Col } from 'jsxstyle';
+import { Block, Col } from '@jsxstyle/react';
 import { styleConstants } from '../utilities/constants';
 
 interface CodeModuleProps {

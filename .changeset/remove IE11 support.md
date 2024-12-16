@@ -1,5 +1,5 @@
 ---
-'jsxstyle-utils': major
+'@jsxstyle/core': major
 ---
 
 Removed IE11 from the list of supported browsers.

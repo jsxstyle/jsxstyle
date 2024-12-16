@@ -1,29 +1,16 @@
 {
+  "extends": "@jsxstyle/internal/tsconfig.react.json",
   "compilerOptions": {
-    "allowJs": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "jsx": "preserve",
-    "lib": [
-      "es6",
-      "dom"
-    ],
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "noImplicitAny": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noUnusedLocals": true,
-    "rootDir": "src",
-    "sourceMap": true,
-    "strictNullChecks": true,
-    "target": "es5"
+    "jsx": "react-jsx",
+    "paths": {
+      "@jsxstyle/react": [
+        "../../packages/runtimes/react/src"
+      ]
+    }
   },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx"
-  ],
-  "exclude": [
-    "node_modules"
+  "references": [
+    {
+      "path": "../../packages/runtimes/react"
+    }
   ]
 }

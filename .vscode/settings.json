@@ -2,5 +2,11 @@
   "git.enabled": true,
   "typescript.tsdk": "node_modules/typescript/lib/",
   "biome.enabled": true,
-  "editor.defaultFormatter": "biomejs.biome"
+  "editor.defaultFormatter": "biomejs.biome",
+  "explorer.fileNesting.patterns": {
+    "*.ts": "${capture}.js, ${capture}.test.ts, ${capture}.test.tsx",
+    "*.js": "${capture}.js.map, ${capture}.d.ts, ${capture}.d.ts.map",
+    "tsconfig.json": "tsconfig.*.json, *.tsbuildinfo",
+    "package.json": "package-lock.json"
+  },
 }

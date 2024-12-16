@@ -1,0 +1,20 @@
+{
+  "name": "@jsxstyle/nextjs-plugin",
+  "version": "0.0.0",
+  "type": "module",
+  "files": [
+    "lib",
+    "!lib/tsconfig.tsbuildinfo"
+  ],
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "dependencies": {
+    "@jsxstyle/webpack-plugin": "*"
+  },
+  "devDependencies": {
+    "next": "^15.1.0"
+  },
+  "peerDependencies": {
+    "next": ">=13.0.0 <=15.0.0"
+  }
+}

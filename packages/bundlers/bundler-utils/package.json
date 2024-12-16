@@ -1,0 +1,25 @@
+{
+  "name": "@jsxstyle/bundler-utils",
+  "version": "0.0.0",
+  "type": "module",
+  "files": [
+    "lib",
+    "!lib/tsconfig.tsbuildinfo"
+  ],
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "import": "./lib/index.js"
+    },
+    "./noop": {
+      "types": "./lib/noop.d.ts",
+      "import": "./lib/noop.js"
+    }
+  },
+  "dependencies": {
+    "@jsxstyle/core": "*",
+    "memfs": "^3.4.1"
+  }
+}

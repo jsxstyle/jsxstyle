@@ -1,4 +1,4 @@
-import { makeCustomProperties } from 'jsxstyle';
+import { makeCustomProperties } from '@jsxstyle/react';
 
 export const styleConstants = makeCustomProperties({
   foreground: '#333',

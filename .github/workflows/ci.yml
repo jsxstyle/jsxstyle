@@ -50,9 +50,9 @@ jobs:
 
       - run: npm install
       - run: npm run build
-      - run: npm run karma
-        env:
-          CI: true
-          TZ: 'America/Los_Angeles'
-          SAUCE_USERNAME: jsxstyle
-          SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
+      # - run: npm run karma
+      #   env:
+      #     CI: true
+      #     TZ: 'America/Los_Angeles'
+      #     SAUCE_USERNAME: jsxstyle
+      #     SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}

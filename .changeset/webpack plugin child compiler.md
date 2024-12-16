@@ -1,5 +1,5 @@
 ---
-'jsxstyle-webpack-plugin': major
+'@jsxstyle/webpack-plugin': major
 ---
 
 Made a few breaking config changes to `jsxstyle/webpack-plugin`:

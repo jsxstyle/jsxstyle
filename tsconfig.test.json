@@ -1,16 +1,5 @@
 {
-  "extends": "./config/tsconfig.base.json",
-  "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "jsx": "react-jsx",
-    "module": "commonjs",
-    "target": "es2015",
-    "types": [
-      "jest",
-      "node"
-    ]
-  },
+  "extends": "@jsxstyle/internal/tsconfig.esm.json",
   "include": [
     "karma.conf.ts",
     "misc/getCustomLaunchers.ts",
@@ -20,20 +9,41 @@
   ],
   "exclude": [
     "node_modules",
-    "packages/jsxstyle-react/src/__tests__/typescript"
+    "packages/clients/react/src/__tests__/typescript"
   ],
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "types": [
+      "vitest/globals"
+    ],
+    "rootDir": "${configDir}",
+    "tsBuildInfoFile": "${configDir}/tsconfig.test.tsbuildinfo"
+  },
   "references": [
     {
-      "path": "packages/jsxstyle-react"
+      "path": "./packages/bundlers/bundler-utils"
     },
     {
-      "path": "packages/jsxstyle-solid"
+      "path": "./packages/bundlers/nextjs-plugin"
     },
     {
-      "path": "packages/jsxstyle-utils"
+      "path": "./packages/bundlers/vite-plugin"
     },
     {
-      "path": "packages/jsxstyle-webpack-plugin"
+      "path": "./packages/bundlers/webpack-plugin"
+    },
+    {
+      "path": "./packages/core"
+    },
+    {
+      "path": "./packages/runtimes/preact"
+    },
+    {
+      "path": "./packages/runtimes/react"
+    },
+    {
+      "path": "./packages/runtimes/solid"
     }
   ]
 }

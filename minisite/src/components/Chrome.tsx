@@ -1,4 +1,4 @@
-import { Block } from 'jsxstyle';
+import { Block } from '@jsxstyle/react';
 
 interface ChromeProps {
   children?: React.ReactNode;

@@ -1,0 +1,15 @@
+{
+  "extends": "@jsxstyle/internal/tsconfig.esm.json",
+  "compilerOptions": {
+    "paths": {
+      "@jsxstyle/webpack-plugin": [
+        "../webpack-plugin/src"
+      ]
+    }
+  },
+  "references": [
+    {
+      "path": "../webpack-plugin"
+    }
+  ]
+}

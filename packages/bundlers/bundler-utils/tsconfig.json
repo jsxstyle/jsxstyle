@@ -1,0 +1,15 @@
+{
+  "extends": "@jsxstyle/internal/tsconfig.esm.json",
+  "compilerOptions": {
+    "paths": {
+      "@jsxstyle/core": [
+        "../../core/src"
+      ]
+    }
+  },
+  "references": [
+    {
+      "path": "../../core"
+    }
+  ]
+}

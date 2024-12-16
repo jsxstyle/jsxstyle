@@ -1,8 +1,0 @@
-{
-  "name": "jsxstyle-react",
-  "version": "2.5.1",
-  "private": true,
-  "peerDependencies": {
-    "@types/react": "^18.0.0"
-  }
-}

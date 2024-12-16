@@ -1,0 +1,15 @@
+{
+  "name": "@jsxstyle/solid",
+  "version": "0.0.1",
+  "type": "module",
+  "files": [
+    "lib",
+    "!lib/tsconfig.tsbuildinfo"
+  ],
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "dependencies": {
+    "@jsxstyle/core": "*",
+    "solid-js": "^1.6.16"
+  }
+}

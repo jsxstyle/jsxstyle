@@ -1,4 +1,4 @@
-import { Block } from 'jsxstyle';
+import { Block } from '@jsxstyle/react';
 
 import Avatar from './Avatar';
 import LayoutConstants from './LayoutConstants';

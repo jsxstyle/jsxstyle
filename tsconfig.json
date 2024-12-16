@@ -2,16 +2,46 @@
   "files": [],
   "references": [
     {
-      "path": "tsconfig.test.json"
+      "path": "./tsconfig.test.json"
     },
     {
-      "path": "packages/tsconfig.json"
+      "path": "./scripts/tsconfig.json"
     },
     {
-      "path": "minisite/tsconfig.json"
+      "path": "./packages/internal/tsconfig.json"
     },
     {
-      "path": "examples/jsxstyle-typescript-example/tsconfig.json"
+      "path": "./examples/jsxstyle-typescript-example"
+    },
+    {
+      "path": "./examples/jsxstyle-vite-example"
+    },
+    {
+      "path": "./minisite"
+    },
+    {
+      "path": "./packages/bundlers/bundler-utils"
+    },
+    {
+      "path": "./packages/bundlers/nextjs-plugin"
+    },
+    {
+      "path": "./packages/bundlers/vite-plugin"
+    },
+    {
+      "path": "./packages/bundlers/webpack-plugin"
+    },
+    {
+      "path": "./packages/core"
+    },
+    {
+      "path": "./packages/runtimes/preact"
+    },
+    {
+      "path": "./packages/runtimes/react"
+    },
+    {
+      "path": "./packages/runtimes/solid"
     }
   ]
 }

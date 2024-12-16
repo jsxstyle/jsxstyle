@@ -1,0 +1,3 @@
+{
+  "extends": "@jsxstyle/internal/tsconfig.esm.json"
+}

@@ -1,7 +1,7 @@
 import generate from '@babel/generator';
 import babelTraverse from '@babel/traverse';
 import * as t from '@babel/types';
-import { extractStyles } from '../../../packages/jsxstyle-bundler-utils/src/ast/extractStyles';
+import { extractStyles } from '@jsxstyle/bundler-utils';
 
 const convertMemberExpression = (
   expression: t.JSXMemberExpression

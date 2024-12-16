@@ -1,8 +1,8 @@
-import * as jsxstyle from 'jsxstyle';
+import * as jsxstyle from '@jsxstyle/react';
 import * as React from 'react';
 import * as jsxRuntime from 'react/jsx-runtime';
 
-import { Block, Col, Row, css } from 'jsxstyle';
+import { Block, Col, Row, css } from '@jsxstyle/react';
 import { useEffect, useReducer, useRef } from 'react';
 import { CodeModule } from '../components/CodeModule';
 import { ErrorBoundary } from '../components/ErrorBoundary';

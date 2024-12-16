@@ -1,4 +1,4 @@
-import { Block } from 'jsxstyle';
+import { Block } from '@jsxstyle/react';
 
 export const ModuleHeading: React.FC<{ children?: React.ReactNode }> = ({
   children,

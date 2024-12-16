@@ -1,0 +1,14 @@
+{
+  "name": "@jsxstyle/core",
+  "version": "2.5.1",
+  "type": "module",
+  "files": [
+    "lib",
+    "!lib/tsconfig.tsbuildinfo"
+  ],
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "dependencies": {
+    "csstype": "^3.0.11"
+  }
+}

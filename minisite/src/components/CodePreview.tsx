@@ -1,4 +1,4 @@
-import { Block } from 'jsxstyle';
+import { Block } from '@jsxstyle/react';
 import { useEffect, useRef, useState } from 'react';
 
 interface CodePreviewProps {

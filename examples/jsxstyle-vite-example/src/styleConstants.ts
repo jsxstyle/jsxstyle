@@ -1,4 +1,4 @@
-import { css, makeCustomProperties } from 'jsxstyle';
+import { css, makeCustomProperties } from '@jsxstyle/react';
 
 export const exampleClassName = css({
   display: 'block',

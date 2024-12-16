@@ -1,4 +1,4 @@
-import { Block, Row } from 'jsxstyle';
+import { Block, Row } from '@jsxstyle/react';
 import PropTypes from 'prop-types';
 
 import LayoutConstants from './LayoutConstants';

@@ -1,6 +1,6 @@
 ---
-'jsxstyle-react': minor
-'jsxstyle-utils': minor
+'@jsxstyle/react': minor
+'@jsxstyle/core': minor
 ---
 
 Combined jsxstyle and jsxstyle-utils. Partially inspired by #167.

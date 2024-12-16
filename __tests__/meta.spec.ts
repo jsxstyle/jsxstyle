@@ -1,28 +1,27 @@
-import { execSync } from 'node:child_process';
+import { getPackList, getWorkspaces } from '@jsxstyle/internal';
 import * as path from 'node:path';
-import { getPackages } from '@manypkg/get-packages';
-import glob from 'glob';
-import packlist from 'npm-packlist';
-
-const JSXSTYLE_ROOT = path.resolve(__dirname, '..');
+import { glob, $ } from 'zx';
 
 describe('npm publish', () => {
   it('only publishes the intended files', async () => {
-    const packages = await getPackages(JSXSTYLE_ROOT);
-    const packagePromises = packages.packages
-      // exclude private packages
-      .filter((pkg) => !pkg.packageJson.private)
-      .sort((a, b) => a.packageJson.name.localeCompare(b.packageJson.name))
-      .map((pkg) =>
-        // fetch file list and format it into something
-        packlist({ path: pkg.dir }).then(
-          (fileList) => `
-${pkg.packageJson.name}
-${pkg.packageJson.name.replace(/./g, '=')}
-${fileList
-  .map((fileName) => {
+    const packages = await getWorkspaces();
+
+    const packLists = await getPackList(
+      packages.filter((pkg) => !pkg.private).map((pkg) => pkg.name)
+    );
+
+    // exclude private packages
+    const results = packLists
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .map(
+        (pkg) =>
+          `
+${pkg.name}
+${pkg.name.replace(/./g, '=')}
+${pkg.files
+  .map(({ path }) => {
     // chunk filenames contain a hash that will change across builds
-    const updatedFileName = fileName.replace(
+    const updatedFileName = path.replace(
       /(\.)[a-f0-9]{8}(\.c?js(?:\.map)?)$/,
       '$1[hash]$2'
     );
@@ -31,24 +30,21 @@ ${fileList
   .sort()
   .join('\n')}
 `
-        )
       );
 
-    await expect(Promise.all(packagePromises)).resolves.toMatchSnapshot();
+    await expect(results).toMatchSnapshot();
   });
 });
 
-describe.skip('examples', () => {
+describe.skip('examples', async () => {
   const exampleDir = path.resolve(__dirname, '..', 'examples');
-  const examples = glob.sync('jsxstyle-*-example', { cwd: exampleDir });
+  const examples = await glob('jsxstyle-*-example', { cwd: exampleDir });
 
   for (const example of examples) {
     it(`\`${example}\` builds correctly`, async () => {
       const cwd = path.join(exampleDir, example);
       expect.assertions(1);
-      return expect(() =>
-        execSync('npm run build', { cwd, stdio: 'inherit' })
-      ).not.toThrow();
+      return expect(() => $({ cwd })`npm run build`).not.toThrow();
     }, 30000);
   }
 });

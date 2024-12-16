@@ -1,0 +1,13 @@
+{
+  "name": "@jsxstyle/internal",
+  "private": true,
+  "version": "0.0.0",
+  "main": "src/index.ts",
+  "type": "module",
+  "dependencies": {
+    "@types/invariant": "^2.2.37",
+    "invariant": "^2.2.4",
+    "superstruct": "^2.0.2",
+    "zx": "^8.2.4"
+  }
+}

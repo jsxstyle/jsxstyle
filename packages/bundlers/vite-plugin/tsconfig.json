@@ -1,0 +1,15 @@
+{
+  "extends": "@jsxstyle/internal/tsconfig.esm.json",
+  "compilerOptions": {
+    "paths": {
+      "@jsxstyle/bundler-utils": [
+        "../bundler-utils/src"
+      ]
+    }
+  },
+  "references": [
+    {
+      "path": "../bundler-utils"
+    }
+  ]
+}

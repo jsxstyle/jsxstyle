@@ -1,4 +1,4 @@
-import { Block, Box, css, useMatchMedia } from 'jsxstyle';
+import { Block, Box, css, useMatchMedia } from '@jsxstyle/react';
 import { useState } from 'react';
 import codeSample from '../codeSample?raw';
 import { styleConstants } from '../utilities/constants';

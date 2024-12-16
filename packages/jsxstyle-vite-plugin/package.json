@@ -1,8 +1,0 @@
-{
-  "name": "jsxstyle-vite-plugin",
-  "version": "2.5.1",
-  "private": true,
-  "peerDependencies": {
-    "vite": "^5.4.2"
-  }
-}

@@ -1,7 +1,7 @@
-**/node_modules/**
-**/build/**
-**/dist/**
-**/lib/**
+**/node_modules
+**/build
+**/dist
+**/lib
 *.log
 /.rpt2_cache
 /.vscode

@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json.schemastore.org/tsconfig",
+  "include": [
+    "${configDir}/src/**/*"
+  ],
+  "exclude": [
+    "lib",
+    "node_modules",
+    "${configDir}/**/__tests__/*",
+    "${configDir}/**/__tests__/*"
+  ],
+  "compilerOptions": {
+    "composite": true,
+    "moduleResolution": "node",
+    "lib": [
+      "ESNext"
+    ],
+    "types": [],
+    "rootDir": "${configDir}/src",
+    "outDir": "${configDir}/lib",
+    "tsBuildInfoFile": "${configDir}/lib/tsconfig.tsbuildinfo",
+    "allowJs": false,
+    "declaration": true,
+    "sourceMap": true,
+    "declarationMap": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmitOnError": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "resolveJsonModule": true,
+    "strictNullChecks": true
+  }
+}

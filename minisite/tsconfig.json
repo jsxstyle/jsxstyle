@@ -1,33 +1,15 @@
 {
-  "extends": "../config/tsconfig.base.json",
-  "include": [
-    "src"
-  ],
+  "extends": "@jsxstyle/internal/tsconfig.react.json",
   "compilerOptions": {
-    "rootDir": ".",
-    "tsBuildInfoFile": "dist/cache.tsbuildinfo",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
-    "strict": true,
-    "moduleResolution": "bundler",
-    "jsx": "react-jsx",
-    "target": "esnext",
-    "module": "esnext",
     "paths": {
-      "jsxstyle": [
-        "../packages/jsxstyle"
+      "@jsxstyle/react": [
+        "../packages/runtimes/react/src"
       ]
     }
   },
   "references": [
     {
-      "path": "../packages/jsxstyle-bundler-utils"
-    },
-    {
-      "path": "../packages/jsxstyle-react"
-    },
+      "path": "../packages/runtimes/react"
+    }
   ]
 }

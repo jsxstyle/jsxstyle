@@ -1,0 +1,29 @@
+{
+  "files": [],
+  "references": [
+    {
+      "path": "./packages/bundlers/bundler-utils"
+    },
+    {
+      "path": "./packages/bundlers/nextjs-plugin"
+    },
+    {
+      "path": "./packages/bundlers/vite-plugin"
+    },
+    {
+      "path": "./packages/bundlers/webpack-plugin"
+    },
+    {
+      "path": "./packages/core"
+    },
+    {
+      "path": "./packages/runtimes/preact"
+    },
+    {
+      "path": "./packages/runtimes/react"
+    },
+    {
+      "path": "./packages/runtimes/solid"
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-import { Block, InlineBlock } from 'jsxstyle';
+import { Block, InlineBlock } from '@jsxstyle/react';
 import * as React from 'react';
 import logo from './logo.svg';
 

@@ -9,10 +9,10 @@ const webpackConfig = {
   target: 'web',
   resolve: {
     alias: {
-      jsxstyle$: path.dirname(
-        require.resolve('./packages/jsxstyle/package.json')
+      '@jsxstyle/react$': path.dirname(
+        require.resolve('./packages/@jsxstyle/react/package.json')
       ),
-      'jsxstyle/utils$': require.resolve('jsxstyle/utils'),
+      '@jsxstyle/core$': require.resolve('@jsxstyle/core'),
       react: path.dirname(require.resolve('react/package.json')),
       'react-dom': path.dirname(require.resolve('react-dom/package.json')),
     },

@@ -114,7 +114,7 @@ This list is fairly arbitrary. If there’s a prop that you think is missing, fe
 To specify a pseudoelement or pseudoclass on a style property, prefix the prop with the name of the applicable pseudoelement or pseudoclass. If you’d like to specify a pseudoelement _and_ a pseudoclass for a style prop, start with the pseudoclass—i.e., `hoverPlaceholderColor`, not `placeholderHoverColor`.
 
 ```jsx
-import { Block } from 'jsxstyle/preact';
+import { Block } from '@jsxstyle/preact';
 
 <Block
   component="input"
@@ -151,7 +151,7 @@ Define a `mediaQueries` property with an object of media queries keyed by whatev
 jsxstyle exports a hook, `useMatchMedia`, that enables the developer to subscribe to media query change events and react accordingly. Here’s the hook in action:
 
 ```jsx
-import { Block, useMatchMedia } from 'jsxstyle';
+import { Block, useMatchMedia } from '@jsxstyle/react';
 
 export const RedOrBlueComponent = ({ children }) => {
   const isSmallScreen = useMatchMedia('screen and (max-width: 800px)');
@@ -260,7 +260,7 @@ jsxstyle exports a `cache` object with a few functions that make adding support 
 Here’s a minimal (untested!) example of jsxstyle server rendering with Koa:
 
 ```jsx
-import { cache } from 'jsxstyle';
+import { cache } from '@jsxstyle/react';
 import * as Koa from 'koa';
 import * as React from 'react';
 import { renderToString } from 'react-dom';
