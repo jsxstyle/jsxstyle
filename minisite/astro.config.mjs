@@ -10,6 +10,11 @@ const __dirname = new URL('.', import.meta.url).pathname;
 // https://astro.build/config
 export default defineConfig({
   integrations: [react()],
+
+  build: {
+    assets: '-',
+  },
+
   vite: {
     resolve: {
       alias: ['path', 'vm', 'module'].map((moduleName) => ({
@@ -34,6 +39,10 @@ export default defineConfig({
 
     build: {
       rollupOptions: {
+        output: {
+          assetFileNames: '-/[hash][extname]',
+        },
+
         plugins: [
           /** @type {any} */
           (
