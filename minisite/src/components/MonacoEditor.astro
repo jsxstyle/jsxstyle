@@ -1,0 +1,77 @@
+---
+import type { CSSProperties } from "@jsxstyle/react";
+import { Box } from "@jsxstyle/astro";
+
+interface Props extends CSSProperties {}
+---
+
+<Box {...Astro.props} props={{ id: "code-preview" }} />
+
+<script>
+  const { monaco } = await import("./customMonaco");
+  import editorWorker from "monaco-editor/esm/vs/editor/editor.worker?worker";
+  import jsonWorker from "monaco-editor/esm/vs/language/json/json.worker?worker";
+  import typescriptWorker from "monaco-editor/esm/vs/language/typescript/ts.worker?worker";
+  import { initialSampleCode } from "./initialSampleCode";
+
+  self.MonacoEnvironment = {
+    async getWorker(_workerId, label) {
+      switch (label) {
+        case "typescript": {
+          return new typescriptWorker();
+        }
+        case "json": {
+          return new jsonWorker();
+        }
+        default: {
+          return new editorWorker();
+        }
+      }
+    },
+  };
+
+  const editorElement = document.getElementById("code-preview")!;
+  const darkModeMq = window.matchMedia(
+    "screen and (prefers-color-scheme: dark)",
+  );
+  const isDarkMode = darkModeMq.matches;
+  darkModeMq.addEventListener("change", (e) => {
+    editor.updateOptions({ theme: isDarkMode ? "vs-dark" : "vs" });
+  });
+
+  const theme = isDarkMode ? "vs-dark" : "vs";
+
+  const editor = monaco.editor.create(editorElement, {
+    scrollBeyondLastLine: true,
+    minimap: {
+      enabled: true,
+    },
+    language: "typescript",
+    theme,
+    wordWrap: "on",
+    wrappingIndent: "indent",
+    wrappingStrategy: "advanced",
+  });
+
+  const model = monaco.editor.createModel(
+    initialSampleCode,
+    "typescript",
+    monaco.Uri.file("exampleSchema.tsx"),
+  );
+  editor.setModel(model);
+
+  editor.onDidChangeModelContent(() => {
+    const value = editor.getValue() || "";
+    window.sessionStorage.setItem("code", value);
+  });
+
+  const resizeObserver = new ResizeObserver((entries) => {
+    for (const entry of entries) {
+      if (entry.target === editorElement) {
+        editor.layout();
+      }
+    }
+  });
+
+  resizeObserver.observe(editorElement);
+</script>

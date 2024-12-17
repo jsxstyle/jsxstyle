@@ -1,4 +1,4 @@
-import Module from 'node:module';
+import { wrap } from 'node:module';
 import * as path from 'node:path';
 import * as vm from 'node:vm';
 
@@ -13,7 +13,7 @@ export const getExportsFromModuleSource = (
     throw new Error(`Expected an absolute path, received ${modulePath}`);
   }
   const moduleObj: { exports: Record<string, unknown> } = { exports: {} };
-  const wrappedModuleContent = Module.wrap(moduleContent);
+  const wrappedModuleContent = wrap(moduleContent);
   const moduleFunction = vm.runInThisContext(wrappedModuleContent);
 
   // `runInThisContext` returns a function (our string of JS wrapped with Module.wrap).

@@ -1,0 +1,21 @@
+{
+  "extends": "@jsxstyle/internal/tsconfig.browser.json",
+  "compilerOptions": {
+    "jsx": "preserve",
+    "plugins": [
+      {
+        "name": "@astrojs/ts-plugin"
+      }
+    ],
+    "paths": {
+      "@jsxstyle/core": [
+        "../../core/src"
+      ]
+    }
+  },
+  "references": [
+    {
+      "path": "../../core"
+    }
+  ]
+}

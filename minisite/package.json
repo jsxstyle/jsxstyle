@@ -2,18 +2,23 @@
   "name": "@jsxstyle/minisite",
   "private": true,
   "version": "0.0.0",
+  "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "start": "npm run dev"
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
   },
   "dependencies": {
-    "@rollup/plugin-inject": "^5.0.5",
+    "@astrojs/react": "^4.1.0",
+    "@jsxstyle/astro": "*",
     "@jsxstyle/react": "*",
+    "@rollup/plugin-inject": "^5.0.5",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "astro": "^5.0.5",
     "monaco-editor": "^0.51.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "vite": "^6.0.3"
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
   }
 }

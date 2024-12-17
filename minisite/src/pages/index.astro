@@ -1,0 +1,35 @@
+---
+import { Box } from "@jsxstyle/astro";
+import Layout from "../layouts/Layout.astro";
+import MonacoEditor from "../components/MonacoEditor.astro";
+import { styleConstants } from "../utilities/constants";
+import CodePreviewIframe from "../components/CodePreviewIframe.astro";
+---
+
+<Layout>
+	<Box
+		display="flex"
+		alignItems="stretch"
+		height="100%"
+		overflow="hidden"
+		flexDirection="row"
+		{...{
+			"@media (max-width: 1000px)": {
+				flexDirection: "column",
+			},
+		}}
+	>
+		<Box
+			position="relative"
+			zIndex={0}
+			flex="1 1 300px"
+			backgroundColor={styleConstants.editorBackground}
+		>
+			<MonacoEditor position="absolute" inset={0} />
+		</Box>
+
+		<Box flex="1 1 300px">
+			<CodePreviewIframe />
+		</Box>
+	</Box>
+</Layout>

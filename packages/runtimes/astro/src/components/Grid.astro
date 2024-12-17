@@ -1,0 +1,19 @@
+---
+import type { CSSParams } from "@jsxstyle/core";
+import { css } from "@jsxstyle/react";
+
+interface Props<K extends keyof astroHTML.JSX.DefinedIntrinsicElements = "div">
+  extends CSSParams {
+  component?: K;
+  props?: astroHTML.JSX.DefinedIntrinsicElements[K];
+}
+
+const { component = "div", props, ...styleProps } = Astro.props;
+const Element = component;
+const className = css({
+  ...styleProps,
+  display: "grid",
+});
+---
+
+<Element class={className || undefined} {...props}><slot /></Element>

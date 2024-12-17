@@ -1,0 +1,21 @@
+{
+  "name": "@jsxstyle/astro",
+  "version": "0.0.0",
+  "type": "module",
+  "description": "jsxstyle components for Astro",
+  "author": "@meyer",
+  "files": [
+    "src"
+  ],
+  "main": "src/index.ts",
+  "dependencies": {
+    "@jsxstyle/core": "*"
+  },
+  "devDependencies": {
+    "astro": "^5.0.5",
+    "@astrojs/ts-plugin": "^1.10.4"
+  },
+  "peerDependencies": {
+    "astro": "^4.0.0 || ^5.0.0"
+  }
+}

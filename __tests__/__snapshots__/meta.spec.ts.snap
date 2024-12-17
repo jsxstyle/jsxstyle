@@ -3,6 +3,16 @@
 exports[`npm publish > only publishes the intended files 1`] = `
 [
   "
+@jsxstyle/astro
+===============
+- package.json
+- src/components/Box.astro
+- src/components/Col.astro
+- src/components/Grid.astro
+- src/components/Row.astro
+- src/index.ts
+",
+  "
 @jsxstyle/bundler-utils
 =======================
 - lib/ModuleCache.d.ts

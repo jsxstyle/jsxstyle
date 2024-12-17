@@ -1,0 +1,53 @@
+---
+interface Props {
+	title?: string;
+}
+
+import { Box } from "@jsxstyle/astro";
+
+const title = Astro.props.title
+	? `${Astro.props.title} \u2027 jsxstyle`
+	: "jsxstyle: Inline styles for JSX";
+import "../style.css";
+
+import { cache } from "@jsxstyle/react";
+import { styleConstants } from "../utilities/constants";
+
+const customProperties = `:root { color: ${styleConstants.foreground}; background-color: ${styleConstants.background} }`;
+
+cache.reset();
+// let index = 0;
+
+const { css, returnValue: slotContent } = await cache.run(
+	async () => {
+		for (const rule of styleConstants.styles) {
+			cache.insertRule(rule);
+		}
+		return (await Astro.slots.render("default")) || "";
+	},
+	// () => "_x" + (index++).toString(36),
+);
+---
+
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width" />
+		<meta
+			name="description"
+			content="Simple and powerful team-friendly inline styling for React in just 3KB"
+		/>
+		<title>{title}</title>
+		<style data-source="jsxstyle" set:html={css}></style>
+		<style set:html={customProperties}></style>
+	</head>
+	<body>
+		<Box
+			component="main"
+			display="content"
+			height="100%"
+			set:html={slotContent}
+		/>
+	</body>
+</html>

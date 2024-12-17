@@ -3,8 +3,18 @@
     Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
   font-size: 16px;
   line-height: 1.2;
-  background-color: var(--jsxstyle-pageBackground);
   color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark light;
+  }
+}
+
+html,
+body {
+  height: 100%;
 }
 
 * {

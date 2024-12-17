@@ -4,15 +4,16 @@ import * as jsxRuntime from 'react/jsx-runtime';
 
 import { Block, Col, Row, css } from '@jsxstyle/react';
 import { useEffect, useReducer, useRef } from 'react';
-import { CodeModule } from '../components/CodeModule';
-import { ErrorBoundary } from '../components/ErrorBoundary';
-import { useAsyncModule } from '../hooks/useAsyncModule';
+import { CodeModule } from './CodeModule';
+import { ErrorBoundary } from './ErrorBoundary';
+import { useAsyncModule } from '../utilities/useAsyncModule';
 import { styleConstants } from '../utilities/constants';
+import { initialSampleCode } from './initialSampleCode';
 
 const modules = {
   react: React,
   'react/jsx-runtime': jsxRuntime,
-  jsxstyle,
+  '@jsxstyle/react': jsxstyle,
 };
 
 const requireFn = (moduleName: string) => {
@@ -95,8 +96,7 @@ export const CodePreviewPage: React.FC = () => {
     }
     const { transpile } = transpileModule.result;
 
-    const handleMessage = (event: WindowEventMap['message']) => {
-      const code = event.data as unknown;
+    const handleMessage = (code: unknown) => {
       if (typeof code !== 'string') return;
 
       try {
@@ -172,10 +172,19 @@ export const CodePreviewPage: React.FC = () => {
       }
     };
 
-    window.addEventListener('message', handleMessage);
+    handleMessage(initialSampleCode);
     window.parent.postMessage('code preview ready!');
 
-    return () => window.removeEventListener('message', handleMessage);
+    const storageHandler = (event: StorageEvent) => {
+      if (event.key === 'code') {
+        handleMessage(event.newValue);
+      }
+    };
+
+    window.addEventListener('storage', storageHandler);
+    return () => {
+      window.removeEventListener('storage', storageHandler);
+    };
   }, [transpileModule]);
 
   return (

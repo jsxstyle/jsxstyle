@@ -8,3 +8,5 @@ export const runInContext = (code: string, context: PolyfillVMContext) => {
 };
 
 export const runInNewContext = (code: string) => new Function(code)();
+
+export const runInThisContext = (code: string) => new Function(code)();

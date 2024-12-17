@@ -8,7 +8,12 @@ import reactRuntimeDts from '../../../node_modules/@types/react/jsx-runtime.d.ts
 import csstypeDts from '../../../node_modules/csstype/index.d.ts?raw';
 
 const jsxstyleTypes = import.meta.glob(
-  '../../../packages/jsxstyle/lib/**/*.d.ts',
+  '../../../packages/runtimes/react/lib/**/*.d.ts',
+  { query: '?raw', import: 'default', eager: true }
+);
+
+const jsxstyleCoreTypes = import.meta.glob(
+  '../../../packages/core/lib/**/*.d.ts',
   { query: '?raw', import: 'default', eager: true }
 );
 
@@ -30,17 +35,27 @@ for (const [fileName, fileContent] of Object.entries(jsxstyleTypes)) {
     console.error('Module content for file `%s` is not a string', fileName);
     continue;
   }
-  const trimmedFileName = fileName.replace('../../../packages/', '');
+  const trimmedFileName = fileName.replace(
+    '../../../packages/runtimes/react/lib/',
+    ''
+  );
   monaco.languages.typescript.typescriptDefaults.addExtraLib(
     fileContent,
-    `file:///node_modules/${trimmedFileName}`
+    `file:///node_modules/@jsxstyle/react/${trimmedFileName}`
   );
 }
 
-monaco.languages.typescript.typescriptDefaults.addExtraLib(
-  `export * from './lib/jsxstyle-react/src/index';`,
-  'file:///node_modules/jsxstyle/index.d.ts'
-);
+for (const [fileName, fileContent] of Object.entries(jsxstyleCoreTypes)) {
+  if (typeof fileContent !== 'string') {
+    console.error('Module content for file `%s` is not a string', fileName);
+    continue;
+  }
+  const trimmedFileName = fileName.replace('../../../packages/core/lib/', '');
+  monaco.languages.typescript.typescriptDefaults.addExtraLib(
+    fileContent,
+    `file:///node_modules/@jsxstyle/core/${trimmedFileName}`
+  );
+}
 
 monaco.languages.typescript.typescriptDefaults.addExtraLib(
   reactDts,

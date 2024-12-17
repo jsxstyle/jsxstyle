@@ -125,6 +125,7 @@ const compilerOptionsKeys = [
   'strictFunctionTypes',
   'strictNullChecks',
   'strictPropertyInitialization',
+  'plugins',
   'paths',
 ];
 

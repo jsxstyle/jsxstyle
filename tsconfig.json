@@ -35,6 +35,9 @@
       "path": "./packages/core"
     },
     {
+      "path": "./packages/runtimes/astro"
+    },
+    {
       "path": "./packages/runtimes/preact"
     },
     {

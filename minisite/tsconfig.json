@@ -2,12 +2,18 @@
   "extends": "@jsxstyle/internal/tsconfig.react.json",
   "compilerOptions": {
     "paths": {
+      "@jsxstyle/astro": [
+        "../packages/runtimes/astro/src"
+      ],
       "@jsxstyle/react": [
         "../packages/runtimes/react/src"
       ]
     }
   },
   "references": [
+    {
+      "path": "../packages/runtimes/astro"
+    },
     {
       "path": "../packages/runtimes/react"
     }
