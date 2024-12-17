@@ -17,7 +17,7 @@ export default defineConfig({
 
   vite: {
     resolve: {
-      alias: ['path', 'vm', 'module'].map((moduleName) => ({
+      alias: ['path', 'vm'].map((moduleName) => ({
         find: 'node:' + moduleName,
         replacement: path.resolve(
           __dirname,
