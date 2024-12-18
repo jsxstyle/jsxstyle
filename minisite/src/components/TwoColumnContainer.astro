@@ -1,0 +1,31 @@
+---
+import { Box } from "@jsxstyle/astro";
+import type { CSSProperties } from "@jsxstyle/react";
+
+interface Props extends CSSProperties {
+  columnMinWidth?: number;
+}
+
+const { columnMinWidth = 500, ...styleProps } = Astro.props;
+---
+
+<Box
+  {...styleProps}
+  display="flex"
+  alignItems="stretch"
+  overflow="hidden"
+  flexDirection="row"
+  {...{
+    [`@media (max-width: ${columnMinWidth * 2}px)`]: {
+      flexDirection: "column",
+    },
+  }}
+>
+  <Box position="relative" zIndex={0} flex="1 1 300px">
+    <slot name="left" />
+  </Box>
+
+  <Box position="relative" zIndex={0} flex="1 1 300px">
+    <slot name="right" />
+  </Box>
+</Box>
