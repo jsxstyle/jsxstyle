@@ -1,6 +1,9 @@
-import { type JsxstyleComponentName, componentStyles } from '@jsxstyle/core';
+import {
+  type JsxstyleComponentName,
+  componentStyles,
+  cacheSingleton,
+} from '@jsxstyle/core';
 import { createElement } from 'preact';
-import { styleCache } from './styleCache.js';
 import type { JsxstyleProps, ValidComponentPropValue } from './types.js';
 
 export const classNamePropKey = 'class';
@@ -16,7 +19,7 @@ export function componentFactory<T extends JsxstyleComponentName>(
   ): preact.VNode<any> => {
     const mergedProps = { ...defaultProps, ...props };
     const Component: any = mergedProps.component || tagName;
-    const extractedProps = styleCache.getComponentProps(
+    const extractedProps = cacheSingleton.getComponentProps(
       mergedProps,
       classNamePropKey
     );

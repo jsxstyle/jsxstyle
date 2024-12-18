@@ -1,6 +1,6 @@
 ---
 import type { CSSParams } from "@jsxstyle/core";
-import { css } from "@jsxstyle/react";
+import { cacheSingleton } from "@jsxstyle/core";
 
 interface Props<K extends keyof astroHTML.JSX.DefinedIntrinsicElements = "div">
   extends CSSParams {
@@ -8,14 +8,16 @@ interface Props<K extends keyof astroHTML.JSX.DefinedIntrinsicElements = "div">
   props?: astroHTML.JSX.DefinedIntrinsicElements[K];
 }
 
-const { component = "div", props, ...styleProps } = Astro.props;
-const Element = component;
-const className = css({
-  alignItems: "center",
-  ...styleProps,
-  display: "flex",
-  flexDirection: "row",
-});
+const { component: Element = "div", ...astroProps } = Astro.props;
+const props = cacheSingleton.getComponentProps(
+  {
+    alignItems: "center",
+    ...astroProps,
+    display: "flex",
+    flexDirection: "row",
+  },
+  "class",
+);
 ---
 
-<Element class={className || undefined} {...props}><slot /></Element>
+<Element {...props}><slot /></Element>

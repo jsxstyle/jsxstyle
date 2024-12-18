@@ -1,8 +1,11 @@
-import { type JsxstyleComponentName, componentStyles } from '@jsxstyle/core';
+import {
+  type JsxstyleComponentName,
+  componentStyles,
+  cacheSingleton,
+} from '@jsxstyle/core';
 import { createMemo } from 'solid-js';
 import type { JSX } from 'solid-js';
 import { Dynamic, createComponent, mergeProps } from 'solid-js/web';
-import { styleCache } from './styleCache.js';
 import type { JsxstyleProps, ValidComponentPropValue } from './types.js';
 
 export const classNamePropKey = 'class';
@@ -17,7 +20,7 @@ export function componentFactory<T extends JsxstyleComponentName>(
     props: JsxstyleProps<T>
   ): JSX.Element => {
     const extractedProps = createMemo(() => {
-      return styleCache.getComponentProps(
+      return cacheSingleton.getComponentProps(
         { ...defaultProps, ...props },
         classNamePropKey
       );

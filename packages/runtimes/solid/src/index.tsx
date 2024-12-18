@@ -1,16 +1,18 @@
-import { getCustomPropertiesFunction } from '@jsxstyle/core';
+import { getCustomPropertiesFunction, cacheSingleton } from '@jsxstyle/core';
 import { makeCssFunction } from '@jsxstyle/core';
 import { classNamePropKey, componentFactory } from './componentFactory.js';
-import { styleCache } from './styleCache.js';
 
 export type { CSSProperties } from '@jsxstyle/core';
 export type { StylableComponentProps } from './types.js';
-export { styleCache as cache };
+export { cacheSingleton as cache };
 
 export const makeCustomProperties =
-  /*#__PURE__*/ getCustomPropertiesFunction(styleCache);
+  /*#__PURE__*/ getCustomPropertiesFunction(cacheSingleton);
 
-export const css = /*#__PURE__*/ makeCssFunction(classNamePropKey, styleCache);
+export const css = /*#__PURE__*/ makeCssFunction(
+  classNamePropKey,
+  cacheSingleton
+);
 
 export const Box = /*#__PURE__*/ componentFactory('Box');
 export const Block = /*#__PURE__*/ componentFactory('Block');
