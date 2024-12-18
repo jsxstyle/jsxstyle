@@ -23,7 +23,7 @@ export const transpile = (code: string) => {
     errorCallback: (error) => errors.push(error),
     getClassNameForKey: (() => {
       let index = 0;
-      return () => `x${(++index).toString(36)}`;
+      return () => `_x${(index++).toString(36)}`;
     })(),
   });
 

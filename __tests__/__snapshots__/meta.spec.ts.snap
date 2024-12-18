@@ -252,12 +252,12 @@ exports[`npm publish > only publishes the intended files 1`] = `
 ===============
 - lib/componentFactory.d.ts
 - lib/componentFactory.d.ts.map
-- lib/componentFactory.jsx
-- lib/componentFactory.jsx.map
+- lib/componentFactory.js
+- lib/componentFactory.js.map
 - lib/index.d.ts
 - lib/index.d.ts.map
-- lib/index.jsx
-- lib/index.jsx.map
+- lib/index.js
+- lib/index.js.map
 - lib/types.d.ts
 - lib/types.d.ts.map
 - lib/types.js
