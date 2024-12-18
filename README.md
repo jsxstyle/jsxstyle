@@ -1,89 +1,54 @@
-# jsxstyle & friends
+# jsxstyle [<img src="https://badgen.net/bundlephobia/minzip/@jsxstyle/react@canary">](https://npmjs.com/package/@jsxstyle/react) [![Sauce Test Status](https://app.saucelabs.com/buildstatus/jsxstyle)](https://app.saucelabs.com/u/jsxstyle)
 
-This repository is the monorepo for runtime versions jsxstyle as well as a few tools designed to be used with jsxstyle.
+**Inline styles for JSX—React, Preact, Solid, and Astro**
 
-| Package | Description |
-| :-- | :-- |
-| [`jsxstyle`][jsxstyle] | stylable React/Preact components |
-| [`jsxstyle/webpack-plugin`][jsxstyle-webpack-plugin] | webpack plugin that extracts static styles from jsxstyle components at build time |
-
-[jsxstyle]: https://github.com/jsxstyle/jsxstyle/tree/main/packages/jsxstyle
-[jsxstyle-webpack-plugin]: https://github.com/jsxstyle/jsxstyle/tree/main/packages/jsxstyle/src/webpack-plugin
-
----
-
-# jsxstyle [<img src="https://badgen.net/bundlephobia/minzip/jsxstyle">](https://npmjs.com/package/jsxstyle) [![Sauce Test Status](https://app.saucelabs.com/buildstatus/jsxstyle)](https://app.saucelabs.com/u/jsxstyle)
-
-jsxstyle is an inline style system for React and Preact. It provides a best-in-class developer experience without sacrificing performance.
+jsxstyle is an inline style system for JSX.
 
 Styles are written _inline_ on a special set of components exported by jsxstyle. Inline styles on these components are converted to CSS rules and added to the document right as they’re needed.
 
-With `jsxstyle`, your component code looks like this:
+With jsxstyle, your component code looks like this:
 
 ```jsx
-<Row padding={15}>
+<Row padding={15} gap={15}>
   <Block
-    backgroundColor="#EEE"
-    boxShadow="inset 0 0 0 1px rgba(0,0,0,0.15)"
+    component="img"
+    src="url(http://graph.facebook.com/justinbieber/picture?type=large)"
     borderRadius={5}
     height={64}
     width={64}
-    marginRight={15}
-    backgroundSize="contain"
-    backgroundImage="url(http://graph.facebook.com/justinbieber/picture?type=large)"
   />
-  <Col fontFamily="sans-serif" fontSize={16} lineHeight="24px">
+  <Col fontFamily="system-ui" fontSize={16} lineHeight="24px">
     <Block fontWeight={600}>Justin Bieber</Block>
     <Block fontStyle="italic">Canadian</Block>
   </Col>
 </Row>
 ```
 
-## ⚡️ Style as fast as you can think.
-
-Jumping between JS and CSS in your editor is no longer necessary. Since style are inline, you can determine at a glance exactly how an element is styled. jsxstyle frees you up to do what you do best—write styles.
-
-## ✅ Inline styles done right.
-
-Just because styles are _written_ inline doesn’t mean they _stay_ inline. jsxstyle’s approach to inline styles ensures that a best-in-class developer experience comes with no performance cost.
-
-## 😪 No more naming fatigue.
-
-Naming components is hard enough, and there are only so many synonyms for “wrapper”. jsxstyle provides a set of stylable components, each with a few default styles set. These primitive stylable components form a set of _building blocks_ that you can reuse throughout your application. You can still create named stylable components if you wish, by utilizing a paradigm you’re already familiar with: composition. No funky syntax necessary:
-
-```jsx
-const RedBlock = (props) => <Block {...props} color="red" />;
-```
-
-## 🍱 Scoped styles right out the box.
-
-Styles written on jsxstyle components are scoped to _component instances_ instead of abstract reusable class names. That’s not to say we’ve abandoned class names, though; styles on jsxstyle components are extracted into CSS rules and assigned a _hashed, content-based class name_ that is intentionally unlike a human-written name.
-
-## 👯 Team friendly by design.
-
-jsxstyle’s mental model is easy to teach and easy to learn, which means onboarding new frontend contributors takes _seconds_, not hours. Since styles applied by jsxstyle are scoped to component instances, frontend contributors don’t need a complete knowledge of the system in order to be 100% productive right from the start.
-
-## 🛠 Powerful build-time optimizations.
-
-Styles written inline on a set of components from a known source can very easily be statically analyzed, which opens up new possibilities for tooling and optimization. One such optimization is the built-in [webpack-plugin][jsxstyle-webpack-plugin] that extracts static styles from jsxstyle components _at build time_. This plugin reduces and in some cases _entirely removes_ the need for runtime jsxstyle.
-
 # Getting started
 
-Install the `jsxstyle` package with your preferred node package manager. Components for React can be imported from `jsxstyle`, and components for Preact can be imported from `jsxstyle/preact`.
+Install the jsxstyle package with your preferred node package manager.
+
+| Framework | Package            |
+| :-------- | :----------------- |
+| Astro     | `@jsxstyle/astro`  |
+| Preact    | `@jsxstyle/preact` |
+| React     | `@jsxstyle/react`  |
+| Solid     | `@jsxstyle/solid`  |
+
 
 jsxstyle provides the following seven components:
 
-| Component     | Default styles                                  |
-| :------------ | :---------------------------------------------- |
-| `Block`       | `display: block;`                               |
-| `Inline`      | `display: inline;`                              |
-| `InlineBlock` | `display: inline-block;`                        |
-| `Row`         | `display: flex; flex-direction: row;`           |
-| `Col`         | `display: flex; flex-direction: column;`        |
-| `InlineRow`   | `display: inline-flex; flex-direction: row;`    |
-| `InlineCol`   | `display: inline-flex; flex-direction: column;` |
-| `Grid`        | `display: grid;`                                |
-| `Box`         | _No default styles_                             |
+| Component     | Default styles                                                 |
+| :------------ | :------------------------------------------------------------- |
+| `Block`       | `display: block;`                                              |
+| `Inline`      | `display: inline;`                                             |
+| `InlineBlock` | `display: inline-block;`                                       |
+| `Row`         | `display: flex; flex-direction: row; justify-content: center;` |
+| `Col`         | `display: flex; flex-direction: column;`                       |
+| `InlineRow`   | `display: inline-flex; flex-direction: row;`                   |
+| `InlineCol`   | `display: inline-flex; flex-direction: column;`                |
+| `Grid`        | `display: grid;`                                               |
+| `Box`         | _No default styles_                                            |
 
 Most props passed to these components are assumed to be CSS properties.
 There are some exceptions to this rule:
@@ -106,6 +71,42 @@ Additionally, the following component props can also be set at the top level if 
 - Any event handler prop starting with `on`
 
 This list is fairly arbitrary. If there’s a prop that you think is missing, feel free to [request an addition to this list][request-new-component-prop].
+
+## The Sales Pitch
+
+### ⚡️ Style as fast as you can think.
+
+Jumping between JS and CSS in your editor is no longer necessary. Since style are inline, you can determine at a glance exactly how an element is styled. jsxstyle frees you up to do what you do best—write styles.
+
+### ✅ Inline styles done right.
+
+Just because styles are _written_ inline doesn’t mean they _stay_ inline. jsxstyle’s approach to inline styles ensures that a best-in-class developer experience comes with no performance cost.
+
+### 😪 No more naming fatigue.
+
+Naming components is hard enough, and there are only so many synonyms for “wrapper”. jsxstyle provides a set of stylable components, each with a few default styles set. These primitive stylable components form a set of _building blocks_ that you can reuse throughout your application.
+
+You can still create named stylable components if you wish, by utilizing a paradigm you’re already familiar with: composition. No funky syntax necessary:
+
+```tsx
+import type { CSSProperties } from '@jsxstyle/core';
+
+const RedBlock: React.FC<CSSProperties> = (props) => (
+  <Block {...props} color="red" />
+);
+```
+
+### 🍱 Atomic styles right out the box.
+
+Each CSS key-value pair is turned into a class name. When jsxstyle sees a key-value pair you’ve already used, style injection is skipped and the class name for that key-value pair is reused. Styles on jsxstyle components are extracted into CSS rules and assigned _hashed, content-based class names_ that are intentionally unlike a human-written name.
+
+### 👯 Team friendly by design.
+
+jsxstyle’s mental model is easy to teach and easy to learn, which means onboarding new frontend contributors takes _seconds_, not hours or days. Since styles applied by jsxstyle are scoped to component instances, frontend contributors don’t need a complete knowledge of the system in order to be 100% productive right from the start.
+
+### 🛠 Powerful build-time optimizations.
+
+Styles written inline on a set of components from a known source can very easily be statically analyzed, which opens up new possibilities for tooling and optimization. One such optimization is the built-in [webpack-plugin][jsxstyle-webpack-plugin] that extracts static styles from jsxstyle components _at build time_. This plugin reduces and in some cases _entirely removes_ the need for runtime jsxstyle.
 
 ## Features
 

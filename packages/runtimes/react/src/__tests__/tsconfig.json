@@ -1,8 +1,10 @@
 {
+  "extends": "@jsxstyle/internal/tsconfig.esm.json",
   "include": [
     "typescript"
   ],
   "compilerOptions": {
+    "rootDir": "typescript",
     "jsx": "preserve",
     "noEmit": true
   }

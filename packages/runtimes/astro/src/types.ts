@@ -1,15 +1,27 @@
-import type { CSSParams, CommonComponentProp } from '@jsxstyle/core';
+import type {
+  CSSParams,
+  CommonComponentProp,
+  EventHandlerKeys,
+} from '@jsxstyle/core';
 
-export type AstroJsxstyleComponentProps<
-  K extends keyof astroHTML.JSX.DefinedIntrinsicElements = 'div',
-> = CSSParams &
-  Pick<
-    astroHTML.JSX.DefinedIntrinsicElements[K],
-    Extract<
-      CommonComponentProp,
-      keyof astroHTML.JSX.DefinedIntrinsicElements[K]
-    >
-  > & {
-    component?: K;
-    props?: astroHTML.JSX.DefinedIntrinsicElements[K];
-  };
+export type IntrinsicElement = keyof astroHTML.JSX.IntrinsicElements;
+
+export type ValidComponentPropValue = IntrinsicElement;
+
+/** Props that will be passed through to whatever component is specified */
+export type StylableComponentProps<T extends ValidComponentPropValue> = Pick<
+  astroHTML.JSX.IntrinsicElements[T],
+  Extract<
+    keyof astroHTML.JSX.IntrinsicElements[T],
+    CommonComponentProp | EventHandlerKeys
+  >
+>;
+
+/** Props for jsxstyle components */
+export type JsxstyleProps<K extends ValidComponentPropValue = 'div'> = {
+  /** Component value is a tag name string. Defaults to `div`. */
+  component?: K | false | null;
+  /** Object of props that will be passed down to the component specified in the `component` prop */
+  props?: astroHTML.JSX.IntrinsicElements[K];
+} & StylableComponentProps<K> &
+  CSSParams;

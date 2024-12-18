@@ -18,7 +18,7 @@
       "vitest/globals"
     ],
     "rootDir": "${configDir}",
-    "tsBuildInfoFile": "${configDir}/tsconfig.test.tsbuildinfo"
+    "tsBuildInfoFile": "${configDir}/node_modules/.cache/tsconfig.test.tsbuildinfo"
   },
   "references": [
     {

@@ -1,15 +1,17 @@
 ---
-import type { AstroJsxstyleComponentProps } from "../types";
+import type { JsxstyleProps } from "../types";
 import { cacheSingleton } from "@jsxstyle/core";
 
 type Props<K extends keyof astroHTML.JSX.DefinedIntrinsicElements = "div"> =
-  AstroJsxstyleComponentProps<K>;
+  JsxstyleProps<K>;
 
-const { component: Element = "div", slot, ...astroProps } = Astro.props;
+const { component, slot, ...astroProps } = Astro.props;
 const props = cacheSingleton.getComponentProps(
   { ...astroProps, display: "flex", flexDirection: "column" },
   "class",
 );
+
+const Element = component || "div";
 ---
 
 <Element {...props}><slot /></Element>

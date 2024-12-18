@@ -6,7 +6,10 @@ interface DemoProps {
   demoProp?: boolean;
 }
 
-const DemoFC: React.FC<DemoProps> = (props) => <div {...props} />;
+const DemoFC: React.FC<DemoProps> = (props) => (
+  // @ts-expect-error demoProp is not in HTMLDivElement props
+  <div {...props} />
+);
 
 interface StyleNumberProps {
   style: number;

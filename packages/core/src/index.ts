@@ -16,7 +16,7 @@ export { generateCustomPropertiesFromVariants } from './generateCustomProperties
 export { makeCssFunction } from './makeCssFunction.js';
 
 export { getStyleCache };
-export type { CacheObject } from './types.js';
+export type { CacheObject, EventHandlerKeys } from './types.js';
 export type { CommonComponentProp } from './parseStyleProps.js';
 export type { CSSParams } from './makeCssFunction.js';
 export type { CSSProperties, AnimatableCSSProperties } from './types.js';

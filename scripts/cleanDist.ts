@@ -1,5 +1,5 @@
 import { fs, path } from 'zx';
-import { getWorkspaces } from '../packages/internal/src/utils.js';
+import { getWorkspaces } from '@jsxstyle/internal';
 
 const workspaces = await getWorkspaces();
 

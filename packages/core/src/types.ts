@@ -13,6 +13,38 @@ type BaseCSSProperties = Falsey<Properties<string | number>>;
 /** Properties that can be animated */
 export type AnimatableCSSProperties = Omit<BaseCSSProperties, 'animation'>;
 
+/** Every uppercase letter */
+type UpperCaseLetter =
+  | 'A'
+  | 'B'
+  | 'C'
+  | 'D'
+  | 'E'
+  | 'F'
+  | 'G'
+  | 'H'
+  | 'I'
+  | 'J'
+  | 'K'
+  | 'L'
+  | 'M'
+  | 'N'
+  | 'O'
+  | 'P'
+  | 'Q'
+  | 'R'
+  | 'S'
+  | 'T'
+  | 'U'
+  | 'V'
+  | 'W'
+  | 'X'
+  | 'Y'
+  | 'Z';
+
+/** Union of patterns that match event handler names. */
+export type EventHandlerKeys = `on${UpperCaseLetter}${string}`;
+
 interface JsxstyleAnimation {
   [key: string]: AnimatableCSSProperties;
 }
