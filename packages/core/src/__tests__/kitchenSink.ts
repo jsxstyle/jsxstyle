@@ -1,4 +1,25 @@
-export const kitchenSink = {
+import type { JsxstyleAnimation, JsxstyleComponentStyleProps } from '../types';
+
+interface ExampleElementProps {
+  /** JSDoc comment 1 */
+  disabled?: boolean;
+  /** JSDoc comment 2 */
+  href?: string;
+}
+
+declare module '@jsxstyle/core' {
+  interface JsxstyleComponentStyleProps {
+    hoverMarginLeft?: number;
+    activeMarginV?: number;
+    placeholderPaddingV?: number;
+    placeholderPadding?: number;
+    placeholderPaddingTop?: number;
+    placeholderHoverColor?: number;
+    hoverAnimation?: JsxstyleAnimation;
+  }
+}
+
+export const kitchenSink: JsxstyleComponentStyleProps & ExampleElementProps = {
   disabled: true,
   href: 'https://jsx.style',
   margin: 1,

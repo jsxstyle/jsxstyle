@@ -1,4 +1,5 @@
 import { type ParsedStyleProp, parseStyleProps } from '../parseStyleProps';
+import type { JsxstyleComponentStyleProps } from '../types';
 
 const formatParsedStyleProps = (
   value: Record<string, ParsedStyleProp> | null | undefined
@@ -73,8 +74,6 @@ describe('parseStyleProps', () => {
           "banana": {
             "propName": "banana",
             "propValue": "purple",
-            "pseudoclass": undefined,
-            "pseudoelement": undefined,
             "specificity": 0,
           },
         },
@@ -144,8 +143,6 @@ describe('parseStyleProps', () => {
           "ontological": {
             "propName": "ontological",
             "propValue": 456,
-            "pseudoclass": undefined,
-            "pseudoelement": undefined,
             "specificity": 0,
           },
         },
@@ -224,5 +221,44 @@ describe('parseStyleProps', () => {
         "marginRight": 1,
       }
     `);
+  });
+
+  it('handles media queries correctly', () => {
+    const props: JsxstyleComponentStyleProps = {
+      padding: 123,
+      '@media 345': {
+        padding: 345,
+        // @ts-expect-error nested media queries aren't supported by typing and should be removed
+        '@media 567': {
+          padding: 567,
+          '@media 789': {
+            padding: 789,
+          },
+        },
+      },
+    };
+
+    const parsed = parseStyleProps(props);
+
+    expect(parsed).toMatchInlineSnapshot(
+      `
+      {
+        "componentProps": {},
+        "parsedStyleProps": {
+          "padding": {
+            "propName": "padding",
+            "propValue": 123,
+            "specificity": 0,
+          },
+          "padding@media 345": {
+            "propName": "padding",
+            "propValue": 345,
+            "queryString": "@media 345",
+            "specificity": 0,
+          },
+        },
+      }
+    `
+    );
   });
 });

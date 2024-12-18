@@ -89,9 +89,9 @@ Naming components is hard enough, and there are only so many synonyms for “wra
 You can still create named stylable components if you wish, by utilizing a paradigm you’re already familiar with: composition. No funky syntax necessary:
 
 ```tsx
-import type { CSSProperties } from '@jsxstyle/core';
+import type { JsxstyleComponentProps } from '@jsxstyle/core';
 
-const RedBlock: React.FC<CSSProperties> = (props) => (
+const RedBlock: React.FC<JsxstyleComponentProps> = (props) => (
   <Block {...props} color="red" />
 );
 ```

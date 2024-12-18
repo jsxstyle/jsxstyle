@@ -1,5 +1,5 @@
 import type {
-  CSSProperties,
+  JsxstyleComponentStyleProps,
   CommonComponentProp,
   EventHandlerKeys,
 } from '@jsxstyle/core';
@@ -30,11 +30,11 @@ export type StylableComponentProps<T extends ValidComponentPropValue> = Pick<
   Extract<keyof ExtractProps<T>, CommonComponentProp | EventHandlerKeys>
 >;
 
-/** Props that will be passed through to whatever component is specified */
+/** Props for jsxstyle components */
 export type JsxstyleProps<T extends ValidComponentPropValue = 'div'> = {
-  /** Component value can be either a React component or a tag name string. Defaults to `div`. */
-  component?: T | false | null | undefined;
+  /** Component value can be either a Solid component or a tag name string. Defaults to `div`. */
+  component?: T | false | null;
   /** Object of props that will be passed down to the component specified in the `component` prop */
   props?: ExtractProps<T>;
 } & StylableComponentProps<T> &
-  CSSProperties;
+  JsxstyleComponentStyleProps;

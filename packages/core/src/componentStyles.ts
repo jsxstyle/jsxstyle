@@ -1,4 +1,4 @@
-import type { CSSProperties } from './types.js';
+import type { JsxstyleComponentStyleProps } from './types.js';
 
 export type JsxstyleComponentName =
   | 'Block'
@@ -25,4 +25,4 @@ export const componentStyles = {
     alignItems: 'center',
   },
   Row: { display: 'flex', flexDirection: 'row', alignItems: 'center' },
-} satisfies Record<JsxstyleComponentName, CSSProperties | null>;
+} satisfies Record<JsxstyleComponentName, JsxstyleComponentStyleProps | null>;

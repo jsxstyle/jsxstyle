@@ -2,7 +2,10 @@ import { getCustomPropertiesFunction, cacheSingleton } from '@jsxstyle/core';
 import { makeCssFunction } from '@jsxstyle/core';
 import { classNamePropKey, componentFactory } from './componentFactory.js';
 
-export type { CSSProperties } from '@jsxstyle/core';
+export type {
+  CSSProperties,
+  JsxstyleComponentStyleProps,
+} from '@jsxstyle/core';
 export type { StylableComponentProps } from './types.js';
 export { cacheSingleton as cache };
 

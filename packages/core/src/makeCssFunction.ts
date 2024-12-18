@@ -1,19 +1,13 @@
 import type { StyleCache } from './getStyleCache.js';
-import type { CSSProperties } from './types.js';
-
-type AmpersandStyles = {
-  [key: `${string}&${string}`]: CSSProperties;
-};
-
-export type CSSParams = CSSProperties &
-  AmpersandStyles & {
-    [key: `@container ${string}`]: CSSProperties & AmpersandStyles;
-    [key: `@media ${string}`]: CSSProperties & AmpersandStyles;
-  };
+import type { JsxstyleComponentStyleProps } from './types.js';
 
 export const makeCssFunction =
   (classNamePropKey: string, cache: Pick<StyleCache, 'getComponentProps'>) =>
-  (...params: Array<CSSParams | string | null | undefined | false>): string => {
+  (
+    ...params: Array<
+      JsxstyleComponentStyleProps | string | null | undefined | false
+    >
+  ): string => {
     let className = '';
     for (const param of params) {
       if (!param) continue;
@@ -26,7 +20,7 @@ export const makeCssFunction =
         classNameString = result?.[classNamePropKey];
       }
 
-      if (typeof classNameString === 'string') {
+      if (classNameString && typeof classNameString === 'string') {
         className = (className ? className + ' ' : '') + classNameString;
       }
     }

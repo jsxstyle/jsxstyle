@@ -3,7 +3,7 @@ const msPattern = /^ms-/;
 const hyphenateCache: Record<string, string> = {};
 
 export function hyphenateStyleName(styleName: string): string {
-  if (!hyphenateCache.hasOwnProperty(styleName)) {
+  if (!hyphenateCache[styleName]) {
     const hyphenatedString = styleName
       .replace(uppercasePattern, '-$1')
       .toLowerCase()
@@ -11,6 +11,5 @@ export function hyphenateStyleName(styleName: string): string {
 
     hyphenateCache[styleName] = hyphenatedString;
   }
-  // biome-ignore lint/style/noNonNullAssertion: value is set above
-  return hyphenateCache[styleName]!;
+  return hyphenateCache[styleName];
 }

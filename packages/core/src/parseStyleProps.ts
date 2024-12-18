@@ -1,5 +1,5 @@
 import { isObject } from './typePredicates.js';
-import type { AnimatableCSSProperties as CSSProps } from './types.js';
+import type { CSSProperties } from './types.js';
 
 // global flag makes subsequent calls of capRegex.test advance to the next match
 const capRegex = /[A-Z]/g;
@@ -53,22 +53,22 @@ const doubleSpecificityPrefixes: Record<string, true> = {
 };
 
 const shorthandProps = {
-  marginH: (margin: CSSProps['marginLeft']): CSSProps => ({
+  marginH: (margin: CSSProperties['marginLeft']): CSSProperties => ({
     marginLeft: margin,
     marginRight: margin,
   }),
 
-  marginV: (margin: CSSProps['marginTop']): CSSProps => ({
+  marginV: (margin: CSSProperties['marginTop']): CSSProperties => ({
     marginTop: margin,
     marginBottom: margin,
   }),
 
-  paddingH: (padding: CSSProps['paddingLeft']): CSSProps => ({
+  paddingH: (padding: CSSProperties['paddingLeft']): CSSProperties => ({
     paddingLeft: padding,
     paddingRight: padding,
   }),
 
-  paddingV: (padding: CSSProps['paddingTop']): CSSProps => ({
+  paddingV: (padding: CSSProperties['paddingTop']): CSSProperties => ({
     paddingTop: padding,
     paddingBottom: padding,
   }),
@@ -93,8 +93,10 @@ export interface ParsedStyleProp {
 export type CommonComponentProp = keyof typeof commonComponentProps;
 
 export const parseStyleProps = (
-  props: Record<string, unknown>,
+  props: Record<string, any>,
+  /** String containing one or more `&` symbols */
   ampersandString?: string,
+  /** String that starts with `"@media "` */
   queryString?: string
 ): {
   parsedStyleProps: Record<string, ParsedStyleProp>;
@@ -109,6 +111,14 @@ export const parseStyleProps = (
 
     const isMq = originalPropName.startsWith('@media ');
     const isContainer = originalPropName.startsWith('@container ');
+    if (isMq && queryString) {
+      console.error(
+        '[jsxstyle] Nested media queries are not supported. Cannot nest `%s` inside `%s`.',
+        originalPropName,
+        queryString
+      );
+      continue;
+    }
     if (
       (isMq || isContainer) &&
       // infinite nesting isn't supported
@@ -241,12 +251,12 @@ export const parseStyleProps = (
 
       // biome-ignore lint/suspicious/noAssignInExpressions: chill
       const obj: ParsedStyleProp = (parsedStyleProps[propName + keySuffix] = {
-        pseudoelement,
-        pseudoclass,
-        specificity,
         propName,
         propValue,
+        specificity,
       });
+      if (pseudoelement) obj.pseudoelement = pseudoelement;
+      if (pseudoclass) obj.pseudoclass = pseudoclass;
       if (ampersandString) obj.ampersandString = ampersandString;
       if (queryString) obj.queryString = queryString;
     }

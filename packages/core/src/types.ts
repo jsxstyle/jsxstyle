@@ -8,10 +8,34 @@ import type { ShorthandProps } from './parseStyleProps.js';
  */
 export type Falsey<T> = { [P in keyof T]?: T[P] | false | null };
 
-type BaseCSSProperties = Falsey<Properties<string | number>>;
+/** The CSS property type from `csstype`, configured for jsxstyle */
+export type CSSProperties = Falsey<Properties<string | number>>;
 
-/** Properties that can be animated */
-export type AnimatableCSSProperties = Omit<BaseCSSProperties, 'animation'>;
+/** All CSS properties minus `animation` */
+export type CSSPropertiesWithoutAnimation = Omit<CSSProperties, 'animation'>;
+
+/** CSS properties that can be animated */
+interface AnimatableStyleProps extends CSSProperties, ShorthandProps {}
+
+/**
+ * An object of style objects keyed by animation step.
+ *
+ * Example:
+ *
+ * ```tsx
+ * <Block
+ *   animation={{
+ *     from: { opacity: 0 },
+ *     to: { opacity: 1 },
+ *   }}
+ *   animationDuration="200ms"
+ *   animationTimingFunction="ease-in-out"
+ * />
+ * ```
+ */
+export interface JsxstyleAnimation {
+  [step: string]: AnimatableStyleProps;
+}
 
 /** Every uppercase letter */
 type UpperCaseLetter =
@@ -45,76 +69,100 @@ type UpperCaseLetter =
 /** Union of patterns that match event handler names. */
 export type EventHandlerKeys = `on${UpperCaseLetter}${string}`;
 
-interface JsxstyleAnimation {
-  [key: string]: AnimatableCSSProperties;
-}
+/**
+ * Commonly-used pseudo-prefixed style names
+ * Note: this interface does not support all prefixed style props (media query or pseudoclass/pseudoelement).
+ * Support for these props can be added as needed with module augmentation. Example:
+ *
+ * ```typescript
+ * import { PseudoPrefixedProps, CSSProperties } from '@jsxstyle/core';
+ *
+ * declare module '@jsxstyle/core' {
+ *   interface PseudoPrefixedProps {
+ *     hoverBackgroundColor: CSSProperties['backgroundColor'];
+ *   }
+ * }
+ * ```
+ *
+ * or if you’re feeling adventurous:
+ *
+ * ```typescript
+ * import { PseudoPrefixedProps } from '@jsxstyle/core';
+ *
+ * declare module '@jsxstyle/core' {
+ *   interface PseudoPrefixedProps {
+ *     [key: string]: any;
+ *   }
+ * }
+ * ```
+ * For further reading, see the TypeScript docs: https://www.typescriptlang.org/docs/handbook/declaration-merging.html#module-augmentation
+ */
+export interface PseudoPrefixedProps {
+  activeOpacity?: CSSProperties['opacity'];
+  disabledOpacity?: CSSProperties['opacity'];
+  focusOpacity?: CSSProperties['opacity'];
+  hoverOpacity?: CSSProperties['opacity'];
 
-/** Commonly-used pseudo-prefixed style names */
-interface PseudoPrefixedProps {
-  activeOpacity?: BaseCSSProperties['opacity'];
-  disabledOpacity?: BaseCSSProperties['opacity'];
-  focusOpacity?: BaseCSSProperties['opacity'];
-  hoverOpacity?: BaseCSSProperties['opacity'];
+  activeColor?: CSSProperties['color'];
+  hoverColor?: CSSProperties['color'];
 
-  activeColor?: BaseCSSProperties['color'];
-  hoverColor?: BaseCSSProperties['color'];
+  activeBackgroundColor?: CSSProperties['backgroundColor'];
+  focusBackgroundColor?: CSSProperties['backgroundColor'];
+  hoverBackgroundColor?: CSSProperties['backgroundColor'];
 
-  activeBackgroundColor?: BaseCSSProperties['backgroundColor'];
-  focusBackgroundColor?: BaseCSSProperties['backgroundColor'];
-  hoverBackgroundColor?: BaseCSSProperties['backgroundColor'];
+  hoverTextDecoration?: CSSProperties['textDecoration'];
+  hoverTextDecorationColor?: CSSProperties['textDecorationColor'];
 
-  hoverTextDecoration?: BaseCSSProperties['textDecoration'];
-  hoverTextDecorationColor?: BaseCSSProperties['textDecorationColor'];
+  activeBoxShadow?: CSSProperties['boxShadow'];
+  focusBoxShadow?: CSSProperties['boxShadow'];
+  hoverBoxShadow?: CSSProperties['boxShadow'];
 
-  activeBoxShadow?: BaseCSSProperties['boxShadow'];
-  focusBoxShadow?: BaseCSSProperties['boxShadow'];
-  hoverBoxShadow?: BaseCSSProperties['boxShadow'];
+  placeholderColor?: CSSProperties['color'];
+  disabledPlaceholderColor?: CSSProperties['color'];
+  focusPlaceholderColor?: CSSProperties['color'];
 
-  placeholderColor?: BaseCSSProperties['color'];
-  disabledPlaceholderColor?: BaseCSSProperties['color'];
-  focusPlaceholderColor?: BaseCSSProperties['color'];
-
-  selectionColor?: BaseCSSProperties['color'];
-  selectionBackgroundColor?: BaseCSSProperties['backgroundColor'];
+  selectionColor?: CSSProperties['color'];
+  selectionBackgroundColor?: CSSProperties['backgroundColor'];
 }
 
 /**
- * jsxstyle-compatible CSS properties interface provided by `csstype`.
- *
- * Note: this interface does not support prefixed style props (media query or pseudoclass/pseudoelement).
- * Support for these props can be added as needed with module augmentation. Example:
- *
-```typescript
-  import { CSSProperties } from '@jsxstyle/react';
-
-  declare module '@jsxstyle/react' {
-    interface CSSProperties {
-      hoverBackgroundColor: CSSProperties['backgroundColor'];
-    }
-  }
-```
-
- * or if you’re feeling adventurous:
-
-```typescript
-  import { CSSProperties } from '@jsxstyle/react';
-
-  declare module '@jsxstyle/react' {
-    interface CSSProperties {
-      [key: string]: any;
-    }
-  }
-```
- * For further reading, see the TypeScript docs: https://www.typescriptlang.org/docs/handbook/declaration-merging.html#module-augmentation
+ * All style props that can be passed to a jsxstyle component.
  */
-export interface CSSProperties
-  extends AnimatableCSSProperties,
+export interface JsxstyleComponentStyleProps
+  extends CSSPropertiesWithoutAnimation,
     PseudoPrefixedProps,
-    ShorthandProps {
-  animation?: BaseCSSProperties['animation'] | JsxstyleAnimation;
+    ShorthandProps,
+    AmpersandStyles {
+  animation?: CSSProperties['animation'] | JsxstyleAnimation;
+  [key: `@container ${string}`]: ValidContainerQueryStyleProps;
+  [key: `@media ${string}`]: ValidMediaQueryStyleProps;
 }
 
-/** Cache object used in `jsxstyle/webpack-plugin` */
+/**
+ * An object of CSS property objects keyed by selector string.
+ * The selector must contain at least one ampersand.
+ *
+ * Every ampersand is replaced with the generated class name selector.
+ */
+interface AmpersandStyles {
+  [key: `${string}&${string}`]: JsxstyleComponentStyleProps;
+}
+
+/** Style props that can be nested inside a `@container` */
+interface ValidContainerQueryStyleProps
+  extends CSSProperties,
+    PseudoPrefixedProps,
+    ShorthandProps,
+    AmpersandStyles {}
+
+/** Style props that can be nested inside a media query */
+interface ValidMediaQueryStyleProps
+  extends CSSProperties,
+    PseudoPrefixedProps,
+    ShorthandProps,
+    AmpersandStyles {}
+
+/** Cache object used in jsxstyle bundler plugins */
 export interface CacheObject {
   [key: string]: string;
   [key: symbol]: number;
