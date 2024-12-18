@@ -14,6 +14,7 @@ export const commonComponentProps = {
   id: true,
   name: true,
   placeholder: true,
+  slot: true,
   src: true,
   style: true,
   type: true,

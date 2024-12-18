@@ -11,6 +11,7 @@ exports[`npm publish > only publishes the intended files 1`] = `
 - src/components/Grid.astro
 - src/components/Row.astro
 - src/index.ts
+- src/types.ts
 ",
   "
 @jsxstyle/bundler-utils
