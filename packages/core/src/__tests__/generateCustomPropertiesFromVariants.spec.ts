@@ -261,4 +261,46 @@ describe('generateCustomPropertiesFromVariants', () => {
       }
     `);
   });
+
+  it('works with initial media queries', () => {
+    const example = generateCustomPropertiesFromVariants({
+      default: {
+        mediaQuery: 'screen and example-media-query',
+        exampleString: 'wow',
+      },
+      exampleVariant: {
+        mediaQuery: 'screen and example-media-query',
+        exampleString: 'ok',
+      },
+    });
+
+    expect(example).toMatchInlineSnapshot(`
+      {
+        "customProperties": {
+          "exampleString": "var(--jsxstyle-exampleString)",
+        },
+        "styles": [
+          ":root { --jsxstyle-exampleString: wow }",
+          ":root:not(.\\9).jsxstyle_default { --jsxstyle-exampleString: wow }",
+          "@media screen and example-media-query { :root:not(.\\9) { --jsxstyle-exampleString: wow } }",
+          ":root:not(.\\9).jsxstyle_exampleVariant { --jsxstyle-exampleString: ok }",
+          "@media screen and example-media-query { :root:not(.\\9) { --jsxstyle-exampleString: ok } }",
+        ],
+        "variantNames": [
+          "default",
+          "exampleVariant",
+        ],
+        "variants": {
+          "default": {
+            "className": "jsxstyle_default",
+            "mediaQuery": "@media screen and example-media-query",
+          },
+          "exampleVariant": {
+            "className": "jsxstyle_exampleVariant",
+            "mediaQuery": "@media screen and example-media-query",
+          },
+        },
+      }
+    `);
+  });
 });

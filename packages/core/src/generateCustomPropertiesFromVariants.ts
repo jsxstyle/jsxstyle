@@ -70,7 +70,7 @@ export const generateCustomPropertiesFromVariants = <
     let cssBody = '';
     let delimiter = '';
     for (const propKey of propKeys) {
-      if (propKey === 'mediaQuery') break;
+      if (propKey === 'mediaQuery') continue;
       const customPropName =
         `--${namespace}` +
         (mangle
