@@ -29,7 +29,6 @@ export const InlineBlock = /*#__PURE__*/ componentFactory('InlineBlock');
 export const Row = /*#__PURE__*/ componentFactory('Row');
 export const Col = /*#__PURE__*/ componentFactory('Col');
 export const InlineRow = /*#__PURE__*/ componentFactory('InlineRow');
-
 export const InlineCol = /*#__PURE__*/ componentFactory('InlineCol');
 
 export const Grid = /*#__PURE__*/ componentFactory('Grid');
