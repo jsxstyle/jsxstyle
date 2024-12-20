@@ -51,33 +51,20 @@ export const transpile = (code: string) => {
     },
 
     ExportNamedDeclaration: (path) => {
-      const dec = path.node.declaration;
-      if (!dec) {
-        throw new Error('Missing declaration');
-      }
+      const specifiers = path.node.specifiers;
 
-      if (dec.type === 'VariableDeclaration') {
-        path.replaceWithMultiple(
-          dec.declarations.map((declarator) => {
-            if (!declarator.init) {
-              throw new Error('An exported variable declaration needs a value');
-            }
-            if (declarator.id.type !== 'Identifier') {
-              throw new Error('');
-            }
+      path.replaceWithMultiple(
+        specifiers.map((specifier) => {
+          if (specifier.type === 'ExportSpecifier') {
             return t.assignmentExpression(
               '=',
-              t.memberExpression(
-                t.identifier('exports'),
-                t.stringLiteral(declarator.id.name),
-                true
-              ),
-              declarator.init
+              t.memberExpression(t.identifier('exports'), specifier.exported),
+              specifier.local
             );
-          })
-        );
-        return;
-      }
+          }
+          throw new Error('Unsupported specifier type: ' + specifier.type);
+        })
+      );
     },
 
     ExportAllDeclaration: () => {

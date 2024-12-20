@@ -1,6 +1,6 @@
 import { Block, makeCustomProperties, useMatchMedia } from '@jsxstyle/react';
 
-const styleProps = makeCustomProperties({
+const customProperties = makeCustomProperties({
   foreground: 'black',
   background: 'white',
 })
@@ -11,13 +11,15 @@ const styleProps = makeCustomProperties({
   })
   .build();
 
+export { customProperties };
+
 export default function ExampleComponent() {
   const isDarkMode = useMatchMedia('screen and (prefers-color-scheme: dark)');
   return (
     <Block
       padding={20}
-      color={styleProps.foreground}
-      backgroundColor={styleProps.background}
+      color={customProperties.foreground}
+      backgroundColor={customProperties.background}
     >
       Dark mode is{isDarkMode ? '' : ' not'} active {isDarkMode ? '🌃' : '🌅'}
     </Block>

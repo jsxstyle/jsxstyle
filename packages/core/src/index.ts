@@ -21,10 +21,13 @@ export type { StyleCache } from './getStyleCache.js';
 export type { CacheObject, EventHandlerKeys } from './types.js';
 export type { CommonComponentProp } from './parseStyleProps.js';
 export type { CSSProperties, JsxstyleComponentStyleProps } from './types.js';
-export type { CustomPropertyVariantWithSetMethod } from './makeCustomProperties.js';
+export type {
+  MakeCustomPropertiesFunction,
+  CustomPropertyVariantWithSetMethod,
+  BuiltCustomProperties,
+} from './makeCustomProperties.js';
 export type { VariantMap } from './generateCustomPropertiesFromVariants.js';
 export type { InsertRuleCallback } from './processProps.js';
-export type { MakeCustomPropertiesFunction } from './makeCustomProperties.js';
 export type { RequestStyleCache } from './createRequestStyleCache.js';
 
 export const cacheSingleton = getStyleCache();

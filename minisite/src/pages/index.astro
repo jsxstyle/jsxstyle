@@ -6,7 +6,12 @@ import TwoColumnContainer from "../components/TwoColumnContainer.astro";
 ---
 
 <Layout>
-	<TwoColumnContainer height="100%" overflow="hidden">
+	<TwoColumnContainer
+		height="100%"
+		overflow="hidden"
+		backgroundColor={styleConstants.insetBackground}
+		gap={2}
+	>
 		<Box
 			slot="left"
 			backgroundColor={styleConstants.editorBackground}

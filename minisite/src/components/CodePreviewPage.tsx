@@ -9,6 +9,7 @@ import { ErrorBoundary } from './ErrorBoundary';
 import { useAsyncModule } from '../utilities/useAsyncModule';
 import { styleConstants } from '../utilities/constants';
 import { initialSampleCode } from './initialSampleCode';
+import type { BuiltCustomProperties } from '@jsxstyle/core';
 
 const modules = {
   react: React,
@@ -28,6 +29,7 @@ const DefaultComponent: React.FC = () => null;
 interface TranspileResult {
   component: React.FC;
   dispose?: (() => void) | null;
+  customProperties?: BuiltCustomProperties<string, string> | null;
   js: string;
   css: string;
 }
@@ -71,9 +73,23 @@ export const CodePreviewPage: React.FC = () => {
   const [transpileResult, setTranspileResult] = useReducer(reducer, {
     component: DefaultComponent,
     dispose: null,
+    customProperties: null,
     js: '',
     css: '',
   });
+
+  const setVariant = (variantName: string | null): void => {
+    const overrideElement = document.documentElement;
+    if (!transpileResult.customProperties) return;
+    const variants = transpileResult.customProperties.variants;
+    const variantNames = transpileResult.customProperties.variantNames;
+    overrideElement.classList.remove(
+      ...variantNames.map((key) => variants[key].className)
+    );
+    if (variantName) {
+      overrideElement.classList.add(variants[variantName].className);
+    }
+  };
 
   useEffect(() => {
     if (transpileModule.state === 'pending') return;
@@ -91,10 +107,12 @@ export const CodePreviewPage: React.FC = () => {
 
         const moduleExports: {
           default: React.ComponentType | null;
-          dispose?: (() => void) | null;
+          dispose: (() => void) | null;
+          customProperties: BuiltCustomProperties<string, string> | null;
         } = {
           default: null,
           dispose: null,
+          customProperties: null,
         };
         try {
           new Function(
@@ -113,12 +131,15 @@ export const CodePreviewPage: React.FC = () => {
           );
 
           const ExportedComponent = moduleExports.default;
+          const exportedCustomProperties = moduleExports.customProperties;
+
           const dispose = moduleExports.dispose;
           if (ExportedComponent) {
             setTranspileResult({
               js,
               css,
               dispose,
+              customProperties: exportedCustomProperties,
               component: () => (
                 <ErrorBoundary>
                   <ExportedComponent />
@@ -129,6 +150,7 @@ export const CodePreviewPage: React.FC = () => {
             setTranspileResult({
               js,
               css: '',
+              customProperties: null,
               component: () => (
                 <Block>Your code is missing a default export.</Block>
               ),
@@ -138,6 +160,7 @@ export const CodePreviewPage: React.FC = () => {
           setTranspileResult({
             js,
             css: '',
+            customProperties: null,
             component: () => (
               <Block>Could not evaluate your code: {error + ''}</Block>
             ),
@@ -178,23 +201,23 @@ export const CodePreviewPage: React.FC = () => {
         padding={10}
         gap={5}
       >
-        {styleConstants.variantNames.map((variantName) => {
-          const variant = styleConstants.variants[variantName];
+        {transpileResult.customProperties?.variantNames.map((variantName) => {
+          const variant =
+            transpileResult.customProperties?.variants[variantName];
+          if (!variant) return null;
           return (
             <Button
               className={css({
                 [`.${variant.className} &`]: { outline: '3px solid red' },
               })}
               key={variantName}
-              onClick={variant.activate}
+              onClick={() => setVariant(variantName)}
             >
               {variantName}
             </Button>
           );
         })}
-        <Button onClick={() => styleConstants.setVariant(null)}>
-          remove override
-        </Button>
+        <Button onClick={() => setVariant(null)}>remove override</Button>
       </Row>
       <style>{transpileResult.css}</style>
       <transpileResult.component />

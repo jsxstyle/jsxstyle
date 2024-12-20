@@ -13,10 +13,7 @@ export interface CustomPropertyVariantWithSetMethod
 }
 
 export interface MakeCustomPropertiesFunction<
-  KPropKey extends Exclude<
-    string,
-    'setVariant' | 'variantNames' | 'variants' | 'styles'
-  >,
+  KPropKey extends string,
   TVariantName extends string,
 > {
   /** Add a variant to this variant group */
@@ -32,25 +29,32 @@ export interface MakeCustomPropertiesFunction<
     }
   ) => MakeCustomPropertiesFunction<KPropKey, TVariantName | TName>;
 
-  build: (buildOptions?: BuildOptions) => {
-    [Key in Exclude<
-      KPropKey,
-      'setVariant' | 'variantNames' | 'variants' | 'styles'
-    >]: string;
-  } & {
-    /** Manually enable a variant. Only one variant in this group can be active at a time. */
-    setVariant: (variantName: TVariantName | null) => void;
-    /** All variant names */
-    variantNames: TVariantName[];
-    /**
-     * Variant metadata keyed by variant name.
-     * There’s a curried `set` method in there too.
-     */
-    variants: Record<TVariantName, CustomPropertyVariantWithSetMethod>;
-    /** All variant styles, one array item per CSS class */
-    styles: string[];
-  };
+  build: (
+    buildOptions?: BuildOptions
+  ) => BuiltCustomProperties<KPropKey, TVariantName>;
 }
+
+export type BuiltCustomProperties<
+  KPropKey extends string,
+  TVariantName extends string,
+> = {
+  [Key in Exclude<
+    KPropKey,
+    'setVariant' | 'variantNames' | 'variants' | 'styles'
+  >]: string;
+} & {
+  /** Manually enable a variant. Only one variant in this group can be active at a time. */
+  setVariant: (variantName: TVariantName | null) => void;
+  /** All variant names */
+  variantNames: TVariantName[];
+  /**
+   * Variant metadata keyed by variant name.
+   * There’s a curried `set` method in there too.
+   */
+  variants: Record<TVariantName, CustomPropertyVariantWithSetMethod>;
+  /** All variant styles, one array item per CSS class */
+  styles: string[];
+};
 
 const makeCustomPropertiesInternal = <
   KPropKey extends string,
