@@ -1,8 +1,10 @@
 import { dangerousStyleValue } from './dangerousStyleValue.js';
+import type { CSSProperties } from './types.js';
 
 type PropMap<KPropKeys extends string> = {
   [K in KPropKeys]?: string | number;
 } & {
+  colorScheme?: CSSProperties['colorScheme'];
   mediaQuery?: string;
 };
 
@@ -70,7 +72,7 @@ export const generateCustomPropertiesFromVariants = <
     let cssBody = '';
     let delimiter = '';
     for (const propKey of propKeys) {
-      if (propKey === 'mediaQuery') continue;
+      if (propKey === 'mediaQuery' || propKey === 'colorScheme') continue;
       const customPropName =
         `--${namespace}` +
         (mangle
@@ -83,6 +85,13 @@ export const generateCustomPropertiesFromVariants = <
         cssBody += delimiter + `${customPropName}: ${propValue}`;
         delimiter = ';';
       }
+    }
+
+    const colorScheme =
+      variant.colorScheme &&
+      dangerousStyleValue('colorScheme', variant.colorScheme);
+    if (colorScheme) {
+      cssBody = `color-scheme: ${colorScheme}${delimiter}${cssBody}`;
     }
 
     const overrideClassName = overrideClassNamePrefix + variantName;

@@ -223,6 +223,43 @@ describe('generateCustomPropertiesFromVariants', () => {
     `);
   });
 
+  it('handles the colorScheme prop', () => {
+    const example = generateCustomPropertiesFromVariants({
+      default: {
+        color: 'black',
+      },
+      darkMode: {
+        colorScheme: 'dark',
+        color: 'white',
+      },
+    });
+
+    expect(example).toMatchInlineSnapshot(`
+      {
+        "customProperties": {
+          "color": "var(--jsxstyle-color)",
+        },
+        "styles": [
+          ":root { --jsxstyle-color: black }",
+          ":root:not(.\\9).jsxstyle_default { --jsxstyle-color: black }",
+          ":root:not(.\\9).jsxstyle_darkMode { color-scheme: dark;--jsxstyle-color: white }",
+        ],
+        "variantNames": [
+          "default",
+          "darkMode",
+        ],
+        "variants": {
+          "darkMode": {
+            "className": "jsxstyle_darkMode",
+          },
+          "default": {
+            "className": "jsxstyle_default",
+          },
+        },
+      }
+    `);
+  });
+
   it('makes use of the mediaQuery prop', () => {
     const example = generateCustomPropertiesFromVariants({
       default: {

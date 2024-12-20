@@ -6,6 +6,7 @@ import type {
   VariantMap,
 } from './generateCustomPropertiesFromVariants.js';
 import type { StyleCache } from './getStyleCache.js';
+import type { CSSProperties } from './types.js';
 
 export interface CustomPropertyVariantWithSetMethod
   extends CustomPropertyVariant {
@@ -26,6 +27,8 @@ export interface MakeCustomPropertiesFunction<
     } & {
       /** An optional media query that will activate this variant */
       mediaQuery?: string;
+      /** An optional `color-scheme` that will be set for this variant */
+      colorScheme?: CSSProperties['colorScheme'];
     }
   ) => MakeCustomPropertiesFunction<KPropKey, TVariantName | TName>;
 
@@ -70,6 +73,8 @@ const makeCustomPropertiesInternal = <
     } & {
       /** An optional media query that will activate this variant */
       mediaQuery?: string;
+      /** An optional `color-scheme` that will be set for this variant */
+      colorScheme?: CSSProperties['colorScheme'];
     }
   ) => {
     (variantMap as any)[variantName] = props;

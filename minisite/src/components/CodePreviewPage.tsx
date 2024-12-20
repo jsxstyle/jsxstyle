@@ -52,10 +52,9 @@ const Button: React.FC<
 > = (props) => {
   return (
     <Block
+      // color and backgroundColor are unset so we can show native control colors changing with color-scheme
       component="button"
       border="none"
-      color={styleConstants.background}
-      backgroundColor={styleConstants.foreground}
       padding="5px 10px"
       borderRadius={4}
       cursor="pointer"
