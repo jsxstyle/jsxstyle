@@ -13,20 +13,16 @@ import "../style.css";
 import { cacheSingleton } from "@jsxstyle/core";
 import { styleConstants } from "../utilities/constants";
 
-const customProperties = `:root { color: ${styleConstants.foreground}; background-color: ${styleConstants.background} }`;
+const customProperties = [
+	...styleConstants.styles,
+	`:root { color: ${styleConstants.foreground}; background-color: ${styleConstants.background} }`,
+].join("");
 
 cacheSingleton.reset();
-// let index = 0;
 
-const { css, returnValue: slotContent } = await cacheSingleton.run(
-	async () => {
-		for (const rule of styleConstants.styles) {
-			cacheSingleton.insertRule(rule);
-		}
-		return (await Astro.slots.render("default")) || "";
-	},
-	// () => "_x" + (index++).toString(36),
-);
+const { css, returnValue: slotContent } = await cacheSingleton.run(() => {
+	return Astro.slots.render("default");
+});
 ---
 
 <!doctype html>
@@ -39,8 +35,7 @@ const { css, returnValue: slotContent } = await cacheSingleton.run(
 			content="Simple and powerful team-friendly inline styling for React in just 3KB"
 		/>
 		<title>{title}</title>
-		<style data-source="jsxstyle" set:html={css}></style>
-		<style set:html={customProperties}></style>
+		<style set:html={customProperties + css}></style>
 	</head>
 	<body>
 		<Box

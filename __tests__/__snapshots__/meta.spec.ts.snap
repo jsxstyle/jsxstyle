@@ -6,11 +6,14 @@ exports[`npm publish > only publishes the intended files 1`] = `
 @jsxstyle/astro
 ===============
 - package.json
+- src/astro.d.ts
 - src/components/Box.astro
 - src/components/Col.astro
 - src/components/Grid.astro
 - src/components/Row.astro
 - src/index.ts
+- src/integration.ts
+- src/middleware.ts
 - src/types.ts
 ",
   "
@@ -142,6 +145,10 @@ exports[`npm publish > only publishes the intended files 1`] = `
 - lib/createClassNameGetter.d.ts.map
 - lib/createClassNameGetter.js
 - lib/createClassNameGetter.js.map
+- lib/createRequestStyleCache.d.ts
+- lib/createRequestStyleCache.d.ts.map
+- lib/createRequestStyleCache.js
+- lib/createRequestStyleCache.js.map
 - lib/dangerousStyleValue.d.ts
 - lib/dangerousStyleValue.d.ts.map
 - lib/dangerousStyleValue.js

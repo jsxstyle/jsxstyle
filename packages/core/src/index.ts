@@ -14,8 +14,10 @@ export { processProps, type GetClassNameForKeyFn } from './processProps.js';
 export { stringHash } from './stringHash.js';
 export { generateCustomPropertiesFromVariants } from './generateCustomPropertiesFromVariants.js';
 export { makeCssFunction } from './makeCssFunction.js';
+export { createRequestStyleCache } from './createRequestStyleCache.js';
 
 export { getStyleCache };
+export type { StyleCache } from './getStyleCache.js';
 export type { CacheObject, EventHandlerKeys } from './types.js';
 export type { CommonComponentProp } from './parseStyleProps.js';
 export type { CSSProperties, JsxstyleComponentStyleProps } from './types.js';
@@ -23,5 +25,6 @@ export type { CustomPropertyVariantWithSetMethod } from './makeCustomProperties.
 export type { VariantMap } from './generateCustomPropertiesFromVariants.js';
 export type { InsertRuleCallback } from './processProps.js';
 export type { MakeCustomPropertiesFunction } from './makeCustomProperties.js';
+export type { RequestStyleCache } from './createRequestStyleCache.js';
 
 export const cacheSingleton = getStyleCache();

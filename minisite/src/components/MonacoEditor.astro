@@ -4,7 +4,9 @@ import { Box, type JsxstyleComponentStyleProps } from "@jsxstyle/astro";
 interface Props extends JsxstyleComponentStyleProps {}
 ---
 
-<Box {...Astro.props} props={{ id: "code-preview" }} />
+<Box {...Astro.props} props={{ id: "code-preview" }}>
+  <Box padding={20}>Loading…</Box>
+</Box>
 
 <script>
   const { monaco } = await import("./customMonaco");

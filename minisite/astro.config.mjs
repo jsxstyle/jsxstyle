@@ -4,12 +4,13 @@ import { defineConfig } from 'astro/config';
 import * as path from 'node:path';
 import injectPlugin from '@rollup/plugin-inject';
 import react from '@astrojs/react';
+import { jsxstyle } from '@jsxstyle/astro/integration';
 
 const __dirname = new URL('.', import.meta.url).pathname;
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [react()],
+  integrations: [react(), jsxstyle()],
 
   build: {
     assets: '-',

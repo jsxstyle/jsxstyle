@@ -8,6 +8,17 @@
     "src"
   ],
   "main": "src/index.ts",
+  "exports": {
+    ".": {
+      "import": "./src/index.ts"
+    },
+    "./middleware": {
+      "import": "./src/middleware.ts"
+    },
+    "./integration": {
+      "import": "./src/integration.ts"
+    }
+  },
   "dependencies": {
     "@jsxstyle/core": "*"
   },
