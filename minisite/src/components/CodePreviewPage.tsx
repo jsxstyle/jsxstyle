@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as jsxRuntime from 'react/jsx-runtime';
 
 import { Block, Col, Row, css } from '@jsxstyle/react';
-import { useEffect, useReducer, useRef } from 'react';
+import { useEffect, useReducer } from 'react';
 import { CodeModule } from './CodeModule';
 import { ErrorBoundary } from './ErrorBoundary';
 import { useAsyncModule } from '../utilities/useAsyncModule';
@@ -75,19 +75,6 @@ export const CodePreviewPage: React.FC = () => {
     css: '',
   });
 
-  const styleElementRef = useRef<HTMLStyleElement | null>(null);
-
-  useEffect(() => {
-    const element = document.createElement('style');
-    styleElementRef.current = element;
-    document.head.appendChild(element);
-
-    return () => {
-      document.head.removeChild(element);
-      styleElementRef.current = null;
-    };
-  }, []);
-
   useEffect(() => {
     if (transpileModule.state === 'pending') return;
     if (transpileModule.state === 'error') {
@@ -100,11 +87,7 @@ export const CodePreviewPage: React.FC = () => {
       if (typeof code !== 'string') return;
 
       try {
-        const { css: extractedCss, js, browserFriendlyJs } = transpile(code);
-
-        if (styleElementRef.current) {
-          styleElementRef.current.innerText = extractedCss;
-        }
+        const { css, js, browserFriendlyJs } = transpile(code);
 
         const moduleExports: {
           default: React.ComponentType | null;
@@ -134,7 +117,7 @@ export const CodePreviewPage: React.FC = () => {
           if (ExportedComponent) {
             setTranspileResult({
               js,
-              css: extractedCss,
+              css,
               dispose,
               component: () => (
                 <ErrorBoundary>
@@ -213,6 +196,7 @@ export const CodePreviewPage: React.FC = () => {
           remove override
         </Button>
       </Row>
+      <style>{transpileResult.css}</style>
       <transpileResult.component />
       <CodeModule title="Extracted CSS" code={transpileResult.css} />
       <CodeModule title="Transformed JS" code={transpileResult.js} />

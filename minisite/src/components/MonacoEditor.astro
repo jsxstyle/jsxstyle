@@ -32,6 +32,9 @@ interface Props extends JsxstyleComponentStyleProps {}
   };
 
   const editorElement = document.getElementById("code-preview")!;
+  // remove loading state
+  editorElement.replaceChildren();
+
   const darkModeMq = window.matchMedia(
     "screen and (prefers-color-scheme: dark)",
   );
