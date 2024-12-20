@@ -17,4 +17,7 @@ export const styleConstants = makeCustomProperties({
     editorBackground: '#1e1e1e',
     insetBackground: '#000',
   })
-  .build();
+  .build({
+    mangle: true,
+    namespace: 'm',
+  });
