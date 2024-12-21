@@ -1,48 +1,48 @@
 ---
 interface Props {
-	title?: string;
+  title?: string;
 }
 
 import { Box } from "@jsxstyle/astro";
 
 const title = Astro.props.title
-	? `${Astro.props.title} \u2027 jsxstyle`
-	: "jsxstyle: Inline styles for JSX";
+  ? `${Astro.props.title} \u2027 jsxstyle`
+  : "jsxstyle: Inline styles for JSX";
 import "../style.css";
 
 import { cacheSingleton } from "@jsxstyle/core";
 import { styleConstants } from "../utilities/constants";
 
 const customProperties = [
-	...styleConstants.styles,
-	`:root { color: ${styleConstants.foreground}; background-color: ${styleConstants.background} }`,
+  ...styleConstants.styles,
+  `:root { color: ${styleConstants.foreground}; background-color: ${styleConstants.background} }`,
 ].join("");
 
 cacheSingleton.reset();
 
 const { css, returnValue: slotContent } = await cacheSingleton.run(() => {
-	return Astro.slots.render("default");
+  return Astro.slots.render("default");
 });
 ---
 
 <!doctype html>
 <html>
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width" />
-		<meta
-			name="description"
-			content="Simple and powerful team-friendly inline styling for React in just 3KB"
-		/>
-		<title>{title}</title>
-		<style set:html={customProperties + css}></style>
-	</head>
-	<body>
-		<Box
-			component="main"
-			display="content"
-			height="100%"
-			set:html={slotContent}
-		/>
-	</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta
+      name="description"
+      content="Simple and powerful team-friendly inline styling for React in just 3KB"
+    />
+    <title>{title}</title>
+    <style set:html={customProperties + css}></style>
+  </head>
+  <body>
+    <Box
+      component="main"
+      display="content"
+      height="100%"
+      set:html={slotContent}
+    />
+  </body>
 </html>
