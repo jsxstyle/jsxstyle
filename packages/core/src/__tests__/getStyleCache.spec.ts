@@ -86,8 +86,8 @@ describe('getStyleCache', () => {
     `);
     expect(insertedRules).toMatchInlineSnapshot(`
       [
-        "._1jvcvsh { color:red }",
-        "._cmecz0 { display:block }",
+        "._1jvcvsh{color:red}",
+        "._cmecz0{display:block}",
       ]
     `);
   });
@@ -105,20 +105,20 @@ describe('getStyleCache', () => {
 
     expect(insertedRules).toMatchInlineSnapshot(`
       [
-        "._17w4vug { margin:1px }",
-        "._1m680gx._1m680gx { margin-left:3px }",
-        "._tn8y8r._tn8y8r { margin-right:2px }",
-        "._11qejiy._11qejiy:hover { margin-left:4px }",
-        "._r23nsx._r23nsx:active { margin-top:5px }",
-        "._18b6tc5._18b6tc5:active { margin-bottom:5px }",
-        "._12u3iza._12u3iza::placeholder { padding-top:8px }",
-        "._1njps7w._1njps7w::placeholder { padding-bottom:6px }",
-        "._1kzxzhu::placeholder { padding:7px }",
-        "._16aryto:hover::placeholder { color:9px }",
-        "@keyframes _141dqt4 { from { color:red; padding-left:69px; padding-right:69px } to { margin-top:123px; margin-bottom:123px; margin:456px } }",
-        "._141dqt4._141dqt4 { animation-name:_141dqt4 }",
-        "@keyframes _1feg296 { test { margin:456px; margin-top:123px; margin-bottom:123px } }",
-        "._1feg296._1feg296:hover { animation-name:_1feg296 }",
+        "._17w4vug{margin:1px}",
+        "._1m680gx._1m680gx{margin-left:3px}",
+        "._tn8y8r._tn8y8r{margin-right:2px}",
+        "._11qejiy._11qejiy:hover{margin-left:4px}",
+        "._r23nsx._r23nsx:active{margin-top:5px}",
+        "._18b6tc5._18b6tc5:active{margin-bottom:5px}",
+        "._12u3iza._12u3iza::placeholder{padding-top:8px}",
+        "._1njps7w._1njps7w::placeholder{padding-bottom:6px}",
+        "._1kzxzhu::placeholder{padding:7px}",
+        "._16aryto:hover::placeholder{color:9px}",
+        "@keyframes _yk2kzc{from{color:red;padding-left:69px;padding-right:69px}to{margin-top:123px;margin-bottom:123px;margin:456px}}",
+        "._yk2kzc._yk2kzc{animation-name:_yk2kzc}",
+        "@keyframes _1nz5one{test{margin:456px;margin-top:123px;margin-bottom:123px}}",
+        "._1nz5one._1nz5one:hover{animation-name:_1nz5one}",
       ]
     `);
   });
@@ -197,7 +197,7 @@ describe('getStyleCache', () => {
         })
       ).resolves.toMatchInlineSnapshot(`
         {
-          "css": "._1jvcvsh { color:red }._1mb383g { color:blue }",
+          "css": "._1jvcvsh{color:red}._1mb383g{color:blue}",
           "returnValue": [
             "_1jvcvsh",
             "_1mb383g",
@@ -214,8 +214,8 @@ describe('getStyleCache', () => {
       `);
       expect(styleCache.insertRuleCache).toMatchInlineSnapshot(`
         {
-          "._1jvcvsh { color:red }": true,
-          "._1mb383g { color:blue }": true,
+          "._1jvcvsh{color:red}": true,
+          "._1mb383g{color:blue}": true,
         }
       `);
     });
@@ -233,7 +233,7 @@ describe('getStyleCache', () => {
         })
       ).resolves.toMatchInlineSnapshot(`
         {
-          "css": "._1jvcvsh { color:red }._1mb383g { color:blue }",
+          "css": "._1jvcvsh{color:red}._1mb383g{color:blue}",
           "returnValue": [
             "_1jvcvsh",
             "_1mb383g",
@@ -250,8 +250,8 @@ describe('getStyleCache', () => {
       `);
       expect(styleCache.insertRuleCache).toMatchInlineSnapshot(`
         {
-          "._1jvcvsh { color:red }": true,
-          "._1mb383g { color:blue }": true,
+          "._1jvcvsh{color:red}": true,
+          "._1mb383g{color:blue}": true,
         }
       `);
     });
@@ -273,7 +273,7 @@ describe('getStyleCache', () => {
         )
       ).resolves.toMatchInlineSnapshot(`
         {
-          "css": ".test0 { color:red }.test1 { color:blue }",
+          "css": ".test0{color:red}.test1{color:blue}",
           "returnValue": [
             "test0",
             "test1",
@@ -290,8 +290,8 @@ describe('getStyleCache', () => {
       `);
       expect(styleCache.insertRuleCache).toMatchInlineSnapshot(`
         {
-          ".test0 { color:red }": true,
-          ".test1 { color:blue }": true,
+          ".test0{color:red}": true,
+          ".test1{color:blue}": true,
         }
       `);
     });

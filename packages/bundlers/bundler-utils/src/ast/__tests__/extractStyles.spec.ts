@@ -64,12 +64,12 @@ describe('the basics', () => {
 
     expect(rv1.css).toMatchInlineSnapshot(`
       "/* mock/validate.js */
-      ._x0 { display:block }
-      ._x1 { extract:yep }
-      ._x2 { display:inline-flex }
-      ._x3._x3 { flex-direction:row }
-      ._x4 { align-items:center }
-      ._x5._x5 { flex-direction:column }
+      ._x0{display:block}
+      ._x1{extract:yep}
+      ._x2{display:inline-flex}
+      ._x3._x3{flex-direction:row}
+      ._x4{align-items:center}
+      ._x5._x5{flex-direction:column}
       "
     `);
   });
@@ -144,18 +144,18 @@ const className = css({
     `);
     expect(rv.css).toMatchInlineSnapshot(`
       "/* mock/extract-static1.js */
-      ._x0 { static-string:wow }
-      ._x1 { static-int:69px }
-      ._x2 { static-float:6.9px }
-      ._x3 { static-negative-int:-420px }
-      ._x4 { static-value:thing }
-      ._x5 { static-member-expression:ok }
-      ._x9._x9 { animation-name:_x9 }
-      ._xa { display:block }
-      @keyframes _x9 { from { color:blue } to { color:red } }
-      @media staticObject { ._x6._x6._x6 { key:value } }
-      @media staticObject { ._x7._x7._x7 { val:thing } }
-      @media staticObject { ._x8._x8._x8 { static-value:ok } }
+      ._x0{static-string:wow}
+      ._x1{static-int:69px}
+      ._x2{static-float:6.9px}
+      ._x3{static-negative-int:-420px}
+      ._x4{static-value:thing}
+      ._x5{static-member-expression:ok}
+      ._x9._x9{animation-name:_x9}
+      ._xa{display:block}
+      @keyframes _x9{from{color:blue}to{color:red}}
+      @media staticObject{._x6._x6._x6{key:value}}
+      @media staticObject{._x7._x7._x7{val:thing}}
+      @media staticObject{._x8._x8._x8{static-value:ok}}
       "
     `);
   });
@@ -178,11 +178,11 @@ import LC from "./LC";
     `);
     expect(rv.css).toMatchInlineSnapshot(`
       "/* mock/extract-static2.js */
-      ._x0 { display:block }
-      ._x1 { static-string:wow }
-      ._x2 { static-int:69px }
-      ._x3 { static-value:thing }
-      ._x4 { static-member-expression:ok }
+      ._x0{display:block}
+      ._x1{static-string:wow}
+      ._x2{static-int:69px}
+      ._x3{static-value:thing}
+      ._x4{static-member-expression:ok}
       "
     `);
   });
@@ -278,12 +278,12 @@ function Thing(props) {
     `);
     expect(rv.css).toMatchInlineSnapshot(`
       "/* mock/trusted-spreads.js */
-      ._x0 { display:block }
-      ._x1 { width:420px }
-      ._x2 { border-radius:4px }
-      ._x3 { box-shadow:0 1px 3px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.07) }
-      ._x4._x4 { background-color:#FFF }
-      ._x5 { color:#444 }
+      ._x0{display:block}
+      ._x1{width:420px}
+      ._x2{border-radius:4px}
+      ._x3{box-shadow:0 1px 3px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.07)}
+      ._x4._x4{background-color:#FFF}
+      ._x5{color:#444}
       "
     `);
   });
@@ -354,8 +354,8 @@ describe('jsxstyle-specific props', () => {
     `);
     expect(rv.css).toMatchInlineSnapshot(`
       "/* mock/props-prop1.js */
-      ._x0 { display:block }
-      ._x1 { seven:eight }
+      ._x0{display:block}
+      ._x1{seven:eight}
       "
     `);
   });
@@ -573,12 +573,12 @@ function Test({ component, thing }) {
     `);
     expect(rv.css).toMatchInlineSnapshot(`
       "/* mock/media-queries.js */
-      ._x0 { display:block }
-      ._x1 { width:640px }
-      ._x2 { sm-width:100% }
-      ._x3 banana { color:blue }
-      @media wow { ._x4._x4._x4 banana { color:blue } }
-      @media wow { ._x5._x5._x5 { ok:123px } }
+      ._x0{display:block}
+      ._x1{width:640px}
+      ._x2{sm-width:100%}
+      ._x3 banana{color:blue}
+      @media wow{._x4._x4._x4 banana{color:blue}}
+      @media wow{._x5._x5._x5{ok:123px}}
       "
     `);
   });
@@ -602,9 +602,9 @@ import LC from "./LC";
     `);
     expect(rv.css).toMatchInlineSnapshot(`
       "/* mock/media-queries.js */
-      ._x0 { display:block }
-      ._x1 { width:640px }
-      ._x2 { sm-width:100% }
+      ._x0{display:block}
+      ._x1{width:640px}
+      ._x2{sm-width:100%}
       "
     `);
   });
@@ -625,9 +625,9 @@ describe('ternaries', () => {
 
     expect(rv.css).toMatchInlineSnapshot(`
       "/* mock/ternary.js */
-      ._x0 { display:block }
-      ._x1 { color:red }
-      ._x2 { color:blue }
+      ._x0{display:block}
+      ._x1{color:red}
+      ._x2{color:blue}
       "
     `);
   });
@@ -645,8 +645,8 @@ describe('ternaries', () => {
     `);
     expect(rv.css).toMatchInlineSnapshot(`
       "/* mock/ternary.js */
-      ._x0 { display:block }
-      ._x1 { color:red }
+      ._x0{display:block}
+      ._x1{color:red}
       "
     `);
   });
@@ -679,9 +679,9 @@ const blue = "blueberry";
     `);
     expect(rv.css).toMatchInlineSnapshot(`
       "/* mock/ternary.js */
-      ._x0 { display:block }
-      ._x1 { color:strawberry }
-      ._x2 { color:blueberry }
+      ._x0{display:block}
+      ._x1{color:strawberry}
+      ._x2{color:blueberry}
       "
     `);
   });
@@ -700,9 +700,9 @@ const blue = "blueberry";
 
     expect(rv.css).toMatchInlineSnapshot(`
       "/* mock/ternary-with-classname.js */
-      ._x0 { display:block }
-      ._x1 { color:red }
-      ._x2 { color:blue }
+      ._x0{display:block}
+      ._x1{color:red}
+      ._x2{color:blue}
       "
     `);
   });
@@ -755,13 +755,13 @@ const blue = "blueberry";
     expect(rv1.css).toEqual(rv2.css);
     expect(rv1.css).toMatchInlineSnapshot(`
       "/* mock/binary-expressions.js */
-      ._x0 { display:block }
-      ._x1 { thing1:four }
-      ._x2 { thing3:four }
-      ._x3 { thing4:four }
-      ._x4 { thing2:not four }
-      ._x5 { thing3:not four }
-      ._x6 { thing4:not four }
+      ._x0{display:block}
+      ._x1{thing1:four}
+      ._x2{thing3:four}
+      ._x3{thing4:four}
+      ._x4{thing2:not four}
+      ._x5{thing3:not four}
+      ._x6{thing4:not four}
       "
     `);
   });
@@ -784,13 +784,13 @@ const blue = "blueberry";
     `);
     expect(rv.css).toMatchInlineSnapshot(`
       "/* mock/unary-expressions.js */
-      ._x0 { display:block }
-      ._x1 { thing1:mod 2 }
-      ._x2 { thing3:mod 2 }
-      ._x3 { thing4:mod 2 }
-      ._x4 { thing2:not mod 2 }
-      ._x5 { thing3:not mod 2 }
-      ._x6 { thing4:not mod 2 }
+      ._x0{display:block}
+      ._x1{thing1:mod 2}
+      ._x2{thing3:mod 2}
+      ._x3{thing4:mod 2}
+      ._x4{thing2:not mod 2}
+      ._x5{thing3:not mod 2}
+      ._x6{thing4:not mod 2}
       "
     `);
   });
@@ -821,11 +821,11 @@ const blue = "blueberry";
     `);
     expect(rv.css).toMatchInlineSnapshot(`
       "/* mock/ternary-groups.js */
-      ._x0 { display:block }
-      ._x1 { color:red }
-      ._x2 { width:200px }
-      ._x3 { color:blue }
-      ._x4 { width:400px }
+      ._x0{display:block}
+      ._x1{color:red}
+      ._x2{width:200px}
+      ._x3{color:blue}
+      ._x4{width:400px}
       "
     `);
   });
@@ -847,8 +847,8 @@ import {Block} from "@jsxstyle/react";
     `);
     expect(rv.css).toMatchInlineSnapshot(`
       "/* mock/ternary-null-values.js */
-      ._x0 { display:block }
-      ._x1 { color:blue }
+      ._x0{display:block}
+      ._x1{color:blue}
       "
     `);
   });
@@ -963,10 +963,10 @@ export const MyComponent = () => {
     `);
     expect(rv.css).toMatchInlineSnapshot(`
       "/* mock/useMatchMedia-shorthand-props.js */
-      ._x2._x2 { padding-left:40px }
-      ._x3._x3 { padding-right:30px }
-      @media matchMedia media query { ._x0._x0._x0._x0 { padding-left:20px } }
-      @media matchMedia media query { ._x1._x1._x1._x1 { padding-right:10px } }
+      ._x2._x2{padding-left:40px}
+      ._x3._x3{padding-right:30px}
+      @media matchMedia media query{._x0._x0._x0._x0{padding-left:20px}}
+      @media matchMedia media query{._x1._x1._x1._x1{padding-right:10px}}
       "
     `);
   });
@@ -1007,11 +1007,11 @@ export const MyComponent = () => {
     `);
     expect(rv.css).toMatchInlineSnapshot(`
       "/* mock/useMatchMedia-extraction.js */
-      ._x0 { display:block }
-      ._x3 { color:blue }
-      ._x4._x4 { font-family:sans-serif }
-      @media matchMedia media query { ._x1._x1._x1 { color:red } }
-      @media matchMedia media query { ._x2._x2._x2._x2 { font-family:serif } }
+      ._x0{display:block}
+      ._x3{color:blue}
+      ._x4._x4{font-family:sans-serif}
+      @media matchMedia media query{._x1._x1._x1{color:red}}
+      @media matchMedia media query{._x2._x2._x2._x2{font-family:serif}}
       "
     `);
   });
@@ -1036,9 +1036,9 @@ describe('animation prop', () => {
     `);
     expect(rv.css).toMatchInlineSnapshot(`
       "/* mock/animation-prop.js */
-      ._x0 { display:block }
-      ._x1._x1 { animation-name:_x1 }
-      @keyframes _x1 { 0%, 50% { opacity:0; padding-left:30px } 100% { opacity:1; padding-left:50px; padding-right:50px } }
+      ._x0{display:block}
+      ._x1._x1{animation-name:_x1}
+      @keyframes _x1{0%, 50%{opacity:0;padding-left:30px}100%{opacity:1;padding-left:50px;padding-right:50px}}
       "
     `);
   });
@@ -1148,16 +1148,16 @@ const staticProp = 'static';
     );
 
     expect(multipleInlineImports.js).toMatchInlineSnapshot(`
-      "// ._x0 { display:block }
-      import "@jsxstyle/core/cache/_x0.css!=!@jsxstyle/webpack-plugin/base64-loader?value=Ll94MCB7IGRpc3BsYXk6YmxvY2sgfQ%3D%3D!@jsxstyle/bundler-utils/noop";
-      // ._x1 { thing1:static }
-      import "@jsxstyle/core/cache/_x1.css!=!@jsxstyle/webpack-plugin/base64-loader?value=Ll94MSB7IHRoaW5nMTpzdGF0aWMgfQ%3D%3D!@jsxstyle/bundler-utils/noop";
-      // ._x2 { thing2:69px }
-      import "@jsxstyle/core/cache/_x2.css!=!@jsxstyle/webpack-plugin/base64-loader?value=Ll94MiB7IHRoaW5nMjo2OXB4IH0%3D!@jsxstyle/bundler-utils/noop";
-      // ._x3 { thing3:static }
-      import "@jsxstyle/core/cache/_x3.css!=!@jsxstyle/webpack-plugin/base64-loader?value=Ll94MyB7IHRoaW5nMzpzdGF0aWMgfQ%3D%3D!@jsxstyle/bundler-utils/noop";
-      // ._x4 { thing4:69px }
-      import "@jsxstyle/core/cache/_x4.css!=!@jsxstyle/webpack-plugin/base64-loader?value=Ll94NCB7IHRoaW5nNDo2OXB4IH0%3D!@jsxstyle/bundler-utils/noop";
+      "// ._x0{display:block}
+      import "@jsxstyle/core/cache/_x0.css!=!@jsxstyle/webpack-plugin/base64-loader?value=Ll94MHtkaXNwbGF5OmJsb2NrfQ%3D%3D!@jsxstyle/bundler-utils/noop";
+      // ._x1{thing1:static}
+      import "@jsxstyle/core/cache/_x1.css!=!@jsxstyle/webpack-plugin/base64-loader?value=Ll94MXt0aGluZzE6c3RhdGljfQ%3D%3D!@jsxstyle/bundler-utils/noop";
+      // ._x2{thing2:69px}
+      import "@jsxstyle/core/cache/_x2.css!=!@jsxstyle/webpack-plugin/base64-loader?value=Ll94Mnt0aGluZzI6NjlweH0%3D!@jsxstyle/bundler-utils/noop";
+      // ._x3{thing3:static}
+      import "@jsxstyle/core/cache/_x3.css!=!@jsxstyle/webpack-plugin/base64-loader?value=Ll94M3t0aGluZzM6c3RhdGljfQ%3D%3D!@jsxstyle/bundler-utils/noop";
+      // ._x4{thing4:69px}
+      import "@jsxstyle/core/cache/_x4.css!=!@jsxstyle/webpack-plugin/base64-loader?value=Ll94NHt0aGluZzQ6NjlweH0%3D!@jsxstyle/bundler-utils/noop";
       const staticProp = 'static';
       <div className="_x0 _x1 _x2"></div>;
       <div className="_x0 _x3 _x4"></div>;"
@@ -1177,8 +1177,8 @@ const staticProp = 'static';
 
     expect(multipleInlineImports.js).toMatchInlineSnapshot(`
       "const staticProp = 'static';
-      <div className="_x0 _x1 _x2"><style jsx global>{\`._x0 { display:block } ._x1 { thing1:static } ._x2 { thing2:69px }\`}</style></div>;
-      <div className="_x0 _x3 _x4"><style jsx global>{\`._x0 { display:block } ._x3 { thing3:static } ._x4 { thing4:69px }\`}</style></div>;"
+      <div className="_x0 _x1 _x2"><style jsx global>{\`._x0{display:block} ._x1{thing1:static} ._x2{thing2:69px}\`}</style></div>;
+      <div className="_x0 _x3 _x4"><style jsx global>{\`._x0{display:block} ._x3{thing3:static} ._x4{thing4:69px}\`}</style></div>;"
     `);
     expect(multipleInlineImports.css).toEqual('');
   });
@@ -1244,10 +1244,10 @@ const props = makeCustomProperties({
     `);
     expect(rv.css).toMatchInlineSnapshot(`
       "/* mock/custom-properties1.js */
-      :root { --jsxstyle-prop1: prop1 value;--jsxstyle-prop2: 123px }
-      :root:not(.\\9).jsxstyle_banana { --jsxstyle-prop1: banana prop1 value }
-      :root:not(.\\9).jsxstyle_default { --jsxstyle-prop1: prop1 value;--jsxstyle-prop2: 123px }
-      @media mq { :root:not(.\\9) { --jsxstyle-prop1: banana prop1 value } }
+      :root:not(.\\9).jsxstyle_banana{--jsxstyle-prop1:banana prop1 value}
+      :root:not(.\\9).jsxstyle_default{--jsxstyle-prop1:prop1 value;--jsxstyle-prop2:123px}
+      :root{--jsxstyle-prop1:prop1 value;--jsxstyle-prop2:123px}
+      @media mq{:root:not(.\\9){--jsxstyle-prop1:banana prop1 value}}
       "
     `);
   });
@@ -1296,10 +1296,10 @@ const props = makeCustomProperties({
     `);
     expect(rv.css).toMatchInlineSnapshot(`
       "/* mock/custom-properties1.js */
-      :root { --test0: prop1 value;--test1: 123px }
-      :root:not(.\\9).test_banana { --test0: banana prop1 value }
-      :root:not(.\\9).test_default { --test0: prop1 value;--test1: 123px }
-      @media mq { :root:not(.\\9) { --test0: banana prop1 value } }
+      :root:not(.\\9).test_banana{--test0:banana prop1 value}
+      :root:not(.\\9).test_default{--test0:prop1 value;--test1:123px}
+      :root{--test0:prop1 value;--test1:123px}
+      @media mq{:root:not(.\\9){--test0:banana prop1 value}}
       "
     `);
   });
@@ -1333,10 +1333,10 @@ const kitchenSink = css(
     `);
     expect(rv.css).toMatchInlineSnapshot(`
       "/* mock/css-function1.js */
-      ._x0 { color:blue }
-      ._x1 { color:green }
-      ._x2 { color:red }
-      ._x3 { display:block }
+      ._x0{color:blue}
+      ._x1{color:green}
+      ._x2{color:red}
+      ._x3{display:block}
       "
     `);
   });
@@ -1374,11 +1374,11 @@ const kitchenSink = css(
     `);
     expect(rv.css).toMatchInlineSnapshot(`
       "/* mock/css-function1.js */
-      ._x0 { color:red }
-      ._x1 { display:block }
-      ._x2 { conditional-prop:conditionalValue }
-      ._x3 { item1:value1 }
-      ._x4 { item2:value2 }
+      ._x0{color:red}
+      ._x1{display:block}
+      ._x2{conditional-prop:conditionalValue}
+      ._x3{item1:value1}
+      ._x4{item2:value2}
       "
     `);
   });
@@ -1397,7 +1397,7 @@ const kitchenSink = css(
     `);
     expect(rv.css).toMatchInlineSnapshot(`
       "/* mock/css-function2.js */
-      ._x0 { color:blue }
+      ._x0{color:blue}
       "
     `);
   });
@@ -1416,7 +1416,7 @@ css({ display: 'contents' });
     `);
     expect(rv.css).toMatchInlineSnapshot(`
       "/* mock/css-function3.js */
-      ._x0 { display:contents }
+      ._x0{display:contents}
       "
     `);
   });
@@ -1501,11 +1501,11 @@ const exampleMQ = useMatchMedia('screen and test');
 
     expect(rv.css).toMatchInlineSnapshot(`
       "/* mock/no-runtime1.js */
-      ._x0 { color:red }
-      ._x1 { display:grid }
-      ._x2 { display:block }
-      ._x4 { color:blue }
-      @media screen and test { ._x3._x3._x3 { color:red } }
+      ._x0{color:red}
+      ._x1{display:grid}
+      ._x2{display:block}
+      ._x4{color:blue}
+      @media screen and test{._x3._x3._x3{color:red}}
       "
     `);
   });

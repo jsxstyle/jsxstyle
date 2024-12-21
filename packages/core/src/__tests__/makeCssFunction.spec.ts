@@ -43,11 +43,11 @@ describe('makeCssFunction', () => {
       {
         "classNames": "_1jvcvsh _173elxt _o8m89d _be7p3k _ivsi2b",
         "insertedCss": [
-          "._1jvcvsh { color:red }",
-          "@media screen { ._173elxt._173elxt._173elxt { color:red } }",
-          "@media screen { ._o8m89d._o8m89d._o8m89d:ok { color:red } }",
-          "._be7p3k._be7p3k.card h2 { font-size:1em }",
-          "@container (max-width: 30em) { ._ivsi2b._ivsi2b._ivsi2b._ivsi2b.card h2 { font-size:2em } }",
+          "._1jvcvsh{color:red}",
+          "@media screen{._173elxt._173elxt._173elxt{color:red}}",
+          "@media screen{._o8m89d._o8m89d._o8m89d:ok{color:red}}",
+          "._be7p3k._be7p3k.card h2{font-size:1em}",
+          "@container (max-width: 30em){._ivsi2b._ivsi2b._ivsi2b._ivsi2b.card h2{font-size:2em}}",
         ],
       }
     `);

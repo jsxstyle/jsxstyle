@@ -57,15 +57,15 @@ it('builds without issue', async () => {
 
   const sharedStyles = `
 /* test-app/Shared.js */
-._1jdyhuw._1jdyhuw { font-size:18px }
-._1n29hly { line-height:22px }
-._cmecz0 { display:block }
-._uaq4md._uaq4md { font-family:-apple-system, BlinkMacSystemFont, sans-serif }
+._1jdyhuw._1jdyhuw{font-size:18px}
+._1n29hly{line-height:22px}
+._cmecz0{display:block}
+._uaq4md._uaq4md{font-family:-apple-system, BlinkMacSystemFont, sans-serif}
 `.trim();
 
-  expect(redCSS).toContain('._1jvcvsh { color:red }');
+  expect(redCSS).toContain('._1jvcvsh{color:red}');
 
-  expect(blueCSS).toContain('._1mb383g { color:blue }');
+  expect(blueCSS).toContain('._1mb383g{color:blue}');
 
   expect(redCSS).toContain(sharedStyles);
   expect(blueCSS).toContain(sharedStyles);

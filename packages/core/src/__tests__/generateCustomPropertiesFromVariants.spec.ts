@@ -16,8 +16,8 @@ describe('generateCustomPropertiesFromVariants', () => {
           "exampleString": "var(--jsxstyle-exampleString)",
         },
         "styles": [
-          ":root { --jsxstyle-exampleNumber: 123px;--jsxstyle-exampleString: wow }",
-          ":root:not(.\\9).jsxstyle_default { --jsxstyle-exampleNumber: 123px;--jsxstyle-exampleString: wow }",
+          ":root{--jsxstyle-exampleNumber:123px;--jsxstyle-exampleString:wow}",
+          ":root:not(.\\9).jsxstyle_default{--jsxstyle-exampleNumber:123px;--jsxstyle-exampleString:wow}",
         ],
         "variantNames": [
           "default",
@@ -50,9 +50,9 @@ describe('generateCustomPropertiesFromVariants', () => {
           "exampleString": "var(--jsxstyle-exampleString)",
         },
         "styles": [
-          ":root { --jsxstyle-exampleNumber: 123px;--jsxstyle-exampleString: wow }",
-          ":root:not(.\\9).jsxstyle_default { --jsxstyle-exampleNumber: 123px;--jsxstyle-exampleString: wow }",
-          ":root:not(.\\9).jsxstyle_exampleVariant { --jsxstyle-exampleNumber: 456px;--jsxstyle-exampleString: ok }",
+          ":root{--jsxstyle-exampleNumber:123px;--jsxstyle-exampleString:wow}",
+          ":root:not(.\\9).jsxstyle_default{--jsxstyle-exampleNumber:123px;--jsxstyle-exampleString:wow}",
+          ":root:not(.\\9).jsxstyle_exampleVariant{--jsxstyle-exampleNumber:456px;--jsxstyle-exampleString:ok}",
         ],
         "variantNames": [
           "default",
@@ -79,8 +79,8 @@ describe('generateCustomPropertiesFromVariants', () => {
       {
         "customProperties": {},
         "styles": [
-          ":root {  }",
-          ":root:not(.\\9).jsxstyle_default {  }",
+          ":root{}",
+          ":root:not(.\\9).jsxstyle_default{}",
         ],
         "variantNames": [
           "default",
@@ -118,9 +118,9 @@ describe('generateCustomPropertiesFromVariants', () => {
           "exampleString": "var(--exampleNamespace-exampleString)",
         },
         "styles": [
-          ":root { --exampleNamespace-exampleNumber: 123px;--exampleNamespace-exampleString: wow }",
-          ":root:not(.\\9).exampleNamespace_default { --exampleNamespace-exampleNumber: 123px;--exampleNamespace-exampleString: wow }",
-          ":root:not(.\\9).exampleNamespace_exampleVariant { --exampleNamespace-exampleNumber: 456px;--exampleNamespace-exampleString: ok }",
+          ":root{--exampleNamespace-exampleNumber:123px;--exampleNamespace-exampleString:wow}",
+          ":root:not(.\\9).exampleNamespace_default{--exampleNamespace-exampleNumber:123px;--exampleNamespace-exampleString:wow}",
+          ":root:not(.\\9).exampleNamespace_exampleVariant{--exampleNamespace-exampleNumber:456px;--exampleNamespace-exampleString:ok}",
         ],
         "variantNames": [
           "default",
@@ -162,9 +162,9 @@ describe('generateCustomPropertiesFromVariants', () => {
           "exampleString": "var(--x1)",
         },
         "styles": [
-          ":root { --x0: 123px;--x1: wow }",
-          ":root:not(.\\9).x_default { --x0: 123px;--x1: wow }",
-          ":root:not(.\\9).x_exampleVariant { --x1: ok }",
+          ":root{--x0:123px;--x1:wow}",
+          ":root:not(.\\9).x_default{--x0:123px;--x1:wow}",
+          ":root:not(.\\9).x_exampleVariant{--x1:ok}",
         ],
         "variantNames": [
           "default",
@@ -203,9 +203,9 @@ describe('generateCustomPropertiesFromVariants', () => {
           "exampleString": "var(--jsxstyle-exampleString)",
         },
         "styles": [
-          "#test { --jsxstyle-exampleString: wow }",
-          "#test:not(.\\9).jsxstyle_default { --jsxstyle-exampleString: wow }",
-          "#test:not(.\\9).jsxstyle_exampleVariant { --jsxstyle-exampleString: ok }",
+          "#test{--jsxstyle-exampleString:wow}",
+          "#test:not(.\\9).jsxstyle_default{--jsxstyle-exampleString:wow}",
+          "#test:not(.\\9).jsxstyle_exampleVariant{--jsxstyle-exampleString:ok}",
         ],
         "variantNames": [
           "default",
@@ -240,9 +240,9 @@ describe('generateCustomPropertiesFromVariants', () => {
           "color": "var(--jsxstyle-color)",
         },
         "styles": [
-          ":root { --jsxstyle-color: black }",
-          ":root:not(.\\9).jsxstyle_default { --jsxstyle-color: black }",
-          ":root:not(.\\9).jsxstyle_darkMode { color-scheme: dark;--jsxstyle-color: white }",
+          ":root{--jsxstyle-color:black}",
+          ":root:not(.\\9).jsxstyle_default{--jsxstyle-color:black}",
+          ":root:not(.\\9).jsxstyle_darkMode{color-scheme:dark;--jsxstyle-color:white}",
         ],
         "variantNames": [
           "default",
@@ -252,6 +252,68 @@ describe('generateCustomPropertiesFromVariants', () => {
           "darkMode": {
             "className": "jsxstyle_darkMode",
           },
+          "default": {
+            "className": "jsxstyle_default",
+          },
+        },
+      }
+    `);
+  });
+
+  it('handles a solitart colorScheme prop in the second variant', () => {
+    const example = generateCustomPropertiesFromVariants({
+      default: {
+        color: 'black',
+      },
+      darkMode: {
+        colorScheme: 'dark',
+      },
+    });
+
+    expect(example).toMatchInlineSnapshot(`
+      {
+        "customProperties": {
+          "color": "var(--jsxstyle-color)",
+        },
+        "styles": [
+          ":root{--jsxstyle-color:black}",
+          ":root:not(.\\9).jsxstyle_default{--jsxstyle-color:black}",
+          ":root:not(.\\9).jsxstyle_darkMode{color-scheme:dark}",
+        ],
+        "variantNames": [
+          "default",
+          "darkMode",
+        ],
+        "variants": {
+          "darkMode": {
+            "className": "jsxstyle_darkMode",
+          },
+          "default": {
+            "className": "jsxstyle_default",
+          },
+        },
+      }
+    `);
+  });
+
+  it('handles a solitary colorScheme prop', () => {
+    const example = generateCustomPropertiesFromVariants({
+      default: {
+        colorScheme: 'light',
+      },
+    });
+
+    expect(example).toMatchInlineSnapshot(`
+      {
+        "customProperties": {},
+        "styles": [
+          ":root{color-scheme:light}",
+          ":root:not(.\\9).jsxstyle_default{color-scheme:light}",
+        ],
+        "variantNames": [
+          "default",
+        ],
+        "variants": {
           "default": {
             "className": "jsxstyle_default",
           },
@@ -277,10 +339,10 @@ describe('generateCustomPropertiesFromVariants', () => {
           "exampleString": "var(--jsxstyle-exampleString)",
         },
         "styles": [
-          ":root { --jsxstyle-exampleString: wow }",
-          ":root:not(.\\9).jsxstyle_default { --jsxstyle-exampleString: wow }",
-          ":root:not(.\\9).jsxstyle_exampleVariant { --jsxstyle-exampleString: ok }",
-          "@media screen and example-media-query { :root:not(.\\9) { --jsxstyle-exampleString: ok } }",
+          ":root{--jsxstyle-exampleString:wow}",
+          ":root:not(.\\9).jsxstyle_default{--jsxstyle-exampleString:wow}",
+          ":root:not(.\\9).jsxstyle_exampleVariant{--jsxstyle-exampleString:ok}",
+          "@media screen and example-media-query{:root:not(.\\9){--jsxstyle-exampleString:ok}}",
         ],
         "variantNames": [
           "default",
@@ -317,11 +379,11 @@ describe('generateCustomPropertiesFromVariants', () => {
           "exampleString": "var(--jsxstyle-exampleString)",
         },
         "styles": [
-          ":root { --jsxstyle-exampleString: wow }",
-          ":root:not(.\\9).jsxstyle_default { --jsxstyle-exampleString: wow }",
-          "@media screen and example-media-query { :root:not(.\\9) { --jsxstyle-exampleString: wow } }",
-          ":root:not(.\\9).jsxstyle_exampleVariant { --jsxstyle-exampleString: ok }",
-          "@media screen and example-media-query { :root:not(.\\9) { --jsxstyle-exampleString: ok } }",
+          ":root{--jsxstyle-exampleString:wow}",
+          ":root:not(.\\9).jsxstyle_default{--jsxstyle-exampleString:wow}",
+          "@media screen and example-media-query{:root:not(.\\9){--jsxstyle-exampleString:wow}}",
+          ":root:not(.\\9).jsxstyle_exampleVariant{--jsxstyle-exampleString:ok}",
+          "@media screen and example-media-query{:root:not(.\\9){--jsxstyle-exampleString:ok}}",
         ],
         "variantNames": [
           "default",

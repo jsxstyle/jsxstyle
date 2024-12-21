@@ -65,6 +65,6 @@ const wow = { prop6: 'hello' };
       "
     `);
 
-    expect(styles).toMatchInlineSnapshot(`"._x0 { prop1:value1 }"`);
+    expect(styles).toMatchInlineSnapshot(`"._x0{prop1:value1}"`);
   });
 });

@@ -85,18 +85,18 @@ const classNameString2 = css('class2', {
 
     expect(styles).toMatchInlineSnapshot(`
       "
-      @media example mq { ._x0._x0._x0 { mq-thing1:123px } }
-      @media example mq { ._x1._x1._x1 { mq-thing2:345px } }
-      ._x2 { mq-thing2:678px }
-      ._x3 { spread-prop:spreadValue }
-      ._x4 { normal-prop:propValue }
-      ._x5 { conditional-prop:c }
-      ._x6 { another-logical-prop:yes }
-      ._x7 { conditional-prop:a }
-      ._x8 { logical-prop:tasty }
-      ._x9 { static-prop:123px }
-      @media test { ._xa._xa._xa { color:red } }
-      ._xb banana { color:blue }
+      @media example mq{._x0._x0._x0{mq-thing1:123px}}
+      @media example mq{._x1._x1._x1{mq-thing2:345px}}
+      ._x2{mq-thing2:678px}
+      ._x3{spread-prop:spreadValue}
+      ._x4{normal-prop:propValue}
+      ._x5{conditional-prop:c}
+      ._x6{another-logical-prop:yes}
+      ._x7{conditional-prop:a}
+      ._x8{logical-prop:tasty}
+      ._x9{static-prop:123px}
+      @media test{._xa._xa._xa{color:red}}
+      ._xb banana{color:blue}
       "
     `);
   });

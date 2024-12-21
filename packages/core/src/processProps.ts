@@ -77,7 +77,7 @@ export function processProps(
           const value = dangerousStyleValue(propName, propValue);
           if (value === '') continue;
           groupStyles +=
-            (groupStyles === '' ? ' ' : '; ') +
+            (groupStyles === '' ? '' : ';') +
             hyphenateStyleName(propName) +
             ':' +
             value;
@@ -100,7 +100,7 @@ export function processProps(
           continue propLoop;
         }
 
-        animationValue += k + ' {' + groupStyles + ' } ';
+        animationValue += k + '{' + groupStyles + '}';
       }
 
       if (animationValue === '') {
@@ -116,7 +116,7 @@ export function processProps(
       specificity++;
 
       insertRuleCallback?.(
-        `@keyframes ${animationKey} { ${animationValue}}`,
+        `@keyframes ${animationKey}{${animationValue}}`,
         '@' + animationKey
       );
     } else {
@@ -148,16 +148,16 @@ export function processProps(
       ampersandString?.replace(/&/g, classNameSelector) || classNameSelector;
 
     const styleRule =
-      ((queryString ? queryString + ' { ' : '') ||
-        (mediaQuery ? '@media ' + mediaQuery + ' { ' : '') ||
+      ((queryString ? queryString + '{' : '') ||
+        (mediaQuery ? '@media ' + mediaQuery + '{' : '') ||
         '') +
       selector +
-      ' { ' +
+      '{' +
       hyphenatedPropName +
       ':' +
       styleValue +
-      ' }' +
-      (queryString || mediaQuery ? ' }' : '');
+      '}' +
+      (queryString || mediaQuery ? '}' : '');
 
     classNames += (classNames === '' ? '' : ' ') + className;
 

@@ -62,11 +62,11 @@ describe('makeCustomProperties', () => {
         "exampleString": "var(--exampleNamespace1)",
         "setVariant": [Function],
         "styles": [
-          "#banana { --exampleNamespace0: 123px;--exampleNamespace1: wow }",
-          "#banana:not(.\\9).exampleNamespace_default { --exampleNamespace0: 123px;--exampleNamespace1: wow }",
-          "#banana:not(.\\9).exampleNamespace_exampleVariant { --exampleNamespace1: variantWow }",
-          "#banana:not(.\\9).exampleNamespace_variantWithMQ { --exampleNamespace0: 456px }",
-          "@media screen and example { #banana:not(.\\9) { --exampleNamespace0: 456px } }",
+          "#banana{--exampleNamespace0:123px;--exampleNamespace1:wow}",
+          "#banana:not(.\\9).exampleNamespace_default{--exampleNamespace0:123px;--exampleNamespace1:wow}",
+          "#banana:not(.\\9).exampleNamespace_exampleVariant{--exampleNamespace1:variantWow}",
+          "#banana:not(.\\9).exampleNamespace_variantWithMQ{--exampleNamespace0:456px}",
+          "@media screen and example{#banana:not(.\\9){--exampleNamespace0:456px}}",
         ],
         "variantNames": [
           "default",

@@ -82,7 +82,7 @@ export const generateCustomPropertiesFromVariants = <
       customProperties[propKey] = `var(${customPropName})`;
       const propValue = dangerousStyleValue('', variant[propKey]);
       if (propValue) {
-        cssBody += delimiter + `${customPropName}: ${propValue}`;
+        cssBody += `${delimiter}${customPropName}:${propValue}`;
         delimiter = ';';
       }
     }
@@ -91,7 +91,7 @@ export const generateCustomPropertiesFromVariants = <
       variant.colorScheme &&
       dangerousStyleValue('colorScheme', variant.colorScheme);
     if (colorScheme) {
-      cssBody = `color-scheme: ${colorScheme}${delimiter}${cssBody}`;
+      cssBody = `color-scheme:${colorScheme}${delimiter}${cssBody}`;
     }
 
     const overrideClassName = overrideClassNamePrefix + variantName;
@@ -102,14 +102,14 @@ export const generateCustomPropertiesFromVariants = <
     variants[variantName] = variantObj;
 
     if (variantName === 'default') {
-      styles.unshift(`${selector} { ${cssBody} }`);
+      styles.unshift(`${selector}{${cssBody}}`);
     }
     // `:not(.\\9)` bumps specificity, +1 class for each `.\\9`
-    styles.push(`${selector}:not(.\\9).${overrideClassName} { ${cssBody} }`);
+    styles.push(`${selector}:not(.\\9).${overrideClassName}{${cssBody}}`);
     if (variant.mediaQuery) {
       variantObj.mediaQuery = `@media ${variant.mediaQuery}`;
       styles.push(
-        `@media ${variant.mediaQuery} { ${selector}:not(.\\9) { ${cssBody} } }`
+        `@media ${variant.mediaQuery}{${selector}:not(.\\9){${cssBody}}}`
       );
     }
   }
