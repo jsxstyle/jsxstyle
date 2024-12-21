@@ -10,15 +10,15 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/react": "^4.1.0",
+    "@astrojs/react": "^4.1.2",
     "@jsxstyle/astro": "*",
     "@jsxstyle/core": "*",
     "@jsxstyle/react": "*",
     "@rollup/plugin-inject": "^5.0.5",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
-    "astro": "^5.0.5",
-    "monaco-editor": "^0.51.0",
+    "astro": "^5.1.1",
+    "monaco-editor": "^0.52.2",
     "react": "^18.0.0",
     "react-dom": "^18.0.0"
   }
