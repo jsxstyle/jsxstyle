@@ -1,17 +1,32 @@
 import { dangerousStyleValue } from './dangerousStyleValue.js';
+import type { GetOptionalCustomProperties } from './makeCustomProperties.js';
 import type { CSSProperties } from './types.js';
 
-type PropMap<KPropKeys extends string> = {
-  [K in KPropKeys]?: string | number;
-} & {
-  colorScheme?: CSSProperties['colorScheme'];
+export type CustomPropsObject = {
   mediaQuery?: string;
+  colorScheme?: CSSProperties['colorScheme'];
+} & NestedCustomPropsObject;
+
+export type NestedCustomPropsObject = {
+  [key: string]: string | number | NestedCustomPropsObject;
 };
 
-export type VariantMap<K extends string, KPropKeys extends string> = Record<
-  K,
-  PropMap<Exclude<KPropKeys, 'mediaQuery'>>
-> & { default: { [PK in KPropKeys]: string | number } };
+export type GetCustomProperties<TCustomProps extends CustomPropsObject> = {
+  [K in keyof TCustomProps]: TCustomProps[K] extends string | number
+    ? `var(--${string})`
+    : TCustomProps[K] extends CustomPropsObject
+      ? GetCustomProperties<TCustomProps[K]>
+      : never;
+};
+
+export type VariantMap<
+  TVariantName extends string,
+  TCustomProps extends CustomPropsObject,
+> = {
+  default: TCustomProps;
+} & {
+  [K in TVariantName]: GetOptionalCustomProperties<TCustomProps>;
+};
 
 export interface BuildOptions {
   /**
@@ -40,11 +55,83 @@ export interface CustomPropertyVariant {
   mediaQuery?: `@media ${string}`;
 }
 
-export const generateCustomPropertiesFromVariants = <
-  KPropKey extends string,
-  TVariantName extends string,
+const getCustomPropsFromDefaultVariant = <
+  TCustomProps extends CustomPropsObject,
 >(
-  variantMap: VariantMap<TVariantName, KPropKey>,
+  obj: TCustomProps,
+  namespace: string,
+  shouldMangle = false,
+  index = 0,
+  propMap: Record<string, string> = {},
+  customProps: CustomPropsObject = {},
+  keyPrefix = ''
+) => {
+  let mangleIndex = index;
+  let cssBody = '';
+  for (const key in obj) {
+    if (keyPrefix === '' && (key === 'mediaQuery' || key === 'colorScheme'))
+      continue;
+    const keyPlusPrefix = (keyPrefix ? keyPrefix + '-' : '') + key;
+    if (typeof obj[key] === 'string' || typeof obj[key] === 'number') {
+      const prop = shouldMangle
+        ? (mangleIndex++).toString(36)
+        : '-' + keyPlusPrefix;
+      propMap[keyPlusPrefix] = `--${namespace || 'jsxstyle'}${prop}`;
+      customProps[key] = `var(${propMap[keyPlusPrefix]})`;
+      cssBody += `${propMap[keyPlusPrefix]}:${dangerousStyleValue('', obj[key])};`;
+    } else if (typeof obj[key] === 'object') {
+      customProps[key] = {};
+      const result = getCustomPropsFromDefaultVariant(
+        obj[key],
+        namespace,
+        shouldMangle,
+        mangleIndex,
+        propMap,
+        customProps[key],
+        keyPlusPrefix
+      );
+      mangleIndex = result.mangleIndex;
+      cssBody += result.css;
+    }
+  }
+  return { mangleIndex, propMap, customProps, css: cssBody };
+};
+
+const getCustomPropsFromVariant = <
+  T extends GetOptionalCustomProperties<NestedCustomPropsObject>,
+>(
+  obj: T,
+  shouldMangle = false,
+  propMap: Record<string, string> = {},
+  keyPrefix = ''
+) => {
+  let css = '';
+  for (const key in obj) {
+    if (keyPrefix === '' && (key === 'mediaQuery' || key === 'colorScheme'))
+      continue;
+    const keyPlusPrefix = (keyPrefix ? keyPrefix + '-' : '') + key;
+    if (typeof obj[key] === 'string' || typeof obj[key] === 'number') {
+      const propName = propMap[keyPlusPrefix];
+      const propValue = dangerousStyleValue('', obj[key]);
+      if (!propName || !propValue) continue;
+      css += `${propName}:${dangerousStyleValue('', obj[key])};`;
+    } else if (typeof obj[key] === 'object') {
+      css += getCustomPropsFromVariant(
+        obj[key],
+        shouldMangle,
+        propMap,
+        keyPlusPrefix
+      );
+    }
+  }
+  return css;
+};
+
+export const generateCustomPropertiesFromVariants = <
+  TVariantName extends string,
+  TCustomProps extends CustomPropsObject,
+>(
+  variantMap: VariantMap<TVariantName, TCustomProps>,
   buildOptions: BuildOptions = {}
 ) => {
   const {
@@ -55,49 +142,64 @@ export const generateCustomPropertiesFromVariants = <
   /** Prefix for the override class name */
   const overrideClassNamePrefix = namespace + '_';
 
-  const propKeys: KPropKey[] = Object.keys(variantMap.default) as any;
   const variantNames: TVariantName[] = Object.keys(variantMap) as any;
 
   const styles: string[] = [];
 
-  const customProperties: Record<KPropKey, string> = {} as any;
-  const mangleMap: Partial<Record<KPropKey, number>> = {};
-  let mangleIndex = 0;
+  const defaultVariant = variantMap.default;
 
-  const variants: Record<TVariantName, CustomPropertyVariant> = {} as any;
+  const { propMap, css, customProps } = getCustomPropsFromDefaultVariant(
+    defaultVariant,
+    namespace,
+    mangle
+  );
+
+  const defaultCss = (
+    (defaultVariant.colorScheme
+      ? `color-scheme:${defaultVariant.colorScheme};`
+      : '') + css
+  ).slice(0, -1);
+
+  const defaultMediaQuery = variantMap.default.mediaQuery
+    ? `@media ${variantMap.default.mediaQuery}`
+    : undefined;
+
+  styles.push(`${selector}{${defaultCss}}`);
+  styles.push(
+    `${selector}:not(.\\9).${overrideClassNamePrefix}default{${defaultCss}}`
+  );
+  if (defaultMediaQuery) {
+    styles.push(`${defaultMediaQuery}{${selector}:not(.\\9){${defaultCss}}}`);
+  }
+
+  const variants: Record<TVariantName, CustomPropertyVariant> = {
+    default: {
+      className: overrideClassNamePrefix + 'default',
+      mediaQuery: defaultMediaQuery,
+    },
+  } as any;
 
   for (const variantName of variantNames) {
-    const variant: PropMap<KPropKey> =
-      variantMap[variantName as keyof typeof variantMap];
-    let cssBody = '';
-    let delimiter = '';
-    for (const propKey of propKeys) {
-      if (propKey === 'mediaQuery' || propKey === 'colorScheme') continue;
-      const customPropName =
-        `--${namespace}` +
-        (mangle
-          ? // biome-ignore lint/suspicious/noAssignInExpressions: chill
-            (mangleMap[propKey] ??= mangleIndex++).toString(36)
-          : `-${propKey}`);
-      customProperties[propKey] = `var(${customPropName})`;
-      const propValue = dangerousStyleValue('', variant[propKey]);
-      if (propValue) {
-        cssBody += `${delimiter}${customPropName}:${propValue}`;
-        delimiter = ';';
-      }
-    }
+    if (variantName === 'default') continue;
+    const variant = variantMap[variantName];
+
+    let cssBody = getCustomPropsFromVariant(variant, mangle, propMap);
 
     const colorScheme =
       variant.colorScheme &&
       dangerousStyleValue('colorScheme', variant.colorScheme);
     if (colorScheme) {
-      cssBody = `color-scheme:${colorScheme}${delimiter}${cssBody}`;
+      cssBody = `color-scheme:${colorScheme};${cssBody}`;
     }
+    cssBody = cssBody.slice(0, -1);
 
     const overrideClassName = overrideClassNamePrefix + variantName;
 
     const variantObj: CustomPropertyVariant = {
       className: overrideClassName,
+      mediaQuery: variant.mediaQuery
+        ? `@media ${variant.mediaQuery}`
+        : undefined,
     };
     variants[variantName] = variantObj;
 
@@ -107,7 +209,7 @@ export const generateCustomPropertiesFromVariants = <
     // `:not(.\\9)` bumps specificity, +1 class for each `.\\9`
     styles.push(`${selector}:not(.\\9).${overrideClassName}{${cssBody}}`);
     if (variant.mediaQuery) {
-      variantObj.mediaQuery = `@media ${variant.mediaQuery}`;
+      // variantObj.mediaQuery = `@media ${variant.mediaQuery}`;
       styles.push(
         `@media ${variant.mediaQuery}{${selector}:not(.\\9){${cssBody}}}`
       );
@@ -115,7 +217,7 @@ export const generateCustomPropertiesFromVariants = <
   }
 
   return {
-    customProperties,
+    customProperties: customProps as GetCustomProperties<TCustomProps>,
     variantNames,
     variants,
     styles,

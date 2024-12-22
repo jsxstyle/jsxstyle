@@ -9,21 +9,21 @@ interface CodeModuleProps {
 export const CodeModule: React.FC<CodeModuleProps> = ({ code, title }) => {
   return (
     <Col
-      backgroundColor={styleConstants.background}
+      backgroundColor={styleConstants.color.background}
       border="1px solid"
-      borderColor={styleConstants.border}
+      borderColor={styleConstants.color.border}
       borderRadius={10}
-      color={styleConstants.foreground}
+      color={styleConstants.color.foreground}
       overflow="hidden"
     >
       <Block
         flex="0 0 auto"
         height={30}
         lineHeight="30px"
-        backgroundColor={styleConstants.insetBackground}
+        backgroundColor={styleConstants.color.insetBackground}
         paddingH={10}
         borderBottom="1px solid"
-        borderBottomColor={styleConstants.border}
+        borderBottomColor={styleConstants.color.border}
       >
         {title}
       </Block>

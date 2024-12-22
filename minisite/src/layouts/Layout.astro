@@ -15,7 +15,7 @@ import { styleConstants } from "../utilities/constants";
 
 const customProperties = [
   ...styleConstants.styles,
-  `:root { color: ${styleConstants.foreground}; background-color: ${styleConstants.background} }`,
+  `:root { color: ${styleConstants.color.foreground}; background-color: ${styleConstants.color.background} }`,
 ].join("");
 
 cacheSingleton.reset();

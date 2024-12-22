@@ -77,10 +77,12 @@ describe('makeCustomProperties', () => {
           "default": {
             "activate": [Function],
             "className": "exampleNamespace_default",
+            "mediaQuery": undefined,
           },
           "exampleVariant": {
             "activate": [Function],
             "className": "exampleNamespace_exampleVariant",
+            "mediaQuery": undefined,
           },
           "variantWithMQ": {
             "activate": [Function],

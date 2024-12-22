@@ -195,9 +195,9 @@ export const jsxstyleVitePlugin = ({
         fileContent,
         idWithoutStuff,
         {
-          warnCallback: (message, ...args) =>
+          warnCallback: (message: any, ...args: any[]) =>
             this.warn(util.format(message, ...args)),
-          errorCallback: (message, ...args) =>
+          errorCallback: (message: any, ...args: any[]) =>
             this.error(util.format(message, ...args)),
           getClassNameForKey,
           modulesByAbsolutePath: moduleBundler?.modulesByAbsolutePath,

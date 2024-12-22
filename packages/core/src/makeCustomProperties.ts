@@ -3,10 +3,27 @@ import { generateCustomPropertiesFromVariants } from './generateCustomProperties
 import type {
   BuildOptions,
   CustomPropertyVariant,
+  CustomPropsObject,
   VariantMap,
 } from './generateCustomPropertiesFromVariants.js';
 import type { StyleCache } from './getStyleCache.js';
 import type { CSSProperties } from './types.js';
+
+export type GetOptionalCustomProperties<
+  TCustomProps extends CustomPropsObject,
+> = {
+  mediaQuery?: string;
+  colorScheme?: CSSProperties['colorScheme'];
+} & GetNestedOptionalCustomProperties<TCustomProps>;
+
+type GetNestedOptionalCustomProperties<TCustomProps extends CustomPropsObject> =
+  {
+    [K in keyof TCustomProps]?: TCustomProps[K] extends string | number
+      ? string | number
+      : TCustomProps[K] extends CustomPropsObject
+        ? GetNestedOptionalCustomProperties<TCustomProps[K]>
+        : never;
+  };
 
 export interface CustomPropertyVariantWithSetMethod
   extends CustomPropertyVariant {
@@ -14,38 +31,39 @@ export interface CustomPropertyVariantWithSetMethod
 }
 
 export interface MakeCustomPropertiesFunction<
-  KPropKey extends string,
   TVariantName extends string,
+  TCustomProps extends CustomPropsObject,
 > {
   /** Add a variant to this variant group */
   addVariant: <TName extends string>(
     /** The name for your new variant. You’ll reference the variant by name when manually activating it. */
     variantName: TName,
     /** The props that will change when this variant is active */
-    props: {
-      [Key in KPropKey]?: string | number;
-    } & {
+    props: GetOptionalCustomProperties<TCustomProps> & {
       /** An optional media query that will activate this variant */
       mediaQuery?: string;
       /** An optional `color-scheme` that will be set for this variant */
       colorScheme?: CSSProperties['colorScheme'];
     }
-  ) => MakeCustomPropertiesFunction<KPropKey, TVariantName | TName>;
+  ) => MakeCustomPropertiesFunction<TVariantName | TName, TCustomProps>;
 
   build: (
     buildOptions?: BuildOptions
-  ) => BuiltCustomProperties<KPropKey, TVariantName>;
+  ) => BuiltCustomProperties<TVariantName, TCustomProps>;
 }
 
+type GetCustomProperties<TCustomProps extends CustomPropsObject> = {
+  [K in keyof TCustomProps]: TCustomProps[K] extends string | number
+    ? string
+    : TCustomProps[K] extends CustomPropsObject
+      ? GetCustomProperties<TCustomProps[K]>
+      : never;
+};
+
 export type BuiltCustomProperties<
-  KPropKey extends string,
   TVariantName extends string,
-> = {
-  [Key in Exclude<
-    KPropKey,
-    'setVariant' | 'variantNames' | 'variants' | 'styles'
-  >]: string;
-} & {
+  TCustomProps extends CustomPropsObject,
+> = GetCustomProperties<TCustomProps> & {
   /** Manually enable a variant. Only one variant in this group can be active at a time. */
   setVariant: (variantName: TVariantName | null) => void;
   /** All variant names */
@@ -60,17 +78,15 @@ export type BuiltCustomProperties<
 };
 
 const makeCustomPropertiesInternal = <
-  KPropKey extends string,
   TVariantName extends string,
+  TCustomProps extends CustomPropsObject,
 >(
-  variantMap: VariantMap<TVariantName, KPropKey>,
+  variantMap: VariantMap<TVariantName, TCustomProps>,
   cache: StyleCache
-): MakeCustomPropertiesFunction<KPropKey, TVariantName> => ({
+): MakeCustomPropertiesFunction<TVariantName, TCustomProps> => ({
   addVariant: <TName extends string>(
     variantName: TName,
-    props: {
-      [Key in KPropKey]?: string | number;
-    } & {
+    props: GetOptionalCustomProperties<TCustomProps> & {
       /** An optional media query that will activate this variant */
       mediaQuery?: string;
       /** An optional `color-scheme` that will be set for this variant */
@@ -78,7 +94,7 @@ const makeCustomPropertiesInternal = <
     }
   ) => {
     (variantMap as any)[variantName] = props;
-    return makeCustomPropertiesInternal<KPropKey, TVariantName | TName>(
+    return makeCustomPropertiesInternal<TVariantName | TName, TCustomProps>(
       variantMap as any,
       cache
     );
@@ -145,5 +161,8 @@ const makeCustomPropertiesInternal = <
 
 export const getCustomPropertiesFunction =
   (cache: StyleCache) =>
-  <KPropKeys extends string>(props: Record<KPropKeys, string | number>) =>
-    makeCustomPropertiesInternal({ default: props }, cache);
+  <TCustomProps extends CustomPropsObject>(props: TCustomProps) =>
+    makeCustomPropertiesInternal<never, TCustomProps>(
+      { default: props },
+      cache
+    );

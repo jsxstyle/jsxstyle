@@ -14,6 +14,7 @@ export function componentFactory<T extends JsxstyleComponentName>(
   const tagName = 'div';
   const defaultProps = componentStyles[displayName];
 
+  // biome-ignore lint/style/noNonNullAssertion: we know it's set
   return {
     // this sets Function.name
     [displayName]: <T extends ValidComponentPropValue = 'div'>(
@@ -27,5 +28,5 @@ export function componentFactory<T extends JsxstyleComponentName>(
       );
       return createElement(Component, extractedProps);
     },
-  }[displayName];
+  }[displayName]!;
 }

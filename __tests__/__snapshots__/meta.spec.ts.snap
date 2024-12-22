@@ -47,6 +47,10 @@ exports[`npm publish > only publishes the intended files 1`] = `
 - lib/ast/generatedUid.d.ts.map
 - lib/ast/generatedUid.js
 - lib/ast/generatedUid.js.map
+- lib/ast/getCustomPropsAstNode.d.ts
+- lib/ast/getCustomPropsAstNode.d.ts.map
+- lib/ast/getCustomPropsAstNode.js
+- lib/ast/getCustomPropsAstNode.js.map
 - lib/ast/getEvaluateAstNodeWithScopeFunction.d.ts
 - lib/ast/getEvaluateAstNodeWithScopeFunction.d.ts.map
 - lib/ast/getEvaluateAstNodeWithScopeFunction.js

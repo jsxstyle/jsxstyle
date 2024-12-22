@@ -26,7 +26,12 @@ export type {
   CustomPropertyVariantWithSetMethod,
   BuiltCustomProperties,
 } from './makeCustomProperties.js';
-export type { VariantMap } from './generateCustomPropertiesFromVariants.js';
+export type {
+  VariantMap,
+  CustomPropsObject,
+  GetCustomProperties,
+  NestedCustomPropsObject,
+} from './generateCustomPropertiesFromVariants.js';
 export type { InsertRuleCallback } from './processProps.js';
 export type { RequestStyleCache } from './createRequestStyleCache.js';
 

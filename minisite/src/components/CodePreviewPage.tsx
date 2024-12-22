@@ -9,7 +9,7 @@ import { ErrorBoundary } from './ErrorBoundary';
 import { useAsyncModule } from '../utilities/useAsyncModule';
 import { styleConstants } from '../utilities/constants';
 import { initialSampleCode } from './initialSampleCode';
-import type { BuiltCustomProperties } from '@jsxstyle/core';
+import type { BuiltCustomProperties, CustomPropsObject } from '@jsxstyle/core';
 
 const modules = {
   react: React,
@@ -29,7 +29,7 @@ const DefaultComponent: React.FC = () => null;
 interface TranspileResult {
   component: React.FC;
   dispose?: (() => void) | null;
-  customProperties?: BuiltCustomProperties<string, string> | null;
+  customProperties?: BuiltCustomProperties<string, CustomPropsObject> | null;
   js: string;
   css: string;
 }
@@ -83,10 +83,16 @@ export const CodePreviewPage: React.FC = () => {
     const variants = transpileResult.customProperties.variants;
     const variantNames = transpileResult.customProperties.variantNames;
     overrideElement.classList.remove(
-      ...variantNames.map((key) => variants[key].className)
+      ...variantNames.map(
+        // biome-ignore lint/style/noNonNullAssertion:
+        (key) => variants[key]!.className
+      )
     );
     if (variantName) {
-      overrideElement.classList.add(variants[variantName].className);
+      overrideElement.classList.add(
+        // biome-ignore lint/style/noNonNullAssertion:
+        variants[variantName]!.className
+      );
     }
   };
 
@@ -107,7 +113,10 @@ export const CodePreviewPage: React.FC = () => {
         const moduleExports: {
           default: React.ComponentType | null;
           dispose: (() => void) | null;
-          customProperties: BuiltCustomProperties<string, string> | null;
+          customProperties: BuiltCustomProperties<
+            string,
+            CustomPropsObject
+          > | null;
         } = {
           default: null,
           dispose: null,
@@ -196,7 +205,7 @@ export const CodePreviewPage: React.FC = () => {
     <Col gap={20} padding={20}>
       <Row
         border="1px solid"
-        borderColor={styleConstants.border}
+        borderColor={styleConstants.color.border}
         padding={10}
         gap={5}
       >

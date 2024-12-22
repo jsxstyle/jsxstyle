@@ -1303,6 +1303,75 @@ const props = makeCustomProperties({
       "
     `);
   });
+
+  it('extracts nested styles', () => {
+    const rv = runExtractStyles(
+      `import { makeCustomProperties } from '@jsxstyle/react';
+const props = makeCustomProperties({
+  prop1: 'prop1 value',
+  prop2: 123,
+  nested: {
+    prop3: 'nested prop3 value',
+    nested2: {
+      prop4: 'nested2 prop4 value',
+    }
+  }
+}).addVariant('banana', {
+  mediaQuery: 'mq',
+  prop1: 'banana prop1 value',
+  nested: {
+    nested2: {
+      prop4: 'banana nested2 prop4 value',
+    }
+  }
+}).build({
+  namespace: 'test',
+  mangle: true,
+})
+`,
+      'mock/custom-properties1.js'
+    );
+
+    expect(rv.js).toMatchInlineSnapshot(`
+      "import "./custom-properties1__jsxstyle.css";
+      const props = {
+        prop1: "var(--test0)",
+        prop2: "var(--test1)",
+        nested: {
+          prop3: "var(--test2)",
+          nested2: {
+            prop4: "var(--test3)"
+          }
+        },
+        variantNames: ["default", "banana"],
+        setVariant: function () {
+          throw new Error("Not yet implemented");
+        },
+        variants: {
+          default: {
+            className: "test_default",
+            activate: function () {
+              throw new Error("Not yet implemented");
+            }
+          },
+          banana: {
+            className: "test_banana",
+            activate: function () {
+              throw new Error("Not yet implemented");
+            }
+          }
+        }
+      };"
+    `);
+    expect(rv.css).toMatchInlineSnapshot(`
+      "/* mock/custom-properties1.js */
+      :root:not(.\\9).test_banana{--test0:banana prop1 value;--test3:banana nested2 prop4 value}
+      :root:not(.\\9).test_default{--test0:prop1 value;--test1:123px;--test2:nested prop3 value;--test3:nested2 prop4 value}
+      :root{--test0:prop1 value;--test1:123px;--test2:nested prop3 value;--test3:nested2 prop4 value}
+      @media mq{:root:not(.\\9){--test0:banana prop1 value;--test3:banana nested2 prop4 value}}
+      "
+    `);
+  });
 });
 
 describe('css function', () => {

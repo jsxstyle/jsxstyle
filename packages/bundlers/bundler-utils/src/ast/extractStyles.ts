@@ -4,7 +4,7 @@ import type { NodePath, TraverseOptions } from '@babel/traverse';
 import * as t from '@babel/types';
 import { VISITOR_KEYS } from '@babel/types';
 import { componentStyles } from '@jsxstyle/core';
-import type { GetClassNameForKeyFn } from '@jsxstyle/core';
+import type { CustomPropsObject, GetClassNameForKeyFn } from '@jsxstyle/core';
 import {
   type VariantMap,
   generateCustomPropertiesFromVariants,
@@ -20,6 +20,7 @@ import { getInlineImportString } from './getInlineImportString.js';
 import { extensionRegex } from './getStaticBindingsForScope.js';
 import { handleCssFunction } from './handleCssFunction.js';
 import { handleJsxElement } from './handleJsxAttributes.js';
+import { getCustomPropsAstNode } from './getCustomPropsAstNode.js';
 
 function skipChildren(path: NodePath) {
   const keys = VISITOR_KEYS[path.type];
@@ -357,7 +358,7 @@ export function extractStyles(
                   bindingCache
                 );
 
-            const variantMap: VariantMap<string, string> = {
+            const variantMap: VariantMap<string, CustomPropsObject> = {
               default: node.arguments[0]
                 ? attemptEval(node.arguments[0])
                 : null,
@@ -450,14 +451,7 @@ export function extractStyles(
 
                 grandparentPath.replaceWith(
                   t.objectExpression([
-                    ...Object.entries(result.customProperties).map(
-                      ([propName, propValue]) => {
-                        return t.objectProperty(
-                          t.identifier(propName),
-                          t.stringLiteral(propValue)
-                        );
-                      }
-                    ),
+                    ...getCustomPropsAstNode(result.customProperties),
                     t.objectProperty(
                       t.identifier('variantNames'),
                       t.arrayExpression(

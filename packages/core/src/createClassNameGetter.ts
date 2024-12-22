@@ -15,7 +15,8 @@ export const createClassNameGetter = (
     // incrementing integer
     const counterKey = Symbol.for('counter');
     cacheObject[counterKey] = cacheObject[counterKey] || 0;
-    getClassName = () => '_x' + (cacheObject[counterKey]++).toString(36);
+    // biome-ignore lint/style/noNonNullAssertion:
+    getClassName = () => '_x' + (cacheObject[counterKey]!++).toString(36);
   }
 
   return (key) => {

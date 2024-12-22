@@ -25,6 +25,7 @@ describe('generateCustomPropertiesFromVariants', () => {
         "variants": {
           "default": {
             "className": "jsxstyle_default",
+            "mediaQuery": undefined,
           },
         },
       }
@@ -61,9 +62,11 @@ describe('generateCustomPropertiesFromVariants', () => {
         "variants": {
           "default": {
             "className": "jsxstyle_default",
+            "mediaQuery": undefined,
           },
           "exampleVariant": {
             "className": "jsxstyle_exampleVariant",
+            "mediaQuery": undefined,
           },
         },
       }
@@ -88,6 +91,7 @@ describe('generateCustomPropertiesFromVariants', () => {
         "variants": {
           "default": {
             "className": "jsxstyle_default",
+            "mediaQuery": undefined,
           },
         },
       }
@@ -129,9 +133,11 @@ describe('generateCustomPropertiesFromVariants', () => {
         "variants": {
           "default": {
             "className": "exampleNamespace_default",
+            "mediaQuery": undefined,
           },
           "exampleVariant": {
             "className": "exampleNamespace_exampleVariant",
+            "mediaQuery": undefined,
           },
         },
       }
@@ -173,9 +179,11 @@ describe('generateCustomPropertiesFromVariants', () => {
         "variants": {
           "default": {
             "className": "x_default",
+            "mediaQuery": undefined,
           },
           "exampleVariant": {
             "className": "x_exampleVariant",
+            "mediaQuery": undefined,
           },
         },
       }
@@ -214,9 +222,11 @@ describe('generateCustomPropertiesFromVariants', () => {
         "variants": {
           "default": {
             "className": "jsxstyle_default",
+            "mediaQuery": undefined,
           },
           "exampleVariant": {
             "className": "jsxstyle_exampleVariant",
+            "mediaQuery": undefined,
           },
         },
       }
@@ -251,16 +261,18 @@ describe('generateCustomPropertiesFromVariants', () => {
         "variants": {
           "darkMode": {
             "className": "jsxstyle_darkMode",
+            "mediaQuery": undefined,
           },
           "default": {
             "className": "jsxstyle_default",
+            "mediaQuery": undefined,
           },
         },
       }
     `);
   });
 
-  it('handles a solitart colorScheme prop in the second variant', () => {
+  it('handles a solitary colorScheme prop in the second variant', () => {
     const example = generateCustomPropertiesFromVariants({
       default: {
         color: 'black',
@@ -287,9 +299,11 @@ describe('generateCustomPropertiesFromVariants', () => {
         "variants": {
           "darkMode": {
             "className": "jsxstyle_darkMode",
+            "mediaQuery": undefined,
           },
           "default": {
             "className": "jsxstyle_default",
+            "mediaQuery": undefined,
           },
         },
       }
@@ -316,6 +330,7 @@ describe('generateCustomPropertiesFromVariants', () => {
         "variants": {
           "default": {
             "className": "jsxstyle_default",
+            "mediaQuery": undefined,
           },
         },
       }
@@ -351,6 +366,7 @@ describe('generateCustomPropertiesFromVariants', () => {
         "variants": {
           "default": {
             "className": "jsxstyle_default",
+            "mediaQuery": undefined,
           },
           "exampleVariant": {
             "className": "jsxstyle_exampleVariant",
@@ -393,6 +409,66 @@ describe('generateCustomPropertiesFromVariants', () => {
           "default": {
             "className": "jsxstyle_default",
             "mediaQuery": "@media screen and example-media-query",
+          },
+          "exampleVariant": {
+            "className": "jsxstyle_exampleVariant",
+            "mediaQuery": "@media screen and example-media-query",
+          },
+        },
+      }
+    `);
+  });
+
+  it('works with nested custom props objects', () => {
+    const example = generateCustomPropertiesFromVariants({
+      default: {
+        mediaQuery: 'screen and default-media-query',
+        exampleString: 'wow',
+        nested: {
+          exampleString: 'wow',
+          nested: {
+            exampleString: 'wow',
+          },
+        },
+      },
+      exampleVariant: {
+        mediaQuery: 'screen and example-media-query',
+        exampleString: 'ok',
+        nested: {
+          exampleString: 'ok',
+          nested: {
+            exampleString: 'ok',
+          },
+        },
+      },
+    });
+
+    expect(example).toMatchInlineSnapshot(`
+      {
+        "customProperties": {
+          "exampleString": "var(--jsxstyle-exampleString)",
+          "nested": {
+            "exampleString": "var(--jsxstyle-nested-exampleString)",
+            "nested": {
+              "exampleString": "var(--jsxstyle-nested-nested-exampleString)",
+            },
+          },
+        },
+        "styles": [
+          ":root{--jsxstyle-exampleString:wow;--jsxstyle-nested-exampleString:wow;--jsxstyle-nested-nested-exampleString:wow}",
+          ":root:not(.\\9).jsxstyle_default{--jsxstyle-exampleString:wow;--jsxstyle-nested-exampleString:wow;--jsxstyle-nested-nested-exampleString:wow}",
+          "@media screen and default-media-query{:root:not(.\\9){--jsxstyle-exampleString:wow;--jsxstyle-nested-exampleString:wow;--jsxstyle-nested-nested-exampleString:wow}}",
+          ":root:not(.\\9).jsxstyle_exampleVariant{--jsxstyle-exampleString:ok;--jsxstyle-nested-exampleString:ok;--jsxstyle-nested-nested-exampleString:ok}",
+          "@media screen and example-media-query{:root:not(.\\9){--jsxstyle-exampleString:ok;--jsxstyle-nested-exampleString:ok;--jsxstyle-nested-nested-exampleString:ok}}",
+        ],
+        "variantNames": [
+          "default",
+          "exampleVariant",
+        ],
+        "variants": {
+          "default": {
+            "className": "jsxstyle_default",
+            "mediaQuery": "@media screen and default-media-query",
           },
           "exampleVariant": {
             "className": "jsxstyle_exampleVariant",
