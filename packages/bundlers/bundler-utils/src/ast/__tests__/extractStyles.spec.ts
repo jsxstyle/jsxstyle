@@ -1210,8 +1210,9 @@ const props = makeCustomProperties({
   prop1: 'prop1 value',
   prop2: 123,
 }).addVariant('banana', {
-  mediaQuery: 'mq',
   prop1: 'banana prop1 value',
+}, {
+  mediaQuery: 'mq',
 }).build()
 `,
       'mock/custom-properties1.js'
@@ -1259,8 +1260,9 @@ const props = makeCustomProperties({
   prop1: 'prop1 value',
   prop2: 123,
 }).addVariant('banana', {
-  mediaQuery: 'mq',
   prop1: 'banana prop1 value',
+}, {
+  mediaQuery: 'mq',
 }).build({
   namespace: 'test',
   mangle: true,
@@ -1317,13 +1319,14 @@ const props = makeCustomProperties({
     }
   }
 }).addVariant('banana', {
-  mediaQuery: 'mq',
   prop1: 'banana prop1 value',
   nested: {
     nested2: {
       prop4: 'banana nested2 prop4 value',
     }
   }
+}, {
+  mediaQuery: 'mq',
 }).build({
   namespace: 'test',
   mangle: true,

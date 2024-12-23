@@ -12,18 +12,12 @@ import type { CSSProperties } from './types.js';
 export type GetOptionalCustomProperties<
   TCustomProps extends CustomPropsObject,
 > = {
-  mediaQuery?: string;
-  colorScheme?: CSSProperties['colorScheme'];
-} & GetNestedOptionalCustomProperties<TCustomProps>;
-
-type GetNestedOptionalCustomProperties<TCustomProps extends CustomPropsObject> =
-  {
-    [K in keyof TCustomProps]?: TCustomProps[K] extends string | number
-      ? string | number
-      : TCustomProps[K] extends CustomPropsObject
-        ? GetNestedOptionalCustomProperties<TCustomProps[K]>
-        : never;
-  };
+  [K in keyof TCustomProps]?: TCustomProps[K] extends string | number
+    ? string | number
+    : TCustomProps[K] extends CustomPropsObject
+      ? GetOptionalCustomProperties<TCustomProps[K]>
+      : never;
+};
 
 export interface CustomPropertyVariantWithSetMethod
   extends CustomPropertyVariant {
@@ -39,12 +33,9 @@ export interface MakeCustomPropertiesFunction<
     /** The name for your new variant. You’ll reference the variant by name when manually activating it. */
     variantName: TName,
     /** The props that will change when this variant is active */
-    props: GetOptionalCustomProperties<TCustomProps> & {
-      /** An optional media query that will activate this variant */
-      mediaQuery?: string;
-      /** An optional `color-scheme` that will be set for this variant */
-      colorScheme?: CSSProperties['colorScheme'];
-    }
+    props: GetOptionalCustomProperties<TCustomProps>,
+    /** Options */
+    options?: VariantOptions
   ) => MakeCustomPropertiesFunction<TVariantName | TName, TCustomProps>;
 
   build: (
@@ -77,6 +68,11 @@ export type BuiltCustomProperties<
   styles: string[];
 };
 
+export interface VariantOptions {
+  colorScheme?: CSSProperties['colorScheme'];
+  mediaQuery?: string;
+}
+
 const makeCustomPropertiesInternal = <
   TVariantName extends string,
   TCustomProps extends CustomPropsObject,
@@ -84,23 +80,12 @@ const makeCustomPropertiesInternal = <
   variantMap: VariantMap<TVariantName, TCustomProps>,
   cache: StyleCache
 ): MakeCustomPropertiesFunction<TVariantName, TCustomProps> => ({
-  addVariant: <TName extends string>(
-    variantName: TName,
-    props: GetOptionalCustomProperties<TCustomProps> & {
-      /** An optional media query that will activate this variant */
-      mediaQuery?: string;
-      /** An optional `color-scheme` that will be set for this variant */
-      colorScheme?: CSSProperties['colorScheme'];
-    }
-  ) => {
-    (variantMap as any)[variantName] = props;
-    return makeCustomPropertiesInternal<TVariantName | TName, TCustomProps>(
-      variantMap as any,
-      cache
-    );
+  addVariant: (variantName, props, options) => {
+    (variantMap as any)[variantName] = { props, options };
+    return makeCustomPropertiesInternal(variantMap as any, cache);
   },
 
-  build: (buildOptions: BuildOptions = {}) => {
+  build: (buildOptions = {}) => {
     let overrideElement: Element | null = null;
 
     const { customProperties, styles, variants, variantNames } =
@@ -161,8 +146,11 @@ const makeCustomPropertiesInternal = <
 
 export const getCustomPropertiesFunction =
   (cache: StyleCache) =>
-  <TCustomProps extends CustomPropsObject>(props: TCustomProps) =>
+  <TCustomProps extends CustomPropsObject>(
+    props: TCustomProps,
+    options?: VariantOptions
+  ) =>
     makeCustomPropertiesInternal<never, TCustomProps>(
-      { default: props },
+      { default: { props, options } },
       cache
     );

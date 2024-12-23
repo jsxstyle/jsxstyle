@@ -28,13 +28,12 @@ describe('makeCustomProperties', () => {
       exampleNumber: 123,
       exampleString: 'wow',
     })
-      .addVariant('exampleVariant', {
-        exampleString: 'variantWow',
-      })
-      .addVariant('variantWithMQ', {
-        mediaQuery: 'screen and example',
-        exampleNumber: 456,
-      })
+      .addVariant('exampleVariant', { exampleString: 'variantWow' })
+      .addVariant(
+        'variantWithMQ',
+        { exampleNumber: 456 },
+        { mediaQuery: 'screen and example' }
+      )
       .build({
         mangle: true,
         namespace: 'exampleNamespace',

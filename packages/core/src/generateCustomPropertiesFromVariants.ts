@@ -1,14 +1,11 @@
 import { dangerousStyleValue } from './dangerousStyleValue.js';
-import type { GetOptionalCustomProperties } from './makeCustomProperties.js';
-import type { CSSProperties } from './types.js';
+import type {
+  GetOptionalCustomProperties,
+  VariantOptions,
+} from './makeCustomProperties.js';
 
 export type CustomPropsObject = {
-  mediaQuery?: string;
-  colorScheme?: CSSProperties['colorScheme'];
-} & NestedCustomPropsObject;
-
-export type NestedCustomPropsObject = {
-  [key: string]: string | number | NestedCustomPropsObject;
+  [key: string | number]: string | number | CustomPropsObject;
 };
 
 export type GetCustomProperties<TCustomProps extends CustomPropsObject> = {
@@ -19,13 +16,18 @@ export type GetCustomProperties<TCustomProps extends CustomPropsObject> = {
       : never;
 };
 
+type Variant<T> = {
+  props: T;
+  options?: VariantOptions;
+};
+
 export type VariantMap<
   TVariantName extends string,
   TCustomProps extends CustomPropsObject,
 > = {
-  default: TCustomProps;
+  default: Variant<TCustomProps>;
 } & {
-  [K in TVariantName]: GetOptionalCustomProperties<TCustomProps>;
+  [K in TVariantName]: Variant<GetOptionalCustomProperties<TCustomProps>>;
 };
 
 export interface BuildOptions {
@@ -69,20 +71,22 @@ const getCustomPropsFromDefaultVariant = <
   let mangleIndex = index;
   let cssBody = '';
   for (const key in obj) {
-    if (keyPrefix === '' && (key === 'mediaQuery' || key === 'colorScheme'))
+    const value = obj[key];
+    if (keyPrefix === '' && (key === 'mediaQuery' || key === 'colorScheme')) {
       continue;
+    }
     const keyPlusPrefix = (keyPrefix ? keyPrefix + '-' : '') + key;
-    if (typeof obj[key] === 'string' || typeof obj[key] === 'number') {
+    if (typeof value === 'string' || typeof value === 'number') {
       const prop = shouldMangle
         ? (mangleIndex++).toString(36)
         : '-' + keyPlusPrefix;
       propMap[keyPlusPrefix] = `--${namespace || 'jsxstyle'}${prop}`;
       customProps[key] = `var(${propMap[keyPlusPrefix]})`;
-      cssBody += `${propMap[keyPlusPrefix]}:${dangerousStyleValue('', obj[key])};`;
-    } else if (typeof obj[key] === 'object') {
+      cssBody += `${propMap[keyPlusPrefix]}:${dangerousStyleValue('', value)};`;
+    } else if (typeof value === 'object') {
       customProps[key] = {};
       const result = getCustomPropsFromDefaultVariant(
-        obj[key],
+        value,
         namespace,
         shouldMangle,
         mangleIndex,
@@ -98,7 +102,7 @@ const getCustomPropsFromDefaultVariant = <
 };
 
 const getCustomPropsFromVariant = <
-  T extends GetOptionalCustomProperties<NestedCustomPropsObject>,
+  T extends GetOptionalCustomProperties<CustomPropsObject>,
 >(
   obj: T,
   shouldMangle = false,
@@ -149,19 +153,19 @@ export const generateCustomPropertiesFromVariants = <
   const defaultVariant = variantMap.default;
 
   const { propMap, css, customProps } = getCustomPropsFromDefaultVariant(
-    defaultVariant,
+    defaultVariant.props,
     namespace,
     mangle
   );
 
   const defaultCss = (
-    (defaultVariant.colorScheme
-      ? `color-scheme:${defaultVariant.colorScheme};`
+    (defaultVariant.options?.colorScheme
+      ? `color-scheme:${defaultVariant.options.colorScheme};`
       : '') + css
   ).slice(0, -1);
 
-  const defaultMediaQuery = variantMap.default.mediaQuery
-    ? `@media ${variantMap.default.mediaQuery}`
+  const defaultMediaQuery = variantMap.default.options?.mediaQuery
+    ? `@media ${variantMap.default.options.mediaQuery}`
     : undefined;
 
   styles.push(`${selector}{${defaultCss}}`);
@@ -183,11 +187,11 @@ export const generateCustomPropertiesFromVariants = <
     if (variantName === 'default') continue;
     const variant = variantMap[variantName];
 
-    let cssBody = getCustomPropsFromVariant(variant, mangle, propMap);
+    let cssBody = getCustomPropsFromVariant(variant.props, mangle, propMap);
 
     const colorScheme =
-      variant.colorScheme &&
-      dangerousStyleValue('colorScheme', variant.colorScheme);
+      variant.options?.colorScheme &&
+      dangerousStyleValue('colorScheme', variant.options.colorScheme);
     if (colorScheme) {
       cssBody = `color-scheme:${colorScheme};${cssBody}`;
     }
@@ -197,8 +201,8 @@ export const generateCustomPropertiesFromVariants = <
 
     const variantObj: CustomPropertyVariant = {
       className: overrideClassName,
-      mediaQuery: variant.mediaQuery
-        ? `@media ${variant.mediaQuery}`
+      mediaQuery: variant.options?.mediaQuery
+        ? `@media ${variant.options.mediaQuery}`
         : undefined,
     };
     variants[variantName] = variantObj;
@@ -208,10 +212,10 @@ export const generateCustomPropertiesFromVariants = <
     }
     // `:not(.\\9)` bumps specificity, +1 class for each `.\\9`
     styles.push(`${selector}:not(.\\9).${overrideClassName}{${cssBody}}`);
-    if (variant.mediaQuery) {
+    if (variant.options?.mediaQuery) {
       // variantObj.mediaQuery = `@media ${variant.mediaQuery}`;
       styles.push(
-        `@media ${variant.mediaQuery}{${selector}:not(.\\9){${cssBody}}}`
+        `@media ${variant.options.mediaQuery}{${selector}:not(.\\9){${cssBody}}}`
       );
     }
   }

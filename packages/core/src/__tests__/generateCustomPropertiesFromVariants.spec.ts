@@ -4,8 +4,10 @@ describe('generateCustomPropertiesFromVariants', () => {
   it('works with a single variant', () => {
     const example = generateCustomPropertiesFromVariants({
       default: {
-        exampleNumber: 123,
-        exampleString: 'wow',
+        props: {
+          exampleNumber: 123,
+          exampleString: 'wow',
+        },
       },
     });
 
@@ -35,12 +37,16 @@ describe('generateCustomPropertiesFromVariants', () => {
   it('works with multiple variants', () => {
     const example = generateCustomPropertiesFromVariants({
       default: {
-        exampleNumber: 123,
-        exampleString: 'wow',
+        props: {
+          exampleNumber: 123,
+          exampleString: 'wow',
+        },
       },
       exampleVariant: {
-        exampleNumber: 456,
-        exampleString: 'ok',
+        props: {
+          exampleNumber: 456,
+          exampleString: 'ok',
+        },
       },
     });
 
@@ -75,7 +81,7 @@ describe('generateCustomPropertiesFromVariants', () => {
 
   it('works with no styles for some reason', () => {
     const example = generateCustomPropertiesFromVariants({
-      default: {},
+      default: { props: {} },
     });
 
     expect(example).toMatchInlineSnapshot(`
@@ -102,12 +108,16 @@ describe('generateCustomPropertiesFromVariants', () => {
     const example = generateCustomPropertiesFromVariants(
       {
         default: {
-          exampleNumber: 123,
-          exampleString: 'wow',
+          props: {
+            exampleNumber: 123,
+            exampleString: 'wow',
+          },
         },
         exampleVariant: {
-          exampleNumber: 456,
-          exampleString: 'ok',
+          props: {
+            exampleNumber: 456,
+            exampleString: 'ok',
+          },
         },
       },
       {
@@ -148,11 +158,15 @@ describe('generateCustomPropertiesFromVariants', () => {
     const example = generateCustomPropertiesFromVariants(
       {
         default: {
-          exampleNumber: 123,
-          exampleString: 'wow',
+          props: {
+            exampleNumber: 123,
+            exampleString: 'wow',
+          },
         },
         exampleVariant: {
-          exampleString: 'ok',
+          props: {
+            exampleString: 'ok',
+          },
         },
       },
       {
@@ -194,10 +208,14 @@ describe('generateCustomPropertiesFromVariants', () => {
     const example = generateCustomPropertiesFromVariants(
       {
         default: {
-          exampleString: 'wow',
+          props: {
+            exampleString: 'wow',
+          },
         },
         exampleVariant: {
-          exampleString: 'ok',
+          props: {
+            exampleString: 'ok',
+          },
         },
       },
       {
@@ -235,13 +253,8 @@ describe('generateCustomPropertiesFromVariants', () => {
 
   it('handles the colorScheme prop', () => {
     const example = generateCustomPropertiesFromVariants({
-      default: {
-        color: 'black',
-      },
-      darkMode: {
-        colorScheme: 'dark',
-        color: 'white',
-      },
+      default: { props: { color: 'black' } },
+      darkMode: { props: { color: 'white' }, options: { colorScheme: 'dark' } },
     });
 
     expect(example).toMatchInlineSnapshot(`
@@ -274,12 +287,8 @@ describe('generateCustomPropertiesFromVariants', () => {
 
   it('handles a solitary colorScheme prop in the second variant', () => {
     const example = generateCustomPropertiesFromVariants({
-      default: {
-        color: 'black',
-      },
-      darkMode: {
-        colorScheme: 'dark',
-      },
+      default: { props: { color: 'black' } },
+      darkMode: { options: { colorScheme: 'dark' }, props: {} },
     });
 
     expect(example).toMatchInlineSnapshot(`
@@ -312,9 +321,7 @@ describe('generateCustomPropertiesFromVariants', () => {
 
   it('handles a solitary colorScheme prop', () => {
     const example = generateCustomPropertiesFromVariants({
-      default: {
-        colorScheme: 'light',
-      },
+      default: { options: { colorScheme: 'light' }, props: {} },
     });
 
     expect(example).toMatchInlineSnapshot(`
@@ -340,11 +347,11 @@ describe('generateCustomPropertiesFromVariants', () => {
   it('makes use of the mediaQuery prop', () => {
     const example = generateCustomPropertiesFromVariants({
       default: {
-        exampleString: 'wow',
+        props: { exampleString: 'wow' },
       },
       exampleVariant: {
-        mediaQuery: 'screen and example-media-query',
-        exampleString: 'ok',
+        props: { exampleString: 'ok' },
+        options: { mediaQuery: 'screen and example-media-query' },
       },
     });
 
@@ -380,12 +387,12 @@ describe('generateCustomPropertiesFromVariants', () => {
   it('works with initial media queries', () => {
     const example = generateCustomPropertiesFromVariants({
       default: {
-        mediaQuery: 'screen and example-media-query',
-        exampleString: 'wow',
+        props: { exampleString: 'wow' },
+        options: { mediaQuery: 'screen and example-media-query' },
       },
       exampleVariant: {
-        mediaQuery: 'screen and example-media-query',
-        exampleString: 'ok',
+        props: { exampleString: 'ok' },
+        options: { mediaQuery: 'screen and example-media-query' },
       },
     });
 
@@ -422,23 +429,31 @@ describe('generateCustomPropertiesFromVariants', () => {
   it('works with nested custom props objects', () => {
     const example = generateCustomPropertiesFromVariants({
       default: {
-        mediaQuery: 'screen and default-media-query',
-        exampleString: 'wow',
-        nested: {
+        props: {
           exampleString: 'wow',
           nested: {
             exampleString: 'wow',
+            nested: {
+              exampleString: 'wow',
+            },
           },
+        },
+        options: {
+          mediaQuery: 'screen and default-media-query',
         },
       },
       exampleVariant: {
-        mediaQuery: 'screen and example-media-query',
-        exampleString: 'ok',
-        nested: {
+        props: {
           exampleString: 'ok',
           nested: {
             exampleString: 'ok',
+            nested: {
+              exampleString: 'ok',
+            },
           },
+        },
+        options: {
+          mediaQuery: 'screen and example-media-query',
         },
       },
     });

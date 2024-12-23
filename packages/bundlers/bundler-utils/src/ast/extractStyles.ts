@@ -341,7 +341,7 @@ export function extractStyles(
             // makeCustomProperties
             node.callee.name === customPropertiesImportName
           ) {
-            if (node.arguments.length !== 1) {
+            if (node.arguments.length < 1 || node.arguments.length > 2) {
               logError(
                 '`%s` import has the wrong number of parameters',
                 customPropertiesImportName
@@ -359,9 +359,14 @@ export function extractStyles(
                 );
 
             const variantMap: VariantMap<string, CustomPropsObject> = {
-              default: node.arguments[0]
-                ? attemptEval(node.arguments[0])
-                : null,
+              default: {
+                props: node.arguments[0]
+                  ? attemptEval(node.arguments[0])
+                  : null,
+                options: node.arguments[1]
+                  ? attemptEval(node.arguments[1])
+                  : undefined,
+              },
             };
 
             let parentPath: NodePath | null = traversePath.parentPath;
@@ -405,12 +410,16 @@ export function extractStyles(
               parentPath = grandparentPath.parentPath;
 
               if (prop.name === 'addVariant') {
-                if (grandparentPath.node.arguments.length !== 2) {
+                if (
+                  grandparentPath.node.arguments.length < 2 ||
+                  grandparentPath.node.arguments.length > 3
+                ) {
                   logError('Expected two arguments');
                   break;
                 }
 
-                const [keyNode, propsNode] = grandparentPath.node.arguments;
+                const [keyNode, propsNode, optionsNode] =
+                  grandparentPath.node.arguments;
 
                 if (!keyNode || !propsNode) {
                   // TODO(meyer) log error?
@@ -418,7 +427,10 @@ export function extractStyles(
                 }
                 const key = evaluateAstNode(keyNode);
                 const props = evaluateAstNode(propsNode);
-                variantMap[key] = props;
+                const options = optionsNode
+                  ? evaluateAstNode(optionsNode)
+                  : undefined;
+                variantMap[key] = { props, options };
                 continue;
               }
 

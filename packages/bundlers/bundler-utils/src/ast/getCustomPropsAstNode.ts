@@ -1,8 +1,12 @@
-import type { NestedCustomPropsObject } from '@jsxstyle/core';
+import type { CustomPropsObject } from '@jsxstyle/core';
 import * as t from '@babel/types';
 
+/**
+ * Given a custom properties object, this function returns an array of
+ * `ObjectProperty` AST nodes that correspond to the custom properties.
+ */
 export const getCustomPropsAstNode = (
-  customProps: NestedCustomPropsObject
+  customProps: CustomPropsObject
 ): t.ObjectProperty[] => {
   const objectProperties: t.ObjectProperty[] = [];
   for (const key in customProps) {
@@ -11,13 +15,11 @@ export const getCustomPropsAstNode = (
       objectProperties.push(
         t.objectProperty(t.identifier(key), t.stringLiteral(value + ''))
       );
-    } else {
+    } else if (typeof value === 'object') {
       objectProperties.push(
         t.objectProperty(
           t.identifier(key),
-          t.objectExpression(
-            getCustomPropsAstNode(value as NestedCustomPropsObject)
-          )
+          t.objectExpression(getCustomPropsAstNode(value))
         )
       );
     }
