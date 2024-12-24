@@ -5,12 +5,17 @@ const customProperties = makeCustomProperties({
   foreground: 'black',
   background: 'white',
 })
-  .addVariant('darkMode', {
-    mediaQuery: 'screen and (prefers-color-scheme: dark)',
-    colorScheme: 'dark',
-    foreground: 'white',
-    background: 'black',
-  })
+  .addVariant(
+    'darkMode',
+    {
+      colorScheme: 'dark',
+      foreground: 'white',
+      background: 'black',
+    },
+    {
+      mediaQuery: 'screen and (prefers-color-scheme: dark)',
+    }
+  )
   .build();
 
 export { customProperties };
