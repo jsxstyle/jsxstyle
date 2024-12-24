@@ -12,9 +12,6 @@
     ".": {
       "import": "./src/index.ts"
     },
-    "./middleware": {
-      "import": "./src/middleware.ts"
-    },
     "./integration": {
       "import": "./src/integration.ts"
     }

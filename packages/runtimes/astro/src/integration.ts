@@ -5,7 +5,7 @@ export const jsxstyle = (): AstroIntegration => ({
   hooks: {
     'astro:config:setup': ({ addMiddleware }) => {
       addMiddleware({
-        entrypoint: '@jsxstyle/astro/middleware',
+        entrypoint: new URL('./middleware.ts', import.meta.url),
         order: 'pre',
       });
     },
