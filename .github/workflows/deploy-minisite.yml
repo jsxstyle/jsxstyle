@@ -3,10 +3,7 @@ name: Deploy to GitHub Pages
 on:
   workflow_dispatch:
   push:
-    paths:
-      - 'minisite/**'
     branches:
-      - 'main'
       - 'dev'
 
 jobs:
