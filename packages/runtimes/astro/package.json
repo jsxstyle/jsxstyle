@@ -3,6 +3,16 @@
   "version": "0.0.0",
   "type": "module",
   "description": "jsxstyle components for Astro",
+  "keywords": [
+    "astro-component",
+    "withastro",
+    "css",
+    "ui",
+    "tooling",
+    "jsxstyle",
+    "components",
+    "css-in-js"
+  ],
   "author": "@meyer",
   "files": [
     "src"

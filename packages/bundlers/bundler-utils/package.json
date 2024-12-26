@@ -2,6 +2,14 @@
   "name": "@jsxstyle/bundler-utils",
   "version": "0.0.0",
   "type": "module",
+  "keywords": [
+    "jsxstyle",
+    "css-in-js",
+    "webpack",
+    "rspack",
+    "vite",
+    "nextjs"
+  ],
   "files": [
     "lib",
     "!lib/tsconfig.tsbuildinfo"

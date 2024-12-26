@@ -2,6 +2,12 @@
   "name": "@jsxstyle/solid",
   "version": "0.0.1",
   "type": "module",
+  "keywords": [
+    "jsxstyle",
+    "css-in-js",
+    "components",
+    "solidjs"
+  ],
   "files": [
     "lib",
     "!lib/tsconfig.tsbuildinfo"

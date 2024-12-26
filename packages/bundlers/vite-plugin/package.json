@@ -2,6 +2,13 @@
   "name": "@jsxstyle/vite-plugin",
   "version": "0.0.0",
   "type": "module",
+  "keywords": [
+    "jsxstyle",
+    "css-in-js",
+    "vite",
+    "plugin",
+    "rollup"
+  ],
   "files": [
     "lib",
     "!lib/tsconfig.tsbuildinfo"
