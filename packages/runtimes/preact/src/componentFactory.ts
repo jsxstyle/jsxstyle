@@ -6,7 +6,7 @@ import {
 import { createElement } from 'preact';
 import type { JsxstyleProps, ValidComponentPropValue } from './types.js';
 
-export const classNamePropKey = 'class';
+const classNamePropKey = 'class';
 
 export function componentFactory<T extends JsxstyleComponentName>(
   displayName: T

@@ -2,7 +2,7 @@ import type { StyleCache } from './getStyleCache.js';
 import type { JsxstyleComponentStyleProps } from './types.js';
 
 export const makeCssFunction =
-  (classNamePropKey: string, cache: Pick<StyleCache, 'getComponentProps'>) =>
+  (cache: Pick<StyleCache, 'getComponentProps'>) =>
   (
     ...params: Array<
       JsxstyleComponentStyleProps | string | null | undefined | false
@@ -16,8 +16,8 @@ export const makeCssFunction =
       if (typeof param === 'string') {
         classNameString = param;
       } else {
-        const result = cache.getComponentProps(param, classNamePropKey);
-        classNameString = result?.[classNamePropKey];
+        const result = cache.getComponentProps(param, 'className');
+        classNameString = result?.className;
       }
 
       if (classNameString && typeof classNameString === 'string') {

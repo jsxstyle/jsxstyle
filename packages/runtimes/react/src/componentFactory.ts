@@ -6,7 +6,7 @@ import {
 import { createElement } from 'react';
 import type { JsxstyleProps, ValidComponentPropValue } from './types.js';
 
-export const classNamePropKey = 'className';
+const classNamePropKey = 'className';
 
 export function componentFactory<T extends JsxstyleComponentName>(
   displayName: T

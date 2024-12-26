@@ -8,7 +8,7 @@ import type { JSX } from 'solid-js';
 import { Dynamic, createComponent, mergeProps } from 'solid-js/web';
 import type { JsxstyleProps, ValidComponentPropValue } from './types.js';
 
-export const classNamePropKey = 'class';
+const classNamePropKey = 'class';
 
 export function componentFactory<T extends JsxstyleComponentName>(
   displayName: T

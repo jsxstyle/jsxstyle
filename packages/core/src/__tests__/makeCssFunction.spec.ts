@@ -9,7 +9,7 @@ const getCssFunction = () => {
       insertedCss.push(rule);
     },
   });
-  const css = makeCssFunction('className', styleCache);
+  const css = makeCssFunction(styleCache);
   return (...params: Parameters<typeof css>) => {
     const result = css(...params);
     return {
