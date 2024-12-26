@@ -25,6 +25,7 @@ export type {
   MakeCustomPropertiesFunction,
   CustomPropertyVariantWithSetMethod,
   BuiltCustomProperties,
+  VariantOptions,
 } from './makeCustomProperties.js';
 export type {
   VariantMap,

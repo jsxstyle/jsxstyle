@@ -1,12 +1,15 @@
-import { cacheSingleton } from '@jsxstyle/core';
 import { componentFactory } from './componentFactory.js';
 
 export type {
   CSSProperties,
   JsxstyleComponentStyleProps,
 } from '@jsxstyle/core';
+export {
+  cacheSingleton as cache,
+  css,
+  makeCustomProperties,
+} from '@jsxstyle/core';
 export type { StylableComponentProps } from './types.js';
-export { cacheSingleton as cache };
 
 export const Box = /*#__PURE__*/ componentFactory('Box');
 export const Block = /*#__PURE__*/ componentFactory('Block');
