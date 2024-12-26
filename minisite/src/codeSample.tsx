@@ -1,4 +1,5 @@
-import { Block, makeCustomProperties, useMatchMedia } from '@jsxstyle/react';
+import { Block, useMatchMedia } from '@jsxstyle/react';
+import { makeCustomProperties } from '@jsxstyle/core';
 
 const customProperties = makeCustomProperties({
   colorScheme: 'light',

@@ -1,4 +1,4 @@
-import { makeCustomProperties } from '@jsxstyle/react';
+import { makeCustomProperties } from '@jsxstyle/core';
 
 export const styleConstants = makeCustomProperties(
   {
