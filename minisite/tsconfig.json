@@ -1,7 +1,9 @@
 {
   "extends": "@jsxstyle/internal/tsconfig.react.json",
   "compilerOptions": {
+    "baseUrl": ".",
     "paths": {
+      "~/*": ["./src/*"],
       "@jsxstyle/astro": [
         "../packages/runtimes/astro/src"
       ],

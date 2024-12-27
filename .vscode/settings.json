@@ -9,4 +9,7 @@
     "tsconfig.json": "tsconfig.*.json, *.tsbuildinfo",
     "package.json": "package-lock.json"
   },
+  "[astro]": {
+    "editor.defaultFormatter": "astro-build.astro-vscode"
+  },
 }

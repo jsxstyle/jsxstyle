@@ -1,0 +1,18 @@
+---
+interface Props extends JsxstyleComponentStyleProps {
+  itemWidth: number;
+}
+
+import { Grid } from "@jsxstyle/astro";
+import type { JsxstyleComponentStyleProps } from "@jsxstyle/astro";
+const { itemWidth, gap = 16, ...styleProps } = Astro.props;
+---
+
+<Grid
+  component="ul"
+  {...styleProps}
+  gridTemplateColumns={`repeat(auto-fill, minmax(${itemWidth}px, 1fr))`}
+  gap={gap}
+>
+  <slot />
+</Grid>

@@ -24,3 +24,7 @@ body {
   font-size: inherit;
   line-height: inherit;
 }
+
+ul {
+  list-style: none;
+}

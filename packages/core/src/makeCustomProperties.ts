@@ -69,7 +69,9 @@ export type BuiltCustomProperties<
 };
 
 export interface VariantOptions {
+  /** Optional color scheme, to be applied when this variant is applied. */
   colorScheme?: CSSProperties['colorScheme'];
+  /** Optional media query that will activate this variant. */
   mediaQuery?: string;
 }
 

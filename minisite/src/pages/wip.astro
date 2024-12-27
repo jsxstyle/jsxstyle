@@ -1,0 +1,26 @@
+---
+import { Box } from "@jsxstyle/astro";
+import Layout from "~/layouts/Layout.astro";
+import LinkGrid from "~/components/LinkGrid.astro";
+import LinkGridItem from "~/components/LinkGridItem.astro";
+---
+
+<Layout padding={20}>
+  <Box component="header" maxWidth={800} margin="0 auto">
+    <h1>jsxstyle</h1>
+    <p>An opinionated way to write styles in JSX environments.</p>
+  </Box>
+
+  <Box component="h2" maxWidth={800} margin="20px auto"
+    >Supported Frameworks</Box
+  >
+
+  <LinkGrid itemWidth={300}>
+    <LinkGridItem title="React" href="/frameworks/react">React</LinkGridItem>
+    <LinkGridItem title="Preact" href="/frameworks/preact">Preact</LinkGridItem>
+    <LinkGridItem title="Solid.js" href="/frameworks/solidjs">
+      Solid.js
+    </LinkGridItem>
+    <LinkGridItem title="Astro" href="/frameworks/astro">Astro</LinkGridItem>
+  </LinkGrid>
+</Layout>

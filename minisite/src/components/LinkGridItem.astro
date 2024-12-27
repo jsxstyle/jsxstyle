@@ -1,0 +1,24 @@
+---
+interface Props {
+  href: string;
+  title?: string;
+}
+
+import { Box } from "@jsxstyle/astro";
+import { styleConstants } from "~/utilities/constants";
+
+const { href, title } = Astro.props;
+const slotContent = ((await Astro.slots.render("default")) || "").trim();
+---
+
+<Box component="li">
+  <Box
+    component="a"
+    padding={20}
+    borderRadius={8}
+    backgroundColor={styleConstants.color.insetBackground}
+    props={{ href, title }}
+    display="block"
+    set:html={slotContent}
+  />
+</Box>

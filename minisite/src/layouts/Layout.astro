@@ -1,17 +1,19 @@
 ---
-interface Props {
+interface Props extends JsxstyleComponentStyleProps {
   title?: string;
 }
 
-import { Box } from "@jsxstyle/astro";
-
-const title = Astro.props.title
-  ? `${Astro.props.title} \u2027 jsxstyle`
-  : "jsxstyle: Inline styles for JSX";
 import "../style.css";
-
+import { Box } from "@jsxstyle/astro";
+import type { JsxstyleComponentStyleProps } from "@jsxstyle/core";
 import { cacheSingleton } from "@jsxstyle/core";
 import { styleConstants } from "../utilities/constants";
+
+const { title: titleProp, ...styleProps } = Astro.props;
+
+const title = titleProp
+  ? `${titleProp} \u2027 jsxstyle`
+  : "jsxstyle: Inline styles for JSX";
 
 const customProperties = [
   ...styleConstants.styles,
@@ -20,9 +22,9 @@ const customProperties = [
 
 cacheSingleton.reset();
 
-const { css, returnValue: slotContent } = await cacheSingleton.run(() => {
-  return Astro.slots.render("default");
-});
+const { css, returnValue: slotContent } = await cacheSingleton.run(
+  async () => (await Astro.slots.render("default")) || "",
+);
 ---
 
 <!doctype html>
@@ -39,9 +41,9 @@ const { css, returnValue: slotContent } = await cacheSingleton.run(() => {
   </head>
   <body>
     <Box
-      component="main"
-      display="content"
       height="100%"
+      {...styleProps}
+      component="main"
       set:html={slotContent}
     />
   </body>
