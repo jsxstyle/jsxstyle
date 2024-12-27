@@ -27,7 +27,7 @@
     }
   },
   "dependencies": {
-    "@jsxstyle/core": "*"
+    "@jsxstyle/core": "workspace:*"
   },
   "devDependencies": {
     "astro": "^5.1.1",

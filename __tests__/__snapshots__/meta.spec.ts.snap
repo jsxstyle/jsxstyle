@@ -1,8 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`npm publish > only publishes the intended files 1`] = `
-[
-  "
+exports[`npm publish > '@jsxstyle/astro' only publishes the intended files 1`] = `
+"
 @jsxstyle/astro
 ===============
 - package.json
@@ -15,8 +14,11 @@ exports[`npm publish > only publishes the intended files 1`] = `
 - src/integration.ts
 - src/middleware.ts
 - src/types.ts
-",
-  "
+"
+`;
+
+exports[`npm publish > '@jsxstyle/bundler-utils' only publishes the intended files 1`] = `
+"
 @jsxstyle/bundler-utils
 =======================
 - lib/ModuleCache.d.ts
@@ -132,8 +134,11 @@ exports[`npm publish > only publishes the intended files 1`] = `
 - lib/wrapFileSystem.js
 - lib/wrapFileSystem.js.map
 - package.json
-",
-  "
+"
+`;
+
+exports[`npm publish > '@jsxstyle/core' only publishes the intended files 1`] = `
+"
 @jsxstyle/core
 ==============
 - README.md
@@ -206,8 +211,11 @@ exports[`npm publish > only publishes the intended files 1`] = `
 - lib/types.js
 - lib/types.js.map
 - package.json
-",
-  "
+"
+`;
+
+exports[`npm publish > '@jsxstyle/nextjs-plugin' only publishes the intended files 1`] = `
+"
 @jsxstyle/nextjs-plugin
 =======================
 - lib/index.d.ts
@@ -215,8 +223,11 @@ exports[`npm publish > only publishes the intended files 1`] = `
 - lib/index.js
 - lib/index.js.map
 - package.json
-",
-  "
+"
+`;
+
+exports[`npm publish > '@jsxstyle/preact' only publishes the intended files 1`] = `
+"
 @jsxstyle/preact
 ================
 - lib/componentFactory.d.ts
@@ -236,8 +247,11 @@ exports[`npm publish > only publishes the intended files 1`] = `
 - lib/useMatchMedia.js
 - lib/useMatchMedia.js.map
 - package.json
-",
-  "
+"
+`;
+
+exports[`npm publish > '@jsxstyle/react' only publishes the intended files 1`] = `
+"
 @jsxstyle/react
 ===============
 - lib/componentFactory.d.ts
@@ -257,8 +271,11 @@ exports[`npm publish > only publishes the intended files 1`] = `
 - lib/useMatchMedia.js
 - lib/useMatchMedia.js.map
 - package.json
-",
-  "
+"
+`;
+
+exports[`npm publish > '@jsxstyle/solid' only publishes the intended files 1`] = `
+"
 @jsxstyle/solid
 ===============
 - lib/componentFactory.d.ts
@@ -274,8 +291,11 @@ exports[`npm publish > only publishes the intended files 1`] = `
 - lib/types.js
 - lib/types.js.map
 - package.json
-",
-  "
+"
+`;
+
+exports[`npm publish > '@jsxstyle/vite-plugin' only publishes the intended files 1`] = `
+"
 @jsxstyle/vite-plugin
 =====================
 - lib/index.d.ts
@@ -283,8 +303,11 @@ exports[`npm publish > only publishes the intended files 1`] = `
 - lib/index.js
 - lib/index.js.map
 - package.json
-",
-  "
+"
+`;
+
+exports[`npm publish > '@jsxstyle/webpack-plugin' only publishes the intended files 1`] = `
+"
 @jsxstyle/webpack-plugin
 ========================
 - README.md
@@ -309,6 +332,5 @@ exports[`npm publish > only publishes the intended files 1`] = `
 - lib/types.js
 - lib/types.js.map
 - package.json
-",
-]
+"
 `;

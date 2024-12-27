@@ -26,11 +26,11 @@ if (!searchString) {
   if (!examplePkg) {
     throw new Error(`Could not find example matching "${answer}"`);
   }
-  $`npm run -w ${examplePkg.name} start`;
+  $`pnpm run --filter=${examplePkg.name} start`;
 } else {
   const examplePkg = examplePkgs.find((pkg) => pkg.name.includes(searchString));
   if (!examplePkg) {
     throw new Error(`Could not find example matching "${searchString}"`);
   }
-  $`npm run -w ${examplePkg.name} start`;
+  $`pnpm run ---filter=${examplePkg.name} start`;
 }

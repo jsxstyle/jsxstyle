@@ -37,10 +37,6 @@ const webpackConfig = {
             ],
             ['@babel/preset-react', { runtime: 'automatic' }],
           ],
-          plugins: [
-            '@babel/plugin-proposal-object-rest-spread',
-            '@babel/plugin-transform-object-assign',
-          ],
         },
       },
       {

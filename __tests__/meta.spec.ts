@@ -2,23 +2,17 @@ import { getPackList, getWorkspaces } from '@jsxstyle/internal';
 import * as path from 'node:path';
 import { glob, $ } from 'zx';
 
-describe('npm publish', () => {
-  it('only publishes the intended files', async () => {
-    const packages = await getWorkspaces();
+describe('npm publish', async () => {
+  const packages = await getWorkspaces().then((pkgs) =>
+    pkgs.filter((pkg) => !pkg.private)
+  );
 
-    const packLists = await getPackList(
-      packages.filter((pkg) => !pkg.private).map((pkg) => pkg.name)
-    );
-
-    // exclude private packages
-    const results = packLists
-      .sort((a, b) => a.name.localeCompare(b.name))
-      .map(
-        (pkg) =>
-          `
-${pkg.name}
-${pkg.name.replace(/./g, '=')}
-${pkg.files
+  it.for(packages)('$name only publishes the intended files', async (pkg) => {
+    const packlist = await getPackList(pkg);
+    expect(`
+${packlist.name}
+${packlist.name.replace(/./g, '=')}
+${packlist.files
   .map(({ path }) => {
     // chunk filenames contain a hash that will change across builds
     const updatedFileName = path.replace(
@@ -29,10 +23,7 @@ ${pkg.files
   })
   .sort()
   .join('\n')}
-`
-      );
-
-    await expect(results).toMatchSnapshot();
+`).toMatchSnapshot();
   });
 });
 

@@ -35,11 +35,20 @@
     "@babel/parser": "^7.26.3",
     "@babel/traverse": "^7.26.4",
     "@babel/types": "^7.26.3",
-    "@jsxstyle/core": "*",
-    "@jsxstyle/bundler-utils": "*",
+    "@jsxstyle/core": "workspace:*",
+    "@jsxstyle/bundler-utils": "workspace:*",
     "@types/babel__generator": "^7.6.8",
     "@types/babel__traverse": "^7.20.6",
     "invariant": "^2.2.4",
     "memfs": "^3.4.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "css-loader": "^7.1.2",
+    "mini-css-extract-plugin": "^2.9.2",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "webpack": "^5.97.1"
   }
 }

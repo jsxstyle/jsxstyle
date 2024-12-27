@@ -13,14 +13,26 @@ export const packageJsonSchema = s.type({
   peerDependencies: s.optional(s.record(s.string(), s.string())),
 });
 
-export const workspacesSchema = s.array(
-  s.assign(
-    packageJsonSchema,
-    s.type({
-      realpath: s.string(),
-    })
-  )
-);
+const pnpmDependency = s.type({
+  from: s.string(),
+  version: s.string(),
+  resolved: s.optional(s.string()),
+  path: s.string(),
+});
+
+export type PnpmWorkspace = s.Infer<typeof workspaceSchema>;
+
+export const workspaceSchema = s.type({
+  name: s.string(),
+  version: s.string(),
+  path: s.string(),
+  private: s.boolean(),
+  dependencies: s.optional(s.record(s.string(), pnpmDependency)),
+  devDependencies: s.optional(s.record(s.string(), pnpmDependency)),
+  unsavedDependencies: s.optional(s.record(s.string(), pnpmDependency)),
+});
+
+export const workspacesSchema = s.array(workspaceSchema);
 
 export const tsconfigSchema = s.type({
   extends: s.optional(s.string()),
@@ -43,16 +55,9 @@ export const tsconfigSchema = s.type({
   ),
 });
 
-const npmPackItemSchema = s.type({
-  id: s.string(),
+export const pnpmPackSchema = s.type({
   name: s.string(),
   version: s.string(),
-  size: s.number(),
-  unpackedSize: s.number(),
-  entryCount: s.number(),
-  files: s.array(
-    s.type({ path: s.string(), size: s.number(), mode: s.number() })
-  ),
+  filename: s.string(),
+  files: s.array(s.type({ path: s.string() })),
 });
-
-export const npmPackSchema = s.array(npmPackItemSchema);

@@ -21,22 +21,22 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Use Node 18
+      - uses: pnpm/action-setup@v4
+
+      - name: Use Node 22
         uses: actions/setup-node@v4
         with:
-          node-version: 18.x
-          cache: 'npm'
+          node-version: 22.x
+          cache: pnpm
 
-      - run: npm install
-      - run: npm run build
-
-      - name: Configure NPM
-        run: npm set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }}
+      - run: pnpm install
+      - run: pnpm build
+      - run: pnpm config set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }}
 
       - name: Publish canary release
         run: |
-          npm run version:canary
-          npm run release:canary
+          pnpm version:canary
+          pnpm release:canary
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

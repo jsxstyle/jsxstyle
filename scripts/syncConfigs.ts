@@ -21,7 +21,7 @@ const publicProjectPaths: string[] = [];
 const publicProjectNames: string[] = [];
 const projectPathsByName: Record<string, string> = {};
 
-for (const { name, private: isPrivate, realpath } of workspaces) {
+for (const { name, private: isPrivate, path: realpath } of workspaces) {
   const relativePath = path.relative(process.cwd(), realpath);
 
   projectPathsByName[name] = relativePath;

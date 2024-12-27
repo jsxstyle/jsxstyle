@@ -7,7 +7,7 @@
     "*.ts": "${capture}.js, ${capture}.test.ts, ${capture}.test.tsx",
     "*.js": "${capture}.js.map, ${capture}.d.ts, ${capture}.d.ts.map",
     "tsconfig.json": "tsconfig.*.json, *.tsbuildinfo",
-    "package.json": "package-lock.json"
+    "package.json": "pnpm-lock.yaml, pnpm-workspace.yaml, .npmrc"
   },
   "[astro]": {
     "editor.defaultFormatter": "astro-build.astro-vscode"

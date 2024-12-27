@@ -49,10 +49,10 @@ export default defineConfig({
           (
             injectPlugin({
               // a namespace import gives us nice error messages if we missed an export
-              Buffer: [
-                path.resolve(__dirname, './src/polyfills/buffer.ts'),
-                '*',
-              ],
+              // Buffer: [
+              //   path.resolve(__dirname, './src/polyfills/buffer.ts'),
+              //   '*',
+              // ],
               process: [
                 path.resolve(__dirname, './src/polyfills/process.ts'),
                 '*',

@@ -1,11 +1,15 @@
 import invariant from 'invariant';
 import * as s from 'superstruct';
-import { $, spinner } from 'zx';
-import { npmPackSchema, workspacesSchema } from './schemas.js';
+import { $, spinner, tmpdir } from 'zx';
+import {
+  pnpmPackSchema,
+  type PnpmWorkspace,
+  workspacesSchema,
+} from './schemas.js';
 
 export const getWorkspaces = async () => {
   const workspaces = await spinner('Getting workspaces…', () =>
-    $`npm query .workspace`.json()
+    $`pnpm list -r --json`.json()
   );
   s.assert(workspaces, workspacesSchema);
   return workspaces.filter(({ name }) => {
@@ -14,13 +18,13 @@ export const getWorkspaces = async () => {
   });
 };
 
-export const getPackList = async (packageNames: string[]) => {
-  const fileList = await spinner(
-    `Packing ${packageNames.length} package(s)…`,
-    () =>
-      $`npm ${packageNames.flatMap((pkg) => ['-w', pkg])} pack --dry-run --json`.json()
+export const getPackList = async (workspace: PnpmWorkspace) => {
+  const fileList = await spinner(`Packing ${workspace.name}…`, () =>
+    $({
+      cwd: workspace.path,
+    })`pnpm pack --json --pack-destination=${tmpdir(workspace.name)}`.json()
   );
-  s.assert(fileList, npmPackSchema);
+  s.assert(fileList, pnpmPackSchema);
   return fileList;
 };
 

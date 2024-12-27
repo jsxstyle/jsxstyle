@@ -14,15 +14,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Use Node 18
+      - uses: pnpm/action-setup@v4
+
+      - name: Use Node 22
         uses: actions/setup-node@v4
         with:
-          node-version: 18.x
-          cache: npm
+          node-version: 22.x
+          cache: pnpm
 
-      - run: npm install
-      - run: npm run build
-      - run: npm -w @jsxstyle/minisite run build
+      - run: pnpm install
+      - run: pnpm build
+      - run: pnpm --filter=@jsxstyle/minisite build
 
       - uses: actions/upload-pages-artifact@v3
         with:

@@ -122,7 +122,6 @@ export const ComponentWithAnimation: React.FC = () => (
       from: { opacity: 0 },
       to: {
         opacity: 1,
-        // @ts-expect-error
         paddingH: 123,
       },
     }}

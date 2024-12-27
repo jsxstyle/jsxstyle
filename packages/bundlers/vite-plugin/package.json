@@ -16,7 +16,8 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "dependencies": {
-    "@jsxstyle/bundler-utils": "*"
+    "@jsxstyle/bundler-utils": "workspace:*",
+    "esbuild": "^0.24.2"
   },
   "peerDependencies": {
     "vite": "^6.0.3"

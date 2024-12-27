@@ -15,7 +15,7 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "peerDependencies": {
-    "@jsxstyle/core": "*",
+    "@jsxstyle/core": "workspace:*",
     "preact": "^10.0.0"
   }
 }

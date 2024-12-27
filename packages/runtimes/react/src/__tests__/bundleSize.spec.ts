@@ -5,8 +5,8 @@ import rollupReplace from '@rollup/plugin-replace';
 import rollupTerser from '@rollup/plugin-terser';
 import { type OutputOptions, type RollupOptions, rollup } from 'rollup';
 
+const nodeModulesDir = new URL('../../node_modules', import.meta.url).pathname;
 const gzipAsync = promisify(zlib.gzip);
-
 const entry = 'bundleSize entrypoint';
 
 // that's what, like 1/50th of your average JPG?
@@ -19,7 +19,9 @@ it(`has a runtime size of less than ${ACCEPTABLE_NUMBER_OF_KILOBYTES}KB`, async 
     external: ['react', 'preact'],
     input: entry,
     plugins: [
-      rollupNodeResolve(),
+      rollupNodeResolve({
+        modulePaths: [nodeModulesDir],
+      }),
       rollupTerser({ output: { comments: false } }),
       rollupReplace({
         values: {
@@ -72,8 +74,8 @@ it(`has a runtime size of less than ${ACCEPTABLE_NUMBER_OF_KILOBYTES}KB`, async 
     (gzipLen / 1024).toFixed(4)
   );
   // ensure jsxstyle and jsxstyle-utils are bundled
-  expect(code).not.toMatch(/require\(['"]jsxstyle['"]\)/);
-  expect(code).not.toMatch(/require\(['"]jsxstyle\/utils['"]\)/);
+  expect(code).not.toMatch(/require\(['"]@jsxstyle\/react['"]\)/);
+  expect(code).not.toMatch(/require\(['"]@jsxstyle\/core['"]\)/);
   // check file size
   expect(gzipLen).toBeLessThan(1024 * ACCEPTABLE_NUMBER_OF_KILOBYTES);
 });

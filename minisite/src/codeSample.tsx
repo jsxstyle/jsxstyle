@@ -1,18 +1,20 @@
 import { Block, useMatchMedia, makeCustomProperties } from '@jsxstyle/react';
 
-const customProperties = makeCustomProperties({
-  colorScheme: 'light',
-  foreground: 'black',
-  background: 'white',
-})
+const customProperties = makeCustomProperties(
+  {
+    foreground: 'black',
+    background: 'white',
+  },
+  { colorScheme: 'light' }
+)
   .addVariant(
     'darkMode',
     {
-      colorScheme: 'dark',
       foreground: 'white',
       background: 'black',
     },
     {
+      colorScheme: 'dark',
       mediaQuery: 'screen and (prefers-color-scheme: dark)',
     }
   )

@@ -27,7 +27,19 @@
     }
   },
   "dependencies": {
-    "@jsxstyle/core": "*",
+    "@types/babel__generator": "^7.6.8",
+    "@types/babel__traverse": "^7.20.6",
+    "@babel/generator": "^7.26.3",
+    "@babel/parser": "^7.26.3",
+    "@babel/traverse": "^7.26.4",
+    "@babel/types": "^7.26.3",
+    "@jsxstyle/core": "workspace:*",
     "memfs": "^3.4.1"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.26.0",
+    "@babel/preset-react": "^7.26.3",
+    "terser": "^5.37.0",
+    "webpack": "^5.97.1"
   }
 }

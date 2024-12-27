@@ -15,8 +15,8 @@ on:
     - cron: '0 0 * * *'
 
 jobs:
-  run-jest:
-    name: Run jest tests
+  run-vitest:
+    name: Run vitest tests
     runs-on: ubuntu-latest
 
     steps:
@@ -24,14 +24,16 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Use Node 18
+      - uses: pnpm/action-setup@v4
+
+      - name: Use Node 22
         uses: actions/setup-node@v4
         with:
-          node-version: 18.x
-          cache: 'npm'
+          node-version: 22.x
+          cache: pnpm
 
-      - run: npm install
-      - run: npm test
+      - run: pnpm install
+      - run: pnpm test
 
   run-karma:
     name: Run karma tests
@@ -42,15 +44,17 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Use Node 18
+      - uses: pnpm/action-setup@v4
+
+      - name: Use Node 22
         uses: actions/setup-node@v4
         with:
-          node-version: 18.x
-          cache: 'npm'
+          node-version: 22.x
+          cache: pnpm
 
-      - run: npm install
-      - run: npm run build
-      # - run: npm run karma
+      - run: pnpm install
+      - run: pnpm build
+      # - run: pnpm karma
       #   env:
       #     CI: true
       #     TZ: 'America/Los_Angeles'

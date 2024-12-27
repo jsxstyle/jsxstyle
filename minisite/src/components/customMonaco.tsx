@@ -3,9 +3,9 @@ import 'monaco-editor/esm/vs/language/typescript/tsMode';
 import 'monaco-editor/esm/vs/editor/editor.all';
 
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
-import reactDts from '../../../node_modules/@types/react/index.d.ts?raw';
-import reactRuntimeDts from '../../../node_modules/@types/react/jsx-runtime.d.ts?raw';
-import csstypeDts from '../../../node_modules/csstype/index.d.ts?raw';
+import reactDts from '../../node_modules/@types/react/index.d.ts?raw';
+import reactRuntimeDts from '../../node_modules/@types/react/jsx-runtime.d.ts?raw';
+import csstypeDts from '../../node_modules/csstype/index.d.ts?raw';
 
 const jsxstyleTypes = import.meta.glob(
   '../../../packages/runtimes/react/lib/**/*.d.ts',

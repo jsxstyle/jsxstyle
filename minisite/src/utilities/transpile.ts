@@ -135,7 +135,7 @@ export const transpile = (code: string) => {
       let param1: t.Expression;
       if (elName.type === 'JSXIdentifier') {
         if (
-          elName.name[0] === elName.name[0].toUpperCase() ||
+          elName.name[0] === elName.name[0]?.toUpperCase() ||
           elName.name[0] === '_'
         ) {
           param1 = t.identifier(elName.name);

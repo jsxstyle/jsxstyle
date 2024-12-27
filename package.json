@@ -7,8 +7,8 @@
   "version": "0.0.0",
   "homepage": "https://github.com/jsxstyle/jsxstyle#readme",
   "scripts": {
-    "start": "npm -w minisite run dev",
-    "build": "npm run clean:dist && tsc -b tsconfig.build.json --verbose",
+    "start": "pnpm --filter=minisite dev",
+    "build": "pnpm clean:dist && tsc -b tsconfig.build.json --verbose",
     "lint": "biome lint .",
     "lint:write": "biome lint --write .",
     "check": "biome check .",
@@ -16,9 +16,9 @@
     "clean": "find . -name 'node_modules' -type d -prune -exec echo {} \\; -exec rm -rf {} \\;",
     "clean:dist": "tsx scripts/cleanDist.ts",
     "example": "tsx scripts/runExample.ts",
-    "test": "npm run build && vitest",
-    "release": "changeset publish",
-    "release:canary": "changeset publish --tag canary",
+    "test": "pnpm build && vitest",
+    "release": "pnpm publish -r --access public",
+    "release:canary": "pnpm publish -r  --access public --tag canary --no-git-checks",
     "version:canary": "changeset version --snapshot canary",
     "reset": "rm -rf packages/{*,*/*}/lib/ minisite/.next/",
     "update-readme": "echo \"$(<./misc/monorepo-preamble.md)\\n\\n---\\n\\n$(<./packages/jsxstyle/README.md)\" > README.md",
@@ -27,35 +27,23 @@
     "sync-configs": "tsx ./scripts/syncConfigs.ts",
     "update-sauce-data": "curl https://saucelabs.com/rest/v1/info/platforms/all > misc/saucelabs-data.json"
   },
-  "workspaces": [
-    "packages/**",
-    "examples/*",
-    "minisite"
-  ],
   "browserslist": [
     "defaults",
     "not IE 11",
     "maintained node versions"
   ],
   "dependencies": {
-    "@babel/preset-env": "^7.26.0",
-    "@babel/preset-react": "^7.26.3",
     "@biomejs/biome": "^1.9.4",
     "@changesets/cli": "^2.27.10",
-    "@rollup/plugin-node-resolve": "^16.0.0",
-    "@rollup/plugin-replace": "^6.0.2",
-    "@rollup/plugin-terser": "^0.4.4",
+    "@jsxstyle/internal": "workspace:*",
     "@types/invariant": "^2.2.37",
-    "@types/node": "^22.10.2",
-    "babel-loader": "^9.2.1",
     "invariant": "^2.2.4",
     "jsdom": "^25.0.1",
-    "mini-css-extract-plugin": "^2.9.2",
-    "prettier": "^3.4.2",
     "superstruct": "^2.0.2",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",
     "vitest": "^2.1.8",
     "zx": "^8.2.4"
-  }
+  },
+  "packageManager": "pnpm@9.15.1+sha512.1acb565e6193efbebda772702950469150cf12bcc764262e7587e71d19dc98a423dff9536e57ea44c49bdf790ff694e83c27be5faa23d67e0c033b583be4bfcf"
 }

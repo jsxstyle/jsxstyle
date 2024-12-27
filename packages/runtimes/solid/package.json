@@ -15,7 +15,7 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "dependencies": {
-    "@jsxstyle/core": "*",
+    "@jsxstyle/core": "workspace:*",
     "solid-js": "^1.6.16"
   }
 }

@@ -16,7 +16,8 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "dependencies": {
-    "@jsxstyle/webpack-plugin": "*"
+    "@jsxstyle/core": "workspace:*",
+    "@jsxstyle/webpack-plugin": "workspace:*"
   },
   "devDependencies": {
     "next": "^15.1.0"
