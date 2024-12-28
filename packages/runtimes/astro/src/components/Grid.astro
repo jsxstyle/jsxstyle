@@ -13,10 +13,10 @@ type Props<K extends keyof astroHTML.JSX.DefinedIntrinsicElements = "div"> =
   JsxstyleProps<K>;
 
 const { component, slot, ...astroProps } = Astro.props;
-const { props, styles } = cache.getComponentProps(
-  { ...astroProps, display: "grid" },
-  "class",
-);
+const { props, styles } = cache.getComponentProps({
+  ...astroProps,
+  display: "grid",
+});
 
 const Element = component || "div";
 ---
