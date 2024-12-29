@@ -1,4 +1,3 @@
-import { canUseDOM } from './addStyleToHead.js';
 import { generateCustomPropertiesFromVariants } from './generateCustomPropertiesFromVariants.js';
 import type {
   BuildOptions,
@@ -18,11 +17,6 @@ export type GetOptionalCustomProperties<
       ? GetOptionalCustomProperties<TCustomProps[K]>
       : never;
 };
-
-export interface CustomPropertyVariantWithSetMethod
-  extends CustomPropertyVariant {
-  activate: () => void;
-}
 
 export interface MakeCustomPropertiesFunction<
   TVariantName extends string,
@@ -55,15 +49,13 @@ export type BuiltCustomProperties<
   TVariantName extends string,
   TCustomProps extends CustomPropsObject,
 > = GetCustomProperties<TCustomProps> & {
-  /** Manually enable a variant. Only one variant in this group can be active at a time. */
-  setVariant: (variantName: TVariantName | null) => void;
   /** All variant names */
   variantNames: TVariantName[];
   /**
    * Variant metadata keyed by variant name.
    * There’s a curried `set` method in there too.
    */
-  variants: Record<TVariantName, CustomPropertyVariantWithSetMethod>;
+  variants: Record<TVariantName, CustomPropertyVariant>;
   /** All variant styles, one array item per CSS class */
   styles: string[];
 };
@@ -88,59 +80,15 @@ const makeCustomPropertiesInternal = <
   },
 
   build: (buildOptions = {}) => {
-    let overrideElement: Element | null = null;
-
     const { customProperties, styles, variants, variantNames } =
       generateCustomPropertiesFromVariants(variantMap, buildOptions);
 
     styles.forEach(cache.insertRule);
 
-    if (canUseDOM) {
-      if (buildOptions.selector) {
-        overrideElement = document.querySelector(buildOptions.selector);
-        if (
-          !overrideElement &&
-          // @ts-expect-error
-          typeof process !== 'undefined' &&
-          // @ts-expect-error
-          process.env.NODE_ENV !== 'production'
-        ) {
-          console.error(
-            'Selector `%s` does not map to an element that exists in the DOM. Manual variant overrides will not work as expected.',
-            buildOptions.selector
-          );
-        }
-      } else {
-        overrideElement = document.documentElement;
-      }
-    }
-
-    const setVariant = (variantName: TVariantName | null): void => {
-      if (!overrideElement) return;
-      overrideElement.classList.remove(
-        ...variantNames.map((key) => variants[key].className)
-      );
-      if (variantName) {
-        overrideElement.classList.add(variants[variantName].className);
-      }
-    };
-
-    const variantsObj: Record<
-      TVariantName,
-      CustomPropertyVariantWithSetMethod
-    > = {} as any;
-    for (const variantName of variantNames) {
-      variantsObj[variantName] = {
-        ...variants[variantName],
-        activate: () => void setVariant(variantName),
-      };
-    }
-
     return {
       ...customProperties,
-      setVariant,
       variantNames,
-      variants: variantsObj,
+      variants,
       styles,
     };
   },

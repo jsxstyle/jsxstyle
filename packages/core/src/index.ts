@@ -15,6 +15,7 @@ export { processProps, type GetClassNameForKeyFn } from './processProps.js';
 export { stringHash } from './stringHash.js';
 export { generateCustomPropertiesFromVariants } from './generateCustomPropertiesFromVariants.js';
 export { createRequestStyleCache } from './createRequestStyleCache.js';
+export { getVariantSwitcher } from './getVariantSwitcher.js';
 
 export { getStyleCache };
 export type { StyleCache } from './getStyleCache.js';
@@ -23,7 +24,6 @@ export type { CommonComponentProp } from './parseStyleProps.js';
 export type { CSSProperties, JsxstyleComponentStyleProps } from './types.js';
 export type {
   MakeCustomPropertiesFunction,
-  CustomPropertyVariantWithSetMethod,
   BuiltCustomProperties,
   VariantOptions,
 } from './makeCustomProperties.js';

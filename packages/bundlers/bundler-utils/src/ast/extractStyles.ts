@@ -449,18 +449,6 @@ export function extractStyles(
                   cssMap[style] = '';
                 }
 
-                const wipFunction = t.functionExpression(
-                  null,
-                  [],
-                  t.blockStatement([
-                    t.throwStatement(
-                      t.newExpression(t.identifier('Error'), [
-                        t.stringLiteral('Not yet implemented'),
-                      ])
-                    ),
-                  ])
-                );
-
                 grandparentPath.replaceWith(
                   t.objectExpression([
                     ...getCustomPropsAstNode(result.customProperties),
@@ -470,28 +458,42 @@ export function extractStyles(
                         result.variantNames.map((name) => t.stringLiteral(name))
                       )
                     ),
-                    t.objectProperty(t.identifier('setVariant'), wipFunction),
                     t.objectProperty(
                       t.identifier('variants'),
                       t.objectExpression(
                         result.variantNames.map((name) => {
+                          const variantProps: t.ObjectProperty[] = [
+                            t.objectProperty(
+                              t.identifier('className'),
+                              t.stringLiteral(
+                                // biome-ignore lint/style/noNonNullAssertion: variant name is always present in variants object
+                                result.variants[name]!.className
+                              )
+                            ),
+                          ];
+
+                          if (result.variants[name]?.mediaQuery) {
+                            variantProps.push(
+                              t.objectProperty(
+                                t.identifier('mediaQuery'),
+                                t.stringLiteral(
+                                  result.variants[name].mediaQuery
+                                )
+                              )
+                            );
+                          }
+
                           return t.objectProperty(
                             t.identifier(name),
-                            t.objectExpression([
-                              t.objectProperty(
-                                t.identifier('className'),
-                                t.stringLiteral(
-                                  // biome-ignore lint/style/noNonNullAssertion: variant name is always present in variants object
-                                  result.variants[name]!.className
-                                )
-                              ),
-                              t.objectProperty(
-                                t.identifier('activate'),
-                                wipFunction
-                              ),
-                            ])
+                            t.objectExpression(variantProps)
                           );
                         })
+                      )
+                    ),
+                    t.objectProperty(
+                      t.identifier('styles'),
+                      t.arrayExpression(
+                        result.styles.map((name) => t.stringLiteral(name))
                       )
                     ),
                   ])

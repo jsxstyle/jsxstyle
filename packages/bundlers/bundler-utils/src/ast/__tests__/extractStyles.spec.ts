@@ -1224,23 +1224,16 @@ const props = makeCustomProperties({
         prop1: "var(--jsxstyle-prop1)",
         prop2: "var(--jsxstyle-prop2)",
         variantNames: ["default", "banana"],
-        setVariant: function () {
-          throw new Error("Not yet implemented");
-        },
         variants: {
           default: {
-            className: "jsxstyle_default",
-            activate: function () {
-              throw new Error("Not yet implemented");
-            }
+            className: "jsxstyle_default"
           },
           banana: {
             className: "jsxstyle_banana",
-            activate: function () {
-              throw new Error("Not yet implemented");
-            }
+            mediaQuery: "@media mq"
           }
-        }
+        },
+        styles: [":root{--jsxstyle-prop1:prop1 value;--jsxstyle-prop2:123px}", ":root:not(.\\\\9).jsxstyle_default{--jsxstyle-prop1:prop1 value;--jsxstyle-prop2:123px}", ":root:not(.\\\\9).jsxstyle_banana{--jsxstyle-prop1:banana prop1 value}", "@media mq{:root:not(.\\\\9){--jsxstyle-prop1:banana prop1 value}}"]
       };"
     `);
     expect(rv.css).toMatchInlineSnapshot(`
@@ -1277,23 +1270,16 @@ const props = makeCustomProperties({
         prop1: "var(--test0)",
         prop2: "var(--test1)",
         variantNames: ["default", "banana"],
-        setVariant: function () {
-          throw new Error("Not yet implemented");
-        },
         variants: {
           default: {
-            className: "test_default",
-            activate: function () {
-              throw new Error("Not yet implemented");
-            }
+            className: "test_default"
           },
           banana: {
             className: "test_banana",
-            activate: function () {
-              throw new Error("Not yet implemented");
-            }
+            mediaQuery: "@media mq"
           }
-        }
+        },
+        styles: [":root{--test0:prop1 value;--test1:123px}", ":root:not(.\\\\9).test_default{--test0:prop1 value;--test1:123px}", ":root:not(.\\\\9).test_banana{--test0:banana prop1 value}", "@media mq{:root:not(.\\\\9){--test0:banana prop1 value}}"]
       };"
     `);
     expect(rv.css).toMatchInlineSnapshot(`
@@ -1347,23 +1333,16 @@ const props = makeCustomProperties({
           }
         },
         variantNames: ["default", "banana"],
-        setVariant: function () {
-          throw new Error("Not yet implemented");
-        },
         variants: {
           default: {
-            className: "test_default",
-            activate: function () {
-              throw new Error("Not yet implemented");
-            }
+            className: "test_default"
           },
           banana: {
             className: "test_banana",
-            activate: function () {
-              throw new Error("Not yet implemented");
-            }
+            mediaQuery: "@media mq"
           }
-        }
+        },
+        styles: [":root{--test0:prop1 value;--test1:123px;--test2:nested prop3 value;--test3:nested2 prop4 value}", ":root:not(.\\\\9).test_default{--test0:prop1 value;--test1:123px;--test2:nested prop3 value;--test3:nested2 prop4 value}", ":root:not(.\\\\9).test_banana{--test0:banana prop1 value;--test3:banana nested2 prop4 value}", "@media mq{:root:not(.\\\\9){--test0:banana prop1 value;--test3:banana nested2 prop4 value}}"]
       };"
     `);
     expect(rv.css).toMatchInlineSnapshot(`

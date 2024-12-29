@@ -59,7 +59,6 @@ describe('makeCustomProperties', () => {
       {
         "exampleNumber": "var(--exampleNamespace0)",
         "exampleString": "var(--exampleNamespace1)",
-        "setVariant": [Function],
         "styles": [
           "#banana{--exampleNamespace0:123px;--exampleNamespace1:wow}",
           "#banana:not(.\\9).exampleNamespace_default{--exampleNamespace0:123px;--exampleNamespace1:wow}",
@@ -74,17 +73,14 @@ describe('makeCustomProperties', () => {
         ],
         "variants": {
           "default": {
-            "activate": [Function],
             "className": "exampleNamespace_default",
             "mediaQuery": undefined,
           },
           "exampleVariant": {
-            "activate": [Function],
             "className": "exampleNamespace_exampleVariant",
             "mediaQuery": undefined,
           },
           "variantWithMQ": {
-            "activate": [Function],
             "className": "exampleNamespace_variantWithMQ",
             "mediaQuery": "@media screen and example",
           },
