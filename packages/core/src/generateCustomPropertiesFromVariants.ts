@@ -4,14 +4,21 @@ import type {
   VariantOptions,
 } from './makeCustomProperties.js';
 
-export type CustomPropsObject = {
-  [key: string | number]: string | number | CustomPropsObject;
+/** Type that represents the values object you can pass into `makeCustomProperties` */
+export type CustomPropValuesObject = {
+  [key: string | number]: string | number | CustomPropValuesObject;
 };
 
-export type GetCustomProperties<TCustomProps extends CustomPropsObject> = {
+/** Type that represents the custom properties object you get from `makeCustomProperties` */
+export type CustomPropsObject = {
+  [key: string | number]: string | CustomPropsObject;
+};
+
+/** Generic that extracts `CustomPropsObject` from `CustomPropValuesObject` */
+export type GetCustomProperties<TCustomProps extends CustomPropValuesObject> = {
   [K in keyof TCustomProps]: TCustomProps[K] extends string | number
     ? `var(--${string})`
-    : TCustomProps[K] extends CustomPropsObject
+    : TCustomProps[K] extends CustomPropValuesObject
       ? GetCustomProperties<TCustomProps[K]>
       : never;
 };
@@ -23,7 +30,7 @@ type Variant<T> = {
 
 export type VariantMap<
   TVariantName extends string,
-  TCustomProps extends CustomPropsObject,
+  TCustomProps extends CustomPropValuesObject,
 > = {
   default: Variant<TCustomProps>;
 } & {
@@ -58,7 +65,7 @@ export interface CustomPropertyVariant {
 }
 
 const getCustomPropsFromDefaultVariant = <
-  TCustomProps extends CustomPropsObject,
+  TCustomProps extends CustomPropValuesObject,
 >(
   obj: TCustomProps,
   namespace: string,
@@ -102,7 +109,7 @@ const getCustomPropsFromDefaultVariant = <
 };
 
 const getCustomPropsFromVariant = <
-  T extends GetOptionalCustomProperties<CustomPropsObject>,
+  T extends GetOptionalCustomProperties<CustomPropValuesObject>,
 >(
   obj: T,
   shouldMangle = false,
@@ -111,8 +118,6 @@ const getCustomPropsFromVariant = <
 ) => {
   let css = '';
   for (const key in obj) {
-    if (keyPrefix === '' && (key === 'mediaQuery' || key === 'colorScheme'))
-      continue;
     const keyPlusPrefix = (keyPrefix ? keyPrefix + '-' : '') + key;
     if (typeof obj[key] === 'string' || typeof obj[key] === 'number') {
       const propName = propMap[keyPlusPrefix];
@@ -133,7 +138,7 @@ const getCustomPropsFromVariant = <
 
 export const generateCustomPropertiesFromVariants = <
   TVariantName extends string,
-  TCustomProps extends CustomPropsObject,
+  TCustomProps extends CustomPropValuesObject,
 >(
   variantMap: VariantMap<TVariantName, TCustomProps>,
   buildOptions: BuildOptions = {}
@@ -201,9 +206,6 @@ export const generateCustomPropertiesFromVariants = <
 
     const variantObj: CustomPropertyVariant = {
       className: overrideClassName,
-      mediaQuery: variant.options?.mediaQuery
-        ? `@media ${variant.options.mediaQuery}`
-        : undefined,
     };
     variants[variantName] = variantObj;
 
@@ -213,7 +215,7 @@ export const generateCustomPropertiesFromVariants = <
     // `:not(.\\9)` bumps specificity, +1 class for each `.\\9`
     styles.push(`${selector}:not(.\\9).${overrideClassName}{${cssBody}}`);
     if (variant.options?.mediaQuery) {
-      // variantObj.mediaQuery = `@media ${variant.mediaQuery}`;
+      variantObj.mediaQuery = `@media ${variant.options.mediaQuery}`;
       styles.push(
         `@media ${variant.options.mediaQuery}{${selector}:not(.\\9){${cssBody}}}`
       );

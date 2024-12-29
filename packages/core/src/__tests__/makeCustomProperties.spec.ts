@@ -78,7 +78,6 @@ describe('makeCustomProperties', () => {
           },
           "exampleVariant": {
             "className": "exampleNamespace_exampleVariant",
-            "mediaQuery": undefined,
           },
           "variantWithMQ": {
             "className": "exampleNamespace_variantWithMQ",

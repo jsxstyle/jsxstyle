@@ -4,7 +4,10 @@ import type { NodePath, TraverseOptions } from '@babel/traverse';
 import * as t from '@babel/types';
 import { VISITOR_KEYS } from '@babel/types';
 import { componentStyles } from '@jsxstyle/core';
-import type { CustomPropsObject, GetClassNameForKeyFn } from '@jsxstyle/core';
+import type {
+  CustomPropValuesObject,
+  GetClassNameForKeyFn,
+} from '@jsxstyle/core';
 import {
   type VariantMap,
   generateCustomPropertiesFromVariants,
@@ -358,7 +361,7 @@ export function extractStyles(
                   bindingCache
                 );
 
-            const variantMap: VariantMap<string, CustomPropsObject> = {
+            const variantMap: VariantMap<string, CustomPropValuesObject> = {
               default: {
                 props: node.arguments[0]
                   ? attemptEval(node.arguments[0])

@@ -30,6 +30,7 @@ export type {
 export type {
   VariantMap,
   CustomPropsObject,
+  CustomPropValuesObject,
   GetCustomProperties,
 } from './generateCustomPropertiesFromVariants.js';
 export type { InsertRuleCallback } from './processProps.js';

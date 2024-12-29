@@ -72,7 +72,6 @@ describe('generateCustomPropertiesFromVariants', () => {
           },
           "exampleVariant": {
             "className": "jsxstyle_exampleVariant",
-            "mediaQuery": undefined,
           },
         },
       }
@@ -147,7 +146,6 @@ describe('generateCustomPropertiesFromVariants', () => {
           },
           "exampleVariant": {
             "className": "exampleNamespace_exampleVariant",
-            "mediaQuery": undefined,
           },
         },
       }
@@ -197,7 +195,6 @@ describe('generateCustomPropertiesFromVariants', () => {
           },
           "exampleVariant": {
             "className": "x_exampleVariant",
-            "mediaQuery": undefined,
           },
         },
       }
@@ -244,7 +241,6 @@ describe('generateCustomPropertiesFromVariants', () => {
           },
           "exampleVariant": {
             "className": "jsxstyle_exampleVariant",
-            "mediaQuery": undefined,
           },
         },
       }
@@ -274,7 +270,6 @@ describe('generateCustomPropertiesFromVariants', () => {
         "variants": {
           "darkMode": {
             "className": "jsxstyle_darkMode",
-            "mediaQuery": undefined,
           },
           "default": {
             "className": "jsxstyle_default",
@@ -308,7 +303,6 @@ describe('generateCustomPropertiesFromVariants', () => {
         "variants": {
           "darkMode": {
             "className": "jsxstyle_darkMode",
-            "mediaQuery": undefined,
           },
           "default": {
             "className": "jsxstyle_default",

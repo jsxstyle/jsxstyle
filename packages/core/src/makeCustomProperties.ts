@@ -2,25 +2,26 @@ import { generateCustomPropertiesFromVariants } from './generateCustomProperties
 import type {
   BuildOptions,
   CustomPropertyVariant,
-  CustomPropsObject,
+  CustomPropValuesObject,
+  GetCustomProperties,
   VariantMap,
 } from './generateCustomPropertiesFromVariants.js';
 import type { StyleCache } from './getStyleCache.js';
 import type { CSSProperties } from './types.js';
 
 export type GetOptionalCustomProperties<
-  TCustomProps extends CustomPropsObject,
+  TCustomProps extends CustomPropValuesObject,
 > = {
   [K in keyof TCustomProps]?: TCustomProps[K] extends string | number
     ? string | number
-    : TCustomProps[K] extends CustomPropsObject
+    : TCustomProps[K] extends CustomPropValuesObject
       ? GetOptionalCustomProperties<TCustomProps[K]>
       : never;
 };
 
 export interface MakeCustomPropertiesFunction<
   TVariantName extends string,
-  TCustomProps extends CustomPropsObject,
+  TCustomProps extends CustomPropValuesObject,
 > {
   /** Add a variant to this variant group */
   addVariant: <TName extends string>(
@@ -37,17 +38,9 @@ export interface MakeCustomPropertiesFunction<
   ) => BuiltCustomProperties<TVariantName, TCustomProps>;
 }
 
-type GetCustomProperties<TCustomProps extends CustomPropsObject> = {
-  [K in keyof TCustomProps]: TCustomProps[K] extends string | number
-    ? string
-    : TCustomProps[K] extends CustomPropsObject
-      ? GetCustomProperties<TCustomProps[K]>
-      : never;
-};
-
 export type BuiltCustomProperties<
   TVariantName extends string,
-  TCustomProps extends CustomPropsObject,
+  TCustomProps extends CustomPropValuesObject,
 > = GetCustomProperties<TCustomProps> & {
   /** All variant names */
   variantNames: TVariantName[];
@@ -69,7 +62,7 @@ export interface VariantOptions {
 
 const makeCustomPropertiesInternal = <
   TVariantName extends string,
-  TCustomProps extends CustomPropsObject,
+  TCustomProps extends CustomPropValuesObject,
 >(
   variantMap: VariantMap<TVariantName, TCustomProps>,
   cache: StyleCache
@@ -96,7 +89,7 @@ const makeCustomPropertiesInternal = <
 
 export const getCustomPropertiesFunction =
   (cache: StyleCache) =>
-  <TCustomProps extends CustomPropsObject>(
+  <TCustomProps extends CustomPropValuesObject>(
     props: TCustomProps,
     options?: VariantOptions
   ) =>
