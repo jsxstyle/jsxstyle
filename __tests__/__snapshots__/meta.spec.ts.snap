@@ -294,6 +294,14 @@ exports[`npm publish > '@jsxstyle/solid' only publishes the intended files 1`] =
 "
 `;
 
+exports[`npm publish > '@jsxstyle/swc-plugin' only publishes the intended files 1`] = `
+"
+@jsxstyle/swc-plugin
+====================
+- package.json
+"
+`;
+
 exports[`npm publish > '@jsxstyle/vite-plugin' only publishes the intended files 1`] = `
 "
 @jsxstyle/vite-plugin
