@@ -1,0 +1,16 @@
+{
+  "name": "@jsxstyle/swc-plugin",
+  "version": "0.0.1",
+  "keywords": [
+    "css-in-js",
+    "swc-plugin"
+  ],
+  "main": "target/wasm32-wasi/release/swc_plugin.wasm",
+  "scripts": {
+    "test": "cargo test",
+    "test-update": "UPDATE=1 cargo test",
+    "prepublishOnly": "cargo build-wasi --release"
+  },
+  "files": [],
+  "preferUnplugged": true
+}
