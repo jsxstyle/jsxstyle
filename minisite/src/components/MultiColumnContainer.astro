@@ -1,0 +1,21 @@
+---
+import type { JsxstyleComponentStyleProps } from "@jsxstyle/astro";
+import { Grid } from "@jsxstyle/astro";
+
+interface Props extends JsxstyleComponentStyleProps {
+  columnMinWidth?: number;
+}
+
+const { columnMinWidth = 500, ...styleProps } = Astro.props;
+---
+
+<Grid
+  {...styleProps}
+  gridTemplateColumns={`repeat(auto-fit, minmax(${columnMinWidth}px, 1fr))`}
+  {...{
+    [`@media (max-width: ${columnMinWidth * 2}px)`]: {
+      gridTemplateColumns: "1fr",
+    },
+  }}
+  overflow="hidden"><slot /></Grid
+>

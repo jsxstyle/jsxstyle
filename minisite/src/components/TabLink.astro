@@ -1,0 +1,20 @@
+---
+import { Box } from "@jsxstyle/astro";
+
+interface Props {
+  href: string;
+}
+---
+
+<Box component="li"
+  ><Box
+    component="a"
+    props={{
+      href: Astro.props.href,
+    }}
+    display="block"
+    padding="10px 20px"
+    textDecoration="none"
+    fontWeight={500}><slot /></Box
+  ></Box
+>

@@ -38,12 +38,11 @@ interface Props extends JsxstyleComponentStyleProps {}
   const darkModeMq = window.matchMedia(
     "screen and (prefers-color-scheme: dark)",
   );
-  const isDarkMode = darkModeMq.matches;
   darkModeMq.addEventListener("change", (e) => {
-    editor.updateOptions({ theme: isDarkMode ? "vs-dark" : "vs" });
+    editor.updateOptions({ theme: e.matches ? "vs-dark" : "vs" });
   });
 
-  const theme = isDarkMode ? "vs-dark" : "vs";
+  const theme = darkModeMq.matches ? "vs-dark" : "vs";
 
   const editor = monaco.editor.create(editorElement, {
     scrollBeyondLastLine: true,

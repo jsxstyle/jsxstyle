@@ -1,21 +1,19 @@
 ---
 import { Box } from "@jsxstyle/astro";
-import TwoColumnContainer from "~/components/TwoColumnContainer.astro";
+import MultiColumnContainer from "~/components/MultiColumnContainer.astro";
 import Layout from "~/layouts/Layout.astro";
 import { styleConstants } from "~/utilities/constants";
 ---
 
 <Layout>
-  <TwoColumnContainer
+  <MultiColumnContainer
     height="100%"
     overflow="hidden"
     backgroundColor={styleConstants.color.insetBackground}
     gap={2}
   >
     <Box
-      slot="left"
       backgroundColor={styleConstants.color.editorBackground}
-      flex="1 1 auto"
       border="none"
       width="100%"
       height="100%"
@@ -27,8 +25,6 @@ import { styleConstants } from "~/utilities/constants";
     />
 
     <Box
-      slot="right"
-      flex="1 1 auto"
       border="none"
       width="100%"
       height="100%"
@@ -38,5 +34,5 @@ import { styleConstants } from "~/utilities/constants";
         src: "/code-preview",
       }}
     />
-  </TwoColumnContainer>
+  </MultiColumnContainer>
 </Layout>

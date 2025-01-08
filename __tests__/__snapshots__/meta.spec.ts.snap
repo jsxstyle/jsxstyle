@@ -10,6 +10,7 @@ exports[`npm publish > '@jsxstyle/astro' only publishes the intended files 1`] =
 - src/components/Col.astro
 - src/components/Grid.astro
 - src/components/Row.astro
+- src/css.ts
 - src/index.ts
 - src/integration.ts
 - src/middleware.ts

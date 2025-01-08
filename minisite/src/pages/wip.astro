@@ -1,26 +1,198 @@
 ---
-import { Box } from "@jsxstyle/astro";
-import LinkGrid from "~/components/LinkGrid.astro";
-import LinkGridItem from "~/components/LinkGridItem.astro";
+import type { JsxstyleComponentStyleProps } from "@jsxstyle/astro";
+import { Box, Col, Grid, Row } from "@jsxstyle/astro";
+import AlternatingSection from "~/components/AlternatingSection.astro";
+import Code from "~/components/Code.astro";
+import FrameworkTile from "~/components/FrameworkTile.astro";
+import MultiColumnContainer from "~/components/MultiColumnContainer.astro";
+import TabLink from "~/components/TabLink.astro";
 import Layout from "~/layouts/Layout.astro";
+import { styleConstants } from "~/utilities/constants";
+
+const columnContainerStyles: JsxstyleComponentStyleProps & {
+  columnMinWidth?: number;
+} = {
+  padding: "20px 0",
+  alignItems: "center",
+  columnMinWidth: 300,
+  maxWidth: 1200,
+  width: "100%",
+  margin: "0 auto",
+  gap: 20,
+};
 ---
 
-<Layout padding={20}>
-  <Box component="header" maxWidth={800} margin="0 auto">
-    <h1>jsxstyle</h1>
-    <p>An opinionated way to write styles in JSX environments.</p>
+<Layout>
+  <Box component="header" maxWidth={800} margin="0 auto" padding={20}>
+    <Box component="h1" fontSize={30} marginBottom={10}>jsxstyle</Box>
+    <Box component="h2" fontSize={24} marginBottom={10}
+      >Markup and styles, best friend forever</Box
+    >
+    <p>
+      jsxstyle is a library for writing styles in JSX environments. If your
+      framework of choice supports JSX, you can use jsxstyle with it.
+    </p>
   </Box>
 
-  <Box component="h2" maxWidth={800} margin="20px auto"
-    >Supported Frameworks</Box
+  <Col
+    backgroundColor={styleConstants.color.insetBackground}
+    borderRadius={7}
+    overflow="hidden"
+    marginInline={20}
+    height="80vh"
+    maxHeight={600}
   >
+    <Row component="ul">
+      <TabLink href="#react">React</TabLink>
+      <TabLink href="#preact">Preact</TabLink>
+      <TabLink href="#astro">Astro</TabLink>
+      <TabLink href="#preact">Preact</TabLink>
+    </Row>
+    <MultiColumnContainer
+      height="100%"
+      overflow="hidden"
+      backgroundColor={styleConstants.color.insetBackground}
+      padding={7}
+      gap={7}
+    >
+      <Box
+        backgroundColor={styleConstants.color.editorBackground}
+        border="none"
+        width="100%"
+        height="100%"
+        component="iframe"
+        props={{
+          title: "Code Editor",
+          src: "/code-editor",
+        }}
+      />
 
-  <LinkGrid itemWidth={300}>
-    <LinkGridItem title="React" href="/frameworks/react">React</LinkGridItem>
-    <LinkGridItem title="Preact" href="/frameworks/preact">Preact</LinkGridItem>
-    <LinkGridItem title="Solid.js" href="/frameworks/solidjs">
-      Solid.js
-    </LinkGridItem>
-    <LinkGridItem title="Astro" href="/frameworks/astro">Astro</LinkGridItem>
-  </LinkGrid>
+      <Box
+        border="none"
+        width="100%"
+        height="100%"
+        component="iframe"
+        props={{
+          title: "Code Preview",
+          src: "/code-preview",
+        }}
+      />
+    </MultiColumnContainer>
+  </Col>
+
+  <Col component="section">
+    <Box
+      component="h2"
+      fontSize={30}
+      padding="0 20px"
+      textAlign="center"
+      margin="20px 0">Why jsxstyle?</Box
+    >
+
+    <AlternatingSection>
+      <MultiColumnContainer {...columnContainerStyles}>
+        <p>Naming CSS selectors sucks!</p>
+        <Box>
+          <Code
+            lang="css"
+            code={`
+.container { /* ... */ }
+.wrapper { /* ... */ }
+`.trim()}
+          />
+        </Box>
+      </MultiColumnContainer>
+    </AlternatingSection>
+
+    <AlternatingSection>
+      <MultiColumnContainer {...columnContainerStyles}>
+        <p>Naming components also sucks!</p>
+        <Box>
+          <Code
+            lang="tsx"
+            code={`
+import { Wrapper } from '...';
+import { Container } from '...';
+`.trim()}
+          />
+        </Box>
+      </MultiColumnContainer>
+    </AlternatingSection>
+
+    <AlternatingSection>
+      <MultiColumnContainer {...columnContainerStyles}>
+        <p>
+          Many smart people have tackled the naming problem and have arrived at
+          some pretty smart conclusions.
+        </p>
+        <Grid
+          maxWidth={500}
+          component="ul"
+          gridTemplateColumns="1fr 1fr"
+          gap={10}
+          paddingBottom={25}
+          {...{
+            "& > :nth-child(odd)": {
+              transform: "translateY(25px)",
+            },
+          }}
+        >
+          <FrameworkTile>BEM</FrameworkTile>
+          <FrameworkTile>OOCSS</FrameworkTile>
+          <FrameworkTile>SMACSS</FrameworkTile>
+          <FrameworkTile>Atomic CSS</FrameworkTile>
+        </Grid>
+      </MultiColumnContainer>
+    </AlternatingSection>
+
+    <AlternatingSection>
+      <MultiColumnContainer {...columnContainerStyles}>
+        <p>
+          A naming system is fundamentally for developers, to aid in styling at
+          development time. Once those styles are deployed, they’re for
+          computers. Computers don’t care what things are named.
+        </p>
+      </MultiColumnContainer>
+    </AlternatingSection>
+
+    <AlternatingSection>
+      <MultiColumnContainer {...columnContainerStyles}>
+        <p>
+          At the end of the day, the goal is to associate styles with markup.
+        </p>
+        <div>
+          <p>You there! You are a red box!</p>
+          <p>Red box: ok</p>
+        </div>
+      </MultiColumnContainer>
+    </AlternatingSection>
+
+    <AlternatingSection>
+      <MultiColumnContainer {...columnContainerStyles}>
+        <div>
+          <p>How we go about that can differ in a thousand different ways.</p>
+          <p>
+            There’s a one-to-many relationship between styles and markup. One
+            CSS rule can style as many elements as you want.
+          </p>
+        </div>
+      </MultiColumnContainer>
+    </AlternatingSection>
+
+    <AlternatingSection>
+      <Box maxWidth={800} margin="0 auto" padding="20px 0">
+        <p>
+          At its core, jsxstyle is convenient syntax for associating styles with
+          markup. It’s a really thin layer on top of that concept.
+        </p>
+
+        <p>
+          You don’t have to learn "jsxstyle". If you can write CSS and you can
+          convert dash case to camelcase, jsxstyle will feel right at home.
+        </p>
+
+        <p>You can build abstractions on top of jsxstyle.</p>
+      </Box>
+    </AlternatingSection>
+  </Col>
 </Layout>

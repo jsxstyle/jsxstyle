@@ -1,0 +1,23 @@
+---
+interface Props extends JsxstyleComponentStyleProps {}
+
+import type { JsxstyleComponentStyleProps } from "@jsxstyle/astro";
+import { Col } from "@jsxstyle/astro";
+import { styleConstants } from "~/utilities/constants";
+
+const { props } = Astro;
+---
+
+<Col
+  component="li"
+  borderRadius={6}
+  padding="15px 10px"
+  textAlign="center"
+  justifyContent="center"
+  fontSize={20}
+  fontWeight={600}
+  color={styleConstants.color.background}
+  backgroundColor={styleConstants.color.foreground}
+  boxShadow={styleConstants.shadow.frameworkTile}
+  {...props}><slot /></Col
+>
