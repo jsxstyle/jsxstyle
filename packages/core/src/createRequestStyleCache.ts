@@ -42,6 +42,7 @@ export function createRequestStyleCache({
     getComponentProps(props: Record<string, any>): {
       props: Record<string, unknown> | null;
       styles: string;
+      className: string | undefined;
     } {
       let styles = '';
       const componentProps = processProps(
@@ -58,7 +59,12 @@ export function createRequestStyleCache({
           }
         }
       );
+      const className =
+        typeof componentProps?.[classNamePropKey] === 'string'
+          ? componentProps[classNamePropKey]
+          : undefined;
       return {
+        className,
         props: componentProps,
         styles,
       };

@@ -1,0 +1,93 @@
+---
+interface Props {
+  class?: string;
+  lang?: string;
+  code: string;
+}
+
+import Prism from "prismjs";
+import "prismjs/plugins/custom-class/prism-custom-class";
+import { Box, getCss } from "@jsxstyle/astro";
+import loadLanguages from "prismjs/components/index.js";
+import { styleConstants } from "~/utilities/constants";
+
+const languageMap = new Map([["ts", "typescript"]]);
+
+function runHighlighterWithAstro({ lang = "plaintext", code }: Props) {
+  const classLanguage = `language-${lang}`;
+  const ensureLoaded = (language: string) => {
+    if (language && !Prism.languages[language]) {
+      loadLanguages([language]);
+    }
+  };
+
+  if (languageMap.has(lang)) {
+    // biome-ignore lint/style/noNonNullAssertion: its ok
+    ensureLoaded(languageMap.get(lang)!);
+  } else {
+    // Prism expects this to exist for a number of other langs
+    ensureLoaded("markup-templating");
+    ensureLoaded(lang);
+  }
+
+  if (lang && !Prism.languages[lang]) {
+    console.warn(`Unable to load the language: ${lang}`);
+  }
+
+  const grammar = Prism.languages[lang];
+  let html = code;
+  if (grammar) {
+    html = Prism.highlight(code, grammar, lang);
+  }
+
+  return { classLanguage, html };
+}
+
+const { css, unwind } = getCss(Astro);
+
+Prism.plugins.customClass.map({
+  keyword: css({ color: styleConstants.code.keyword }),
+  string: css({ color: styleConstants.code.string }),
+  comment: css({ color: styleConstants.code.comment }),
+  selector: css({ color: styleConstants.code.selector }),
+  punctuation: css({ color: styleConstants.code.punctuation }),
+  tag: css({ color: styleConstants.code.tag }),
+  "plain-text": css({ color: styleConstants.code.plainText }),
+  "class-name": css({ color: styleConstants.code.className }),
+  "attr-name": css({ color: styleConstants.code.attrName }),
+  "attr-value": css({ color: styleConstants.code.attrValue }),
+  "attr-equals": css({ color: styleConstants.code.attrEquals }),
+});
+
+const styles = unwind();
+
+const { classLanguage, html } = runHighlighterWithAstro(Astro.props);
+---
+
+{styles && <style set:html={styles} />}
+<Box
+  component="pre"
+  class:list={[Astro.props.class, classLanguage]}
+  padding="2px 4px"
+  backgroundColor={styleConstants.code.background}
+  borderRadius={7}
+  boxShadow="0 0 0 1px rgba(0,0,0,0.1)"
+  margin={1}
+  {...{
+    "@media screen and (prefers-color-scheme: dark)": {
+      boxShadow:
+        "inset 0 0 0 1px rgba(0,0,0,0.4), 0 1px 0 rgba(255,255,255,0.07), inset 0 1px 3px rgba(0,0,0,0.2)",
+      textShadow: "0 1.2px 0 rgba(0,0,0,0.6)",
+    },
+  }}
+  ><Box
+    component="code"
+    overflow="auto"
+    scrollbarWidth="thin"
+    padding={10}
+    scrollbarColor={`${styleConstants.color.insetBackground} transparent`}
+    display="block"
+    class={classLanguage}
+    set:html={html}
+  /></Box
+>

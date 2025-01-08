@@ -1,0 +1,13 @@
+---
+import { Row } from "@jsxstyle/astro";
+import { styleConstants } from "~/utilities/constants";
+---
+
+<Row
+  padding="0 20px"
+  {...{
+    "&:nth-child(odd)": {
+      backgroundColor: styleConstants.color.pageBackground,
+    },
+  }}><slot /></Row
+>

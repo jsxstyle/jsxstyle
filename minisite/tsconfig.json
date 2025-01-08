@@ -4,11 +4,14 @@
     "baseUrl": ".",
     "paths": {
       "~/*": ["./src/*"],
-      "@jsxstyle/astro": [
-        "../packages/runtimes/astro/src"
+      "@jsxstyle/bundler-utils": [
+        "../packages/bundlers/bundler-utils/src"
       ],
       "@jsxstyle/core": [
         "../packages/core/src"
+      ],
+      "@jsxstyle/astro": [
+        "../packages/runtimes/astro/src"
       ],
       "@jsxstyle/react": [
         "../packages/runtimes/react/src"
@@ -17,10 +20,13 @@
   },
   "references": [
     {
-      "path": "../packages/runtimes/astro"
+      "path": "../packages/bundlers/bundler-utils"
     },
     {
       "path": "../packages/core"
+    },
+    {
+      "path": "../packages/runtimes/astro"
     },
     {
       "path": "../packages/runtimes/react"
