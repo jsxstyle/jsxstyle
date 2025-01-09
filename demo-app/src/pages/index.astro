@@ -1,0 +1,29 @@
+---
+import { Box, Row } from "@jsxstyle/astro";
+import Layout from "../layouts/Layout.astro";
+
+const listItemStyles = {
+  flex: "1 1 auto",
+  "& a": {
+    textDecoration: "none",
+  },
+};
+---
+
+<Layout>
+  <Box component="main" padding={20}>
+    <Box component="h1" margin={0}>Astro</Box>
+
+    <Row component="ul" listStyle="none" padding={0}>
+      <Box component="li" {...listItemStyles}>
+        <a href="/preact">Preact</a>
+      </Box>
+      <Box component="li" {...listItemStyles}>
+        <a href="/react">React</a>
+      </Box>
+      <Box component="li" {...listItemStyles}>
+        <a href="/solid">Solid</a>
+      </Box>
+    </Row>
+  </Box>
+</Layout>

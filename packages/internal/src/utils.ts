@@ -2,8 +2,8 @@ import invariant from 'invariant';
 import * as s from 'superstruct';
 import { $, spinner, tmpdir } from 'zx';
 import {
-  pnpmPackSchema,
   type PnpmWorkspace,
+  pnpmPackSchema,
   workspacesSchema,
 } from './schemas.js';
 
@@ -80,6 +80,7 @@ const tsconfigKeys = [
   'files',
   'include',
   'exclude',
+  'baseUrl',
   'compilerOptions',
   'references',
 ];

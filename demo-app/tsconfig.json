@@ -1,7 +1,8 @@
 {
-  "extends": "@jsxstyle/internal/tsconfig.react.json",
+  "extends": "@jsxstyle/internal/tsconfig.browser.json",
   "baseUrl": ".",
   "compilerOptions": {
+    "jsx": "preserve",
     "paths": {
       "~/*": [
         "./src/*"
@@ -9,14 +10,17 @@
       "@jsxstyle/astro": [
         "../packages/runtimes/astro/src"
       ],
-      "@jsxstyle/bundler-utils": [
-        "../packages/bundlers/bundler-utils/src"
-      ],
       "@jsxstyle/core": [
         "../packages/core/src"
       ],
+      "@jsxstyle/preact": [
+        "../packages/runtimes/preact/src"
+      ],
       "@jsxstyle/react": [
         "../packages/runtimes/react/src"
+      ],
+      "@jsxstyle/solid": [
+        "../packages/runtimes/solid/src"
       ]
     }
   },
@@ -25,13 +29,16 @@
       "path": "../packages/runtimes/astro"
     },
     {
-      "path": "../packages/bundlers/bundler-utils"
-    },
-    {
       "path": "../packages/core"
     },
     {
+      "path": "../packages/runtimes/preact"
+    },
+    {
       "path": "../packages/runtimes/react"
+    },
+    {
+      "path": "../packages/runtimes/solid"
     }
   ]
 }

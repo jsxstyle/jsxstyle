@@ -1,8 +1,6 @@
 {
   "extends": "@jsxstyle/internal/tsconfig.esm.json",
   "include": [
-    "karma.conf.ts",
-    "misc/getCustomLaunchers.ts",
     "**/__tests__/**/*.ts",
     "**/__tests__/**/*.tsx",
     "**/*.karma.tsx"

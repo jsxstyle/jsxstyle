@@ -53,6 +53,7 @@ export const tsconfigSchema = s.type({
       })
     )
   ),
+  baseUrl: s.optional(s.string()),
 });
 
 export const pnpmPackSchema = s.type({

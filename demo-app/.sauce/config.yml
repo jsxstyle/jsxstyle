@@ -1,0 +1,43 @@
+apiVersion: v1alpha
+kind: playwright
+sauce:
+  region: us-west-1
+  concurrency: 10
+  metadata:
+    tags:
+      - e2e
+      - release team
+      - other tag
+playwright:
+  # See https://docs.saucelabs.com/web-apps/automated-testing/playwright/#supported-testing-platforms for a list of supported versions.
+  version: package.json
+  # See https://docs.saucelabs.com/web-apps/automated-testing/playwright/yaml/#configfile for a list of supported configuration files.
+  configFile: playwright.config.ts
+# Controls what files are available in the context of a test run (unless explicitly excluded by .sauceignore).
+rootDir: ./
+suites:
+  - name: "Firefox Win"
+    platformName: "Windows 11"
+    screenResolution: "1440x900"
+    testMatch: [".*.js"]
+    params:
+      browserName: "firefox"
+      project: "firefox" # Runs the project that's defined in `playwright.config.js`
+  - name: "Chromium Mac"
+    platformName: "macOS 12"
+    screenResolution: "1440x900"
+    testMatch: [".*.js"]
+    params:
+      browserName: "chromium"
+      project: "chrome"
+  - name: "Webkit Win"
+    platformName: "Windows 11"
+    screenResolution: "1440x900"
+    testMatch: [".*.js"]
+    params:
+      browserName: "webkit"
+      project: "webkit"
+
+reporters:
+  spotlight:
+    enabled: true

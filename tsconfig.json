@@ -11,6 +11,9 @@
       "path": "./packages/internal/tsconfig.json"
     },
     {
+      "path": "./demo-app"
+    },
+    {
       "path": "./examples/jsxstyle-typescript-example"
     },
     {

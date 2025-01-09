@@ -16,6 +16,6 @@
   "types": "lib/index.d.ts",
   "dependencies": {
     "@jsxstyle/core": "workspace:*",
-    "solid-js": "^1.6.16"
+    "solid-js": "^1.9.4"
   }
 }

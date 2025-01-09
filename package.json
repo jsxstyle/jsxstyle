@@ -22,8 +22,6 @@
     "version:canary": "changeset version --snapshot canary",
     "reset": "rm -rf packages/{*,*/*}/lib/ minisite/.next/",
     "update-readme": "echo \"$(<./misc/monorepo-preamble.md)\\n\\n---\\n\\n$(<./packages/jsxstyle/README.md)\" > README.md",
-    "karma": "exit 1",
-    "karma-headless-chrome": "exit 1",
     "sync-configs": "tsx ./scripts/syncConfigs.ts",
     "update-sauce-data": "curl https://saucelabs.com/rest/v1/info/platforms/all > misc/saucelabs-data.json"
   },
@@ -32,7 +30,7 @@
     "not IE 11",
     "maintained node versions"
   ],
-  "dependencies": {
+  "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@changesets/cli": "^2.27.10",
     "@jsxstyle/internal": "workspace:*",
@@ -45,5 +43,5 @@
     "vitest": "^2.1.8",
     "zx": "^8.2.4"
   },
-  "packageManager": "pnpm@9.15.1+sha512.1acb565e6193efbebda772702950469150cf12bcc764262e7587e71d19dc98a423dff9536e57ea44c49bdf790ff694e83c27be5faa23d67e0c033b583be4bfcf"
+  "packageManager": "pnpm@9.15.3+sha512.1f79bc245a66eb0b07c5d4d83131240774642caaa86ef7d0434ab47c0d16f66b04e21e0c086eb61e62c77efc4d7f7ec071afad3796af64892fae66509173893a"
 }

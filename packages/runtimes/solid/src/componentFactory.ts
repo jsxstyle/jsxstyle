@@ -1,7 +1,7 @@
 import {
   type JsxstyleComponentName,
-  componentStyles,
   cacheSingleton,
+  componentStyles,
 } from '@jsxstyle/core';
 import { createMemo } from 'solid-js';
 import type { JSX } from 'solid-js';
