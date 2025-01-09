@@ -11,11 +11,9 @@ export type ValidComponentPropValue = IntrinsicElement;
 /** Props that will be passed through to whatever component is specified */
 export type StylableComponentProps<T extends ValidComponentPropValue> = Pick<
   astroHTML.JSX.IntrinsicElements[T],
-  Extract<
-    keyof astroHTML.JSX.IntrinsicElements[T],
-    CommonComponentProp | EventHandlerKeys
-  >
->;
+  Extract<keyof astroHTML.JSX.IntrinsicElements[T], CommonComponentProp>
+> &
+  Pick<astroHTML.JSX.IntrinsicElements[T], EventHandlerKeys>;
 
 /** Props for jsxstyle components */
 export type JsxstyleProps<K extends ValidComponentPropValue = 'div'> = {

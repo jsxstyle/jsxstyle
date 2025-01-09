@@ -17,7 +17,6 @@
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "style-loader": "^4.0.0",
-    "typescript": "^5.7.2",
     "webpack": "^5.97.1",
     "webpack-cli": "^6.0.1",
     "webpack-dev-server": "^5.2.0"

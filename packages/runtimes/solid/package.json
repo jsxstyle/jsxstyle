@@ -15,7 +15,9 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "dependencies": {
-    "@jsxstyle/core": "workspace:*",
-    "solid-js": "^1.6.16"
+    "@jsxstyle/core": "workspace:*"
+  },
+  "peerDependencies": {
+    "solid-js": "^1.9.4"
   }
 }

@@ -25,18 +25,18 @@
   "formatter": {
     "enabled": true,
     "indentStyle": "space",
-    // using VS Code's JSON formatting instead since it's basically JSON.stringify
-    "ignore": ["**/*.json", "**/*.astro"]
+    "ignore": [
+      // using VS Code's JSON formatting instead since it's basically JSON.stringify
+      "**/*.json",
+      // Astro handles its own formatting
+      "**/*.astro"
+    ]
   },
   "javascript": {
     "formatter": {
       "quoteStyle": "single",
       "trailingCommas": "es5"
     }
-  },
-  "files": {
-    // gitignore is being.... ignored, even though I've set vcs.useIgnoreFile to true
-    "ignore": ["**/build", "**/dist", "**/lib", "./misc/saucelabs-data.json"]
   },
   "overrides": [
     {

@@ -1,14 +1,13 @@
 {
   "extends": "@jsxstyle/internal/tsconfig.esm.json",
   "include": [
-    "karma.conf.ts",
-    "misc/getCustomLaunchers.ts",
     "**/__tests__/**/*.ts",
     "**/__tests__/**/*.tsx",
     "**/*.karma.tsx"
   ],
   "exclude": [
     "node_modules",
+    "examples/jsxstyle-astro-example/__tests__",
     "packages/clients/react/src/__tests__/typescript"
   ],
   "compilerOptions": {

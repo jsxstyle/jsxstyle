@@ -1,0 +1,44 @@
+{
+  "extends": "@jsxstyle/internal/tsconfig.browser.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "jsx": "preserve",
+    "paths": {
+      "~/*": [
+        "./src/*"
+      ],
+      "@jsxstyle/astro": [
+        "../../packages/runtimes/astro/src"
+      ],
+      "@jsxstyle/core": [
+        "../../packages/core/src"
+      ],
+      "@jsxstyle/preact": [
+        "../../packages/runtimes/preact/src"
+      ],
+      "@jsxstyle/react": [
+        "../../packages/runtimes/react/src"
+      ],
+      "@jsxstyle/solid": [
+        "../../packages/runtimes/solid/src"
+      ]
+    }
+  },
+  "references": [
+    {
+      "path": "../../packages/runtimes/astro"
+    },
+    {
+      "path": "../../packages/core"
+    },
+    {
+      "path": "../../packages/runtimes/preact"
+    },
+    {
+      "path": "../../packages/runtimes/react"
+    },
+    {
+      "path": "../../packages/runtimes/solid"
+    }
+  ]
+}

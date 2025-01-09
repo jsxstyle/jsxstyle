@@ -20,7 +20,6 @@
     "@jsxstyle/webpack-plugin": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^22",
     "next": "^15.1.0"
   },
   "peerDependencies": {

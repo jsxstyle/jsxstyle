@@ -22,23 +22,27 @@
     "version:canary": "rm -f ./.changeset/pre.json && changeset version --snapshot canary",
     "reset": "rm -rf packages/{*,*/*}/lib/ minisite/.next/",
     "update-readme": "echo \"$(<./misc/monorepo-preamble.md)\\n\\n---\\n\\n$(<./packages/jsxstyle/README.md)\" > README.md",
-    "karma": "exit 1",
-    "karma-headless-chrome": "exit 1",
-    "sync-configs": "tsx ./scripts/syncConfigs.ts",
-    "update-sauce-data": "curl https://saucelabs.com/rest/v1/info/platforms/all > misc/saucelabs-data.json"
+    "sync-configs": "tsx ./scripts/syncConfigs.ts"
   },
   "browserslist": [
     "defaults",
     "not IE 11",
     "maintained node versions"
   ],
-  "dependencies": {
+  "pnpm": {
+    "overrides": {
+      "@astrojs/preact>@preact/preset-vite": "^2.9.4"
+    }
+  },
+  "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@changesets/cli": "^2.27.11",
     "@changesets/types": "^6.0.0",
     "@jsxstyle/internal": "workspace:*",
     "@manypkg/get-packages": "^2.2.2",
+    "@playwright/test": "^1.49.0",
     "@types/invariant": "^2.2.37",
+    "@types/node": "^22",
     "invariant": "^2.2.4",
     "jsdom": "^25.0.1",
     "superstruct": "^2.0.2",

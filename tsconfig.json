@@ -11,6 +11,9 @@
       "path": "./packages/internal/tsconfig.json"
     },
     {
+      "path": "./examples/jsxstyle-astro-example"
+    },
+    {
       "path": "./examples/jsxstyle-typescript-example"
     },
     {

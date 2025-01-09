@@ -1,0 +1,31 @@
+---
+import { Box } from "@jsxstyle/astro";
+import Layout from "../layouts/Layout.astro";
+
+const listItemStyles = {
+  "& a": {
+    textDecoration: "none",
+  },
+};
+---
+
+<Layout>
+  <Box component="h1" margin={0}>Astro</Box>
+  <Box
+    component="ul"
+    listStyle="none"
+    padding={0}
+    width={300}
+    borderRadius={10}
+  >
+    <Box component="li" {...listItemStyles}>
+      <a href="/preact">Preact</a>
+    </Box>
+    <Box component="li" {...listItemStyles}>
+      <a href="/react">React</a>
+    </Box>
+    <Box component="li" {...listItemStyles}>
+      <a href="/solid">Solid</a>
+    </Box>
+  </Box>
+</Layout>
