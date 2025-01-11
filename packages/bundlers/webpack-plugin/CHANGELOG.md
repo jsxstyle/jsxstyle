@@ -1,6 +1,6 @@
 # @jsxstyle/webpack-plugin
 
-## 3.0.0-beta.0
+## 3.0.0
 
 ### Major Changes
 
@@ -16,5 +16,5 @@
 ### Patch Changes
 
 - Updated dependencies:
-  - @jsxstyle/core@3.0.0-beta.0
-  - @jsxstyle/bundler-utils@1.0.0-beta.0
+  - @jsxstyle/core@3.0.0
+  - @jsxstyle/bundler-utils@1.0.0

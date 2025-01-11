@@ -1,6 +1,6 @@
 # jsxstyle
 
-## 3.0.0-beta.0
+## 3.0.0
 
 ### Major Changes
 
@@ -16,7 +16,7 @@
 ### Patch Changes
 
 - Updated dependencies:
-  - @jsxstyle/core@3.0.0-beta.0
+  - @jsxstyle/core@3.0.0
 
 ## 2.5.1
 
