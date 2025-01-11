@@ -1,9 +1,10 @@
-# jsxstyle
+# @jsxstyle/nextjs-plugin
 
-## 3.0.0-beta.0
+## 1.0.0-beta.0
 
 ### Major Changes
 
+- 60e0e0cead7720e30a6ce02292e944d7081c844d: Added a nextjs plugin that enables build-time style extraction.
 - 0c39358ccb4f83a3ec159eb6f32e291fcaab613f: Split jsxstyle into separate modules using the `@jsxstyle` namespace. Imports have changed a bit:
 
   | Before                    | After                      |
@@ -17,20 +18,4 @@
 
 - Updated dependencies:
   - @jsxstyle/core@3.0.0-beta.0
-
-## 2.5.1
-
-### Patch Changes
-
-- a504a4a: Added a `key` prop to the `JsxstyleProps` interface in `jsxstyle/preact`
-
-## 2.5.0
-
-### Minor Changes
-
-- 5c7973f: Mark generated components (`Block`, `Row`, etc.) as pure to allow them to be pruned if unused.
-
-### Patch Changes
-
-- Updated dependencies [a294cf4]
-  - jsxstyle-utils@2.5.0
+  - @jsxstyle/webpack-plugin@3.0.0-beta.0

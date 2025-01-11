@@ -17,5 +17,13 @@
     "@jsxstyle/react": "2.5.1",
     "@jsxstyle/solid": "0.0.1"
   },
-  "changesets": []
+  "changesets": [
+    "add jsxstyle astro",
+    "add makeCustomProperties",
+    "component prop allowlist",
+    "nextjs support",
+    "one className per style prop",
+    "processProps",
+    "split jsxstyle into modules"
+  ]
 }
