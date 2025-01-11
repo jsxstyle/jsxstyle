@@ -1,0 +1,21 @@
+{
+  "mode": "pre",
+  "tag": "beta",
+  "initialVersions": {
+    "@jsxstyle/react-webpack5-example": "0.0.0",
+    "@jsxstyle/typescript-example": "0.0.0",
+    "@jsxstyle/vite-example": "0.0.0",
+    "@jsxstyle/minisite": "0.0.0",
+    "@jsxstyle/bundler-utils": "0.0.0",
+    "@jsxstyle/nextjs-plugin": "0.0.0",
+    "@jsxstyle/vite-plugin": "0.0.0",
+    "@jsxstyle/webpack-plugin": "2.5.1",
+    "@jsxstyle/core": "2.5.1",
+    "@jsxstyle/internal": "0.0.0",
+    "@jsxstyle/astro": "0.0.0",
+    "@jsxstyle/preact": "2.5.1",
+    "@jsxstyle/react": "2.5.1",
+    "@jsxstyle/solid": "0.0.1"
+  },
+  "changesets": []
+}

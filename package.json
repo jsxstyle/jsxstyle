@@ -19,7 +19,7 @@
     "test": "pnpm build && vitest",
     "release": "pnpm publish -r --access public",
     "release:canary": "pnpm publish -r  --access public --tag canary --no-git-checks",
-    "version:canary": "changeset version --snapshot canary",
+    "version:canary": "rm -f ./.changeset/pre.json && changeset version --snapshot canary",
     "reset": "rm -rf packages/{*,*/*}/lib/ minisite/.next/",
     "update-readme": "echo \"$(<./misc/monorepo-preamble.md)\\n\\n---\\n\\n$(<./packages/jsxstyle/README.md)\" > README.md",
     "karma": "exit 1",
