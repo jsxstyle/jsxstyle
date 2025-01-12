@@ -1,7 +1,7 @@
 import generate from '@babel/generator';
 import * as t from '@babel/types';
-import { getCustomPropsAstNode } from '../getCustomPropsAstNode';
 import type { CustomPropsObject } from '@jsxstyle/core';
+import { getCustomPropsAstNode } from '../getCustomPropsAstNode';
 
 const getCustomPropsSnapshot = (obj: CustomPropsObject) =>
   generate(t.objectExpression(getCustomPropsAstNode(obj))).code;

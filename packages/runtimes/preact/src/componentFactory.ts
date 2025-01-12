@@ -1,7 +1,7 @@
 import {
   type JsxstyleComponentName,
-  componentStyles,
   cacheSingleton,
+  componentStyles,
 } from '@jsxstyle/core';
 import { createElement } from 'preact';
 import type { JsxstyleProps, ValidComponentPropValue } from './types.js';

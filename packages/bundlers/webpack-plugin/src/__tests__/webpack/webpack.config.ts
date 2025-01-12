@@ -1,6 +1,6 @@
-import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import path from 'node:path';
 import { JsxstyleWebpackPlugin } from '@jsxstyle/webpack-plugin';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import type { Configuration } from 'webpack';
 
 export default {

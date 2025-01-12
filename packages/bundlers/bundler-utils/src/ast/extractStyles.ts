@@ -17,13 +17,13 @@ import { parse } from './babelUtils.js';
 import { generate, traverse } from './babelUtils.js';
 import { evaluateAstNode } from './evaluateAstNode.js';
 import { generateUid } from './generatedUid.js';
+import { getCustomPropsAstNode } from './getCustomPropsAstNode.js';
 import { getEvaluateAstNodeWithScopeFunction } from './getEvaluateAstNodeWithScopeFunction.js';
 import { getImportForSource } from './getImportForSource.js';
 import { getInlineImportString } from './getInlineImportString.js';
 import { extensionRegex } from './getStaticBindingsForScope.js';
 import { handleCssFunction } from './handleCssFunction.js';
 import { handleJsxElement } from './handleJsxAttributes.js';
-import { getCustomPropsAstNode } from './getCustomPropsAstNode.js';
 
 function skipChildren(path: NodePath) {
   const keys = VISITOR_KEYS[path.type];

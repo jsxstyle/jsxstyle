@@ -1,8 +1,8 @@
 import { generateCustomPropertiesFromVariants } from './generateCustomPropertiesFromVariants.js';
 import type {
   BuildOptions,
-  CustomPropertyVariant,
   CustomPropValuesObject,
+  CustomPropertyVariant,
   GetCustomProperties,
   VariantMap,
 } from './generateCustomPropertiesFromVariants.js';

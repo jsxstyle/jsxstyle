@@ -2,14 +2,14 @@ import * as jsxstyle from '@jsxstyle/react';
 import * as React from 'react';
 import * as jsxRuntime from 'react/jsx-runtime';
 
+import type { BuiltCustomProperties, CustomPropsObject } from '@jsxstyle/core';
 import { Block, Col, Row, css } from '@jsxstyle/react';
 import { useEffect, useReducer } from 'react';
+import { styleConstants } from '../utilities/constants';
+import { useAsyncModule } from '../utilities/useAsyncModule';
 import { CodeModule } from './CodeModule';
 import { ErrorBoundary } from './ErrorBoundary';
-import { useAsyncModule } from '../utilities/useAsyncModule';
-import { styleConstants } from '../utilities/constants';
 import { initialSampleCode } from './initialSampleCode';
-import type { BuiltCustomProperties, CustomPropsObject } from '@jsxstyle/core';
 
 const modules = {
   react: React,

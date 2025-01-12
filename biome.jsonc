@@ -1,6 +1,7 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "vcs": {
+    "enabled": true,
     "clientKind": "git",
     "defaultBranch": "main",
     "useIgnoreFile": true
@@ -25,7 +26,7 @@
     "enabled": true,
     "indentStyle": "space",
     // using VS Code's JSON formatting instead since it's basically JSON.stringify
-    "ignore": ["**/*.json"]
+    "ignore": ["**/*.json", "**/*.astro"]
   },
   "javascript": {
     "formatter": {

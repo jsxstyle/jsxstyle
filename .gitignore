@@ -14,3 +14,4 @@ misc/saucelabs-data.json
 /examples/jsxstyle-typescript-example/build
 /packages/jsxstyle/lib
 /packages/jsxstyle/preact/lib
+**/.astro

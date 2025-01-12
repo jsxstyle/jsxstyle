@@ -1,5 +1,5 @@
-import type { CustomPropsObject } from '@jsxstyle/core';
 import * as t from '@babel/types';
+import type { CustomPropsObject } from '@jsxstyle/core';
 
 const customPropRegex = /^var\(\-\-(.+?)\)$/;
 

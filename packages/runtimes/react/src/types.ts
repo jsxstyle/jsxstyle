@@ -1,7 +1,7 @@
 import type {
-  JsxstyleComponentStyleProps,
   CommonComponentProp,
   EventHandlerKeys,
+  JsxstyleComponentStyleProps,
 } from '@jsxstyle/core';
 
 export type IntrinsicElement = keyof JSX.IntrinsicElements;

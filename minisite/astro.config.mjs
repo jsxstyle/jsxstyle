@@ -1,10 +1,10 @@
 // @ts-check
 
-import { defineConfig } from 'astro/config';
 import * as path from 'node:path';
-import injectPlugin from '@rollup/plugin-inject';
 import react from '@astrojs/react';
 import { jsxstyle } from '@jsxstyle/astro/integration';
+import injectPlugin from '@rollup/plugin-inject';
+import { defineConfig } from 'astro/config';
 
 const __dirname = new URL('.', import.meta.url).pathname;
 

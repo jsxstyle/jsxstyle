@@ -14,7 +14,9 @@ describe('primitiveValueToNode', () => {
 
     expect(() =>
       doTheThing(Symbol.for('banana'))
-    ).toThrowErrorMatchingInlineSnapshot(`[Error: Unhandled value type: symbol]`);
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[Error: Unhandled value type: symbol]`
+    );
 
     expect(
       doTheThing({

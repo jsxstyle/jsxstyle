@@ -1,7 +1,7 @@
 import type {
-  JsxstyleComponentStyleProps,
   CommonComponentProp,
   EventHandlerKeys,
+  JsxstyleComponentStyleProps,
 } from '@jsxstyle/core';
 import type { Component, JSX } from 'solid-js';
 
