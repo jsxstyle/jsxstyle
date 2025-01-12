@@ -3,9 +3,14 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "~/*": ["./src/*"],
+      "~/*": [
+        "./src/*"
+      ],
       "@jsxstyle/astro": [
         "../packages/runtimes/astro/src"
+      ],
+      "@jsxstyle/bundler-utils": [
+        "../packages/bundlers/bundler-utils/src"
       ],
       "@jsxstyle/core": [
         "../packages/core/src"
@@ -18,6 +23,9 @@
   "references": [
     {
       "path": "../packages/runtimes/astro"
+    },
+    {
+      "path": "../packages/bundlers/bundler-utils"
     },
     {
       "path": "../packages/core"

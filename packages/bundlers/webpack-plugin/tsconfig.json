@@ -1,22 +1,24 @@
 {
   "extends": "@jsxstyle/internal/tsconfig.esm.json",
   "compilerOptions": {
-    "types": ["node"],
+    "types": [
+      "node"
+    ],
     "paths": {
-      "@jsxstyle/core": [
-        "../../core/src"
-      ],
       "@jsxstyle/bundler-utils": [
         "../bundler-utils/src"
+      ],
+      "@jsxstyle/core": [
+        "../../core/src"
       ]
     }
   },
   "references": [
     {
-      "path": "../../core"
+      "path": "../bundler-utils"
     },
     {
-      "path": "../bundler-utils"
+      "path": "../../core"
     }
   ]
 }

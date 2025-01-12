@@ -5,6 +5,9 @@
     "paths": {
       "@jsxstyle/core": [
         "../../core/src"
+      ],
+      "@jsxstyle/react": [
+        "./src"
       ]
     }
   },

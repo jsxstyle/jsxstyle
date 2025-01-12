@@ -1,14 +1,22 @@
 {
   "extends": "@jsxstyle/internal/tsconfig.esm.json",
   "compilerOptions": {
-    "types": ["node"],
+    "types": [
+      "node"
+    ],
     "paths": {
+      "@jsxstyle/core": [
+        "../../core/src"
+      ],
       "@jsxstyle/webpack-plugin": [
         "../webpack-plugin/src"
       ]
     }
   },
   "references": [
+    {
+      "path": "../../core"
+    },
     {
       "path": "../webpack-plugin"
     }

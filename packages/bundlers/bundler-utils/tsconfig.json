@@ -1,7 +1,9 @@
 {
   "extends": "@jsxstyle/internal/tsconfig.esm.json",
   "compilerOptions": {
-    "types": ["node"],
+    "types": [
+      "node"
+    ],
     "paths": {
       "@jsxstyle/core": [
         "../../core/src"

@@ -1,8 +1,12 @@
 {
   "extends": "@jsxstyle/internal/tsconfig.react.json",
   "compilerOptions": {
+    "baseUrl": ".",
     "jsx": "react-jsx",
     "paths": {
+      "~/*": [
+        "./src/*"
+      ],
       "@jsxstyle/react": [
         "../../packages/runtimes/react/src"
       ]

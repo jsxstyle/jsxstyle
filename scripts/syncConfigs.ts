@@ -1,11 +1,11 @@
-import * as s from 'superstruct';
-import { fs, path, glob } from 'zx';
 import {
-  schemas,
   getWorkspaces,
+  schemas,
   sortPackageJson,
   sortTsconfig,
 } from '@jsxstyle/internal';
+import * as s from 'superstruct';
+import { fs, path, glob } from 'zx';
 
 const getPathBuilder = (relativeDir: string) => (projectPath: string) => {
   const relativePath = path.relative(relativeDir, projectPath);
@@ -65,19 +65,19 @@ for (const projectPath of typeScriptProjects) {
       )
       .sort();
 
-    if (projectPath.startsWith('examples/') || projectPath === 'minisite') {
-      tsconfig.extends = '@jsxstyle/internal/tsconfig.react.json';
-    } else if (projectPath.startsWith('packages/runtimes/')) {
-      tsconfig.extends = '@jsxstyle/internal/tsconfig.browser.json';
-    } else if (packageJson.type === 'module') {
-      tsconfig.extends = '@jsxstyle/internal/tsconfig.esm.json';
-    } else {
-      tsconfig.extends = '@jsxstyle/internal/tsconfig.cjs.json';
+    if (
+      !tsconfig.extends ||
+      !tsconfig.extends.startsWith('@jsxstyle/internal/')
+    ) {
+      throw new Error(
+        'Non-standard `tsconfig.extends` value in "' + projectPath + '"'
+      );
     }
 
     tsconfig.include = undefined;
     tsconfig.exclude = undefined;
     tsconfig.compilerOptions = {
+      types: tsconfig.compilerOptions?.types,
       jsx: tsconfig.compilerOptions?.jsx,
       jsxImportSource: tsconfig.compilerOptions?.jsxImportSource,
       jsxFactory: tsconfig.compilerOptions?.jsxFactory,
@@ -94,14 +94,28 @@ for (const projectPath of typeScriptProjects) {
 
       tsconfig.references = knownDependencies
         .map((dep) => dep.path)
+        .filter((dep) => dep !== projectPath)
         .map(pathBuilder);
 
-      tsconfig.compilerOptions.paths = Object.fromEntries(
-        knownDependencies.map((dep) => [
-          dep.name,
-          [path.join(pathBuilder(dep.path).path, 'src')],
-        ])
-      );
+      const isNotAPackage = !projectPath.startsWith('packages/');
+      if (isNotAPackage) {
+        tsconfig.compilerOptions.baseUrl = '.';
+      } else {
+        tsconfig.compilerOptions.baseUrl = undefined;
+      }
+
+      tsconfig.compilerOptions.paths = {
+        ...(isNotAPackage ? { '~/*': ['./src/*'] } : null),
+        ...Object.fromEntries(
+          knownDependencies.map((dep) => {
+            const srcDir = path.join(pathBuilder(dep.path).path, 'src');
+            return [
+              dep.name,
+              [srcDir.startsWith('.') ? srcDir : `./${srcDir}`],
+            ];
+          })
+        ),
+      };
     }
 
     if (publicProjectPaths.includes(projectPath)) {

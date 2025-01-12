@@ -40,6 +40,8 @@ export const tsconfigSchema = s.type({
   exclude: s.optional(s.array(s.string())),
   compilerOptions: s.optional(
     s.type({
+      baseUrl: s.optional(s.string()),
+      types: s.optional(s.array(s.string())),
       paths: s.optional(s.record(s.string(), s.array(s.string()))),
       jsx: s.optional(s.string()),
       jsxFactory: s.optional(s.string()),

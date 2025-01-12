@@ -2,8 +2,8 @@ import invariant from 'invariant';
 import * as s from 'superstruct';
 import { $, spinner, tmpdir } from 'zx';
 import {
-  pnpmPackSchema,
   type PnpmWorkspace,
+  pnpmPackSchema,
   workspacesSchema,
 } from './schemas.js';
 
@@ -28,7 +28,7 @@ export const getPackList = async (workspace: PnpmWorkspace) => {
   return fileList;
 };
 
-export const sortObj = <T>(obj: T, customSort: string[]): T => {
+const sortObj = <T>(obj: T, customSort: string[]): T => {
   if (typeof obj !== 'object' || obj == null) return obj;
 
   // @ts-expect-error
@@ -85,6 +85,7 @@ const tsconfigKeys = [
 ];
 
 const compilerOptionsKeys = [
+  'baseUrl',
   'composite',
   'target',
   'module',
