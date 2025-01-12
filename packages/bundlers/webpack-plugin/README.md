@@ -17,7 +17,7 @@ Don’t know what jsxstyle is? Check out the [jsxstyle README][] for more inform
 When you’re done, the relevant parts of your webpack config should look like this:
 
 ```js
-const { JsxstyleWebpackPlugin } = require('jsxstyle/webpack-plugin');
+const { JsxstyleWebpackPlugin } = require('@jsxstyle/webpack-plugin');
 
 module.exports = {
   // ...

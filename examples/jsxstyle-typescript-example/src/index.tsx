@@ -1,16 +1,8 @@
-import * as ReactDOM from 'react-dom';
-
+import * as ReactDOMClient from 'react-dom/client';
 import App from './App';
 import './index.css';
 
-const appRoot = document.getElementById('.jsxstyle-demo') as HTMLElement;
-
-function load() {
-  ReactDOM.render(<App />, appRoot);
-}
-
-if (module.hot) {
-  module.hot.accept('./App', load);
-}
-
-load();
+// biome-ignore lint/style/noNonNullAssertion: its ok
+const appRoot = document.getElementById('.jsxstyle-demo')!;
+const root = ReactDOMClient.createRoot(appRoot);
+root.render(<App />);

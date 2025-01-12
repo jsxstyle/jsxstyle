@@ -11,9 +11,9 @@ const source = {
   size: () => indexFileContents.length,
 };
 
-exports.ReactIndexPlugin = class ReactIndexPlugin {
+export class ReactIndexPlugin {
   apply(
-    /** @type {import('webpack').Compiler} */
+    /** @type {any} */
     compiler
   ) {
     compiler.hooks.make.tap('ReactIndexPlugin', (compilation) => {
@@ -22,4 +22,4 @@ exports.ReactIndexPlugin = class ReactIndexPlugin {
       });
     });
   }
-};
+}

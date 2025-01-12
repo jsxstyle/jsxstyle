@@ -11,9 +11,9 @@
   },
   "dependencies": {
     "@astrojs/react": "^4.1.2",
-    "@babel/generator": "^7.26.3",
-    "@babel/traverse": "^7.26.4",
-    "@babel/types": "^7.26.3",
+    "@babel/generator": "^7.26.5",
+    "@babel/traverse": "^7.26.5",
+    "@babel/types": "^7.26.5",
     "@jsxstyle/astro": "workspace:*",
     "@jsxstyle/bundler-utils": "workspace:*",
     "@jsxstyle/core": "workspace:*",

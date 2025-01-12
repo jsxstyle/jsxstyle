@@ -2,13 +2,13 @@ import fs from 'node:fs';
 import { createClassNameGetter } from '@jsxstyle/core';
 import { Volume } from 'memfs';
 // @ts-expect-error this export is not exposed in the `compiler.webpack` object
-import NodeWatchFileSystem from 'webpack/lib/node/NodeWatchFileSystem';
+import NodeWatchFileSystem from 'webpack/lib/node/NodeWatchFileSystem.js';
 
+import { createRequire } from 'node:module';
 import { ModuleCache } from '@jsxstyle/bundler-utils';
 import { wrapFileSystem } from '@jsxstyle/bundler-utils';
 import invariant from 'invariant';
 import type { JsxstyleWebpackPluginOptions, PluginContext } from './types.js';
-import { createRequire } from 'node:module';
 
 // TODO(meyer) replace this with `import.meta.resolve` (node 20+) some time after node 18 is no longer LTS
 const customRequire = createRequire(import.meta.url);

@@ -75,7 +75,7 @@ export default async function jsxstyleLoader(
         return;
       }
 
-      memoryFS.mkdirpSync(path.dirname(rv.cssFileName));
+      memoryFS.mkdirSync(path.dirname(rv.cssFileName), { recursive: true });
       memoryFS.writeFileSync(rv.cssFileName, rv.css);
     }
 
