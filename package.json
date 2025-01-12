@@ -37,6 +37,7 @@
     "@changesets/cli": "^2.27.11",
     "@changesets/types": "^6.0.0",
     "@jsxstyle/internal": "workspace:*",
+    "@manypkg/get-packages": "^2.2.2",
     "@types/invariant": "^2.2.37",
     "invariant": "^2.2.4",
     "jsdom": "^25.0.1",

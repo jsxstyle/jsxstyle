@@ -1,28 +1,14 @@
+import type { Package } from '@manypkg/get-packages';
 import invariant from 'invariant';
 import * as s from 'superstruct';
 import { $, spinner, tmpdir } from 'zx';
-import {
-  type PnpmWorkspace,
-  pnpmPackSchema,
-  workspacesSchema,
-} from './schemas.js';
+import { pnpmPackSchema } from './schemas.js';
 
-export const getWorkspaces = async () => {
-  const workspaces = await spinner('Getting workspaces…', () =>
-    $`pnpm list -r --json`.json()
-  );
-  s.assert(workspaces, workspacesSchema);
-  return workspaces.filter(({ name }) => {
-    // internal packages doesn't need to be standardised
-    return name !== '@jsxstyle/internal';
-  });
-};
-
-export const getPackList = async (workspace: PnpmWorkspace) => {
-  const fileList = await spinner(`Packing ${workspace.name}…`, () =>
+export const getPackList = async (workspace: Package) => {
+  const fileList = await spinner(`Packing ${workspace.packageJson.name}…`, () =>
     $({
-      cwd: workspace.path,
-    })`pnpm pack --json --pack-destination=${tmpdir(workspace.name)}`.json()
+      cwd: workspace.dir,
+    })`pnpm pack --json --pack-destination=${tmpdir(workspace.packageJson.name)}`.json()
   );
   s.assert(fileList, pnpmPackSchema);
   return fileList;

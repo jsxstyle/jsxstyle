@@ -1,15 +1,18 @@
-import { getPackList, getWorkspaces } from '@jsxstyle/internal';
 import * as path from 'node:path';
-import { glob, $ } from 'zx';
+import { getPackList } from '@jsxstyle/internal';
+import { getPackages } from '@manypkg/get-packages';
+import { $, glob } from 'zx';
 
 describe('npm publish', async () => {
-  const packages = await getWorkspaces().then((pkgs) =>
-    pkgs.filter((pkg) => !pkg.private)
+  const packages = await getPackages(process.cwd()).then((pkgs) =>
+    pkgs.packages.filter((pkg) => !pkg.packageJson.private)
   );
 
-  it.for(packages)('$name only publishes the intended files', async (pkg) => {
-    const packlist = await getPackList(pkg);
-    expect(`
+  it.for(packages)(
+    '$packageJson.name only publishes the intended files',
+    async (pkg) => {
+      const packlist = await getPackList(pkg);
+      expect(`
 ${packlist.name}
 ${packlist.name.replace(/./g, '=')}
 ${packlist.files
@@ -24,7 +27,8 @@ ${packlist.files
   .sort()
   .join('\n')}
 `).toMatchSnapshot();
-  });
+    }
+  );
 });
 
 describe.skip('examples', async () => {

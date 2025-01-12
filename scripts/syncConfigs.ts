@@ -1,9 +1,5 @@
-import {
-  getWorkspaces,
-  schemas,
-  sortPackageJson,
-  sortTsconfig,
-} from '@jsxstyle/internal';
+import { schemas, sortPackageJson, sortTsconfig } from '@jsxstyle/internal';
+import { getPackages } from '@manypkg/get-packages';
 import * as s from 'superstruct';
 import { fs, path, glob } from 'zx';
 
@@ -14,24 +10,26 @@ const getPathBuilder = (relativeDir: string) => (projectPath: string) => {
   };
 };
 
-const workspaces = await getWorkspaces();
+const workspaces = await getPackages(process.cwd());
 
 const typeScriptProjects: string[] = [];
 const publicProjectPaths: string[] = [];
 const publicProjectNames: string[] = [];
 const projectPathsByName: Record<string, string> = {};
 
-for (const { name, private: isPrivate, path: realpath } of workspaces) {
-  const relativePath = path.relative(process.cwd(), realpath);
+for (const {
+  relativeDir,
+  packageJson: { name, private: isPrivate },
+} of workspaces.packages) {
+  if (name === '@jsxstyle/internal') continue;
+  projectPathsByName[name] = relativeDir;
 
-  projectPathsByName[name] = relativePath;
-
-  const hasTsConfig = await fs.exists(`${relativePath}/tsconfig.json`);
+  const hasTsConfig = await fs.exists(`${relativeDir}/tsconfig.json`);
   if (!hasTsConfig) continue;
 
-  typeScriptProjects.push(relativePath);
+  typeScriptProjects.push(relativeDir);
   if (!isPrivate && name !== '@jsxstyle/astro') {
-    publicProjectPaths.push(relativePath);
+    publicProjectPaths.push(relativeDir);
     publicProjectNames.push(name);
   }
 }

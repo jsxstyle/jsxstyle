@@ -1,15 +1,15 @@
-import { $, question, argv } from 'zx';
-import { getWorkspaces } from '@jsxstyle/internal';
+import { getPackages } from '@manypkg/get-packages';
+import { $, argv, question } from 'zx';
 
-const workspaces = await getWorkspaces();
+const workspaces = await getPackages(process.cwd());
 
 const searchString = argv._.join(' ');
 
-const examplePkgs = workspaces
-  .filter((f) => f.name.endsWith('-example'))
+const examplePkgs = workspaces.packages
+  .filter((f) => f.packageJson.name.endsWith('-example'))
   .map((pkg, index) => ({
     id: (index + 1).toString(),
-    name: pkg.name,
+    name: pkg.packageJson.name,
   }));
 
 const choices = examplePkgs.map((pkg) => pkg.id);

@@ -13,27 +13,6 @@ export const packageJsonSchema = s.type({
   peerDependencies: s.optional(s.record(s.string(), s.string())),
 });
 
-const pnpmDependency = s.type({
-  from: s.string(),
-  version: s.string(),
-  resolved: s.optional(s.string()),
-  path: s.string(),
-});
-
-export type PnpmWorkspace = s.Infer<typeof workspaceSchema>;
-
-export const workspaceSchema = s.type({
-  name: s.string(),
-  version: s.string(),
-  path: s.string(),
-  private: s.boolean(),
-  dependencies: s.optional(s.record(s.string(), pnpmDependency)),
-  devDependencies: s.optional(s.record(s.string(), pnpmDependency)),
-  unsavedDependencies: s.optional(s.record(s.string(), pnpmDependency)),
-});
-
-export const workspacesSchema = s.array(workspaceSchema);
-
 export const tsconfigSchema = s.type({
   extends: s.optional(s.string()),
   include: s.optional(s.array(s.string())),
