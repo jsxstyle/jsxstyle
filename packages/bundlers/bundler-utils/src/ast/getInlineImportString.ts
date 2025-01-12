@@ -14,4 +14,4 @@ export const getInlineImportString = (css: string, key: string) =>
   }).toString() +
   '!' +
   // the contents of this file will be discarded
-  '@jsxstyle/bundler-utils/noop';
+  '@jsxstyle/webpack-plugin/noop';

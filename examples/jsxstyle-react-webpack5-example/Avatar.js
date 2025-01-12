@@ -1,5 +1,4 @@
 import { Block, Row } from '@jsxstyle/react';
-import PropTypes from 'prop-types';
 
 import LayoutConstants from './LayoutConstants';
 
@@ -9,15 +8,16 @@ export default function Avatar(props) {
       width={192}
       marginLeft="auto"
       marginRight="auto"
-      mediaQueries={{
-        sm: 'screen and (max-width: 900px)',
-      }}
       color="black"
-      smColor="blue"
       hoverColor="white"
-      smHoverColor="red"
       backgroundColor="white"
       hoverBackgroundColor={LayoutConstants.secondaryColor}
+      {...{
+        '@media screen and (max-width: 900px)': {
+          smColor: 'blue',
+          smHoverColor: 'red',
+        },
+      }}
     >
       <Block
         style={{
@@ -31,7 +31,3 @@ export default function Avatar(props) {
     </Row>
   );
 }
-
-Avatar.propTypes = {
-  username: PropTypes.string.isRequired,
-};

@@ -26,7 +26,13 @@
     },
     "./base64-loader": {
       "types": "./lib/base64Loader.d.ts",
-      "import": "./lib/base64Loader.js"
+      "import": "./lib/base64Loader.js",
+      "require": "./lib/base64Loader.js"
+    },
+    "./noop": {
+      "types": "./lib/noop.d.ts",
+      "import": "./lib/noop.js",
+      "require": "./lib/noop.js"
     }
   },
   "dependencies": {

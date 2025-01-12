@@ -1,0 +1,8 @@
+{
+  "include": ["**/*.js"],
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "checkJs": true,
+    "strict": true
+  }
+}

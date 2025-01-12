@@ -1129,7 +1129,7 @@ const staticProp = 'static';
     );
 
     expect(singleInlineImports.js).toMatchInlineSnapshot(`
-      "import "@jsxstyle/core/cache/mock/evaluateVars.js.css!=!@jsxstyle/webpack-plugin/base64-loader?value=!@jsxstyle/bundler-utils/noop";
+      "import "@jsxstyle/core/cache/mock/evaluateVars.js.css!=!@jsxstyle/webpack-plugin/base64-loader?value=!@jsxstyle/webpack-plugin/noop";
       const staticProp = 'static';
       <div className="_x0 _x1 _x2"></div>;
       <div className="_x0 _x3 _x4"></div>;"
@@ -1149,15 +1149,15 @@ const staticProp = 'static';
 
     expect(multipleInlineImports.js).toMatchInlineSnapshot(`
       "// ._x0{display:block}
-      import "@jsxstyle/core/cache/_x0.css!=!@jsxstyle/webpack-plugin/base64-loader?value=Ll94MHtkaXNwbGF5OmJsb2NrfQ%3D%3D!@jsxstyle/bundler-utils/noop";
+      import "@jsxstyle/core/cache/_x0.css!=!@jsxstyle/webpack-plugin/base64-loader?value=Ll94MHtkaXNwbGF5OmJsb2NrfQ%3D%3D!@jsxstyle/webpack-plugin/noop";
       // ._x1{thing1:static}
-      import "@jsxstyle/core/cache/_x1.css!=!@jsxstyle/webpack-plugin/base64-loader?value=Ll94MXt0aGluZzE6c3RhdGljfQ%3D%3D!@jsxstyle/bundler-utils/noop";
+      import "@jsxstyle/core/cache/_x1.css!=!@jsxstyle/webpack-plugin/base64-loader?value=Ll94MXt0aGluZzE6c3RhdGljfQ%3D%3D!@jsxstyle/webpack-plugin/noop";
       // ._x2{thing2:69px}
-      import "@jsxstyle/core/cache/_x2.css!=!@jsxstyle/webpack-plugin/base64-loader?value=Ll94Mnt0aGluZzI6NjlweH0%3D!@jsxstyle/bundler-utils/noop";
+      import "@jsxstyle/core/cache/_x2.css!=!@jsxstyle/webpack-plugin/base64-loader?value=Ll94Mnt0aGluZzI6NjlweH0%3D!@jsxstyle/webpack-plugin/noop";
       // ._x3{thing3:static}
-      import "@jsxstyle/core/cache/_x3.css!=!@jsxstyle/webpack-plugin/base64-loader?value=Ll94M3t0aGluZzM6c3RhdGljfQ%3D%3D!@jsxstyle/bundler-utils/noop";
+      import "@jsxstyle/core/cache/_x3.css!=!@jsxstyle/webpack-plugin/base64-loader?value=Ll94M3t0aGluZzM6c3RhdGljfQ%3D%3D!@jsxstyle/webpack-plugin/noop";
       // ._x4{thing4:69px}
-      import "@jsxstyle/core/cache/_x4.css!=!@jsxstyle/webpack-plugin/base64-loader?value=Ll94NHt0aGluZzQ6NjlweH0%3D!@jsxstyle/bundler-utils/noop";
+      import "@jsxstyle/core/cache/_x4.css!=!@jsxstyle/webpack-plugin/base64-loader?value=Ll94NHt0aGluZzQ6NjlweH0%3D!@jsxstyle/webpack-plugin/noop";
       const staticProp = 'static';
       <div className="_x0 _x1 _x2"></div>;
       <div className="_x0 _x3 _x4"></div>;"

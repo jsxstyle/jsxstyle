@@ -121,10 +121,6 @@ exports[`npm publish > '@jsxstyle/bundler-utils' only publishes the intended fil
 - lib/makePromise.d.ts.map
 - lib/makePromise.js
 - lib/makePromise.js.map
-- lib/noop.d.ts
-- lib/noop.d.ts.map
-- lib/noop.js
-- lib/noop.js.map
 - lib/types.d.ts
 - lib/types.d.ts.map
 - lib/types.js
@@ -327,6 +323,10 @@ exports[`npm publish > '@jsxstyle/webpack-plugin' only publishes the intended fi
 - lib/loader.d.ts.map
 - lib/loader.js
 - lib/loader.js.map
+- lib/noop.d.ts
+- lib/noop.d.ts.map
+- lib/noop.js
+- lib/noop.js.map
 - lib/plugin.d.ts
 - lib/plugin.d.ts.map
 - lib/plugin.js

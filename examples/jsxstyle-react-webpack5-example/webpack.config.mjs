@@ -1,12 +1,17 @@
 // @ts-check
 
+import { createRequire } from 'node:module';
+import path from 'node:path';
 import { JsxstyleWebpackPlugin } from '@jsxstyle/webpack-plugin';
-import { ReactIndexPlugin } from '../ReactIndexPlugin';
+import { ReactIndexPlugin } from '../ReactIndexPlugin.mjs';
+
+const customRequire = createRequire(import.meta.url);
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
 /** @type {import('webpack').Configuration} */
-module.exports = {
+export default {
   mode: 'production',
-  entry: require.resolve('./entry'),
+  entry: customRequire.resolve('./entry'),
 
   output: {
     path: __dirname + '/build',
@@ -19,15 +24,9 @@ module.exports = {
     new ReactIndexPlugin(),
     new JsxstyleWebpackPlugin({
       cssMode: 'multipleInlineImports',
-      staticModules: [require.resolve('./LayoutConstants')],
+      staticModules: [customRequire.resolve('./LayoutConstants')],
     }),
   ],
-
-  resolve: {
-    alias: {
-      '@jsxstyle/react': require.resolve('@jsxstyle/react'),
-    },
-  },
 
   stats: {
     // log information from child compilers as well
@@ -45,16 +44,8 @@ module.exports = {
             options: {
               babelrc: false,
               presets: [
-                [
-                  '@babel/preset-env',
-                  {
-                    targets: {
-                      browsers: ['last 2 versions'],
-                    },
-                    modules: false,
-                  },
-                ],
-                '@babel/preset-react',
+                '@babel/preset-env',
+                ['@babel/preset-react', { runtime: 'automatic' }],
               ],
             },
           },

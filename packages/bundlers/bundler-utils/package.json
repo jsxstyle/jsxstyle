@@ -20,10 +20,6 @@
     ".": {
       "types": "./lib/index.d.ts",
       "import": "./lib/index.js"
-    },
-    "./noop": {
-      "types": "./lib/noop.d.ts",
-      "import": "./lib/noop.js"
     }
   },
   "dependencies": {
