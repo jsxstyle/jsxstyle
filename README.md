@@ -337,3 +337,5 @@ Sorting through the myriad CSS-in-JS solutions out there can get tiring, but the
 [tachyons]: http://tachyons.io
 [github-actions]: https://github.com/jsxstyle/jsxstyle/actions
 [request-new-component-prop]: https://github.com/jsxstyle/jsxstyle/issues/new?assignees=meyer&labels=enhancement&template=component+prop+allowlist+addition.yml&title=New+top-level+component+prop%3A+
+
+<!-- This project is tested with BrowserStack -->
