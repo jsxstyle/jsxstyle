@@ -17,7 +17,7 @@
     "clean:dist": "pnpm -r exec rm -rf lib dist build",
     "example": "tsx scripts/runExample.ts",
     "test": "pnpm build && vitest",
-    "release": "pnpm publish -r --access public",
+    "release": "pnpm publish -r --access public --tag latest",
     "release:canary": "pnpm publish -r  --access public --tag canary --no-git-checks",
     "version:canary": "rm -f ./.changeset/pre.json && changeset version --snapshot canary",
     "reset": "rm -rf packages/{*,*/*}/lib/ minisite/.next/",
