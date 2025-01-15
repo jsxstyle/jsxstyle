@@ -1,5 +1,14 @@
 # @jsxstyle/nextjs-plugin
 
+## 1.0.1
+
+### Patch Changes
+
+- ad398394b9e361c809c82483518192ed49407cd2: Patch bump all packages
+- Updated dependencies:
+  - @jsxstyle/webpack-plugin@3.0.1
+  - @jsxstyle/core@3.0.1
+
 ## 1.0.0
 
 ### Major Changes
