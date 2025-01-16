@@ -6,8 +6,9 @@
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
   "ignore": [
-    "@jsxstyle/minisite",
     "@jsxstyle/internal",
+    "@jsxstyle/minisite",
+    "@jsxstyle/scripts",
     "@jsxstyle/*-example"
   ]
 }

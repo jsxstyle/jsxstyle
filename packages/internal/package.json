@@ -5,6 +5,7 @@
   "main": "src/index.ts",
   "type": "module",
   "dependencies": {
+    "@manypkg/get-packages": "^2.2.2",
     "@types/invariant": "^2.2.37",
     "invariant": "^2.2.4",
     "superstruct": "^2.0.2",

@@ -1,5 +1,9 @@
-import { schemas, sortPackageJson, sortTsconfig } from '@jsxstyle/internal';
-import { getPackages } from '@manypkg/get-packages';
+import {
+  getPackages,
+  schemas,
+  sortPackageJson,
+  sortTsconfig,
+} from '@jsxstyle/internal';
 import * as s from 'superstruct';
 import { fs, path, glob } from 'zx';
 

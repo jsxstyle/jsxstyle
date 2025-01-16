@@ -17,7 +17,9 @@
   "types": "lib/index.d.ts",
   "dependencies": {
     "@jsxstyle/bundler-utils": "workspace:*",
-    "esbuild": "^0.24.2"
+    "@types/invariant": "^2.2.37",
+    "esbuild": "^0.24.2",
+    "invariant": "^2.2.4"
   },
   "peerDependencies": {
     "vite": "^6.0.3"

@@ -48,6 +48,9 @@
     },
     {
       "path": "./packages/runtimes/solid"
+    },
+    {
+      "path": "./scripts"
     }
   ]
 }

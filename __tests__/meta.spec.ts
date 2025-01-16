@@ -1,7 +1,4 @@
-import * as path from 'node:path';
-import { getPackList } from '@jsxstyle/internal';
-import { getPackages } from '@manypkg/get-packages';
-import { $, glob } from 'zx';
+import { getPackList, getPackages } from '@jsxstyle/internal';
 
 describe('npm publish', async () => {
   const packages = await getPackages(process.cwd()).then((pkgs) =>
@@ -31,15 +28,15 @@ ${packlist.files
   );
 });
 
-describe.skip('examples', async () => {
-  const exampleDir = path.resolve(__dirname, '..', 'examples');
-  const examples = await glob('jsxstyle-*-example', { cwd: exampleDir });
+// describe.skip('examples', async () => {
+//   const exampleDir = path.resolve(__dirname, '..', 'examples');
+//   const examples = await glob('jsxstyle-*-example', { cwd: exampleDir });
 
-  for (const example of examples) {
-    it(`\`${example}\` builds correctly`, async () => {
-      const cwd = path.join(exampleDir, example);
-      expect.assertions(1);
-      return expect(() => $({ cwd })`npm run build`).not.toThrow();
-    }, 30000);
-  }
-});
+//   for (const example of examples) {
+//     it(`\`${example}\` builds correctly`, async () => {
+//       const cwd = path.join(exampleDir, example);
+//       expect.assertions(1);
+//       return expect(() => $({ cwd })`npm run build`).not.toThrow();
+//     }, 30000);
+//   }
+// });

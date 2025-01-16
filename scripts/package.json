@@ -1,0 +1,11 @@
+{
+  "name": "@jsxstyle/scripts",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "dependencies": {
+    "@jsxstyle/internal": "workspace:*",
+    "superstruct": "^2.0.2",
+    "zx": "^8.2.4"
+  }
+}
