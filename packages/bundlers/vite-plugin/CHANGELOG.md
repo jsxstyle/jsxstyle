@@ -1,5 +1,13 @@
 # @jsxstyle/vite-plugin
 
+## 1.0.2
+
+### Patch Changes
+
+- 457182d72bce12ebd3e49699ad38ae519382591c: Fixed a few type errors that were occuring because imports were resolving to workspace-level packages
+- Updated dependencies:
+  - @jsxstyle/bundler-utils@1.0.2
+
 ## 1.0.1
 
 ### Patch Changes
