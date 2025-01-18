@@ -1,4 +1,4 @@
-import { getPackages } from '@manypkg/get-packages';
+import { getPackages } from '@jsxstyle/internal';
 import { $, argv, question } from 'zx';
 
 const workspaces = await getPackages(process.cwd());
