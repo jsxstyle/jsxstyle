@@ -11,6 +11,7 @@ export {
 } from '@jsxstyle/core';
 export type { StylableComponentProps } from './types.js';
 export { useMatchMedia } from './useMatchMedia.js';
+export { makeComponent } from './makeComponent.js';
 
 export const Box = /*#__PURE__*/ componentFactory('Box');
 export const Block = /*#__PURE__*/ componentFactory('Block');

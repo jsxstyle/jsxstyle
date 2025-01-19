@@ -1,4 +1,5 @@
-import { type ParsedStyleProp, parseStyleProps } from '../parseStyleProps';
+import type { ParsedStyleProp } from '../parseStyleProp';
+import { parseStyleProps } from '../parseStyleProps';
 import type { JsxstyleComponentStyleProps } from '../types';
 
 const formatParsedStyleProps = (
@@ -72,6 +73,7 @@ describe('parseStyleProps', () => {
         },
         "parsedStyleProps": {
           "banana": {
+            "key": "banana",
             "propName": "banana",
             "propValue": "purple",
             "specificity": 0,
@@ -141,6 +143,7 @@ describe('parseStyleProps', () => {
         },
         "parsedStyleProps": {
           "ontological": {
+            "key": "ontological",
             "propName": "ontological",
             "propValue": 456,
             "specificity": 0,
@@ -246,11 +249,13 @@ describe('parseStyleProps', () => {
         "componentProps": {},
         "parsedStyleProps": {
           "padding": {
+            "key": "padding",
             "propName": "padding",
             "propValue": 123,
             "specificity": 0,
           },
           "padding@media 345": {
+            "key": "padding@media 345",
             "propName": "padding",
             "propValue": 345,
             "queryString": "@media 345",

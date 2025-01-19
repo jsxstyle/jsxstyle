@@ -1,4 +1,6 @@
 import * as t from '@babel/types';
+import type { GetClassNameForKeyFn, InsertRuleCallback } from '@jsxstyle/core';
+import { parseStyleProps, processProps } from '@jsxstyle/core';
 import { generate } from './babelUtils.js';
 import { joinStringExpressions } from './joinStringExpressions.js';
 
@@ -55,13 +57,23 @@ export const updateStyleObject = (
 };
 
 export const convertStyleObjectToClassNameNode = (
-  getClassNameNode: (styles: Record<string, any>) => t.StringLiteral | null,
-  styleObj: StaticStyleObject
+  styleObj: StaticStyleObject,
+  getClassNameForKey: GetClassNameForKeyFn,
+  onInsertRule: InsertRuleCallback
 ) => {
   const nodes: Array<t.StringLiteral | t.ConditionalExpression | null> = [];
 
   if (styleObj.styles) {
-    nodes.push(getClassNameNode(styleObj.styles));
+    const parsed = parseStyleProps(styleObj.styles);
+    const className = processProps(
+      parsed.parsedStyleProps,
+      null,
+      getClassNameForKey,
+      onInsertRule
+    );
+    if (className) {
+      nodes.push(t.stringLiteral(className));
+    }
   }
 
   if (styleObj.ternaries) {
@@ -69,12 +81,14 @@ export const convertStyleObjectToClassNameNode = (
       ...Object.values(styleObj.ternaries).map(
         ({ test, alternate, consequent }) => {
           const consequentNode = convertStyleObjectToClassNameNode(
-            getClassNameNode,
-            consequent
+            consequent,
+            getClassNameForKey,
+            onInsertRule
           );
           const alternateNode = convertStyleObjectToClassNameNode(
-            getClassNameNode,
-            alternate
+            alternate,
+            getClassNameForKey,
+            onInsertRule
           );
           return t.conditionalExpression(test, consequentNode, alternateNode);
         }

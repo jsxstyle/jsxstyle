@@ -10,7 +10,7 @@ const gzipAsync = promisify(zlib.gzip);
 const entry = 'bundleSize entrypoint';
 
 // that's what, like 1/50th of your average JPG?
-const ACCEPTABLE_NUMBER_OF_KILOBYTES = 4;
+const ACCEPTABLE_NUMBER_OF_KILOBYTES = 5;
 
 it(`has a runtime size of less than ${ACCEPTABLE_NUMBER_OF_KILOBYTES}KB`, async () => {
   expect.assertions(4);

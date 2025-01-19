@@ -1,5 +1,6 @@
 import { addStyleToHead } from './addStyleToHead.js';
 import { getStringHash } from './getStringHash.js';
+import { parseStyleProps } from './parseStyleProps.js';
 import type { GetClassNameForKeyFn } from './processProps.js';
 import { processProps } from './processProps.js';
 import type { CacheObject } from './types.js';
@@ -78,6 +79,8 @@ export function getStyleCache({
       styleCache.injectOptions = injectOptions;
     },
 
+    getClassNameForKey: memoizedGetClassNameForKey,
+
     get classNameCache() {
       return { ...classNameCache };
     },
@@ -135,12 +138,18 @@ export function getStyleCache({
       classNamePropKey: string
     ): Record<string, unknown> | null {
       styleCache.injectOptions = cannotInject;
-      return processProps(
-        props,
-        classNamePropKey,
+      const parsed = parseStyleProps(props);
+      const className = processProps(
+        parsed.parsedStyleProps,
+        parsed.componentProps,
         memoizedGetClassNameForKey,
         onInsertRule ? memoizedOnInsertRule : undefined
       );
+      const componentProps = { ...parsed.componentProps };
+      if (className) {
+        componentProps[classNamePropKey] = className;
+      }
+      return componentProps;
     },
   };
 

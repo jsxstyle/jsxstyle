@@ -1,3 +1,4 @@
+import { parseStyleProps } from './parseStyleProps.js';
 import type { GetClassNameForKeyFn } from './processProps.js';
 import { processProps } from './processProps.js';
 import { stringHash } from './stringHash.js';
@@ -44,9 +45,10 @@ export function createRequestStyleCache({
       styles: string;
     } {
       let styles = '';
-      const componentProps = processProps(
-        props,
-        classNamePropKey,
+      const parsed = parseStyleProps(props);
+      const className = processProps(
+        parsed.parsedStyleProps,
+        parsed.componentProps,
         (key) => {
           // biome-ignore lint/suspicious/noAssignInExpressions: chill
           return (classNameCache[key] ||= getClassName(key));
@@ -58,6 +60,10 @@ export function createRequestStyleCache({
           }
         }
       );
+      const componentProps = { ...parsed.componentProps };
+      if (className) {
+        componentProps[classNamePropKey] = className;
+      }
       return {
         props: componentProps,
         styles,

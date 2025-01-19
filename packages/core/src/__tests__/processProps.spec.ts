@@ -1,17 +1,36 @@
 import { createClassNameGetter } from '../createClassNameGetter';
+import { parseStyleProps } from '../parseStyleProps';
 import { processProps } from '../processProps';
+import type { GetClassNameForKeyFn } from '../processProps';
 import { kitchenSink } from './kitchenSink';
 
-const runProcessProps = (...args: Parameters<typeof processProps>) => {
+const runProcessProps = (
+  props: Record<string, any>,
+  getClassNameForKey: GetClassNameForKeyFn,
+  mediaQuery?: string
+) => {
   const rules: string[] = [];
   const onInsertRule = (rule: string) => rules.push(rule);
-  const props = processProps(args[0], args[1], args[2], onInsertRule, args[4]);
-  return { props, rules };
+  const parsed = parseStyleProps(props);
+  const className = processProps(
+    parsed.parsedStyleProps,
+    parsed.componentProps,
+    getClassNameForKey,
+    onInsertRule,
+    mediaQuery
+  );
+  return {
+    props: {
+      ...parsed.componentProps,
+      ...(className ? { className } : null),
+    },
+    rules,
+  };
 };
 
 describe('processProps', () => {
   it('returns empty rules and props when given an empty props object', () => {
-    const keyObj = runProcessProps({}, 'className', createClassNameGetter({}));
+    const keyObj = runProcessProps({}, createClassNameGetter({}));
     expect(keyObj).toEqual({
       props: {},
       rules: [],
@@ -20,21 +39,13 @@ describe('processProps', () => {
 
   it('returns empty rules and a props object when only given known component props', () => {
     const propsObject = { id: 'hello', onBanana: true };
-    const keyObj = runProcessProps(
-      propsObject,
-      'className',
-      createClassNameGetter({})
-    );
+    const keyObj = runProcessProps(propsObject, createClassNameGetter({}));
     expect(keyObj.props).toEqual(propsObject);
     expect(keyObj.rules).toEqual([]);
   });
 
   it('separates component props and styles', () => {
-    const keyObj1 = runProcessProps(
-      kitchenSink,
-      'className',
-      createClassNameGetter({})
-    );
+    const keyObj1 = runProcessProps(kitchenSink, createClassNameGetter({}));
 
     expect(keyObj1).toMatchInlineSnapshot(`
       {
@@ -72,11 +83,7 @@ describe('processProps', () => {
       },
     };
 
-    const keyObj = runProcessProps(
-      styleObj,
-      'className',
-      createClassNameGetter({})
-    );
+    const keyObj = runProcessProps(styleObj, createClassNameGetter({}));
 
     expect(keyObj).toMatchInlineSnapshot(`
       {
@@ -97,12 +104,7 @@ describe('processProps', () => {
       color: 'red',
       animation: {},
     };
-
-    const { rules } = runProcessProps(
-      styleObj,
-      'className',
-      createClassNameGetter({})
-    );
+    const { rules } = runProcessProps(styleObj, createClassNameGetter({}));
 
     expect(rules).toMatchInlineSnapshot(`
       [
@@ -121,11 +123,7 @@ describe('processProps', () => {
       },
     };
 
-    const { rules } = runProcessProps(
-      styleObj,
-      'className',
-      createClassNameGetter({})
-    );
+    const { rules } = runProcessProps(styleObj, createClassNameGetter({}));
 
     expect(consoleSpy).toHaveBeenCalledTimes(1);
     expect(consoleSpy.mock.calls[0]).toMatchInlineSnapshot(`
@@ -156,7 +154,6 @@ describe('processProps', () => {
           thing2: { padding: 123 },
         },
       },
-      'className',
       createClassNameGetter({})
     );
 
@@ -168,7 +165,6 @@ describe('processProps', () => {
           thing2: { padding: 123 },
         },
       },
-      'className',
       createClassNameGetter({})
     );
 
@@ -217,13 +213,11 @@ describe('processProps', () => {
 
     const getClassName = createClassNameGetter({});
 
-    const { rules } = runProcessProps(styleObject, 'className', getClassName);
+    const { rules } = runProcessProps(styleObject, getClassName);
 
     const { rules: mediaQueryRules } = runProcessProps(
       styleObject,
-      'className',
       getClassName,
-      undefined,
       'example'
     );
 

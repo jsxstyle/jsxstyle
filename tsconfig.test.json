@@ -16,6 +16,7 @@
     "types": [
       "vitest/globals"
     ],
+    "jsx": "preserve",
     "rootDir": "${configDir}",
     "tsBuildInfoFile": "${configDir}/node_modules/.cache/tsconfig.test.tsbuildinfo"
   },
