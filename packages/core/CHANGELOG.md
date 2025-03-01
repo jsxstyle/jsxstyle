@@ -1,5 +1,11 @@
 # @jsxstyle/core
 
+## 3.0.2
+
+### Patch Changes
+
+- d669f414d126f9dc2b536855f5b7df084c2be0fb: Export `PseudoPrefixedProps` so it can be augmented
+
 ## 3.0.1
 
 ### Patch Changes
