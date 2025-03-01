@@ -1,5 +1,12 @@
 # @jsxstyle/preact
 
+## 3.0.2
+
+### Patch Changes
+
+- Updated dependencies:
+  - @jsxstyle/core@3.0.2
+
 ## 3.0.1
 
 ### Patch Changes
