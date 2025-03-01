@@ -19,9 +19,14 @@ export { getVariantSwitcher } from './getVariantSwitcher.js';
 
 export { getStyleCache };
 export type { StyleCache } from './getStyleCache.js';
-export type { CacheObject, EventHandlerKeys } from './types.js';
+export type {
+  CacheObject,
+  EventHandlerKeys,
+  PseudoPrefixedProps,
+  CSSProperties,
+  JsxstyleComponentStyleProps,
+} from './types.js';
 export type { CommonComponentProp } from './parseStyleProps.js';
-export type { CSSProperties, JsxstyleComponentStyleProps } from './types.js';
 export type {
   MakeCustomPropertiesFunction,
   BuiltCustomProperties,
