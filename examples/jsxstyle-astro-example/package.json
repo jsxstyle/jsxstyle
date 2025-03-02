@@ -20,13 +20,13 @@
     "@jsxstyle/preact": "workspace:*",
     "@jsxstyle/react": "workspace:*",
     "@jsxstyle/solid": "workspace:*",
-    "@playwright/test": "^1.49.0",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
+    "@playwright/test": "^1.50.1",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
     "astro": "^5.4.1",
-    "preact": "^10.25.4",
+    "preact": "^10.26.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "solid-js": "^1.9.4"
+    "solid-js": "^1.9.5"
   }
 }

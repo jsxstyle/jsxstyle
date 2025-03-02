@@ -31,15 +31,15 @@
   ],
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@changesets/cli": "^2.27.11",
-    "@changesets/types": "^6.0.0",
+    "@changesets/cli": "^2.28.1",
+    "@changesets/types": "^6.1.0",
     "@jsxstyle/internal": "workspace:*",
-    "@playwright/test": "^1.49.0",
-    "@types/node": "^22",
-    "jsdom": "^25.0.1",
-    "tsx": "^4.19.2",
-    "typescript": "^5.7.2",
-    "vitest": "^2.1.8"
+    "@playwright/test": "^1.50.1",
+    "@types/node": "^22.13.8",
+    "jsdom": "^26.0.0",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2",
+    "vitest": "^3.0.7"
   },
   "packageManager": "pnpm@10.5.2+sha512.da9dc28cd3ff40d0592188235ab25d3202add8a207afbedc682220e4a0029ffbff4562102b9e6e46b4e3f9e8bd53e6d05de48544b0c57d4b0179e22c76d1199b"
 }
