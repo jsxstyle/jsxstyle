@@ -18,7 +18,7 @@
   "dependencies": {
     "@jsxstyle/bundler-utils": "workspace:*",
     "@types/invariant": "^2.2.37",
-    "esbuild": "^0.24.2",
+    "esbuild": "^0.25.0",
     "invariant": "^2.2.4"
   },
   "peerDependencies": {

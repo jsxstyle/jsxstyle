@@ -6,6 +6,6 @@
   "dependencies": {
     "@jsxstyle/internal": "workspace:*",
     "superstruct": "^2.0.2",
-    "zx": "^8.2.4"
+    "zx": "^8.3.2"
   }
 }

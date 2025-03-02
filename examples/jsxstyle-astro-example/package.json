@@ -12,21 +12,21 @@
     "playwright": "playwright"
   },
   "dependencies": {
-    "@astrojs/preact": "^4.0.1",
-    "@astrojs/react": "^4.1.3",
-    "@astrojs/solid-js": "^5.0.1",
+    "@astrojs/preact": "^4.0.5",
+    "@astrojs/react": "^4.2.1",
+    "@astrojs/solid-js": "^5.0.5",
     "@jsxstyle/astro": "workspace:*",
     "@jsxstyle/core": "workspace:*",
     "@jsxstyle/preact": "workspace:*",
     "@jsxstyle/react": "workspace:*",
     "@jsxstyle/solid": "workspace:*",
-    "@playwright/test": "^1.49.0",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "astro": "^5.1.5",
-    "preact": "^10.25.4",
+    "@playwright/test": "^1.50.1",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "astro": "^5.4.1",
+    "preact": "^10.26.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "solid-js": "^1.9.4"
+    "solid-js": "^1.9.5"
   }
 }

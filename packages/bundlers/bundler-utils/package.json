@@ -23,10 +23,10 @@
     }
   },
   "dependencies": {
-    "@babel/generator": "^7.26.5",
-    "@babel/parser": "^7.26.5",
-    "@babel/traverse": "^7.26.5",
-    "@babel/types": "^7.26.5",
+    "@babel/generator": "^7.26.9",
+    "@babel/parser": "^7.26.9",
+    "@babel/traverse": "^7.26.9",
+    "@babel/types": "^7.26.9",
     "@jsxstyle/core": "workspace:*",
     "@types/babel__generator": "^7.6.8",
     "@types/babel__traverse": "^7.20.6",
@@ -35,9 +35,10 @@
     "memfs": "^4.17.0"
   },
   "devDependencies": {
-    "@babel/preset-env": "^7.26.0",
+    "@babel/preset-env": "^7.26.9",
     "@babel/preset-react": "^7.26.3",
-    "terser": "^5.37.0",
-    "webpack": "^5.97.1"
+    "prettier": "^3.5.2",
+    "terser": "^5.39.0",
+    "webpack": "^5.98.0"
   }
 }
