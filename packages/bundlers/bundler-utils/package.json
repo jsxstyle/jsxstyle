@@ -37,6 +37,7 @@
   "devDependencies": {
     "@babel/preset-env": "^7.26.9",
     "@babel/preset-react": "^7.26.3",
+    "prettier": "^3.5.2",
     "terser": "^5.39.0",
     "webpack": "^5.98.0"
   }

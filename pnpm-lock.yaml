@@ -294,6 +294,9 @@ importers:
       '@babel/preset-react':
         specifier: ^7.26.3
         version: 7.26.3(@babel/core@7.26.9)
+      prettier:
+        specifier: ^3.5.2
+        version: 3.5.2
       terser:
         specifier: ^5.39.0
         version: 5.39.0
@@ -3741,6 +3744,11 @@ packages:
   prettier@2.8.8:
     resolution: {integrity: sha512-tdN8qQGvNjw4CHbY+XXk0JgCXn9QiF21a55rBe5LJAU+kDyC4WQn4+awm2Xfk2lQMk5fKup9XgzTZtGkjBdP9Q==}
     engines: {node: '>=10.13.0'}
+    hasBin: true
+
+  prettier@3.5.2:
+    resolution: {integrity: sha512-lc6npv5PH7hVqozBR7lkBNOGXV9vMwROAPlumdBkX0wTbbzPu/U1hk5yL8p2pt4Xoc+2mkT8t/sow2YrV/M5qg==}
+    engines: {node: '>=14'}
     hasBin: true
 
   prismjs@1.29.0:
@@ -8586,6 +8594,8 @@ snapshots:
       which-pm: 3.0.1
 
   prettier@2.8.8: {}
+
+  prettier@3.5.2: {}
 
   prismjs@1.29.0: {}
 
