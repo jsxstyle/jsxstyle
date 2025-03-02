@@ -29,11 +29,6 @@
     "not IE 11",
     "maintained node versions"
   ],
-  "pnpm": {
-    "overrides": {
-      "@astrojs/preact>@preact/preset-vite": "^2.9.4"
-    }
-  },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@changesets/cli": "^2.27.11",
