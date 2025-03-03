@@ -1,5 +1,5 @@
 import type { Properties } from 'csstype';
-import type { ShorthandProps } from './parseStyleProps.js';
+import type { ShorthandProps } from './parseStyleProp.js';
 
 /**
  * Make all properties in `T` potentially `null` or `false`.
@@ -123,6 +123,13 @@ export interface PseudoPrefixedProps {
 
   selectionColor?: CSSProperties['color'];
   selectionBackgroundColor?: CSSProperties['backgroundColor'];
+}
+
+export interface MakeComponentCustomPropCSSProperties
+  extends CSSPropertiesWithoutAnimation,
+    PseudoPrefixedProps,
+    ShorthandProps {
+  animation?: CSSProperties['animation'] | JsxstyleAnimation;
 }
 
 /**
