@@ -48,7 +48,7 @@ const reducer: React.Reducer<TranspileResult, TranspileResult> = (
 };
 
 const Button: React.FC<
-  React.PropsWithChildren<JSX.IntrinsicElements['button']>
+  React.PropsWithChildren<React.JSX.IntrinsicElements['button']>
 > = (props) => {
   return (
     <Block

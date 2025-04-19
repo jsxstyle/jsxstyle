@@ -1,5 +1,8 @@
 packages:
-- "packages/**"
-- "examples/*"
-- "minisite"
-- "scripts"
+  - packages/**
+  - examples/*
+  - minisite
+  - scripts
+
+onlyBuiltDependencies:
+  - esbuild

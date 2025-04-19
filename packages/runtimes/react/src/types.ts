@@ -4,7 +4,7 @@ import type {
   JsxstyleComponentStyleProps,
 } from '@jsxstyle/core';
 
-export type IntrinsicElement = keyof JSX.IntrinsicElements;
+export type IntrinsicElement = keyof React.JSX.IntrinsicElements;
 
 export type ValidComponentPropValue =
   | IntrinsicElement
@@ -19,7 +19,7 @@ export type ValidComponentPropValue =
 // modified to add detection for empty interfaces
 export type ExtractProps<T extends ValidComponentPropValue> =
   T extends IntrinsicElement
-    ? JSX.IntrinsicElements[T]
+    ? React.JSX.IntrinsicElements[T]
     : T extends React.FunctionComponent<infer FCProps>
       ? keyof FCProps extends never
         ? never
