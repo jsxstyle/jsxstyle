@@ -1,5 +1,11 @@
 # jsxstyle
 
+## 3.0.3
+
+### Patch Changes
+
+- 06491d4b7780e432ed379772225e6cfc833b1b16: Migrate from `JSX.IntrinsicElements` to `React.JSX.IntrinsicElements` for React 19 compatibility
+
 ## 3.0.2
 
 ### Patch Changes
