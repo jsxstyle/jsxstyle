@@ -7,14 +7,26 @@
       "~/*": [
         "./src/*"
       ],
+      "@jsxstyle/core": [
+        "../../packages/core/src"
+      ],
       "@jsxstyle/react": [
         "../../packages/runtimes/react/src"
+      ],
+      "@jsxstyle/vite-plugin": [
+        "../../packages/bundlers/vite-plugin/src"
       ]
     }
   },
   "references": [
     {
+      "path": "../../packages/core"
+    },
+    {
       "path": "../../packages/runtimes/react"
+    },
+    {
+      "path": "../../packages/bundlers/vite-plugin"
     }
   ]
 }
