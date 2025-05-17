@@ -21,7 +21,10 @@
     "esbuild": "^0.25.0",
     "invariant": "^2.2.4"
   },
+  "devDependencies": {
+    "vite": "^6.3.5"
+  },
   "peerDependencies": {
-    "vite": "^6.0.3"
+    "vite": "^6.3.5"
   }
 }

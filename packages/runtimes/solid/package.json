@@ -14,8 +14,14 @@
   ],
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
+  "scripts": {
+    "build": "rslib build"
+  },
   "dependencies": {
     "@jsxstyle/core": "workspace:*"
+  },
+  "devDependencies": {
+    "solid-js": "^1.9.5"
   },
   "peerDependencies": {
     "solid-js": "^1.9.4"

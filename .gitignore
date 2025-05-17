@@ -7,6 +7,7 @@ lib
 .env.*
 .dev.vars
 .DS_Store
+.rslib
 
 *.log
 *.tsbuildinfo

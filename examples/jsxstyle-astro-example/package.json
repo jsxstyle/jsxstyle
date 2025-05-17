@@ -21,12 +21,12 @@
     "@jsxstyle/react": "workspace:*",
     "@jsxstyle/solid": "workspace:*",
     "@playwright/test": "^1.50.1",
-    "@types/react": "^19.1.2",
-    "@types/react-dom": "^19.1.2",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
     "astro": "^5.4.1",
     "preact": "^10.26.4",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "solid-js": "^1.9.5"
   }
 }

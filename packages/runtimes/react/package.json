@@ -14,6 +14,9 @@
   ],
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
+  "scripts": {
+    "build": "rslib build"
+  },
   "dependencies": {
     "@jsxstyle/core": "workspace:*"
   },
@@ -22,6 +25,8 @@
     "@rollup/plugin-node-resolve": "^16.0.0",
     "@rollup/plugin-replace": "^6.0.2",
     "@rollup/plugin-terser": "^0.4.4",
+    "@types/react": "^18.3.18",
+    "react": "^18.3.1",
     "rollup": "^4.34.9"
   },
   "peerDependencies": {

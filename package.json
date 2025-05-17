@@ -8,7 +8,7 @@
   "homepage": "https://github.com/jsxstyle/jsxstyle#readme",
   "scripts": {
     "start": "pnpm --filter=minisite dev",
-    "build": "pnpm clean:dist && tsc -b tsconfig.build.json --verbose",
+    "build": "pnpm clean:dist && pnpm -r --filter=\"{packages/**/*}\" build",
     "lint": "biome lint .",
     "lint:write": "biome lint --write .",
     "check": "biome check .",
@@ -35,8 +35,10 @@
     "@changesets/types": "^6.1.0",
     "@jsxstyle/internal": "workspace:*",
     "@playwright/test": "^1.50.1",
+    "@rslib/core": "^0.7.1",
     "@types/node": "^22.13.8",
     "jsdom": "^26.0.0",
+    "rsbuild-plugin-dts": "^0.7.1",
     "tsx": "^4.19.3",
     "typescript": "^5.8.2",
     "vitest": "^3.0.7"

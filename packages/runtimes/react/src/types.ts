@@ -3,6 +3,7 @@ import type {
   EventHandlerKeys,
   JsxstyleComponentStyleProps,
 } from '@jsxstyle/core';
+import type * as React from 'react';
 
 export type IntrinsicElement = keyof React.JSX.IntrinsicElements;
 

@@ -84,6 +84,7 @@ const compilerOptionsKeys = [
   'types',
   'rootDir',
   'outDir',
+  'declarationDir',
   'tsBuildInfoFile',
   'allowJs',
   'allowSyntheticDefaultImports',

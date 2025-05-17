@@ -14,8 +14,16 @@
   ],
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
+  "scripts": {
+    "build": "rslib build"
+  },
+  "dependencies": {
+    "@jsxstyle/core": "workspace:*"
+  },
+  "devDependencies": {
+    "preact": "^10.26.4"
+  },
   "peerDependencies": {
-    "@jsxstyle/core": "workspace:*",
     "preact": "^10.0.0"
   }
 }
