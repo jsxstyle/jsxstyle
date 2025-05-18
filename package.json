@@ -36,6 +36,7 @@
     "@jsxstyle/internal": "workspace:*",
     "@playwright/test": "^1.50.1",
     "@types/node": "^22.13.8",
+    "@vitejs/plugin-react": "^4.3.4",
     "jsdom": "^26.0.0",
     "tsx": "^4.19.3",
     "typescript": "^5.8.2",

@@ -40,12 +40,16 @@
   },
   "overrides": [
     {
-      "include": ["**/__tests__/*.spec.ts", "**/__tests__/*.spec.tsx"],
+      "include": [
+        "**/__tests__/*.spec.ts",
+        "**/__tests__/*.spec.tsx"
+      ],
       "linter": {
         "rules": {
           "style": {
             "useTemplate": "off",
-            "noUnusedTemplateLiteral": "off"
+            "noUnusedTemplateLiteral": "off",
+            "noNonNullAssertion": "off"
           }
         }
       }
