@@ -7,6 +7,7 @@ import { componentStyles } from '@jsxstyle/core';
 import type {
   CustomPropValuesObject,
   GetClassNameForKeyFn,
+  InsertRuleCallback,
 } from '@jsxstyle/core';
 import {
   type VariantMap,
@@ -62,7 +63,7 @@ export interface OptionsObject {
   logWarning: (str: string, ...args: any[]) => void;
   mediaQueriesByKey: Record<string, string>;
   noRuntime: boolean;
-  onInsertRule: (rule: string, key: string) => void;
+  onInsertRule: InsertRuleCallback;
 }
 
 declare module '@babel/traverse' {

@@ -1,5 +1,4 @@
 import * as t from '@babel/types';
-import { processProps } from '@jsxstyle/core';
 import invariant from 'invariant';
 import { generate } from './babelUtils.js';
 import { evaluateAttributes } from './evaluateAttributes.js';
@@ -49,27 +48,14 @@ export const handleCssFunction = (
 ): t.BinaryExpression | t.StringLiteral | t.CallExpression => {
   const {
     attemptEval,
-    classPropName,
     getClassNameForKey,
-    onInsertRule: insertRuleCallback,
+    onInsertRule,
     logWarning,
     logError,
     noRuntime,
   } = options;
 
   const logFn = noRuntime ? logError : logWarning;
-
-  const getClassNameNode = (props: Record<string, any>) => {
-    const processedProps = processProps(
-      props,
-      classPropName,
-      getClassNameForKey,
-      insertRuleCallback
-    );
-    const className = processedProps?.[classPropName];
-    if (typeof className !== 'string') return null;
-    return t.stringLiteral(className);
-  };
 
   // expressions that must stay as css function params
   const unextractables: t.CallExpression['arguments'] = [];
@@ -128,8 +114,9 @@ export const handleCssFunction = (
       );
 
       const classNameExpression = convertStyleObjectToClassNameNode(
-        getClassNameNode,
-        styleObj
+        styleObj,
+        getClassNameForKey,
+        onInsertRule
       );
 
       extractedClassNames.push(classNameExpression);

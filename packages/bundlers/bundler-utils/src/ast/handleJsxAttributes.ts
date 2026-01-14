@@ -1,5 +1,4 @@
 import * as t from '@babel/types';
-import { processProps } from '@jsxstyle/core';
 import { generate } from './babelUtils.js';
 import { evaluateAttributes } from './evaluateAttributes.js';
 import type { OptionsObject } from './extractStyles.js';
@@ -26,7 +25,7 @@ export const handleJsxElement = (
     attemptEval,
     classPropName,
     getClassNameForKey,
-    onInsertRule: insertRuleCallback,
+    onInsertRule,
     noRuntime,
     logWarning,
     logError,
@@ -82,21 +81,10 @@ export const handleJsxElement = (
     componentProps.delete('props');
   }
 
-  const getClassNameNode = (props: Record<string, any>) => {
-    const processedProps = processProps(
-      props,
-      classPropName,
-      getClassNameForKey,
-      insertRuleCallback
-    );
-    const className = processedProps?.[classPropName];
-    if (typeof className !== 'string') return null;
-    return t.stringLiteral(className);
-  };
-
   const classNameExpression = convertStyleObjectToClassNameNode(
-    getClassNameNode,
-    styleObj
+    styleObj,
+    getClassNameForKey,
+    onInsertRule
   );
 
   const processedAttributes: Array<t.JSXAttribute | t.JSXSpreadAttribute> =

@@ -11,11 +11,21 @@ export { createClassNameGetter } from './createClassNameGetter.js';
 export { dangerousStyleValue } from './dangerousStyleValue.js';
 export { hyphenateStyleName } from './hyphenateStyleName.js';
 export { isObject } from './typePredicates.js';
+export { parseStyleProps } from './parseStyleProps.js';
 export { processProps, type GetClassNameForKeyFn } from './processProps.js';
 export { stringHash } from './stringHash.js';
 export { generateCustomPropertiesFromVariants } from './generateCustomPropertiesFromVariants.js';
 export { createRequestStyleCache } from './createRequestStyleCache.js';
 export { getVariantSwitcher } from './getVariantSwitcher.js';
+export {
+  makeGetPropsFunction,
+  makeVariant,
+} from './getMakeComponent.js';
+export type {
+  CustomProp,
+  CustomPropMap,
+  GetPropsForVariantMap,
+} from './getMakeComponent.js';
 
 export { getStyleCache };
 export type { StyleCache } from './getStyleCache.js';
@@ -25,8 +35,9 @@ export type {
   PseudoPrefixedProps,
   CSSProperties,
   JsxstyleComponentStyleProps,
+  MakeComponentCustomPropCSSProperties,
 } from './types.js';
-export type { CommonComponentProp } from './parseStyleProps.js';
+export type { CommonComponentProp } from './parseStyleProp.js';
 export type {
   MakeCustomPropertiesFunction,
   BuiltCustomProperties,
