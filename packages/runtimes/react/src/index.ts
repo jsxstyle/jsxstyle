@@ -3,14 +3,22 @@ import { componentFactory } from './componentFactory.js';
 export type {
   CSSProperties,
   JsxstyleComponentStyleProps,
+  RequestStyleCacheOptions,
 } from '@jsxstyle/core';
 export {
   cacheSingleton as cache,
+  createRequestStyleCache,
   css,
   makeCustomProperties,
+  RequestStyleCache,
 } from '@jsxstyle/core';
 export type { StylableComponentProps } from './types.js';
 export { useMatchMedia } from './useMatchMedia.js';
+export {
+  JsxstyleCacheProvider,
+  type JsxstyleCache,
+  type JsxstyleCacheProviderProps,
+} from './JsxstyleCacheProvider.js';
 
 export const Box = /*#__PURE__*/ componentFactory('Box');
 export const Block = /*#__PURE__*/ componentFactory('Block');

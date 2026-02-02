@@ -1,10 +1,10 @@
 /** @vitest-environment jsdom */
 /// <reference lib="dom" />
 
-import { getStyleCache } from '../getStyleCache';
+import { StyleCache } from '../getStyleCache';
 import { getCustomPropertiesFunction } from '../makeCustomProperties';
 
-const cache = getStyleCache();
+const cache = new StyleCache();
 const makeCustomProperties = getCustomPropertiesFunction(cache);
 
 const getStyleSheetContents = () => {

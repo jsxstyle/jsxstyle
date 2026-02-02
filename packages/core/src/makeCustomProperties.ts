@@ -76,7 +76,9 @@ const makeCustomPropertiesInternal = <
     const { customProperties, styles, variants, variantNames } =
       generateCustomPropertiesFromVariants(variantMap, buildOptions);
 
-    styles.forEach(cache.insertRule);
+    for (const rule of styles) {
+      cache.insertRule(rule);
+    }
 
     return {
       ...customProperties,

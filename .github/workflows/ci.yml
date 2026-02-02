@@ -7,14 +7,24 @@ on:
         required: true
 
   pull_request:
-    paths-ignore:
-      - '.changeset/**'
 
   schedule:
     # run every day at midnight UTC
     - cron: '0 0 * * *'
 
 jobs:
+  check-changesets:
+    name: Check for changesets
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' && github.head_ref != 'changeset-release/main'
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - run: npx @changesets/cli status --since=origin/main
+
   run-vitest:
     name: Run vitest tests
     runs-on: ubuntu-latest

@@ -1,4 +1,5 @@
-import { createRequestStyleCache } from '@jsxstyle/core';
+import integrationOptions from 'virtual:jsxstyle/config';
+import { RequestStyleCache } from '@jsxstyle/core';
 import type { MiddlewareHandler } from 'astro';
 
 export const onRequest: MiddlewareHandler = async (context, next) => {
@@ -6,10 +7,10 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
   // use deterministic class names to avoid style conflicts
   const classNameStyle = context.url.pathname.startsWith('/_server-islands/')
     ? 'deterministic'
-    : 'short';
+    : integrationOptions.classNameStyle;
 
-  context.locals.jsxstyleCache = createRequestStyleCache({
-    classNamePropKey: 'class',
+  context.locals.jsxstyleCache = new RequestStyleCache({
+    ...integrationOptions,
     classNameStyle,
   });
 

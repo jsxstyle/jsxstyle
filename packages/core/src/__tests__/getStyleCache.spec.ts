@@ -1,9 +1,9 @@
-import { getStyleCache } from '../getStyleCache';
+import { StyleCache } from '../getStyleCache';
 import { kitchenSink } from './kitchenSink';
 
-describe('getStyleCache', () => {
+describe('StyleCache', () => {
   it('combines class names if `className` prop is present', () => {
-    const styleCache = getStyleCache();
+    const styleCache = new StyleCache();
     const props = styleCache.getComponentProps(
       {
         display: 'inline',
@@ -16,13 +16,13 @@ describe('getStyleCache', () => {
   });
 
   it('generates deterministic class names', () => {
-    const styleCache = getStyleCache();
+    const styleCache = new StyleCache();
     const props = styleCache.getComponentProps({ wow: 'cool' }, 'className');
     expect(props?.className).toMatchInlineSnapshot(`"_1b8zaqn"`);
   });
 
   it('generates a stable classname hash for the specified style object', () => {
-    const styleCache = getStyleCache();
+    const styleCache = new StyleCache();
     const props = styleCache.getComponentProps(
       {
         color: 'red',
@@ -37,7 +37,7 @@ describe('getStyleCache', () => {
   });
 
   it('returns an object of known component props when given an object containing only those props', () => {
-    const styleCache = getStyleCache();
+    const styleCache = new StyleCache();
     const insertedRules: string[] = [];
     styleCache.injectOptions({
       onInsertRule(css) {
@@ -59,7 +59,7 @@ describe('getStyleCache', () => {
   });
 
   it('returns a props object with a className when styles and allowed props are present', () => {
-    const styleCache = getStyleCache();
+    const styleCache = new StyleCache();
     const insertedRules: string[] = [];
     styleCache.injectOptions({
       onInsertRule(css) {
@@ -93,7 +93,7 @@ describe('getStyleCache', () => {
   });
 
   it('works with addRule injection', () => {
-    const styleCache = getStyleCache();
+    const styleCache = new StyleCache();
     const insertedRules: string[] = [];
     styleCache.injectOptions({
       onInsertRule(css) {
@@ -124,7 +124,7 @@ describe('getStyleCache', () => {
   });
 
   it('works with classname strategy injection', () => {
-    const styleCache = getStyleCache();
+    const styleCache = new StyleCache();
     let idx = -1;
     styleCache.injectOptions({ getClassName: () => 'jsxstyle' + ++idx });
 
@@ -145,7 +145,7 @@ describe('getStyleCache', () => {
 
   it('resets', () => {
     let idx = -1;
-    const styleCache = getStyleCache({
+    const styleCache = new StyleCache({
       getClassName: () => 'jsxstyle' + ++idx,
     });
 
@@ -162,7 +162,7 @@ describe('getStyleCache', () => {
   });
 
   it('throws an errors when injections are added incorrectly', () => {
-    const styleCache = getStyleCache();
+    const styleCache = new StyleCache();
 
     expect(() => styleCache.injectOptions({})).not.toThrow();
 
@@ -170,7 +170,7 @@ describe('getStyleCache', () => {
     expect(() =>
       styleCache.injectOptions({})
     ).toThrowErrorMatchingInlineSnapshot(
-      `[Error: jsxstyle error: \`injectOptions\` should be called once and only once.]`
+      `[Error: jsxstyle error: \`injectOptions\` must be called once, before any jsxstyle components mount.]`
     );
 
     styleCache.getComponentProps({ a: 1 }, 'className');
@@ -179,13 +179,13 @@ describe('getStyleCache', () => {
     expect(() =>
       styleCache.injectOptions({})
     ).toThrowErrorMatchingInlineSnapshot(
-      `[Error: jsxstyle error: \`injectOptions\` must be called before any jsxstyle components mount.]`
+      `[Error: jsxstyle error: \`injectOptions\` must be called once, before any jsxstyle components mount.]`
     );
   });
 
   describe('run', () => {
     it('works with synchronous callbacks', async () => {
-      const styleCache = getStyleCache();
+      const styleCache = new StyleCache();
 
       await expect(
         styleCache.run(() => {
@@ -221,7 +221,7 @@ describe('getStyleCache', () => {
     });
 
     it('works with asynchronous callbacks', async () => {
-      const styleCache = getStyleCache();
+      const styleCache = new StyleCache();
 
       await expect(
         styleCache.run(() => {
@@ -257,7 +257,7 @@ describe('getStyleCache', () => {
     });
 
     it('allows class names to be customised', async () => {
-      const styleCache = getStyleCache();
+      const styleCache = new StyleCache();
       let index = 0;
 
       await expect(

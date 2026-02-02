@@ -16,7 +16,7 @@ it(`has a runtime size of less than ${ACCEPTABLE_NUMBER_OF_KILOBYTES}KB`, async 
   expect.assertions(4);
 
   const inputOptions: RollupOptions = {
-    external: ['react', 'preact'],
+    external: (id) => /^(react|preact)(\/|$)/.test(id),
     input: entry,
     plugins: [
       rollupNodeResolve({
@@ -39,7 +39,7 @@ it(`has a runtime size of less than ${ACCEPTABLE_NUMBER_OF_KILOBYTES}KB`, async 
         },
         load(id) {
           if (id === entry) {
-            return "export * from '@jsxstyle/react';\n";
+            return "export { Box, Row, Col, Grid, css, JsxstyleCacheProvider } from '@jsxstyle/react';\n";
           }
           return;
         },

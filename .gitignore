@@ -13,3 +13,4 @@ lib
 
 /examples/jsxstyle-astro-example/playwright-report
 /examples/jsxstyle-astro-example/test-results
+.claude/settings.local.json

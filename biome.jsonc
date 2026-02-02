@@ -45,7 +45,8 @@
         "rules": {
           "style": {
             "useTemplate": "off",
-            "noUnusedTemplateLiteral": "off"
+            "noUnusedTemplateLiteral": "off",
+            "noNonNullAssertion": "off"
           }
         }
       }

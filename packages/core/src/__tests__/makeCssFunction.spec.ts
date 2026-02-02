@@ -1,10 +1,9 @@
-import { getStyleCache } from '../getStyleCache';
+import { StyleCache } from '../getStyleCache';
 import { makeCssFunction } from '../makeCssFunction';
 
 const getCssFunction = () => {
   const insertedCss: string[] = [];
-  const styleCache = getStyleCache();
-  styleCache.injectOptions({
+  const styleCache = new StyleCache({
     onInsertRule(rule) {
       insertedCss.push(rule);
     },
