@@ -6,6 +6,7 @@ exports[`npm publish > '@jsxstyle/astro' only publishes the intended files 1`] =
 ===============
 - package.json
 - src/astro.d.ts
+- src/augment-types.d.ts
 - src/components/Box.astro
 - src/components/Col.astro
 - src/components/Grid.astro
@@ -254,6 +255,10 @@ exports[`npm publish > '@jsxstyle/react' only publishes the intended files 1`] =
 "
 @jsxstyle/react
 ===============
+- lib/JsxstyleCacheProvider.d.ts
+- lib/JsxstyleCacheProvider.d.ts.map
+- lib/JsxstyleCacheProvider.js
+- lib/JsxstyleCacheProvider.js.map
 - lib/componentFactory.d.ts
 - lib/componentFactory.d.ts.map
 - lib/componentFactory.js

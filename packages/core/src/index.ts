@@ -1,4 +1,4 @@
-import { getStyleCache } from './getStyleCache.js';
+import { StyleCache } from './getStyleCache.js';
 import { makeCssFunction } from './makeCssFunction.js';
 import { getCustomPropertiesFunction } from './makeCustomProperties.js';
 
@@ -14,11 +14,13 @@ export { isObject } from './typePredicates.js';
 export { processProps, type GetClassNameForKeyFn } from './processProps.js';
 export { stringHash } from './stringHash.js';
 export { generateCustomPropertiesFromVariants } from './generateCustomPropertiesFromVariants.js';
-export { createRequestStyleCache } from './createRequestStyleCache.js';
+export {
+  createRequestStyleCache,
+  RequestStyleCache,
+} from './createRequestStyleCache.js';
 export { getVariantSwitcher } from './getVariantSwitcher.js';
-
-export { getStyleCache };
-export type { StyleCache } from './getStyleCache.js';
+export { StyleCache, getStyleCache } from './getStyleCache.js';
+export type { StyleCacheOptions } from './getStyleCache.js';
 export type {
   CacheObject,
   EventHandlerKeys,
@@ -39,9 +41,9 @@ export type {
   GetCustomProperties,
 } from './generateCustomPropertiesFromVariants.js';
 export type { InsertRuleCallback } from './processProps.js';
-export type { RequestStyleCache } from './createRequestStyleCache.js';
+export type { RequestStyleCacheOptions } from './createRequestStyleCache.js';
 
-export const cacheSingleton = /*#__PURE__*/ getStyleCache();
+export const cacheSingleton = /*#__PURE__*/ new StyleCache();
 export const makeCustomProperties =
   /*#__PURE__*/ getCustomPropertiesFunction(cacheSingleton);
 

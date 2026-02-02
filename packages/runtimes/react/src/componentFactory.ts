@@ -1,9 +1,8 @@
-import {
-  type JsxstyleComponentName,
-  cacheSingleton,
-  componentStyles,
-} from '@jsxstyle/core';
-import { createElement } from 'react';
+'use client';
+
+import { type JsxstyleComponentName, componentStyles } from '@jsxstyle/core';
+import { createElement, useContext } from 'react';
+import { JsxstyleCacheContext } from './JsxstyleCacheProvider.js';
 import type { JsxstyleProps, ValidComponentPropValue } from './types.js';
 
 const classNamePropKey = 'className';
@@ -20,9 +19,10 @@ export function componentFactory<T extends JsxstyleComponentName>(
     [displayName]: <T extends ValidComponentPropValue = 'div'>(
       props: JsxstyleProps<T>
     ): React.ReactElement => {
+      const cache = useContext(JsxstyleCacheContext);
       const mergedProps = { ...defaultProps, ...props };
       const Component: any = mergedProps.component || tagName;
-      const extractedProps = cacheSingleton.getComponentProps(
+      const extractedProps = cache.getComponentProps(
         mergedProps,
         classNamePropKey
       );

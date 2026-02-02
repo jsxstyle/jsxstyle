@@ -10,7 +10,7 @@ const __dirname = new URL('.', import.meta.url).pathname;
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [react(), jsxstyle()],
+  integrations: [react(), jsxstyle({ classNamePrefix: '_j' })],
 
   build: {
     assets: '-',

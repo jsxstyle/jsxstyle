@@ -459,12 +459,6 @@ importers:
       '@jsxstyle/core':
         specifier: workspace:*
         version: link:../../core
-      '@types/react':
-        specifier: ^18.0.0 || ^19.0.0
-        version: 19.1.2
-      react:
-        specifier: ^18.0.0 || ^19.0.0
-        version: 19.1.0
     devDependencies:
       '@jsxstyle/react':
         specifier: workspace:*
@@ -478,6 +472,18 @@ importers:
       '@rollup/plugin-terser':
         specifier: ^0.4.4
         version: 0.4.4(rollup@4.34.9)
+      '@types/react':
+        specifier: ^19.0.0
+        version: 19.1.2
+      '@types/react-dom':
+        specifier: ^19.0.0
+        version: 19.1.2(@types/react@19.1.2)
+      react:
+        specifier: ^19.0.0
+        version: 19.1.0
+      react-dom:
+        specifier: ^19.0.0
+        version: 19.1.0(react@19.1.0)
       rollup:
         specifier: ^4.34.9
         version: 4.34.9
