@@ -2,6 +2,11 @@
   "name": "@jsxstyle/webpack-plugin",
   "version": "3.0.3",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jsxstyle/jsxstyle",
+    "directory": "packages/bundlers/webpack-plugin"
+  },
   "keywords": [
     "jsxstyle",
     "css-in-js",

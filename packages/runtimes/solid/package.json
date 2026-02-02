@@ -2,6 +2,11 @@
   "name": "@jsxstyle/solid",
   "version": "1.0.2",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jsxstyle/jsxstyle",
+    "directory": "packages/runtimes/solid"
+  },
   "keywords": [
     "jsxstyle",
     "css-in-js",
