@@ -22,6 +22,9 @@ jobs:
       contents: write
       pull-requests: write
 
+    env:
+      IS_CANARY: ${{ github.event_name == 'push' && !startsWith(github.event.head_commit.message, 'Bump versions') }}
+
     steps:
       - uses: actions/checkout@v6
         with:
@@ -39,8 +42,19 @@ jobs:
       - run: pnpm install
       - run: pnpm build
 
+      - name: Publish canary release
+        if: ${{ env.IS_CANARY == 'true' }}
+        run: |
+          pnpm version:canary
+          pnpm release:canary
+        env:
+          NPM_CONFIG_PROVENANCE: true
+
+      - name: Reset working directory
+        if: ${{ env.IS_CANARY == 'true' }}
+        run: git checkout .
+
       - name: Create release PR or publish to npm
-        id: changesets
         uses: changesets/action@v1
         with:
           commit: Bump versions
@@ -48,12 +62,4 @@ jobs:
           publish: pnpm release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_CONFIG_PROVENANCE: true
-
-      - name: Publish canary release
-        if: ${{ steps.changesets.outputs.published != 'true' && github.event_name == 'push' }}
-        run: |
-          pnpm version:canary
-          pnpm release:canary
-        env:
           NPM_CONFIG_PROVENANCE: true
