@@ -19,7 +19,7 @@ jobs:
     if: github.event_name == 'pull_request' && github.head_ref != 'changeset-release/main'
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -30,16 +30,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 1
 
       - uses: pnpm/action-setup@v4
 
-      - name: Use Node 22
-        uses: actions/setup-node@v4
+      - name: Use Node
+        uses: actions/setup-node@v6
         with:
-          node-version: 22.x
+          node-version-file: '.tool-versions'
           cache: pnpm
 
       - run: pnpm install
@@ -50,16 +50,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 1
 
       - uses: pnpm/action-setup@v4
 
-      - name: Use Node 22
-        uses: actions/setup-node@v4
+      - name: Use Node
+        uses: actions/setup-node@v6
         with:
-          node-version: 22.x
+          node-version-file: '.tool-versions'
           cache: pnpm
 
       - run: pnpm install
