@@ -1,5 +1,16 @@
 # jsxstyle
 
+## 3.1.0
+
+### Minor Changes
+
+- ebf0156e50aa0e886d5b0aac6c417b26239c3c6c: Add proper concurrent rendering support
+
+### Patch Changes
+
+- Updated dependencies:
+  - @jsxstyle/core@3.1.0
+
 ## 3.0.3
 
 ### Patch Changes

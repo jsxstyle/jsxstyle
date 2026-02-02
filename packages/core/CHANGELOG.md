@@ -1,5 +1,11 @@
 # @jsxstyle/core
 
+## 3.1.0
+
+### Minor Changes
+
+- ebf0156e50aa0e886d5b0aac6c417b26239c3c6c: Refactor `createRequestStyleCache` into a new class, `RequestStyleCache`, and then deprecate the function
+
 ## 3.0.2
 
 ### Patch Changes

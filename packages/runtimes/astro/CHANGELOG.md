@@ -1,5 +1,16 @@
 # @jsxstyle/astro
 
+## 1.1.0
+
+### Minor Changes
+
+- ebf0156e50aa0e886d5b0aac6c417b26239c3c6c: Allow jsxstyle cache to be configured via options passed to the integration
+
+### Patch Changes
+
+- Updated dependencies:
+  - @jsxstyle/core@3.1.0
+
 ## 1.0.2
 
 ### Patch Changes
