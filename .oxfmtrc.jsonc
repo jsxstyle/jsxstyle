@@ -7,7 +7,16 @@
   // we want exactly `JSON.stringify(x, null, 2)` output (how pnpm and our
   // syncConfigs script write package.json/tsconfig.json), and oxfmt's
   // prettier-style JSON collapses short arrays onto one line, which differs.
-  "ignorePatterns": ["**/*.json"],
+  "ignorePatterns": [
+    "**/*.json",
+    // Cargo manifests are owned by cargo/rustfmt conventions, not a JS formatter.
+    "**/*.toml",
+    // Reformatting SWC test fixtures would break the Rust snapshot tests;
+    // napi index.js/.d.ts are generated.
+    "crates/**/tests/fixture/**",
+    "crates/jsxstyle-swc-napi/index.js",
+    "crates/jsxstyle-swc-napi/index.d.ts",
+  ],
   "overrides": [
     {
       // YAML conventionally uses double quotes (also applies to the YAML

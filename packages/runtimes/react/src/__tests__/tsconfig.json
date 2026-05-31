@@ -5,7 +5,7 @@
   ],
   "compilerOptions": {
     "rootDir": "typescript",
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "noEmit": true
   }
 }

@@ -9,6 +9,17 @@ export {
 } from './componentStyles.js';
 export { createClassNameGetter } from './createClassNameGetter.js';
 export { dangerousStyleValue } from './dangerousStyleValue.js';
+export {
+  commonComponentProps,
+  doubleSpecificityPrefixes,
+  jsxstyleSources,
+  nonComponentImports,
+  pseudoClasses,
+  pseudoElements,
+  shorthandExpansions,
+  skippedProps,
+  unitlessNumbers,
+} from './sharedConstants.js';
 export { hyphenateStyleName } from './hyphenateStyleName.js';
 export { isObject } from './typePredicates.js';
 export { processProps, type GetClassNameForKeyFn } from './processProps.js';

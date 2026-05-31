@@ -1,0 +1,19 @@
+{
+  "extends": "@jsxstyle/internal/tsconfig.esm.json",
+  "compilerOptions": {
+    "skipLibCheck": true,
+    "types": [
+      "node"
+    ],
+    "paths": {
+      "@jsxstyle/bundler-utils": [
+        "../bundler-utils/src"
+      ]
+    }
+  },
+  "references": [
+    {
+      "path": "../bundler-utils"
+    }
+  ]
+}

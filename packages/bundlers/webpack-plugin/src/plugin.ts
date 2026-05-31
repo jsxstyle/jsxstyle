@@ -1,36 +1,30 @@
 import fs from 'node:fs';
-import { createClassNameGetter } from '@jsxstyle/core';
+import { createRequire } from 'node:module';
 import { Volume } from 'memfs';
 // @ts-expect-error this export is not exposed in the `compiler.webpack` object
 import NodeWatchFileSystem from 'webpack/lib/node/NodeWatchFileSystem.js';
 
-import { createRequire } from 'node:module';
-import { ModuleCache } from '@jsxstyle/bundler-utils';
-import { wrapFileSystem } from '@jsxstyle/bundler-utils';
-import invariant from 'invariant';
+import { validateOptions, wrapFileSystem } from '@jsxstyle/bundler-utils';
 import type { JsxstyleWebpackPluginOptions, PluginContext } from './types.js';
 
 // TODO(meyer) replace this with `import.meta.resolve` (node 20+) some time after node 18 is no longer LTS
 const customRequire = createRequire(import.meta.url);
 
-type Compilation = import('webpack').Compilation;
 type Compiler = import('webpack').Compiler;
 type WebpackPluginInstance = import('webpack').WebpackPluginInstance;
 
 const pluginName = 'JsxstyleWebpackPlugin';
-const childCompilerName = `${pluginName} compiled modules`;
 
 export class JsxstyleWebpackPlugin implements WebpackPluginInstance {
   constructor({
     cacheFile,
-    classNameFormat,
-    staticModules,
     cacheObject = {},
-    ...loaderOptions
+    ...pluginOptions
   }: JsxstyleWebpackPluginOptions = {}) {
-    const getClassNameForKey = createClassNameGetter(
-      cacheObject,
-      classNameFormat
+    // Validate shared plugin options (extensions, classNameStrategy, etc.)
+    validateOptions(
+      'jsxstyle-webpack-plugin',
+      pluginOptions as Record<string, unknown>
     );
 
     if (typeof cacheFile === 'string') {
@@ -40,21 +34,22 @@ export class JsxstyleWebpackPlugin implements WebpackPluginInstance {
           flag: 'r',
         });
 
-        // create mapping of unique CSS strings to class names
+        // Populate cacheObject from existing cache file
         const lines = new Set<string>(cacheFileContents.trim().split('\n'));
         for (const line of lines) {
           const trimmedLine = line.trim();
           if (trimmedLine) {
-            // add each line of CSS to the cache
-            getClassNameForKey(trimmedLine);
+            // Pre-populate cache: use the line as both key and placeholder value.
+            // The Rust transform will use this cache for consistent class names.
+            cacheObject[trimmedLine] = cacheObject[trimmedLine] || '';
           }
         }
-      } catch (err) {
-        invariant(
-          err.code !== 'EISDIR',
-          'Value of cacheFile (`%s`) is a directory',
-          cacheFile
-        );
+      } catch (err: any) {
+        if (err.code === 'EISDIR') {
+          throw new Error(
+            `Value of cacheFile (\`${cacheFile}\`) is a directory`
+          );
+        }
       }
 
       this.donePlugin = (): void => {
@@ -63,28 +58,19 @@ export class JsxstyleWebpackPlugin implements WebpackPluginInstance {
           const cacheString =
             Object.keys(cacheObject).filter(Boolean).join('\n') + '\n';
           fs.writeFileSync(cacheFile, cacheString, 'utf8');
-        } catch (err) {
+        } catch {
           console.error('Could not write cache file to `%s`', cacheFile);
         }
       };
     }
 
-    if (Array.isArray(staticModules)) {
-      this.entrypointCache = new ModuleCache(staticModules);
-    }
-
-    const getModules =
-      this.entrypointCache?.getModules ||
-      (() => Promise.resolve<Record<string, unknown>>({}));
-
     this.memoryFS = new Volume();
 
-    // context object that gets passed to each loader.
-    // available in each loader as this[Symbol.for('jsxstyle-webpack-plugin')]
+    // Context object that gets passed to each loader.
+    // Available in each loader as this[Symbol.for('jsxstyle-webpack-plugin')]
     this.ctx = {
-      getClassNameForKey,
-      getModules,
-      defaultLoaderOptions: loaderOptions,
+      pluginOptions: { ...pluginOptions, cacheFile },
+      cacheObject,
       memoryFS: this.memoryFS,
     };
   }
@@ -95,7 +81,6 @@ export class JsxstyleWebpackPlugin implements WebpackPluginInstance {
 
   private ctx: PluginContext;
   private memoryFS = new Volume();
-  private entrypointCache?: ModuleCache;
 
   private nmlPlugin = (loaderContext: any): void => {
     loaderContext[Symbol.for('jsxstyle-webpack-plugin')] = this.ctx;
@@ -104,98 +89,15 @@ export class JsxstyleWebpackPlugin implements WebpackPluginInstance {
   /** conditionally set based on whether or not we have a `cacheFile` */
   private donePlugin: (() => void) | null = null;
 
-  private makePlugin =
-    (compiler: Compiler, moduleCache: ModuleCache) =>
-    (compilation: Compilation): Promise<void> => {
-      return new Promise((resolve, reject) => {
-        const resultObject: Record<string, string> = {};
-
-        const childCompiler = compilation.createChildCompiler(
-          childCompilerName,
-          {
-            filename: '[name]',
-            library: {
-              type: 'commonjs2',
-            },
-            scriptType: 'text/javascript',
-            iife: true,
-          },
-          [
-            new compiler.webpack.node.NodeTargetPlugin(),
-            new compiler.webpack.node.NodeTemplatePlugin(),
-            new compiler.webpack.LoaderTargetPlugin('node'),
-            new compiler.webpack.library.EnableLibraryPlugin('commonjs2'),
-          ]
-        );
-
-        // these two options don't appear to be respected
-        childCompiler.options.mode = 'production';
-        childCompiler.options.devtool = false;
-
-        childCompiler.context = compiler.context;
-        childCompiler.options.output.library = { type: 'commonjs2' };
-
-        for (const [modulePath, metadata] of Object.entries(
-          moduleCache.entrypoints
-        )) {
-          new compiler.webpack.EntryPlugin(
-            compiler.context,
-            modulePath,
-            metadata.key
-          ).apply(childCompiler);
-        }
-
-        // delete all emitted chunks
-        childCompiler.hooks.thisCompilation.tap(pluginName, (compilation) => {
-          compilation.hooks.processAssets.tap(
-            {
-              name: pluginName,
-              stage:
-                compiler.webpack.Compilation.PROCESS_ASSETS_STAGE_ADDITIONS,
-            },
-            (assets) => {
-              for (const [key, asset] of Object.entries(assets)) {
-                resultObject[key] = asset.source().toString();
-                compilation.deleteAsset(key);
-              }
-            }
-          );
-        });
-
-        childCompiler.hooks.normalModuleFactory.tap(
-          pluginName,
-          (normalModuleFactory) => {
-            normalModuleFactory.hooks.afterResolve.tap(
-              pluginName,
-              (resolveData) => {
-                resolveData.createData.loaders =
-                  resolveData.createData.loaders?.filter(
-                    (loaderObj) =>
-                      loaderObj.loader !== JsxstyleWebpackPlugin.loader
-                  );
-              }
-            );
-          }
-        );
-
-        childCompiler.hooks.beforeCompile.tap(pluginName, () => {
-          moduleCache.reset();
-        });
-
-        childCompiler.runAsChild((err) => {
-          if (err) {
-            compilation.errors.push(err as any);
-            moduleCache.reject(err);
-            reject(err);
-          } else {
-            moduleCache.setModules(resultObject);
-            resolve();
-          }
-        });
-      });
-    };
-
   public apply(compiler: Compiler): void {
+    // Default debugClassNames to true in development mode
+    if (this.ctx.pluginOptions.debugClassNames === undefined) {
+      this.ctx.pluginOptions = {
+        ...this.ctx.pluginOptions,
+        debugClassNames: compiler.options.mode === 'development',
+      };
+    }
+
     const environmentPlugin = (): void => {
       if (!compiler.inputFileSystem) {
         throw new Error(
@@ -217,13 +119,6 @@ export class JsxstyleWebpackPlugin implements WebpackPluginInstance {
 
     if (this.donePlugin) {
       compiler.hooks.done.tap(pluginName, this.donePlugin);
-    }
-
-    if (this.entrypointCache) {
-      compiler.hooks.make.tapPromise(
-        pluginName,
-        this.makePlugin(compiler, this.entrypointCache)
-      );
     }
   }
 }

@@ -4,9 +4,9 @@
 
 /** @type {ChangelogFunctions['getReleaseLine']} */
 const getReleaseLine = async (
-  { summary, commit, id, releases },
-  versionType,
-  changelogOpts
+  { summary, commit },
+  _versionType,
+  _changelogOpts
 ) => {
   const lines = summary
     .trim()
@@ -35,9 +35,9 @@ const getReleaseLine = async (
 
 /** @type {ChangelogFunctions['getDependencyReleaseLine']} */
 const getDependencyReleaseLine = async (
-  changesets,
+  _changesets,
   dependenciesUpdated,
-  changelogOpts
+  _changelogOpts
 ) => {
   if (dependenciesUpdated.length === 0) return '';
 

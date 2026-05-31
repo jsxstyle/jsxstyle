@@ -1,6 +1,6 @@
 {
   "name": "@jsxstyle/vite-plugin",
-  "version": "1.0.3",
+  "version": "2.0.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -21,12 +21,9 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "dependencies": {
-    "@jsxstyle/bundler-utils": "workspace:*",
-    "@types/invariant": "^2.2.37",
-    "esbuild": "^0.25.0",
-    "invariant": "^2.2.4"
+    "@jsxstyle/bundler-utils": "workspace:*"
   },
   "peerDependencies": {
-    "vite": "^6.0.3"
+    "vite": ">= 6 <= 7"
   }
 }

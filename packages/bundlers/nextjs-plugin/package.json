@@ -1,6 +1,6 @@
 {
   "name": "@jsxstyle/nextjs-plugin",
-  "version": "1.0.3",
+  "version": "2.0.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -12,7 +12,8 @@
     "css-in-js",
     "nextjs",
     "plugin",
-    "webpack"
+    "webpack",
+    "turbopack"
   ],
   "files": [
     "lib",
@@ -20,14 +21,34 @@
   ],
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "import": "./lib/index.js"
+    },
+    "./webpack-loader": {
+      "types": "./lib/webpack-loader.d.ts",
+      "import": "./lib/webpack-loader.js",
+      "require": "./lib/webpack-loader.js"
+    },
+    "./turbopack-loader": {
+      "types": "./lib/turbopack-loader.d.ts",
+      "import": "./lib/turbopack-loader.js",
+      "require": "./lib/turbopack-loader.js"
+    }
+  },
   "dependencies": {
-    "@jsxstyle/core": "workspace:*",
-    "@jsxstyle/webpack-plugin": "workspace:*"
+    "@jsxstyle/bundler-utils": "workspace:*",
+    "memfs": "^4.57.3"
   },
   "devDependencies": {
-    "next": "^15.2.0"
+    "@types/react": "^19.2.15",
+    "@types/react-dom": "^19.2.3",
+    "next": "^16.2.6",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6"
   },
   "peerDependencies": {
-    "next": ">=13.0.0 <=15.0.0"
+    "next": ">=14.0.0"
   }
 }

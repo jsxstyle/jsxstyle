@@ -1,0 +1,15 @@
+{
+  "name": "@jsxstyle/bundler-utils-darwin-arm64",
+  "version": "1.0.3",
+  "description": "Platform-specific SWC binary for @jsxstyle/bundler-utils (darwin-arm64)",
+  "os": ["darwin"],
+  "cpu": ["arm64"],
+  "main": "jsxstyle-swc.darwin-arm64.node",
+  "files": ["jsxstyle-swc.darwin-arm64.node"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jsxstyle/jsxstyle",
+    "directory": "npm/bundler-utils-darwin-arm64"
+  },
+  "license": "Apache-2.0"
+}

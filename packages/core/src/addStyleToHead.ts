@@ -52,7 +52,7 @@ export function addStyleToHead(rule: string): void {
     const sheet = styleElement.sheet;
     try {
       sheet.insertRule(rule, sheet.cssRules.length);
-    } catch (insertError) {
+    } catch {
       // insertRule will fail for rules with pseudoelements the browser doesn't support.
       // see: https://github.com/jsxstyle/jsxstyle/issues/75
       if (

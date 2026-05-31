@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["typescript", "react", "unicorn"],
+  "plugins": ["typescript", "react", "unicorn", "oxc"],
   "categories": {
     "correctness": "error",
   },
@@ -20,7 +20,14 @@
     "typescript/no-empty-interface": "error",
     "no-extra-label": "error",
   },
-  "ignorePatterns": ["**/*.astro", "**/env.d.ts"],
+  "ignorePatterns": [
+    "**/*.astro",
+    "**/env.d.ts",
+    // Rust test fixtures and napi-generated bindings are not hand-written source.
+    "crates/**/tests/fixture/**",
+    "crates/jsxstyle-swc-napi/index.js",
+    "crates/jsxstyle-swc-napi/index.d.ts",
+  ],
   "overrides": [
     {
       "files": ["**/__tests__/*.spec.ts", "**/__tests__/*.spec.tsx"],

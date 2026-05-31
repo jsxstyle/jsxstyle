@@ -26,13 +26,11 @@ if (!searchString) {
   if (!examplePkg) {
     throw new Error(`Could not find example matching "${answer}"`);
   }
-  // oxlint-disable-next-line no-unused-expressions -- zx tag executes the command
-  $`pnpm run --filter=${examplePkg.name} start`;
+  await $`pnpm run --filter=${examplePkg.name} start`;
 } else {
   const examplePkg = examplePkgs.find((pkg) => pkg.name.includes(searchString));
   if (!examplePkg) {
     throw new Error(`Could not find example matching "${searchString}"`);
   }
-  // oxlint-disable-next-line no-unused-expressions -- zx tag executes the command
-  $`pnpm run ---filter=${examplePkg.name} start`;
+  await $`pnpm run --filter=${examplePkg.name} start`;
 }

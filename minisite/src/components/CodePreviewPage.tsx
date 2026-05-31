@@ -6,7 +6,6 @@ import type { BuiltCustomProperties, CustomPropsObject } from '@jsxstyle/core';
 import { Block, Col, Row, css } from '@jsxstyle/react';
 import { useEffect, useReducer } from 'react';
 import { styleConstants } from '../utilities/constants';
-import { useAsyncModule } from '../utilities/useAsyncModule';
 import { CodeModule } from './CodeModule';
 import { ErrorBoundary } from './ErrorBoundary';
 import { initialSampleCode } from './initialSampleCode';
@@ -65,10 +64,6 @@ const Button: React.FC<
 };
 
 export const CodePreviewPage: React.FC = () => {
-  const transpileModule = useAsyncModule(
-    () => import('../utilities/transpile')
-  );
-
   const [transpileResult, setTranspileResult] = useReducer(reducer, {
     component: DefaultComponent,
     dispose: null,
@@ -97,18 +92,22 @@ export const CodePreviewPage: React.FC = () => {
   };
 
   useEffect(() => {
-    if (transpileModule.state === 'pending') return;
-    if (transpileModule.state === 'error') {
-      console.error('Error transpiling module: %o', transpileModule.error);
-      return;
-    }
-    const { transpile } = transpileModule.result;
-
-    const handleMessage = (code: unknown) => {
+    const handleMessage = async (code: unknown) => {
       if (typeof code !== 'string') return;
 
       try {
-        const { css, js, browserFriendlyJs } = transpile(code);
+        const response = await fetch('/api/transpile', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code }),
+        });
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.error || 'Transpile request failed');
+        }
+
+        const { css, js, browserFriendlyJs } = result;
 
         const moduleExports: {
           default: React.ComponentType | null;
@@ -199,7 +198,7 @@ export const CodePreviewPage: React.FC = () => {
     return () => {
       window.removeEventListener('storage', storageHandler);
     };
-  }, [transpileModule]);
+  }, []);
 
   return (
     <Col gap={20} padding={20}>

@@ -1,0 +1,15 @@
+{
+  "name": "@jsxstyle/bundler-utils-win32-x64-msvc",
+  "version": "1.0.3",
+  "description": "Platform-specific SWC binary for @jsxstyle/bundler-utils (win32-x64-msvc)",
+  "os": ["win32"],
+  "cpu": ["x64"],
+  "main": "jsxstyle-swc.win32-x64-msvc.node",
+  "files": ["jsxstyle-swc.win32-x64-msvc.node"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jsxstyle/jsxstyle",
+    "directory": "npm/bundler-utils-win32-x64-msvc"
+  },
+  "license": "Apache-2.0"
+}

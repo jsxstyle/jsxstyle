@@ -1,0 +1,40 @@
+# cargo-deny configuration. Run from this directory: `cargo deny check`.
+# Docs: https://embarkstudios.github.io/cargo-deny/
+
+[advisories]
+# Deny crates with known security vulnerabilities or that are unmaintained.
+# Add advisory IDs here (with a note) only to consciously accept a risk.
+ignore = [
+  # Both are unmaintained (not vulnerabilities) and reach us only transitively
+  # through swc's *test* crates (swc_ecma_transforms_testing / testing) -- not the
+  # runtime path -- with no fixed upstream version available.
+  "RUSTSEC-2021-0139", # ansi_term unmaintained
+  "RUSTSEC-2020-0095", # difference unmaintained
+]
+
+[licenses]
+# Licenses we accept for dependencies. jsxstyle itself is Apache-2.0. This list is
+# exactly the set the current tree requires; a new/unknown license will fail the
+# check so it gets a conscious review. MPL-2.0 (smartstring) is weak file-level
+# copyleft and fine for an unmodified build-time dependency.
+allow = [
+  "MIT",
+  "Apache-2.0",
+  "Apache-2.0 WITH LLVM-exception",
+  "BSD-3-Clause",
+  "ISC",
+  "Unicode-3.0",
+  "MPL-2.0",
+]
+confidence-threshold = 0.8
+
+[bans]
+# SWC pulls many transitive crates, so duplicate versions are expected; warn
+# rather than fail. Revisit if the dependency tree gets unwieldy.
+multiple-versions = "warn"
+wildcards = "allow"
+
+[sources]
+# All dependencies should come from crates.io.
+unknown-registry = "deny"
+unknown-git = "deny"

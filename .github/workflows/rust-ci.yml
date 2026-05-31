@@ -1,0 +1,173 @@
+name: Rust CI
+
+env:
+  DEBUG: napi:*
+  MACOSX_DEPLOYMENT_TARGET: "10.13"
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Lint & Format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+      - name: Cargo fmt
+        working-directory: crates
+        run: cargo fmt --all -- --check
+      - name: Clippy
+        working-directory: crates
+        run: cargo clippy --all-targets -- -D warnings
+
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        settings:
+          - host: macos-latest
+            target: aarch64-apple-darwin
+            build: pnpm build:napi --target aarch64-apple-darwin
+          - host: macos-latest
+            target: x86_64-apple-darwin
+            build: pnpm build:napi --target x86_64-apple-darwin
+          - host: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            build: pnpm build:napi --target x86_64-unknown-linux-gnu --use-napi-cross
+          - host: ubuntu-latest
+            target: x86_64-unknown-linux-musl
+            build: pnpm build:napi --target x86_64-unknown-linux-musl -x
+          - host: ubuntu-latest
+            target: aarch64-unknown-linux-gnu
+            build: pnpm build:napi --target aarch64-unknown-linux-gnu --use-napi-cross
+          - host: windows-latest
+            target: x86_64-pc-windows-msvc
+            build: pnpm build:napi --target x86_64-pc-windows-msvc
+    name: Build ${{ matrix.settings.target }}
+    runs-on: ${{ matrix.settings.host }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ".tool-versions"
+          cache: pnpm
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.settings.target }}
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            crates/target/
+          key: ${{ matrix.settings.target }}-cargo-${{ hashFiles('crates/Cargo.lock') }}
+          restore-keys: |
+            ${{ matrix.settings.target }}-cargo-
+      - uses: mlugg/setup-zig@v2
+        if: contains(matrix.settings.target, 'musl')
+        with:
+          version: 0.14.1
+      - uses: taiki-e/install-action@v2
+        if: contains(matrix.settings.target, 'musl')
+        with:
+          tool: cargo-zigbuild
+      - run: pnpm install
+      - run: ${{ matrix.settings.build }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bindings-${{ matrix.settings.target }}
+          path: crates/jsxstyle-swc-napi/*.node
+          if-no-files-found: error
+
+  test-rust:
+    name: Rust tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            crates/target/
+          key: test-cargo-${{ hashFiles('crates/Cargo.lock') }}
+          restore-keys: |
+            test-cargo-
+      - name: Run tests
+        working-directory: crates
+        run: cargo test
+
+  test-napi:
+    name: Test NAPI on ${{ matrix.settings.target }}
+    needs: [build]
+    strategy:
+      fail-fast: false
+      matrix:
+        settings:
+          - host: macos-latest
+            target: aarch64-apple-darwin
+          - host: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+          - host: windows-latest
+            target: x86_64-pc-windows-msvc
+    runs-on: ${{ matrix.settings.host }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ".tool-versions"
+          cache: pnpm
+      - run: pnpm install
+      - uses: actions/download-artifact@v4
+        with:
+          name: bindings-${{ matrix.settings.target }}
+          path: crates/jsxstyle-swc-napi/
+      - name: Test NAPI binding
+        run: |
+          node -e "
+            const m = require(require('path').resolve('crates/jsxstyle-swc-napi'));
+            const r = m.transform(
+              \"import { Block } from '@jsxstyle/react';\\nexport default () => <Block color=\\\"red\\\">hi</Block>;\",
+              'test.tsx',
+              { classNameStrategy: 'hash', classNamePrefix: '_x' }
+            );
+            if (!r.code) { throw new Error('Transform failed: no code output'); }
+            if (!r.css || r.css.length === 0) { throw new Error('No CSS extracted'); }
+            if (!/\._x[a-z0-9]+/.test(r.css)) { throw new Error('CSS missing class selector: ' + r.css); }
+            console.log('NAPI binding test passed: code=' + r.code.length + ' chars, css=' + r.css.length + ' chars');
+          "
+
+  supply-chain:
+    name: Supply chain
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-audit,cargo-deny,cargo-machete
+      - name: cargo audit (RustSec advisories)
+        working-directory: crates
+        run: cargo audit
+      - name: cargo deny (licenses, bans, advisories, sources)
+        working-directory: crates
+        run: cargo deny check
+      - name: cargo machete (unused dependencies)
+        working-directory: crates
+        run: cargo machete

@@ -1,56 +1,15 @@
+import {
+  commonComponentProps,
+  doubleSpecificityPrefixes,
+  pseudoClasses,
+  pseudoElements,
+  skippedProps,
+} from './sharedConstants.js';
 import { isObject } from './typePredicates.js';
 import type { CSSProperties } from './types.js';
 
 // global flag makes subsequent calls of capRegex.test advance to the next match
 const capRegex = /[A-Z]/g;
-
-export const commonComponentProps = {
-  alt: true,
-  checked: true,
-  children: true,
-  class: true,
-  className: true,
-  disabled: true,
-  href: true,
-  id: true,
-  name: true,
-  placeholder: true,
-  slot: true,
-  src: true,
-  style: true,
-  title: true,
-  type: true,
-  value: true,
-};
-
-const pseudoelements = new Set(['after', 'before', 'placeholder', 'selection']);
-
-const pseudoclasses = new Set([
-  'active',
-  'checked',
-  'disabled',
-  'empty',
-  'enabled',
-  'focus',
-  'hover',
-  'invalid',
-  'link',
-  'required',
-  'target',
-  'valid',
-]);
-
-/** Props that are used internally and not passed on to the underlying component */
-const skippedProps = new Set(['component', 'mediaQueries', 'props']);
-
-const doubleSpecificityPrefixes: Record<string, true> = {
-  animation: true,
-  background: true,
-  flex: true,
-  font: true,
-  margin: true,
-  padding: true,
-};
 
 const shorthandProps = {
   marginH: (margin: CSSProperties['marginLeft']): CSSProperties => ({
@@ -177,7 +136,7 @@ export const parseStyleProps = (
 
     if (!ampersandString) {
       // check for pseudoelement prefix
-      if (propNamePrefix && pseudoelements.has(propNamePrefix)) {
+      if (propNamePrefix && pseudoElements.has(propNamePrefix)) {
         pseudoelement = propNamePrefix;
         splitIndex = capRegex.lastIndex - 1;
         propNamePrefix =
@@ -188,7 +147,7 @@ export const parseStyleProps = (
       }
 
       // check for pseudoclass prefix
-      if (propNamePrefix && pseudoclasses.has(propNamePrefix)) {
+      if (propNamePrefix && pseudoClasses.has(propNamePrefix)) {
         pseudoclass = propNamePrefix;
         splitIndex = capRegex.lastIndex - 1;
         propNamePrefix =

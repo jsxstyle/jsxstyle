@@ -7,18 +7,12 @@
     "paths": {
       "@jsxstyle/bundler-utils": [
         "../bundler-utils/src"
-      ],
-      "@jsxstyle/core": [
-        "../../core/src"
       ]
     }
   },
   "references": [
     {
       "path": "../bundler-utils"
-    },
-    {
-      "path": "../../core"
     }
   ]
 }

@@ -22,7 +22,7 @@ export const useMatchMedia = (mediaQuery: string): boolean => {
       // `MediaQueryList.addListener` is deprecated but more widely supported at the moment
       mqList.addListener(changeEventListener);
       return () => mqList.removeListener(changeEventListener);
-    } catch (err) {
+    } catch {
       mqList.addEventListener('change', changeEventListener);
       return () => mqList.removeEventListener('change', changeEventListener);
     }

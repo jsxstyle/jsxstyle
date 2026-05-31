@@ -30,6 +30,8 @@ export function componentFactory<T extends JsxstyleComponentName>(
 
       return createComponent(
         Dynamic,
+        // `as any`: extractedProps() carries an unknown-valued index signature
+        // that widens `component` past Dynamic's typing
         mergeProps(
           {
             get component() {
@@ -37,7 +39,7 @@ export function componentFactory<T extends JsxstyleComponentName>(
             },
           },
           extractedProps()
-        )
+        ) as any
       );
     },
   }[displayName]!;

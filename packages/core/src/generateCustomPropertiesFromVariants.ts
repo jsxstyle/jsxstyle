@@ -112,6 +112,7 @@ const getCustomPropsFromVariant = <
   T extends GetOptionalCustomProperties<CustomPropValuesObject>,
 >(
   obj: T,
+  // oxlint-disable-next-line oxc/only-used-in-recursion -- kept to mirror the sibling default-variant helper's signature
   shouldMangle = false,
   propMap: Record<string, string> = {},
   keyPrefix = ''

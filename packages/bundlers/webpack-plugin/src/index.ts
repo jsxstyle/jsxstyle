@@ -1,2 +1,2 @@
-export * from './plugin.js';
-export type * from './types.js';
+export { JsxstyleWebpackPlugin } from './plugin.js';
+export type { JsxstyleWebpackPluginOptions } from './types.js';

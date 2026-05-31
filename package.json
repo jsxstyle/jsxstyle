@@ -11,10 +11,10 @@
     "build": "pnpm clean:dist && tsc -b tsconfig.build.json --verbose",
     "lint": "oxlint",
     "lint:write": "oxlint --fix",
-    "format": "oxfmt --check .",
-    "format:write": "oxfmt .",
-    "check": "oxlint && oxfmt --check .",
-    "check:write": "oxlint --fix && oxfmt .",
+    "format": "oxfmt --check . && cd crates && cargo fmt --all -- --check",
+    "format:write": "oxfmt . && cd crates && cargo fmt",
+    "check": "oxlint && oxfmt --check . && cd crates && cargo fmt --all -- --check && cargo clippy --all-targets -- -D warnings",
+    "check:write": "oxlint --fix && oxfmt . && cd crates && cargo fmt && cargo clippy --fix --allow-dirty --allow-staged --all-targets",
     "clean": "rm -rf node_modules && pnpm -r exec rm -rf node_modules",
     "clean:dist": "pnpm -r exec rm -rf lib dist build",
     "example": "tsx scripts/runExample.ts",
@@ -24,7 +24,14 @@
     "version:canary": "rm -f ./.changeset/pre.json && changeset version --snapshot canary",
     "reset": "rm -rf packages/{*,*/*}/lib/ minisite/.next/",
     "update-readme": "echo \"$(<./misc/monorepo-preamble.md)\\n\\n---\\n\\n$(<./packages/jsxstyle/README.md)\" > README.md",
-    "sync-configs": "tsx ./scripts/syncConfigs.ts"
+    "sync-configs": "tsx ./scripts/syncConfigs.ts",
+    "build:rust": "cd crates && cargo build",
+    "build:rust:release": "cd crates && cargo build --release",
+    "build:napi": "cd crates/jsxstyle-swc-napi && napi build --platform --release --output-dir . --js-package-name @jsxstyle/bundler-utils",
+    "build:napi:debug": "cd crates/jsxstyle-swc-napi && napi build --platform --output-dir . --js-package-name @jsxstyle/bundler-utils",
+    "test:napi": "pnpm build:napi:debug && node crates/jsxstyle-swc-napi/smoke-test.cjs",
+    "dev:rust": "cd crates && cargo watch -w .",
+    "generate:rust-constants": "tsx scripts/generateRustConstants.ts"
   },
   "browserslist": [
     "defaults",
@@ -32,17 +39,20 @@
     "maintained node versions"
   ],
   "devDependencies": {
-    "@changesets/cli": "^2.28.1",
+    "@changesets/cli": "^2.31.0",
     "@changesets/types": "^6.1.0",
+    "@jsxstyle/bundler-utils": "workspace:*",
+    "@jsxstyle/core": "workspace:*",
     "@jsxstyle/internal": "workspace:*",
-    "@playwright/test": "^1.50.1",
-    "@types/node": "^22.13.8",
-    "jsdom": "^26.0.0",
+    "@napi-rs/cli": "^3.7.0",
+    "@playwright/test": "^1.60.0",
+    "@types/node": "^25.9.1",
+    "jsdom": "^29.1.1",
     "oxfmt": "^0.52.0",
     "oxlint": "^1.67.0",
-    "tsx": "^4.19.3",
-    "typescript": "^5.8.2",
-    "vitest": "^3.0.7"
+    "tsx": "^4.22.3",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.7"
   },
   "packageManager": "pnpm@10.28.2"
 }

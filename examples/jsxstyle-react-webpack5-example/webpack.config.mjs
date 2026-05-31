@@ -23,7 +23,7 @@ export default {
   plugins: [
     new ReactIndexPlugin(),
     new JsxstyleWebpackPlugin({
-      cssMode: 'multipleInlineImports',
+      classNameStrategy: 'hash',
       staticModules: [customRequire.resolve('./LayoutConstants')],
     }),
   ],
@@ -40,13 +40,12 @@ export default {
         exclude: /node_modules/,
         use: [
           {
-            loader: 'babel-loader',
+            loader: 'swc-loader',
             options: {
-              babelrc: false,
-              presets: [
-                '@babel/preset-env',
-                ['@babel/preset-react', { runtime: 'automatic' }],
-              ],
+              jsc: {
+                parser: { syntax: 'ecmascript', jsx: true },
+                transform: { react: { runtime: 'automatic' } },
+              },
             },
           },
           JsxstyleWebpackPlugin.loader,

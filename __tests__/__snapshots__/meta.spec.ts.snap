@@ -22,110 +22,22 @@ exports[`npm publish > '@jsxstyle/bundler-utils' only publishes the intended fil
 "
 @jsxstyle/bundler-utils
 =======================
-- lib/ModuleCache.d.ts
-- lib/ModuleCache.d.ts.map
-- lib/ModuleCache.js
-- lib/ModuleCache.js.map
-- lib/ast/babelUtils.d.ts
-- lib/ast/babelUtils.d.ts.map
-- lib/ast/babelUtils.js
-- lib/ast/babelUtils.js.map
-- lib/ast/evaluateAstNode.d.ts
-- lib/ast/evaluateAstNode.d.ts.map
-- lib/ast/evaluateAstNode.js
-- lib/ast/evaluateAstNode.js.map
-- lib/ast/evaluateAttributes.d.ts
-- lib/ast/evaluateAttributes.d.ts.map
-- lib/ast/evaluateAttributes.js
-- lib/ast/evaluateAttributes.js.map
-- lib/ast/extractStyles.d.ts
-- lib/ast/extractStyles.d.ts.map
-- lib/ast/extractStyles.js
-- lib/ast/extractStyles.js.map
-- lib/ast/flattenSpreadAttributes.d.ts
-- lib/ast/flattenSpreadAttributes.d.ts.map
-- lib/ast/flattenSpreadAttributes.js
-- lib/ast/flattenSpreadAttributes.js.map
-- lib/ast/generatedUid.d.ts
-- lib/ast/generatedUid.d.ts.map
-- lib/ast/generatedUid.js
-- lib/ast/generatedUid.js.map
-- lib/ast/getCustomPropsAstNode.d.ts
-- lib/ast/getCustomPropsAstNode.d.ts.map
-- lib/ast/getCustomPropsAstNode.js
-- lib/ast/getCustomPropsAstNode.js.map
-- lib/ast/getEvaluateAstNodeWithScopeFunction.d.ts
-- lib/ast/getEvaluateAstNodeWithScopeFunction.d.ts.map
-- lib/ast/getEvaluateAstNodeWithScopeFunction.js
-- lib/ast/getEvaluateAstNodeWithScopeFunction.js.map
-- lib/ast/getImportForSource.d.ts
-- lib/ast/getImportForSource.d.ts.map
-- lib/ast/getImportForSource.js
-- lib/ast/getImportForSource.js.map
-- lib/ast/getInlineImportString.d.ts
-- lib/ast/getInlineImportString.d.ts.map
-- lib/ast/getInlineImportString.js
-- lib/ast/getInlineImportString.js.map
-- lib/ast/getJsxAttribute.d.ts
-- lib/ast/getJsxAttribute.d.ts.map
-- lib/ast/getJsxAttribute.js
-- lib/ast/getJsxAttribute.js.map
-- lib/ast/getObjectProperty.d.ts
-- lib/ast/getObjectProperty.d.ts.map
-- lib/ast/getObjectProperty.js
-- lib/ast/getObjectProperty.js.map
-- lib/ast/getSourceModule.d.ts
-- lib/ast/getSourceModule.d.ts.map
-- lib/ast/getSourceModule.js
-- lib/ast/getSourceModule.js.map
-- lib/ast/getStaticBindingsForScope.d.ts
-- lib/ast/getStaticBindingsForScope.d.ts.map
-- lib/ast/getStaticBindingsForScope.js
-- lib/ast/getStaticBindingsForScope.js.map
-- lib/ast/getValue.d.ts
-- lib/ast/getValue.d.ts.map
-- lib/ast/getValue.js
-- lib/ast/getValue.js.map
-- lib/ast/handleCssFunction.d.ts
-- lib/ast/handleCssFunction.d.ts.map
-- lib/ast/handleCssFunction.js
-- lib/ast/handleCssFunction.js.map
-- lib/ast/handleJsxAttributes.d.ts
-- lib/ast/handleJsxAttributes.d.ts.map
-- lib/ast/handleJsxAttributes.js
-- lib/ast/handleJsxAttributes.js.map
-- lib/ast/joinStringExpressions.d.ts
-- lib/ast/joinStringExpressions.d.ts.map
-- lib/ast/joinStringExpressions.js
-- lib/ast/joinStringExpressions.js.map
-- lib/ast/normalizeTernary.d.ts
-- lib/ast/normalizeTernary.d.ts.map
-- lib/ast/normalizeTernary.js
-- lib/ast/normalizeTernary.js.map
-- lib/ast/primitiveValueToNode.d.ts
-- lib/ast/primitiveValueToNode.d.ts.map
-- lib/ast/primitiveValueToNode.js
-- lib/ast/primitiveValueToNode.js.map
-- lib/ast/styleObjectUtils.d.ts
-- lib/ast/styleObjectUtils.d.ts.map
-- lib/ast/styleObjectUtils.js
-- lib/ast/styleObjectUtils.js.map
-- lib/getExportsFromModuleSource.d.ts
-- lib/getExportsFromModuleSource.d.ts.map
-- lib/getExportsFromModuleSource.js
-- lib/getExportsFromModuleSource.js.map
+- lib/DependencyAnalysisCache.d.ts
+- lib/DependencyAnalysisCache.d.ts.map
+- lib/DependencyAnalysisCache.js
+- lib/DependencyAnalysisCache.js.map
 - lib/index.d.ts
 - lib/index.d.ts.map
 - lib/index.js
 - lib/index.js.map
-- lib/makePromise.d.ts
-- lib/makePromise.d.ts.map
-- lib/makePromise.js
-- lib/makePromise.js.map
 - lib/types.d.ts
 - lib/types.d.ts.map
 - lib/types.js
 - lib/types.js.map
+- lib/validation.d.ts
+- lib/validation.d.ts.map
+- lib/validation.js
+- lib/validation.js.map
 - lib/wrapFileSystem.d.ts
 - lib/wrapFileSystem.d.ts.map
 - lib/wrapFileSystem.js
@@ -199,6 +111,10 @@ exports[`npm publish > '@jsxstyle/core' only publishes the intended files 1`] = 
 - lib/processProps.d.ts.map
 - lib/processProps.js
 - lib/processProps.js.map
+- lib/sharedConstants.d.ts
+- lib/sharedConstants.d.ts.map
+- lib/sharedConstants.js
+- lib/sharedConstants.js.map
 - lib/stringHash.d.ts
 - lib/stringHash.d.ts.map
 - lib/stringHash.js
@@ -223,6 +139,14 @@ exports[`npm publish > '@jsxstyle/nextjs-plugin' only publishes the intended fil
 - lib/index.d.ts.map
 - lib/index.js
 - lib/index.js.map
+- lib/turbopack-loader.d.ts
+- lib/turbopack-loader.d.ts.map
+- lib/turbopack-loader.js
+- lib/turbopack-loader.js.map
+- lib/webpack-loader.d.ts
+- lib/webpack-loader.d.ts.map
+- lib/webpack-loader.js
+- lib/webpack-loader.js.map
 - package.json
 "
 `;
@@ -279,6 +203,26 @@ exports[`npm publish > '@jsxstyle/react' only publishes the intended files 1`] =
 "
 `;
 
+exports[`npm publish > '@jsxstyle/rspack-plugin' only publishes the intended files 1`] = `
+"
+@jsxstyle/rspack-plugin
+=======================
+- lib/index.d.ts
+- lib/index.d.ts.map
+- lib/index.js
+- lib/index.js.map
+- lib/loader.d.ts
+- lib/loader.d.ts.map
+- lib/loader.js
+- lib/loader.js.map
+- lib/plugin.d.ts
+- lib/plugin.d.ts.map
+- lib/plugin.js
+- lib/plugin.js.map
+- package.json
+"
+`;
+
 exports[`npm publish > '@jsxstyle/solid' only publishes the intended files 1`] = `
 "
 @jsxstyle/solid
@@ -303,6 +247,7 @@ exports[`npm publish > '@jsxstyle/vite-plugin' only publishes the intended files
 "
 @jsxstyle/vite-plugin
 =====================
+- README.md
 - lib/index.d.ts
 - lib/index.d.ts.map
 - lib/index.js

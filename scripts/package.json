@@ -4,8 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "dependencies": {
+    "@jsxstyle/core": "workspace:*",
     "@jsxstyle/internal": "workspace:*",
     "superstruct": "^2.0.2",
-    "zx": "^8.3.2"
+    "zx": "^8.8.5"
   }
 }

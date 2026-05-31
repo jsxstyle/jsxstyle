@@ -1,166 +1,46 @@
-import fs from 'node:fs/promises';
+import * as fs from 'node:fs';
 import * as path from 'node:path';
-import util from 'node:util';
 import {
-  type UserConfigurableOptions,
-  extractStyles,
+  DependencyAnalysisCache,
+  extractImportSpecifiers,
+  transform as swcTransform,
+  validateOptions,
 } from '@jsxstyle/bundler-utils';
-import { getExportsFromModuleSource } from '@jsxstyle/bundler-utils';
-import esbuild from 'esbuild';
-import invariant from 'invariant';
-import type { Plugin } from 'vite';
+import type { PluginOptions } from '@jsxstyle/bundler-utils';
+import type { Plugin, ResolvedConfig, ViteDevServer } from 'vite';
 
-interface PluginOptions extends UserConfigurableOptions {
-  staticModulePaths?: string[];
-  extensions?: string[];
-  cacheFile?: string;
-  classNamePrefix?: string;
-}
+const JSXSTYLE_IMPORT_RE = /['"]@jsxstyle\//;
 
-class ModuleBundler {
-  constructor(
-    private staticModulePaths: string[],
-    private context: esbuild.BuildContext<{ write: false }>
-  ) {}
-
-  rebuildModules = async (): Promise<void> => {
-    const result = await this.context.rebuild();
-    this.modulesByAbsolutePath = result.outputFiles.reduce<
-      Record<string, unknown>
-    >((prev, file) => {
-      const index = Number.parseInt(path.basename(file.path), 10);
-      invariant(!Number.isNaN(index), 'Invalid file path: %s', file.path);
-      const absPath = this.staticModulePaths[index];
-      invariant(
-        absPath,
-        'File path `%s` does not have a corresponding static module path',
-        file.path
-      );
-      const moduleExports = getExportsFromModuleSource(absPath, file.text);
-      prev[absPath] = moduleExports;
-      return prev;
-    }, {});
-  };
-
-  modulesByAbsolutePath: Record<string, unknown> = {};
-
-  cleanup = async () => {
-    await this.context.dispose();
-  };
-}
-
-export const jsxstyleVitePlugin = ({
-  extensions = ['.ts', '.tsx', '.js'],
-  cacheFile,
-  classNamePrefix = '_x',
-  staticModulePaths,
-  ...options
-}: PluginOptions = {}): Plugin => {
+export const jsxstyleVitePlugin = (options: PluginOptions = {}): Plugin => {
+  validateOptions('jsxstyle-vite-plugin', options as Record<string, unknown>);
+  const {
+    extensions = ['.ts', '.tsx', '.js'],
+    classNamePrefix = '_x',
+    classNameStrategy = 'counter',
+    debugClassNames,
+    noRuntime,
+  } = options;
   const cssContent: Record<string, string> = {};
-  const classNameCache: Record<string, string> = {};
+  const fileToCssMap: Record<string, string> = {};
+  let resolvedConfig: ResolvedConfig;
+  let server: ViteDevServer | undefined;
 
-  const getClassNameForKey = (() => {
-    let num = 0;
+  // Shared cache object across all transform calls for consistent class names
+  const cacheObject: Record<string, string> = {};
 
-    return (content: string) => {
-      if (!classNameCache[content]) {
-        classNameCache[content] = (num++).toString(36);
-      }
-      return classNamePrefix + classNameCache[content];
-    };
-  })();
-
-  let moduleBundler: ModuleBundler | undefined;
+  // Cache for dependency analysis (static export detection)
+  const depCache = new DependencyAnalysisCache();
 
   return {
     name: 'jsxstyle-vite-plugin',
+    enforce: 'pre',
 
-    async handleHotUpdate(context) {
-      if (
-        staticModulePaths &&
-        moduleBundler &&
-        staticModulePaths.includes(context.file)
-      ) {
-        await moduleBundler.rebuildModules();
-      }
+    configResolved(config) {
+      resolvedConfig = config;
     },
 
-    async buildStart() {
-      if (staticModulePaths) {
-        const entryPoints = staticModulePaths.reduce<Record<string, string>>(
-          (prev, modulePath, index) => {
-            // ensure that rollup does something when our static modules change
-            this.addWatchFile(modulePath);
-            prev[`${index}`] = modulePath;
-            return prev;
-          },
-          {}
-        );
-        try {
-          const esbuildContext = await esbuild.context({
-            target: 'node14',
-            write: false,
-            bundle: true,
-            // code splitting will potentially add relative imports to in-memory files and we don't want that
-            splitting: false,
-            outdir: '/',
-            // commonjs output lets us use `vm.runInContext`
-            format: 'cjs',
-            entryPoints,
-          });
-
-          moduleBundler = new ModuleBundler(staticModulePaths, esbuildContext);
-        } catch (error) {
-          this.error(error);
-        }
-      }
-
-      if (cacheFile) {
-        try {
-          const cacheFileContents = await fs.readFile(cacheFile, {
-            encoding: 'utf8',
-            flag: 'r',
-          });
-
-          // create mapping of unique CSS strings to class names
-          const lines = new Set<string>(cacheFileContents.trim().split('\n'));
-          for (const line of lines) {
-            const trimmedLine = line.trim();
-            if (trimmedLine) {
-              // add each line of CSS to the cache
-              getClassNameForKey(trimmedLine);
-            }
-          }
-        } catch (error) {
-          if (error.code === 'EISDIR') {
-            throw new Error('Value of cacheFile is a directory');
-          }
-
-          if (error.code === 'ENOENT') {
-            console.log('Cache file does not exist and will be created');
-          } else {
-            throw error;
-          }
-        }
-      }
-    },
-
-    async buildEnd() {
-      if (moduleBundler) await moduleBundler.cleanup();
-
-      if (cacheFile) {
-        try {
-          const cacheString =
-            Object.keys(classNameCache).filter(Boolean).join('\n') + '\n';
-          await fs.writeFile(cacheFile, cacheString, 'utf8');
-        } catch (error) {
-          console.error(
-            'Could not write cache file to `%s`:',
-            cacheFile,
-            error
-          );
-        }
-      }
+    configureServer(devServer) {
+      server = devServer;
     },
 
     resolveId(id, importer) {
@@ -171,58 +51,124 @@ export const jsxstyleVitePlugin = ({
       return '\0' + fullPath;
     },
 
-    async load(id) {
-      if (id.endsWith('__jsxstyle.css')) {
-        // oxlint-disable-next-line no-control-regex -- \0 is Rollup's virtual module prefix
-        const idWithoutStuff = id.replace(/^\0/, '');
-        const content = cssContent[idWithoutStuff];
-        if (!content) {
-          this.error('No CSS file could be found for ID ' + id);
-        }
-        return {
-          code: content,
-          moduleSideEffects: 'no-treeshake',
-        };
+    load(id) {
+      if (!id.startsWith('\0') || !id.endsWith('__jsxstyle.css')) return;
+      const content = cssContent[id.slice(1)];
+      if (!content) {
+        this.error('No CSS content found for virtual module: ' + id);
       }
-
-      // ignore modules that have already been resolved
-      if (id.startsWith('\0')) return;
-
-      if (!extensions.some((ext) => id.endsWith(ext))) return;
-
-      // oxlint-disable-next-line no-control-regex -- \0 is Rollup's virtual module prefix
-      const idWithoutStuff = id.replace(/^\0/, '');
-      const fileContent = await fs.readFile(id, 'utf-8');
-      const result = extractStyles(
-        fileContent,
-        idWithoutStuff,
-        {
-          warnCallback: (message: any, ...args: any[]) =>
-            this.warn(util.format(message, ...args)),
-          errorCallback: (message: any, ...args: any[]) =>
-            this.error(util.format(message, ...args)),
-          getClassNameForKey,
-          modulesByAbsolutePath: moduleBundler?.modulesByAbsolutePath,
-        },
-        options
-      );
-      if (!result || !result.cssFileName) return;
-      cssContent[result.cssFileName] = result.css;
       return {
-        code: result.js.toString('utf-8'),
-        ast: result.ast as any,
+        code: content,
+        moduleSideEffects: 'no-treeshake',
       };
     },
 
-    async transform(fileContent, id) {
-      if (staticModulePaths?.includes(id)) {
-        return {
-          code: fileContent,
-          moduleSideEffects: 'no-treeshake',
-        };
+    async transform(code, id) {
+      const cleanId = id.replace(/\?.*$/, '');
+      if (!extensions.some((ext: string) => cleanId.endsWith(ext))) return;
+      if (cleanId.startsWith('\0')) return;
+
+      // Clean up previous CSS entry for this file (handles HMR when jsxstyle components are removed)
+      const prevCss = fileToCssMap[cleanId];
+      if (prevCss) {
+        delete cssContent[prevCss];
+        delete fileToCssMap[cleanId];
       }
 
-      return;
+      // Use the new NAPI API: class names generated in Rust, diagnostics returned as data
+      const isDebug =
+        debugClassNames !== undefined
+          ? debugClassNames
+          : resolvedConfig.command === 'serve';
+
+      const transformOptions = {
+        classNameStrategy,
+        classNamePrefix,
+        debugClassNames: isDebug,
+        cacheObject,
+        noRuntime,
+      };
+
+      // Analyze dependencies for external bindings when this file imports from jsxstyle
+      let externalBindings: Record<string, Record<string, unknown>> | undefined;
+      if (JSXSTYLE_IMPORT_RE.test(code)) {
+        const specifiers = extractImportSpecifiers(code);
+        if (specifiers.length > 0) {
+          externalBindings = {};
+          for (const specifier of specifiers) {
+            try {
+              const resolved = await this.resolve(specifier, cleanId);
+              if (!resolved || resolved.external) continue;
+              const resolvedPath = resolved.id;
+              const depSource = fs.readFileSync(resolvedPath, 'utf8');
+              const staticExports = depCache.analyze(
+                resolvedPath,
+                depSource,
+                transformOptions
+              );
+              if (Object.keys(staticExports).length > 0) {
+                externalBindings[specifier] = staticExports;
+              }
+            } catch {
+              // Skip dependencies that can't be resolved or read
+            }
+          }
+          if (Object.keys(externalBindings).length === 0) {
+            externalBindings = undefined;
+          }
+        }
+      }
+
+      const result = swcTransform(code, cleanId, {
+        ...transformOptions,
+        externalBindings,
+      });
+
+      // Merge returned cache back into our shared cache
+      Object.assign(cacheObject, result.cacheObject);
+
+      // Route warnings through Vite's warning system
+      for (const warning of result.warnings) {
+        this.warn(warning);
+      }
+
+      // Route errors through Vite's error system
+      if (result.errors.length > 0) {
+        if (noRuntime === 'error') {
+          // Accumulate all errors and report at once (Vite's this.error() throws immediately)
+          this.error(result.errors.join('\n'));
+        } else {
+          for (const error of result.errors) {
+            this.error(error);
+          }
+        }
+      }
+
+      if (!result.cssFileName) {
+        return { code: result.code, map: result.map };
+      }
+
+      cssContent[result.cssFileName] = result.css;
+      fileToCssMap[cleanId] = result.cssFileName;
+
+      // During HMR, reload the CSS virtual module so the browser picks up
+      // updated styles. This must happen here (in transform) rather than in
+      // handleHotUpdate, because handleHotUpdate fires BEFORE transform,
+      // meaning load() would read stale cssContent.
+      if (prevCss && server) {
+        const virtualId = '\0' + result.cssFileName;
+        const cssModule = server.moduleGraph.getModuleById(virtualId);
+        if (cssModule) {
+          server.moduleGraph.invalidateModule(cssModule);
+          server.reloadModule(cssModule).catch(() => {});
+        }
+      }
+
+      const cssImport = `import ${JSON.stringify('./' + path.basename(result.cssFileName))};\n`;
+      return {
+        code: cssImport + result.code,
+        map: result.map,
+      };
     },
   };
 };

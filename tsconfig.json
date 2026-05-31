@@ -29,6 +29,9 @@
       "path": "./packages/bundlers/nextjs-plugin"
     },
     {
+      "path": "./packages/bundlers/rspack-plugin"
+    },
+    {
       "path": "./packages/bundlers/vite-plugin"
     },
     {

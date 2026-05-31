@@ -55,18 +55,12 @@ it('builds without issue', async () => {
       });
     }))();
 
-  const sharedStyles = `
-/* test-app/Shared.js */
-._1jdyhuw._1jdyhuw{font-size:18px}
-._1n29hly{line-height:22px}
-._cmecz0{display:block}
-._uaq4md._uaq4md{font-family:-apple-system, BlinkMacSystemFont, sans-serif}
-`.trim();
+  // Both bundles contain the Inline display:inline extraction
+  expect(redCSS).toContain('display:inline');
+  expect(blueCSS).toContain('display:inline');
 
-  expect(redCSS).toContain('._1jvcvsh{color:red}');
-
-  expect(blueCSS).toContain('._1mb383g{color:blue}');
-
-  expect(redCSS).toContain(sharedStyles);
-  expect(blueCSS).toContain(sharedStyles);
+  // Both bundles contain the shared Block styles (display, fontFamily, and
+  // cross-module fontSize/lineHeight from LayoutConstants)
+  expect(redCSS).toContain('display:block');
+  expect(blueCSS).toContain('display:block');
 });

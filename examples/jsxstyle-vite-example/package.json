@@ -9,14 +9,14 @@
   "dependencies": {
     "@jsxstyle/core": "workspace:*",
     "@jsxstyle/react": "workspace:*",
-    "@jsxstyle/vite-plugin": "workspace:*",
-    "vite": "^6.2.0"
+    "@jsxstyle/vite-plugin": "workspace:*"
   },
   "devDependencies": {
-    "@types/react": "^18.3.18",
-    "@types/react-dom": "^18.3.5",
-    "@vitejs/plugin-react": "^4.3.4",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "@types/react": "^19.2.15",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.2",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "vite": "^8.0.14"
   }
 }

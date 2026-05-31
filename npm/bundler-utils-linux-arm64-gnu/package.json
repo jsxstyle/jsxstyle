@@ -1,0 +1,16 @@
+{
+  "name": "@jsxstyle/bundler-utils-linux-arm64-gnu",
+  "version": "1.0.3",
+  "description": "Platform-specific SWC binary for @jsxstyle/bundler-utils (linux-arm64-gnu)",
+  "os": ["linux"],
+  "cpu": ["arm64"],
+  "libc": ["glibc"],
+  "main": "jsxstyle-swc.linux-arm64-gnu.node",
+  "files": ["jsxstyle-swc.linux-arm64-gnu.node"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jsxstyle/jsxstyle",
+    "directory": "npm/bundler-utils-linux-arm64-gnu"
+  },
+  "license": "Apache-2.0"
+}

@@ -22,8 +22,7 @@ export default {
 
   plugins: [
     new JsxstyleWebpackPlugin({
-      classNameFormat: 'hash',
-      staticModules: [require.resolve('./test-app/LayoutConstants')],
+      classNameStrategy: 'hash',
     }),
     new MiniCssExtractPlugin({
       chunkFilename: '[id].css',
@@ -50,13 +49,12 @@ export default {
         },
         use: [
           {
-            loader: require.resolve('babel-loader'),
+            loader: require.resolve('swc-loader'),
             options: {
-              babelrc: false,
-              presets: [
-                [require.resolve('@babel/preset-env'), { modules: false }],
-                require.resolve('@babel/preset-react'),
-              ],
+              jsc: {
+                parser: { syntax: 'ecmascript', jsx: true },
+                transform: { react: { runtime: 'automatic' } },
+              },
             },
           },
           JsxstyleWebpackPlugin.loader,
