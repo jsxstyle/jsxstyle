@@ -1,0 +1,19 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "printWidth": 80,
+  "singleQuote": true,
+  "trailingComma": "es5",
+  // JSON is formatted by the editor's JSON language features instead of oxfmt:
+  // we want exactly `JSON.stringify(x, null, 2)` output (how pnpm and our
+  // syncConfigs script write package.json/tsconfig.json), and oxfmt's
+  // prettier-style JSON collapses short arrays onto one line, which differs.
+  "ignorePatterns": ["**/*.json"],
+  "overrides": [
+    {
+      // YAML conventionally uses double quotes (also applies to the YAML
+      // frontmatter in changeset markdown files)
+      "files": ["**/*.yml", "**/*.yaml", "**/.changeset/*.md"],
+      "options": { "singleQuote": false },
+    },
+  ],
+}

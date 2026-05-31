@@ -57,7 +57,6 @@ export class RequestStyleCache {
       props,
       classNamePropKey,
       (key) => {
-        // biome-ignore lint/suspicious/noAssignInExpressions: chill
         return (this.#classNameCache[key] ||= this.#getClassName(key));
       },
       (rule) => {

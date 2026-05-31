@@ -469,7 +469,7 @@ export function extractStyles(
                             t.objectProperty(
                               t.identifier('className'),
                               t.stringLiteral(
-                                // biome-ignore lint/style/noNonNullAssertion: variant name is always present in variants object
+                                // oxlint-disable-next-line typescript/no-non-null-assertion -- variant name is always present in variants object
                                 result.variants[name]!.className
                               )
                             ),

@@ -173,6 +173,7 @@ export const jsxstyleVitePlugin = ({
 
     async load(id) {
       if (id.endsWith('__jsxstyle.css')) {
+        // oxlint-disable-next-line no-control-regex -- \0 is Rollup's virtual module prefix
         const idWithoutStuff = id.replace(/^\0/, '');
         const content = cssContent[idWithoutStuff];
         if (!content) {
@@ -189,6 +190,7 @@ export const jsxstyleVitePlugin = ({
 
       if (!extensions.some((ext) => id.endsWith(ext))) return;
 
+      // oxlint-disable-next-line no-control-regex -- \0 is Rollup's virtual module prefix
       const idWithoutStuff = id.replace(/^\0/, '');
       const fileContent = await fs.readFile(id, 'utf-8');
       const result = extractStyles(

@@ -129,7 +129,8 @@ export interface PseudoPrefixedProps {
  * All style props that can be passed to a jsxstyle component.
  */
 export interface JsxstyleComponentStyleProps
-  extends CSSPropertiesWithoutAnimation,
+  extends
+    CSSPropertiesWithoutAnimation,
     PseudoPrefixedProps,
     ShorthandProps,
     AmpersandStyles {
@@ -150,17 +151,11 @@ interface AmpersandStyles {
 
 /** Style props that can be nested inside a `@container` */
 interface ValidContainerQueryStyleProps
-  extends CSSProperties,
-    PseudoPrefixedProps,
-    ShorthandProps,
-    AmpersandStyles {}
+  extends CSSProperties, PseudoPrefixedProps, ShorthandProps, AmpersandStyles {}
 
 /** Style props that can be nested inside a media query */
 interface ValidMediaQueryStyleProps
-  extends CSSProperties,
-    PseudoPrefixedProps,
-    ShorthandProps,
-    AmpersandStyles {}
+  extends CSSProperties, PseudoPrefixedProps, ShorthandProps, AmpersandStyles {}
 
 /** Cache object used in jsxstyle bundler plugins */
 export interface CacheObject {

@@ -10,7 +10,7 @@ on:
 
   schedule:
     # run every day at midnight UTC
-    - cron: '0 0 * * *'
+    - cron: "0 0 * * *"
 
 jobs:
   check-changesets:
@@ -39,7 +39,7 @@ jobs:
       - name: Use Node
         uses: actions/setup-node@v6
         with:
-          node-version-file: '.tool-versions'
+          node-version-file: ".tool-versions"
           cache: pnpm
 
       - run: pnpm install
@@ -59,7 +59,7 @@ jobs:
       - name: Use Node
         uses: actions/setup-node@v6
         with:
-          node-version-file: '.tool-versions'
+          node-version-file: ".tool-versions"
           cache: pnpm
 
       - run: pnpm install

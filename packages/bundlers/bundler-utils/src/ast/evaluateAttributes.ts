@@ -86,9 +86,7 @@ export const evaluateAttributes = (
         if (normalizedValue.test.type === 'Identifier') {
           const mq = mediaQueryIdentifierMap[normalizedValue.test.name];
           if (mq) {
-            // biome-ignore lint/suspicious/noAssignInExpressions: chill
             const styles = (styleObj.styles ||= {});
-            // biome-ignore lint/suspicious/noAssignInExpressions: chill
             const mqStyles = (styles[`@media ${mq}`] ||= {});
             styles[key] = attemptEval(normalizedValue.alternate);
             mqStyles[key] = attemptEval(normalizedValue.consequent);

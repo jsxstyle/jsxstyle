@@ -29,8 +29,9 @@ export interface JsxstyleCache {
 export const JsxstyleCacheContext =
   createContext<JsxstyleCache>(cacheSingleton);
 
-interface JsxstyleCacheProviderCacheProps
-  extends Partial<Record<keyof RequestStyleCacheOptions, never>> {
+interface JsxstyleCacheProviderCacheProps extends Partial<
+  Record<keyof RequestStyleCacheOptions, never>
+> {
   cache: JsxstyleCache;
   classNamePrefix?: never;
   classNameStyle?: never;

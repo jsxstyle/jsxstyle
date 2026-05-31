@@ -16,7 +16,7 @@ export function componentFactory<T extends JsxstyleComponentName>(
   const tagName = 'div';
   const defaultProps = componentStyles[displayName];
 
-  // biome-ignore lint/style/noNonNullAssertion: we know it's set
+  // oxlint-disable-next-line typescript/no-non-null-assertion -- we know it's set
   return {
     [displayName]: <T extends ValidComponentPropValue = 'div'>(
       props: JsxstyleProps<T>

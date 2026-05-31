@@ -9,10 +9,12 @@
   "scripts": {
     "start": "pnpm --filter=minisite dev",
     "build": "pnpm clean:dist && tsc -b tsconfig.build.json --verbose",
-    "lint": "biome lint .",
-    "lint:write": "biome lint --write .",
-    "check": "biome check .",
-    "check:write": "biome check --write .",
+    "lint": "oxlint",
+    "lint:write": "oxlint --fix",
+    "format": "oxfmt --check .",
+    "format:write": "oxfmt .",
+    "check": "oxlint && oxfmt --check .",
+    "check:write": "oxlint --fix && oxfmt .",
     "clean": "rm -rf node_modules && pnpm -r exec rm -rf node_modules",
     "clean:dist": "pnpm -r exec rm -rf lib dist build",
     "example": "tsx scripts/runExample.ts",
@@ -30,13 +32,14 @@
     "maintained node versions"
   ],
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
     "@changesets/cli": "^2.28.1",
     "@changesets/types": "^6.1.0",
     "@jsxstyle/internal": "workspace:*",
     "@playwright/test": "^1.50.1",
     "@types/node": "^22.13.8",
     "jsdom": "^26.0.0",
+    "oxfmt": "^0.52.0",
+    "oxlint": "^1.67.0",
     "tsx": "^4.19.3",
     "typescript": "^5.8.2",
     "vitest": "^3.0.7"

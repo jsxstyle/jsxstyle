@@ -61,9 +61,8 @@ describe('evaluateAttributes', () => {
       },
     };
 
-    expect(
-      evaluateAttributes(new Map(Object.entries(styles)), options)
-    ).toMatchInlineSnapshot(`
+    expect(evaluateAttributes(new Map(Object.entries(styles)), options))
+      .toMatchInlineSnapshot(`
       {
         "classNameNode": {
           "type": "StringLiteral",

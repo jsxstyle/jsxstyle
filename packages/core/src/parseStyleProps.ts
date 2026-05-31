@@ -182,7 +182,7 @@ export const parseStyleProps = (
         splitIndex = capRegex.lastIndex - 1;
         propNamePrefix =
           capRegex.test(originalPropName) &&
-          // biome-ignore lint/style/noNonNullAssertion: always valid
+          // oxlint-disable-next-line typescript/no-non-null-assertion -- always valid
           originalPropName[splitIndex]!.toLowerCase() +
             originalPropName.slice(splitIndex + 1, capRegex.lastIndex - 1);
       }
@@ -193,7 +193,7 @@ export const parseStyleProps = (
         splitIndex = capRegex.lastIndex - 1;
         propNamePrefix =
           capRegex.test(originalPropName) &&
-          // biome-ignore lint/style/noNonNullAssertion: always valid
+          // oxlint-disable-next-line typescript/no-non-null-assertion -- always valid
           originalPropName[splitIndex]!.toLowerCase() +
             originalPropName.slice(splitIndex + 1, capRegex.lastIndex - 1);
       }
@@ -207,7 +207,7 @@ export const parseStyleProps = (
     // trim prefixes off propName
     if (splitIndex > 0) {
       propName =
-        // biome-ignore lint/style/noNonNullAssertion: always valid
+        // oxlint-disable-next-line typescript/no-non-null-assertion -- always valid
         originalPropName[splitIndex]!.toLowerCase() +
         originalPropName.slice(splitIndex + 1);
     }
@@ -231,7 +231,6 @@ export const parseStyleProps = (
           continue;
         }
 
-        // biome-ignore lint/suspicious/noAssignInExpressions: chill
         const obj: ParsedStyleProp = (parsedStyleProps[
           expandedPropName + keySuffix
         ] = {
@@ -249,7 +248,6 @@ export const parseStyleProps = (
         continue;
       }
 
-      // biome-ignore lint/suspicious/noAssignInExpressions: chill
       const obj: ParsedStyleProp = (parsedStyleProps[propName + keySuffix] = {
         propName,
         propValue,

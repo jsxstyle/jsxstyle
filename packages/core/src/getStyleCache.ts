@@ -40,7 +40,6 @@ export class StyleCache {
   }
 
   #memoizedGetClassNameForKey: GetClassNameForKeyFn = (key) => {
-    // biome-ignore lint/suspicious/noAssignInExpressions: chill
     return (this.#classNameCache[key] ||= this.#getClassNameForKey(key));
   };
 

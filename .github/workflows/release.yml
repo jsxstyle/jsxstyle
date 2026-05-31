@@ -35,9 +35,9 @@ jobs:
       - name: Use Node
         uses: actions/setup-node@v6
         with:
-          node-version-file: '.tool-versions'
+          node-version-file: ".tool-versions"
           cache: pnpm
-          registry-url: 'https://registry.npmjs.org'
+          registry-url: "https://registry.npmjs.org"
 
       - run: pnpm install
       - run: pnpm build

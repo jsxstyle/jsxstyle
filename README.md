@@ -35,7 +35,6 @@ Install the jsxstyle package with your preferred node package manager.
 | React     | `@jsxstyle/react`  |
 | Solid     | `@jsxstyle/solid`  |
 
-
 jsxstyle provides the following seven components:
 
 | Component     | Default styles                                                 |
@@ -125,8 +124,8 @@ import { Block } from '@jsxstyle/preact';
 />;
 ```
 
-| Supported Pseudoclasses | Supported Pseudoelements |
-| -- | -- |
+| Supported Pseudoclasses                                                                                                 | Supported Pseudoelements                      |
+| ----------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
 | `active`, `checked`, `disabled`, `empty`, `enabled`, `focus`, `hover`, `invalid`, `link`, `required`, `target`, `valid` | `placeholder`, `selection`, `before`, `after` |
 
 <br>

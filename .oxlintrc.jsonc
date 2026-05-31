@@ -1,0 +1,32 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "react", "unicorn"],
+  "categories": {
+    "correctness": "error",
+  },
+  "rules": {
+    "typescript/no-explicit-any": "off",
+    "no-prototype-builtins": "off",
+    "prefer-template": "off",
+    "no-unused-vars": [
+      "error",
+      {
+        "args": "none",
+        "caughtErrors": "none",
+        "varsIgnorePattern": "^_",
+      },
+    ],
+    "typescript/no-non-null-assertion": "error",
+    "typescript/no-empty-interface": "error",
+    "no-extra-label": "error",
+  },
+  "ignorePatterns": ["**/*.astro", "**/env.d.ts"],
+  "overrides": [
+    {
+      "files": ["**/__tests__/*.spec.ts", "**/__tests__/*.spec.tsx"],
+      "rules": {
+        "typescript/no-non-null-assertion": "off",
+      },
+    },
+  ],
+}

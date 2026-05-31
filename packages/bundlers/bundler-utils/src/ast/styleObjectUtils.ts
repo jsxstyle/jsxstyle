@@ -39,11 +39,9 @@ export const updateStyleObject = (
   styleObj: StaticStyleObject
 ): void => {
   if (value.type === 'primitive') {
-    // biome-ignore lint/suspicious/noAssignInExpressions: chill
     (styleObj.styles ||= {})[key] = value.value;
   } else {
     const ternaryKey = generate(value.test).code;
-    // biome-ignore lint/suspicious/noAssignInExpressions: chill
     const nestedThing = ((styleObj.ternaries ||= {})[ternaryKey] ||= {
       test: value.test,
       alternate: {},

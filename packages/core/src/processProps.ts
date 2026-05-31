@@ -22,7 +22,7 @@ export function processProps(
   let classNames: string = props.class || props.className || '';
 
   propLoop: for (const key in parsedStyleProps) {
-    // biome-ignore lint/style/noNonNullAssertion: we know key is in parsedStyleProps
+    // oxlint-disable-next-line typescript/no-non-null-assertion -- we know key is in parsedStyleProps
     const mergedProp = parsedStyleProps[key]!;
     const {
       pseudoelement,
@@ -56,7 +56,7 @@ export function processProps(
 
         for (const key in animationResult.parsedStyleProps) {
           const { propName, propValue, pseudoclass, pseudoelement } =
-            // biome-ignore lint/style/noNonNullAssertion: we know key is in parsedStyleProps
+            // oxlint-disable-next-line typescript/no-non-null-assertion -- we know key is in parsedStyleProps
             animationResult.parsedStyleProps[key]!;
           if (pseudoclass || pseudoelement) {
             if (
@@ -104,7 +104,7 @@ export function processProps(
       }
 
       if (animationValue === '') {
-        // biome-ignore lint/complexity/noUselessLabel: explicit continue
+        // oxlint-disable-next-line no-extra-label -- explicit continue
         continue propLoop;
       }
 

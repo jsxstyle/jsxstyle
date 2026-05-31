@@ -1,7 +1,7 @@
 import * as t from '@babel/types';
 import type { CustomPropsObject } from '@jsxstyle/core';
 
-const customPropRegex = /^var\(\-\-(.+?)\)$/;
+const customPropRegex = /^var\(--(.+?)\)$/;
 
 /**
  * Given a custom properties object, this function returns an array of

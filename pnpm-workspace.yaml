@@ -5,6 +5,5 @@ packages:
   - scripts
 
 onlyBuiltDependencies:
-  - '@biomejs/biome'
   - esbuild
   - sharp

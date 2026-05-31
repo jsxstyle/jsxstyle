@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    name: 'Build the minisite'
+    name: "Build the minisite"
     runs-on: ubuntu-latest
 
     steps:
@@ -19,7 +19,7 @@ jobs:
       - name: Use Node
         uses: actions/setup-node@v6
         with:
-          node-version-file: '.tool-versions'
+          node-version-file: ".tool-versions"
           cache: pnpm
 
       - run: pnpm install
@@ -28,10 +28,10 @@ jobs:
 
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: 'minisite/dist/'
+          path: "minisite/dist/"
 
   deploy:
-    name: 'Deploy to GitHub Pages'
+    name: "Deploy to GitHub Pages"
     needs: build
     runs-on: ubuntu-latest
 

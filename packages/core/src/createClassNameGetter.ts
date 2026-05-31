@@ -15,12 +15,11 @@ export const createClassNameGetter = (
     // incrementing integer
     const counterKey = Symbol.for('counter');
     cacheObject[counterKey] = cacheObject[counterKey] || 0;
-    // biome-ignore lint/style/noNonNullAssertion:
+    // oxlint-disable-next-line typescript/no-non-null-assertion
     getClassName = () => '_x' + (cacheObject[counterKey]!++).toString(36);
   }
 
   return (key) => {
-    // biome-ignore lint/suspicious/noAssignInExpressions: chill
     return (cacheObject[key] = cacheObject[key] || getClassName(key));
   };
 };

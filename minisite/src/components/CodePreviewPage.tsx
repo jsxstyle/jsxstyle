@@ -84,13 +84,13 @@ export const CodePreviewPage: React.FC = () => {
     const variantNames = transpileResult.customProperties.variantNames;
     overrideElement.classList.remove(
       ...variantNames.map(
-        // biome-ignore lint/style/noNonNullAssertion:
+        // oxlint-disable-next-line typescript/no-non-null-assertion
         (key) => variants[key]!.className
       )
     );
     if (variantName) {
       overrideElement.classList.add(
-        // biome-ignore lint/style/noNonNullAssertion:
+        // oxlint-disable-next-line typescript/no-non-null-assertion
         variants[variantName]!.className
       );
     }
