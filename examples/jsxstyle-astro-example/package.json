@@ -12,9 +12,9 @@
     "playwright": "playwright"
   },
   "dependencies": {
-    "@astrojs/preact": "^4.0.5",
-    "@astrojs/react": "^4.2.1",
-    "@astrojs/solid-js": "^5.0.5",
+    "@astrojs/preact": "^5.1.4",
+    "@astrojs/react": "^5.0.6",
+    "@astrojs/solid-js": "^6.0.1",
     "@jsxstyle/astro": "workspace:*",
     "@jsxstyle/core": "workspace:*",
     "@jsxstyle/preact": "workspace:*",
@@ -23,7 +23,7 @@
     "@playwright/test": "^1.50.1",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
-    "astro": "^5.4.1",
+    "astro": "^6.4.2",
     "preact": "^10.26.4",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
