@@ -38,6 +38,23 @@ const { css, returnValue: slotContent } = await cacheSingleton.run(
     />
     <title>{title}</title>
     <style set:html={customProperties + css}></style>
+    {
+      // hide the astro dev toolbar in iframes
+      import.meta.env.DEV && (
+        <>
+          <script>
+            if (window.self !== window.top) {
+              document.documentElement.classList.add("dev-toolbar-hidden");
+            }
+          </script>
+          <style is:global>
+            html.dev-toolbar-hidden astro-dev-toolbar {
+              display: none !important;
+            }
+          </style>
+        </>
+      )
+    }
   </head>
   <body>
     <Box

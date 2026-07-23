@@ -1,7 +1,20 @@
-import generate from '@babel/generator';
-import babelTraverse from '@babel/traverse';
+import * as generateModule from '@babel/generator';
+import * as traverseModule from '@babel/traverse';
 import * as t from '@babel/types';
 import { extractStyles } from '@jsxstyle/bundler-utils';
+
+// sigh
+const interopDefault = <T>(mod: unknown): T => {
+  let value: any = mod;
+  while (value != null && typeof value !== 'function' && 'default' in value) {
+    value = value.default;
+  }
+  return value as T;
+};
+
+const generate = interopDefault<typeof generateModule.default>(generateModule);
+const babelTraverse =
+  interopDefault<typeof traverseModule.default>(traverseModule);
 
 const convertMemberExpression = (
   expression: t.JSXMemberExpression

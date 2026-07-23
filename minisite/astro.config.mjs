@@ -3,12 +3,34 @@
 import * as path from 'node:path';
 import react from '@astrojs/react';
 import { jsxstyle } from '@jsxstyle/astro/integration';
-import injectPlugin from '@rollup/plugin-inject';
 import { defineConfig } from 'astro/config';
 
 const __dirname = new URL('.', import.meta.url).pathname;
 
-// https://astro.build/config
+/** @returns {NonNullable<NonNullable<import('astro').AstroUserConfig['vite']>['plugins']>[number]} */
+const browserNodePolyfills = () => {
+  /** @type {Record<string, string>} */
+  const polyfills = {
+    'node:path': path.resolve(__dirname, './src/polyfills/path.ts'),
+    'node:vm': path.resolve(__dirname, './src/polyfills/vm.ts'),
+  };
+  return {
+    name: 'jsxstyle-minisite:browser-node-polyfills',
+    enforce: 'pre',
+    resolveId(id) {
+      if (this.environment?.name === 'client' && id in polyfills) {
+        return polyfills[id];
+      }
+      return null;
+    },
+  };
+};
+
+/** @type {Record<string, [string, string]>} */
+const inject = {
+  process: [path.resolve(__dirname, './src/polyfills/process.ts'), '*'],
+};
+
 export default defineConfig({
   integrations: [react(), jsxstyle({ classNamePrefix: '_j' })],
 
@@ -17,51 +39,21 @@ export default defineConfig({
   },
 
   vite: {
-    resolve: {
-      alias: ['path', 'vm'].map((moduleName) => ({
-        find: 'node:' + moduleName,
-        replacement: path.resolve(
-          __dirname,
-          `./src/polyfills/${moduleName}.ts`
-        ),
-      })),
-    },
+    plugins: [browserNodePolyfills()],
 
     optimizeDeps: {
-      esbuildOptions: {
-        define: {
-          global: 'globalThis',
-        },
-        inject:
-          // this work is more comprehensively at build time by @rollup/plugin-inject
-          ['./src/polyfills/shims.ts'],
+      rolldownOptions: {
+        transform: { inject },
       },
     },
 
     build: {
-      rollupOptions: {
+      rolldownOptions: {
         output: {
           assetFileNames: '-/[hash][extname]',
         },
 
-        plugins: [
-          /** @type {any} */
-          (
-            injectPlugin({
-              // a namespace import gives us nice error messages if we missed an export
-              // Buffer: [
-              //   path.resolve(__dirname, './src/polyfills/buffer.ts'),
-              //   '*',
-              // ],
-              process: [
-                path.resolve(__dirname, './src/polyfills/process.ts'),
-                '*',
-              ],
-              // monaco-editor has guards in place for process.* usage
-              exclude: /\/monaco-editor\//,
-            })
-          ),
-        ],
+        transform: { inject },
       },
     },
   },
