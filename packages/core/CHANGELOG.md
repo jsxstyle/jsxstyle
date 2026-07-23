@@ -1,5 +1,15 @@
 # @jsxstyle/core
 
+## 3.1.0
+
+### Minor Changes
+
+- ebf0156e50aa0e886d5b0aac6c417b26239c3c6c: Refactor `createRequestStyleCache` into a new class, `RequestStyleCache`, and then deprecate the function
+
+### Patch Changes
+
+- 31dea68a4542d400fd2a8f14df1fae875d6de94c: Embed original sources in sourcemaps so they no longer point at source files that aren't published
+
 ## 3.0.2
 
 ### Patch Changes

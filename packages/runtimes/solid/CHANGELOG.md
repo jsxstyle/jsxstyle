@@ -1,5 +1,13 @@
 # @jsxstyle/solid
 
+## 1.0.3
+
+### Patch Changes
+
+- 31dea68a4542d400fd2a8f14df1fae875d6de94c: Embed original sources in sourcemaps so they no longer point at source files that aren't published
+- Updated dependencies:
+  - @jsxstyle/core@3.1.0
+
 ## 1.0.2
 
 ### Patch Changes
