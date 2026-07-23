@@ -1,5 +1,19 @@
 # @jsxstyle/astro
 
+## 1.1.0
+
+### Minor Changes
+
+- ebf0156e50aa0e886d5b0aac6c417b26239c3c6c: Allow jsxstyle cache to be configured via options passed to the integration
+- 4e20ba14c38250284ee29dcc2cc6c8769841bd7b: Bump peer dep range to include Astro 6
+- 31dea68a4542d400fd2a8f14df1fae875d6de94c: Bump peer dep range to include Astro 7
+
+### Patch Changes
+
+- 31dea68a4542d400fd2a8f14df1fae875d6de94c: Embed original sources in sourcemaps so they no longer point at source files that aren't published
+- Updated dependencies:
+  - @jsxstyle/core@3.1.0
+
 ## 1.0.2
 
 ### Patch Changes
