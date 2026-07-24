@@ -1,5 +1,13 @@
 # @jsxstyle/astro
 
+## 1.1.1
+
+### Patch Changes
+
+- f83871bed24c5dbfe0ec507e8c29cd8d83667389: Bump deps
+- Updated dependencies:
+  - @jsxstyle/core@3.1.1
+
 ## 1.1.0
 
 ### Minor Changes
