@@ -1,5 +1,12 @@
 # @jsxstyle/vite-plugin
 
+## 1.1.1
+
+### Patch Changes
+
+- Updated dependencies:
+  - @jsxstyle/bundler-utils@1.0.5
+
 ## 1.1.0
 
 ### Minor Changes
